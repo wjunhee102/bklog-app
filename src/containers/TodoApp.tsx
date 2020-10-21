@@ -7,7 +7,7 @@ import { toggleTodo, removeTodo, addTodo } from '../store/modules/todos';
 
 import TodoInsert from '../components/TodoInsert';
 import TodoList   from '../components/TodoList'
-import WorkApp from './WorkApp';
+import WorkApp from './TaskModule';
 
 function TodoApp() {
   const todos    = useSelector((state: RootState) => state.todos);

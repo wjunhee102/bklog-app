@@ -6,9 +6,9 @@ const Container = styled.div`
   
 `;
 
-function WorkItem() {
+function Task() {
   return (
-    <div className="work-item">
+    <div className="task">
       <Container>
 
       </Container>
@@ -16,4 +16,4 @@ function WorkItem() {
   )
 }
 
-export default WorkItem;
+export default Task;

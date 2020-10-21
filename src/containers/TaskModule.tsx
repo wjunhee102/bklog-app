@@ -1,6 +1,6 @@
 import React from 'react';
 
-function WorkApp() {
+function TaskModule() {
   return (
     <div>
       인수인계 앱입니다.
@@ -8,4 +8,4 @@ function WorkApp() {
   )
 }
 
-export default WorkApp;
+export default TaskModule;
