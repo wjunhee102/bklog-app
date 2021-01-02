@@ -1,6 +1,6 @@
 import React from 'react';
 import Form from '../components/Form';
-import CounterContainer from '../components/CounterContainer';
+import Blocklog from '../components/bklog/Blocklog';
 
 function Home() {
   return (
@@ -17,7 +17,7 @@ function Home() {
         formType="password"
         errorMessage="비밀번호를 입력해주세요."
       />
-      <CounterContainer />
+      <Blocklog />
     </div>
   )
 }

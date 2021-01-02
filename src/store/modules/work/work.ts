@@ -59,7 +59,7 @@ const work = createReducer<WorkInfoState, WorkAction>(initialState, {
       }
       return work;
     })
-    return ({workList: newWorkList})
+    return ({workList: newWorkList});
   }
 });
 
