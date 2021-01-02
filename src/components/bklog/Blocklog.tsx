@@ -8,26 +8,16 @@ import {
   editAble,
   editBlock, 
   commitBlock, 
+  deleteBlock,
   BlocklogState 
 } from '../../store/modules/blocklog';
 
 interface BlockRaw {
   id: string;
+  preId: string | null;
   type: string;
   style?: any[];
   contents: string[];
-}
-
-interface BlockEleProps {
-  content: string;
-}
-
-function BlockEle({content}:BlockEleProps) {
-  return (
-    <> 
-      {content}
-    </>
-  )
 }
 
 interface BlockProps {
@@ -57,6 +47,10 @@ function Block({blockData}:BlockProps) {
   const onCommitBlock = () => {
     dispatch(commitBlock());
   }
+  
+  const onDeleteBlock = () => {
+    dispatch(deleteBlock(blockData.id));
+  }
 
   const createMarkup = () => {
     return {
@@ -68,24 +62,39 @@ function Block({blockData}:BlockProps) {
   }
 
   const editContent = (e:any) => {
+    onEditBlock(blockData.id, e.target.innerHTML);
+    console.log(blockData.id);
+    if(e.key === "Backspace" && !e.target.innerHTML) {
+      console.log(typeof e.target.innerHTML);
+      onDeleteBlock();
+      if(blockData.preId) dispatch(editAble(blockData.preId));
+    }
+    if(e.key === "Enter") {
+      e.preventDefault();
+    }
+  }
+
+  const addContent = (e:any) => {
     if(e.key === "Enter") {
       e.preventDefault();
       onAddBlock(blockData.id);
-    } else {
-      console.log(e.target);
-      onEditBlock(blockData.id, e.target.innerHTML);
     }
   }
 
   const dragData = (e:any) => {
     const selObj = window.getSelection()
     const data = selObj? selObj.toString() : "없음";
-    console.log(data);
+    // console.log(data);
+  }
+
+  const focus = (ele: any) => {
+    ele.focus();
   }
 
   useEffect(()=> {
    if(state.editingId === blockData.id && blockRef.current ) {
-    console.log(blockRef.current)
+    // console.log(blockRef.current)
+    focus(blockRef.current)
    }
   },[state.editingId]);
 
@@ -96,14 +105,15 @@ function Block({blockData}:BlockProps) {
         className={blockData.type}
         dangerouslySetInnerHTML={createMarkup()}  
         contentEditable={true}
-        onKeyPress={editContent}
+        onKeyUp={editContent}
+        onKeyPress={addContent}
         onFocus={onEditable}
         onBlur={onCommitBlock}
         onDrag={dragData}
         onMouseDown={dragData}
       >
       </div>
-      <BlockEle content={blockData.contents.join()} />
+      <button onClick={onDeleteBlock}> 삭제 </button>
     </div>
   )
 }
@@ -124,15 +134,12 @@ function Blocklog() {
   const blockData = state? state.blocks.map( raw => {
     return {
       id: raw.id,
+      preId: raw.preBlockId,
       type: raw.property.type,
       style: [],
       contents: raw.property.contents
     }
   }) : null;
-
-  useEffect(()=> {
-    console.log(state);
-  },[state])
 
   return (
     <div className="blocklog">

@@ -208,6 +208,8 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
     case COMMIT_BLOCK: 
 
       const temps = state.temps.concat();
+      
+      console.log(temps);
 
       const newBlocks = state.blocks.map((block)=> {
 
@@ -221,7 +223,7 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
                     temps[i].content
                   ]
                 })
-              })
+              });
 
             }
           }
@@ -234,6 +236,69 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
         temps: [],
         editingId: null
       });
+    
+    case DELETE_BLOCK: 
+      const deletedBlock = state.blocks.filter((block)=>
+        block.id !== action.payload.id
+      );
+      
+      let preBlock, nextBlock;
+
+      if(deletedBlock.length === 0) {
+        deletedBlock.push({
+          id: uuidv4(),
+          preBlockId: null,
+          nextBlockId: null,
+          property: {
+            type: "BKlog-p",
+            styles: {
+            },
+            contents: [
+            ]
+          }
+        })
+      } else {
+
+        for(let i = 0; i < deletedBlock.length; i++) {
+
+          if(i === 0) {
+            if(state.blocks[i].id === action.payload.id) {
+              deletedBlock[i].preBlockId = null
+              break;
+            }
+          } else if(i === deletedBlock.length - 1 ) {
+            if(state.blocks[i+1].id === action.payload.id) {
+              deletedBlock[i].nextBlockId = null
+            }
+          }
+
+          if(deletedBlock[i].nextBlockId === action.payload.id) {
+            preBlock = {
+              idx: i,
+              id: deletedBlock[i].id
+            }
+          }
+  
+          if(deletedBlock[i].preBlockId === action.payload.id) {
+            nextBlock = {
+              idx: i,
+              id: deletedBlock[i].id
+            }
+          }
+
+        }
+  
+        if(preBlock && nextBlock) {
+          deletedBlock[preBlock.idx].nextBlockId = nextBlock.id
+          deletedBlock[nextBlock.idx].preBlockId = preBlock.id
+        } 
+
+      }
+
+      return Object.assign({}, state, {
+        blocks: deletedBlock
+      })
+
 
     default: 
       return state;

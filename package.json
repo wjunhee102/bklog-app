@@ -11,11 +11,8 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.9",
-<<<<<<< HEAD
     "@types/uuid": "^8.3.0",
-=======
     "@types/styled-components": "^5.1.4",
->>>>>>> 5d746be7be0031e67202f7e4e1e6131d4b634be1
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",
