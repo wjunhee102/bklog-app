@@ -1,0 +1,37 @@
+: {id: "311e521d-e551-4f73-8d2a-bc55900b8784", table: "block", path: ["properties", "title"],…}
+args: [["as"], ["da", [["_"]]], ["s", [["b"]]], ["da", [["i"], ["b"]]], ["s", [["_"], ["i"], ["b"]]],…]
+0: ["as"]
+1: ["da", [["_"]]]
+2: ["s", [["b"]]]
+3: ["da", [["i"], ["b"]]]
+4: ["s", [["_"], ["i"], ["b"]]]
+5: ["ds", [["i"], ["b"]]]
+6: ["dad", [["b"]]]
+command: "set"
+id: "311e521d-e551-4f73-8d2a-bc55900b8784"
+path: ["properties", "title"]
+table: "block"
+spaceId: "27d6fc9d-6759-4723-819d-bac64c65e3cc"
+
+{
+  "data": [
+    {
+      "id": "d5cc2725-97ec-494b-bc80-c16f96379e61",
+      "preBlockId": null,
+      "nextBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+      "property": {
+        "type": "BKlog-h1",
+        "styles": {
+          "color": "black",
+          "backgroudColor": "white"
+        },
+        "contents": [
+          ["안녕하세요 저는", ["b", "_"]],
+          ["테스트", ["i"]],
+          ["입니다", ["b"]],
+          ["."]
+        ]
+      }
+    },
+  ]
+}

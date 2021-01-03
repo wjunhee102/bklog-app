@@ -1,8 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { data } from '../../../data/dummy.json';
-import { Store } from 'redux';
-import { string } from 'prop-types';
 
 export interface BlockProp {
   type: string;
@@ -111,7 +109,7 @@ const initialState:BlocklogState = (():BlocklogState => {
 })()
 
 function blocklog( state: BlocklogState = initialState, action: BlocklogActions):BlocklogState {
-  
+
   switch(action.type) {
 
     case ADD_BLOCK:
@@ -206,10 +204,7 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
       });
 
     case COMMIT_BLOCK: 
-
       const temps = state.temps.concat();
-      
-      console.log(temps);
 
       const newBlocks = state.blocks.map((block)=> {
 
@@ -230,13 +225,17 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
 
           return block;
         });
-
-      return Object.assign({}, state, {
+      
+      const newState = Object.assign({}, state, {
         blocks: newBlocks,
         temps: [],
         editingId: null
       });
-    
+
+      localStorage.setItem("bklog", JSON.stringify(newState));
+
+      return newState;
+
     case DELETE_BLOCK: 
       const deletedBlock = state.blocks.filter((block)=>
         block.id !== action.payload.id
@@ -245,6 +244,7 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
       let preBlock, nextBlock;
 
       if(deletedBlock.length === 0) {
+      
         deletedBlock.push({
           id: uuidv4(),
           preBlockId: null,
@@ -257,6 +257,7 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
             ]
           }
         })
+
       } else {
 
         for(let i = 0; i < deletedBlock.length; i++) {
@@ -301,7 +302,9 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
 
 
     default: 
-      return state;
+      let preState = localStorage.getItem("bklog")
+
+      return preState? JSON.parse(preState) : state;
   }
 
 }

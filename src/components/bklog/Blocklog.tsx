@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { RootState } from '../../store/modules';
@@ -15,6 +15,7 @@ import {
 interface BlockRaw {
   id: string;
   preId: string | null;
+  nextId: string | null;
   type: string;
   style?: any[];
   contents: string[];
@@ -25,6 +26,8 @@ interface BlockProps {
 }
 
 function Block({blockData}:BlockProps) {
+
+  const [ editing, setEditing ] = useState<boolean>(true);
 
   const state:BlocklogState = useSelector(( state: RootState) => state.blocklog);
 
@@ -62,16 +65,33 @@ function Block({blockData}:BlockProps) {
   }
 
   const editContent = (e:any) => {
+    console.log(e.key);
     onEditBlock(blockData.id, e.target.innerHTML);
-    console.log(blockData.id);
-    if(e.key === "Backspace" && !e.target.innerHTML) {
-      console.log(typeof e.target.innerHTML);
-      onDeleteBlock();
-      if(blockData.preId) dispatch(editAble(blockData.preId));
+
+    switch(e.key) {
+ 
+      case "Enter":
+        e.preventDefault();
+        break;
+
+      case "ArrowUp": 
+        if(blockData.preId) dispatch(editAble(blockData.preId))
+        break;
+
+      case "ArrowDown":
+        if(blockData.nextId) dispatch(editAble(blockData.nextId));
+        break;
+
+      case "Backspace":
+        if(!e.target.innerHTML) {
+          onDeleteBlock();
+          if(blockData.preId) dispatch(editAble(blockData.preId))
+          else if(blockData.nextId) { dispatch(editAble(blockData.nextId))};
+          break;
+        }
+
     }
-    if(e.key === "Enter") {
-      e.preventDefault();
-    }
+
   }
 
   const addContent = (e:any) => {
@@ -82,34 +102,52 @@ function Block({blockData}:BlockProps) {
   }
 
   const dragData = (e:any) => {
+    const range = document.createRange();
     const selObj = window.getSelection()
     const data = selObj? selObj.toString() : "없음";
-    // console.log(data);
+    const focusOffset = selObj? selObj.focusOffset : null
+    console.log(data, selObj, range, focusOffset);
+    if(focusOffset) {
+      const newBlock = blockData.contents.concat().join();
+      const newData =  newBlock.replace(data, `<strong>${data}</strong>`);
+      onEditBlock(blockData.id, newData);
+      console.log(newData, "ㅁㄴㅇㅁㄴㅇ");
+      console.log("dsadsd")
+    }
   }
 
   const focus = (ele: any) => {
+    const selObj = window.getSelection();
+    const range = document.createRange();
+    
     ele.focus();
+    // if(ele.childNodes[0] && blockData.contents.join().length > 0) {
+    //   range.setStart(ele.childNodes[0], 3);
+    //   range.setEnd(ele.childNodes[0], 4);
+    // }  
+    // console.log(ele.childNodes[0], blockData.contents.join().length);
   }
 
   useEffect(()=> {
    if(state.editingId === blockData.id && blockRef.current ) {
-    // console.log(blockRef.current)
     focus(blockRef.current)
    }
   },[state.editingId]);
 
   return (
-    <div className="block-zone">
+    <div id={blockData.id} className="block-zone">
       <div 
+        data-id={blockData.id}
         ref={blockRef}
         className={blockData.type}
         dangerouslySetInnerHTML={createMarkup()}  
-        contentEditable={true}
+        contentEditable={editing}
         onKeyUp={editContent}
         onKeyPress={addContent}
         onFocus={onEditable}
         onBlur={onCommitBlock}
-        onDrag={dragData}
+        onMouseUp={dragData}
+        onClick={onEditable}
         onMouseDown={dragData}
       >
       </div>
@@ -135,6 +173,7 @@ function Blocklog() {
     return {
       id: raw.id,
       preId: raw.preBlockId,
+      nextId: raw.nextBlockId,
       type: raw.property.type,
       style: [],
       contents: raw.property.contents
@@ -145,16 +184,13 @@ function Blocklog() {
     <div className="blocklog">
       {
         blockData?
-        blockData.map((block, idx)=> 
+        blockData.map((block)=> 
           <Block 
             blockData={block}
-            key={idx}
+            key={block.id}
           />
         ) : <div>""</div>
       }
-      <div className="block-zone">
-        <p className="BKlog-p" contentEditable="false"></p>
-      </div>
       <button onClick={click}>블럭 추가</button>
     </div>
   )
