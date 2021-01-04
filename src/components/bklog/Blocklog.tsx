@@ -9,7 +9,8 @@ import {
   editBlock, 
   commitBlock, 
   deleteBlock,
-  BlocklogState 
+  BlocklogState, 
+  UUID
 } from '../../store/modules/blocklog';
 
 interface BlockRaw {
@@ -35,7 +36,7 @@ function Block({blockData}:BlockProps) {
 
   const blockRef = useRef<null>(null);
 
-  const onAddBlock = (preid?: any, type?: string) => {
+  const onAddBlock = (preid?: UUID, type?: string) => {
     dispatch(addBlock(preid, type));
   }
 
@@ -65,7 +66,15 @@ function Block({blockData}:BlockProps) {
   }
 
   const editContent = (e:any) => {
-    console.log(e.key);
+    
+    const selObj = window.getSelection();
+    const range = document.createRange();
+    
+    // Select paragraph
+    const focusOffset = selObj? selObj.focusOffset : 0;
+   
+    console.log(focusOffset, selObj? selObj.toString() : "없음", e.target.innerText.slice(focusOffset -2, focusOffset));
+
     onEditBlock(blockData.id, e.target.innerHTML);
 
     switch(e.key) {
@@ -101,19 +110,30 @@ function Block({blockData}:BlockProps) {
     }
   }
 
+  const changeTextStyle = (text:string, type: string) => {
+    return [
+      text,
+      type
+    ]
+  }
+
   const dragData = (e:any) => {
     const range = document.createRange();
     const selObj = window.getSelection()
     const data = selObj? selObj.toString() : "없음";
-    const focusOffset = selObj? selObj.focusOffset : null
-    console.log(data, selObj, range, focusOffset);
-    if(focusOffset) {
-      const newBlock = blockData.contents.concat().join();
-      const newData =  newBlock.replace(data, `<strong>${data}</strong>`);
-      onEditBlock(blockData.id, newData);
-      console.log(newData, "ㅁㄴㅇㅁㄴㅇ");
-      console.log("dsadsd")
-    }
+    const focusOffset = selObj? selObj.focusOffset : null;
+
+    const newText = changeTextStyle(data, "b");
+
+    console.log(newText);
+  
+    // if(focusOffset) {
+    //   const newBlock = blockData.contents.concat().join();
+    //   const newData =  newBlock.replace(data, `<strong>${data}</strong>`);
+    //   onEditBlock(blockData.id, newData);
+    //   console.log(newData, "ㅁㄴㅇㅁㄴㅇ");
+    //   console.log("dsadsd")
+    // }
   }
 
   const focus = (ele: any) => {

@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { data } from '../../../data/dummy.json';
+import { page } from '../../../data/db.json';
+
+export type UUID = ReturnType<typeof uuidv4>
 
 export interface BlockProp {
   type: string;
@@ -8,33 +10,36 @@ export interface BlockProp {
     color?: string;
     backgroundColor?: string;
   }
-  contents: any[];
+  contents: any;
 }
 
-export type UUID = ReturnType<typeof uuidv4>
-
-export interface RawBlock {
+export interface BlockData {
   id: UUID | string;
+  type: string;
+  parentId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
-  property: BlockProp;
+  property: BlockProp | {};
+  children?: any[] | [];
 }
 
-const ADD_BLOCK    = 'blocklog/ADD_BLOCK' as const;
-const EDITABLE     = 'blocklog/EDITABLE' as const; 
-const EDIT_BLOCK   = 'blocklog/EDIT_BLOCK' as const; // 임시 데이터로 이동
-const COMMIT_BLOCK = 'blocklog/COMMIT_BLOCK' as const;
-const DELETE_BLOCK = 'blocklog/DELETE_BLOCK' as const;
-const UPDATE_BLOCK = 'blocklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
-const SWITCH_BLOCK = 'blocklog/SWITCH_BLOCK' as const;
+const ADD_BLOCK    = 'bklog/ADD_BLOCK' as const;
+const EDITABLE     = 'bklog/EDITABLE' as const; 
+const EDIT_BLOCK   = 'bklog/EDIT_BLOCK' as const; // 임시 데이터로 이동
+const COMMIT_BLOCK = 'bklog/COMMIT_BLOCK' as const;
+const DELETE_BLOCK = 'bklog/DELETE_BLOCK' as const;
+const UPDATE_BLOCK = 'bklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
+const SWITCH_BLOCK = 'bklog/SWITCH_BLOCK' as const;
 
-const NEWEDIT_BLOCK = 'blocklog/NEWEDIT_BLOCK' as const;
+const NEWEDIT_BLOCK = 'bklog/NEWEDIT_BLOCK' as const;
+
+
 
 interface EditedBlock {
   blockId: UUID,
   focusOffset: number,
   text: string,
-  textType: "b" | "i" 
+  textType: "b" | "i" | ["fc", string] | ["bc", string]
 }
 
 export function newEditBlock({ 
@@ -73,12 +78,19 @@ export function editAble (id: UUID) {
   }
 }
 
-export function editBlock(id:UUID, content: string) {
+export function editBlock({ 
+  blockId,
+  focusOffset,
+  text,
+  textType
+}: EditedBlock) {
   return {
     type: EDIT_BLOCK,
     payload: {
-      id,
-      content
+      blockId,
+      focusOffset,
+      text,
+      textType
     }
   }
 }
@@ -107,7 +119,7 @@ export function updateBlock(id: UUID) {
   }
 }
 
-export type BlocklogActions = ReturnType<typeof addBlock>
+export type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof editAble>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
@@ -116,33 +128,19 @@ export type BlocklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof newEditBlock>
 ;
 
-interface TempData {
-  id: UUID;
-  content: string;
-}
-
-interface NewTemps {
+interface StagedBlock{
   id: UUID;
   content: string;
   startOffset: number;
   lastOffset: number;
 }
 
-export interface BlocklogState {
+export interface BklogState {
+  pageId: UUID;
+  userId: string;
   editingId: string | null;
-  blocks: RawBlock[];
-  temps: TempData[];
-  newTemps: NewTemps[];
-}
-
-export interface Content {
-  content: [
-    string,
-    [
-      string[],
-      string[]?
-    ]?
-  ]
+  blocks: BlockData[];
+  stage: StagedBlock[] | [];
 }
 
 
@@ -169,16 +167,17 @@ function newContents (
   }
 }
 
-const initialState:BlocklogState = (():BlocklogState => {
+const initialState:BklogState = ((): BklogState => {
   return {
+    pageId: page.id,
+    userId: page.userId,
+    blocks: page.blocks,
     editingId: null,
-    blocks: [...data],
-    temps: [],
-    newTemps: []
+    stage: []
   };
 })()
 
-function blocklog( state: BlocklogState = initialState, action: BlocklogActions):BlocklogState {
+function bklog( state: BklogState = initialState, action: BklogActions):BklogState {
 
   switch(action.type) {
 
@@ -188,8 +187,10 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
 
       const blocks = [...state.blocks];
 
-      const newBlock: RawBlock = {
+      const newBlock: BlockData = {
         id: uuidv4(),
+        type: "block",
+        parentId: null,
         preBlockId: preBlockId?  preBlockId : state.blocks[state.blocks.length - 1].id,
         nextBlockId: null,
         property: {
@@ -246,79 +247,20 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
       return Object.assign({}, state, {
         editingId: action.payload.id
       })
-
-    case NEWEDIT_BLOCK:
-      const { blockId, focusOffset, text, textType } = action.payload;
-      const editingBlock = state.blocks.filter(block => 
-          block.id === blockId
-        )[0];
-
-      console.log(editingBlock);
-
-      return state;
     
     case EDIT_BLOCK: 
+      const editedId = action.payload.blockId;
+      const { focusOffset, textType, text } = action.payload;
 
-      const { id, content } = action.payload;
+      return state
+    // case COMMIT_BLOCK: 
 
-      let tempChange = false;
-
-      for(let i = 0; i < state.temps.length; i++) {
-        if(state.temps[i].id === id) {
-          tempChange = true;
-          
-          break;
-        }
-      }
-
-      return Object.assign({}, state, {
-        temps: tempChange? state.temps.map(temp => 
-            temp.id === id? {
-              id,
-              content
-            } : temp
-          ): [...state.temps, {
-            id,
-            content
-          }]
-      });
-
-    case COMMIT_BLOCK: 
-      const temps = state.temps.concat();
-
-      const newBlocks = state.blocks.map((block)=> {
-
-          for(let i = 0; i < temps.length; i++) {
-
-            if(block.id === temps[i].id) {
-
-              return Object.assign({}, block, {
-                property: Object.assign({}, block.property, {
-                  contents: [
-                    temps[i].content
-                  ]
-                })
-              });
-
-            }
-          }
-
-          return block;
-        });
-      
-      const newState = Object.assign({}, state, {
-        blocks: newBlocks,
-        temps: [],
-        editingId: null
-      });
-
-      localStorage.setItem("bklog", JSON.stringify(newState));
-
-      return newState;
 
     case DELETE_BLOCK: 
+      const deletedId = action.payload.id;  
+
       const deletedBlock = state.blocks.filter((block)=>
-        block.id !== action.payload.id
+        block.id !== deletedId
       );
       
       let preBlock, nextBlock;
@@ -327,6 +269,8 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
       
         deletedBlock.push({
           id: uuidv4(),
+          type: "block",
+          parentId: null,
           preBlockId: null,
           nextBlockId: null,
           property: {
@@ -335,7 +279,8 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
             },
             contents: [
             ]
-          }
+          },
+          children: []
         })
 
       } else {
@@ -343,24 +288,24 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
         for(let i = 0; i < deletedBlock.length; i++) {
 
           if(i === 0) {
-            if(state.blocks[i].id === action.payload.id) {
+            if(state.blocks[i].id === deletedId) {
               deletedBlock[i].preBlockId = null
               break;
             }
           } else if(i === deletedBlock.length - 1 ) {
-            if(state.blocks[i+1].id === action.payload.id) {
+            if(state.blocks[i+1].id === deletedId) {
               deletedBlock[i].nextBlockId = null
             }
           }
 
-          if(deletedBlock[i].nextBlockId === action.payload.id) {
+          if(deletedBlock[i].nextBlockId === deletedId) {
             preBlock = {
               idx: i,
               id: deletedBlock[i].id
             }
           }
   
-          if(deletedBlock[i].preBlockId === action.payload.id) {
+          if(deletedBlock[i].preBlockId === deletedId) {
             nextBlock = {
               idx: i,
               id: deletedBlock[i].id
@@ -382,11 +327,11 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
 
 
     default: 
-      let preState = localStorage.getItem("bklog")
+      let preState = localStorage.getItem("newBklog")
 
       return preState? JSON.parse(preState) : state;
   }
 
 }
 
-export default blocklog;
+export default bklog;

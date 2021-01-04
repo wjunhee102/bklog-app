@@ -5,7 +5,7 @@ import Blocklog from '../components/bklog/Blocklog';
 function Home() {
   return (
     <div className="home">
-      <Form 
+      {/* <Form 
         formType="number"
         errorMessage="숫자를 입력해주세요."
       />
@@ -17,7 +17,7 @@ function Home() {
         formType="password"
         errorMessage="비밀번호를 입력해주세요."
       />
-      <Blocklog />
+      <Blocklog /> */}
     </div>
   )
 }
