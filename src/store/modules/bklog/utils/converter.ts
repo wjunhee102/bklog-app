@@ -1,21 +1,30 @@
+const BOLD = "b" as const;
+const ITALY = "i" as const;
+const UNDERBAR = "_" as const;
+const FONT_COLOR = "fc" as const;
+const BACKGROUND_COLOR = "bc" as const;
+const ANCHOR = "a" as const;
+
 const BK_BOLB = "bk-bold";
 const BK_ITALIC = "bk-italic";
-const BACKGROUND_COLOR = "background";
 const BK_UNDER = "bk-underbar";
-const COLOR = "color";
+const BK_COLOR = "color";
+const BK_BACKGROUND_COLOR = "background";
+
+type ContentType = ["b"] | ["i"] | ["_"] | ["a", string] | ["fc", string] | ["bc", string];
 
 function convertType(prop: string):any {
   switch(prop) {
     case BK_BOLB:
-      return "b";
+      return BOLD;
     case BK_ITALIC:
-      return "i";
+      return ITALY;
     case BK_UNDER:
-      return "_";
-    case COLOR:
-      return "fc";
-    case BACKGROUND_COLOR:
-      return "bc";
+      return UNDERBAR;
+    case BK_COLOR:
+      return FONT_COLOR;
+    case BK_BACKGROUND_COLOR:
+      return BACKGROUND_COLOR;
     default:
       return prop;
   }
@@ -72,7 +81,7 @@ export function updateContents(text:string):any {
 
             if(text[i+1] === "s") {
               i += 4;
-            } else if(text[i+1] === "a") {
+            } else if(text[i+1] === ANCHOR) {
               i += 1;
             }
          
@@ -185,9 +194,9 @@ export function updateContents(text:string):any {
 
       if(text[i] === "'" || text[i] === '"') {
         if(!content[1]) {
-          content = [content[0],[["a", property]]];
+          content = [content[0],[[ANCHOR, property]]];
         } else {
-          content[1].push(["a", property]);
+          content[1].push([ANCHOR, property]);
         }
         
         property = null;

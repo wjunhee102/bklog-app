@@ -1,27 +1,38 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  BlockProp,
+  BlockData,
+  UUID,
+  ContentType
+} from '../../../types/bklog';
+
+import { updateContents } from './utils/converter';
+
 import { page } from '../../../data/db.json';
 
-export type UUID = ReturnType<typeof uuidv4>
+// export type UUID = ReturnType<typeof uuidv4>
 
-export interface BlockProp {
-  type: string;
-  styles?: {
-    color?: string;
-    backgroundColor?: string;
-  }
-  contents: any;
-}
+// export type ContentType = ["b"] | ["i"] | ["_"] | ["a", string] | ["fc", string] | ["bc", string]; 
 
-export interface BlockData {
-  id: UUID | string;
-  type: string;
-  parentId: UUID | string | null;
-  preBlockId: UUID | string | null;
-  nextBlockId: UUID | string | null;
-  property: BlockProp | {};
-  children?: any[] | [];
-}
+// export interface BlockProp {
+//   type: string;
+//   styles?: {
+//     color?: string;
+//     backgroundColor?: string;
+//   }
+//   contents: any;
+// }
+
+// export interface BlockData {
+//   id: UUID | string;
+//   type: string;
+//   parentId: UUID | string | null;
+//   preBlockId: UUID | string | null;
+//   nextBlockId: UUID | string | null;
+//   property?: BlockProp | null;
+//   children?: any[];
+// }
 
 const ADD_BLOCK    = 'bklog/ADD_BLOCK' as const;
 const EDITABLE     = 'bklog/EDITABLE' as const; 
@@ -36,27 +47,8 @@ const NEWEDIT_BLOCK = 'bklog/NEWEDIT_BLOCK' as const;
 
 
 interface EditedBlock {
-  blockId: UUID,
-  focusOffset: number,
-  text: string,
-  textType: "b" | "i" | ["fc", string] | ["bc", string]
-}
-
-export function newEditBlock({ 
-  blockId,
-  focusOffset,
-  text,
-  textType
-}: EditedBlock) {
-  return {
-    type: NEWEDIT_BLOCK,
-    payload: {
-      blockId,
-      focusOffset,
-      text,
-      textType
-    }
-  }
+  blockId: UUID;
+  text: string;
 }
 
 export function addBlock(preBlockId?: string, type?: string) {
@@ -80,17 +72,13 @@ export function editAble (id: UUID) {
 
 export function editBlock({ 
   blockId,
-  focusOffset,
-  text,
-  textType
+  text
 }: EditedBlock) {
   return {
     type: EDIT_BLOCK,
     payload: {
       blockId,
-      focusOffset,
-      text,
-      textType
+      text
     }
   }
 }
@@ -125,14 +113,11 @@ export type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof commitBlock>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof updateBlock>
-  | ReturnType<typeof newEditBlock>
 ;
 
 interface StagedBlock{
   id: UUID;
-  content: string;
-  startOffset: number;
-  lastOffset: number;
+  contents: any;
 }
 
 export interface BklogState {
@@ -140,32 +125,36 @@ export interface BklogState {
   userId: string;
   editingId: string | null;
   blocks: BlockData[];
-  stage: StagedBlock[] | [];
+  stage: StagedBlock[];
 }
 
 
 // 먼저 기존 기능 대체
-function newContents (
-    preContents:any, 
-    focusOffset:number, 
-    textLength: number,
-    newContent: any
-  ):any  {
-    let contents = [...preContents];
-    let newContents = []
-    let temp = []
-    
-    newContents = [contents.slice(0, focusOffset)];
+function addContents(preContents: any[], focusOffset:number, text: string[]):string[] {
+  let newContents = ["error"];
+  let count = 0;
+  const startPoint = focusOffset - text.length;
+  const endPoint = focusOffset;
 
-    for (let i = focusOffset; i < textLength; i++ ) {
-      
+  preContents.forEach((content) => {
+    console.log(content, typeof content ,"addContents");
+    if(typeof content === 'string') {
+      newContents = [`${content.slice(0, startPoint - 1)}${text.join()}${content.slice(endPoint, content.length - 1)}`]
+      console.log(newContents);
+    } else if(Array.isArray(content)) {
+      content.forEach((text)=> {
+
+        if(count >= startPoint && count < endPoint) {
+        
+        } 
+      })
+    } else {
     }
-
-
-  return {
-    contents: ["aa", [["aa"]]]
-  }
+  })
+  console.log(newContents);
+  return newContents;
 }
+
 
 const initialState:BklogState = ((): BklogState => {
   return {
@@ -250,10 +239,51 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
     
     case EDIT_BLOCK: 
       const editedId = action.payload.blockId;
-      const { focusOffset, textType, text } = action.payload;
+      const { text } = action.payload;
 
-      return state
-    // case COMMIT_BLOCK: 
+      const editedBlock = state.blocks.filter((block)=>
+        block.id === editedId
+      )[0]
+
+      console.log(editedBlock);
+
+      return Object.assign({}, state, {
+        stage: [{
+          id: editedId,
+          contents: text
+        }]
+      })
+      
+    case COMMIT_BLOCK: 
+    const stagedBlocks = state.stage.concat();
+
+    const newBlocks = state.blocks.map((block)=> {
+
+        for(let i = 0; i < stagedBlocks.length; i++) {
+
+          if(block.id === stagedBlocks[i].id) {
+
+            return Object.assign({}, block, {
+              property: Object.assign({}, block.property, {
+                contents: updateContents(stagedBlocks[i].contents)
+              })
+            });
+
+          }
+        }
+
+        return block;
+      });
+    
+    const newState = Object.assign({}, state, {
+      blocks: newBlocks,
+      stage: [],
+      editingId: null
+    });
+
+    localStorage.setItem("bklog", JSON.stringify(newState));
+
+    return newState;
 
 
     case DELETE_BLOCK: 
@@ -327,9 +357,9 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
 
 
     default: 
-      let preState = localStorage.getItem("newBklog")
-
-      return preState? JSON.parse(preState) : state;
+      // let preState = localStorage.getItem("bklog")
+      console.log("state:", state)
+      return state;
   }
 
 }

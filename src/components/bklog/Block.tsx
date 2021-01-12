@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 
 import useBKlog from '../../hooks/useBKlog';
+
+import { BlockData } from '../../types/bklog';
 
 import './block.css';
 
@@ -13,57 +15,69 @@ export interface BlockProp {
   contents: any;
 }
 
-
-interface BlockData {
-  id: string;
-  preId: string | null;
-  nextId: string | null;
-  parentId: string | null;
-  type: string;
-  style?: any[];
-  contents: string[];
-  children: any;
-}
-
 interface BlockProps {
   blockData: BlockData;
 }
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
+const UNDERBAR = "_" as const;
 const FONT_COLOR = "fc" as const;
 const BACKGROUND_COLOR = "bc" as const;
+const ANCHOR = "a" as const;
 
-type ContentType = "b" | "i" | ["fc", string] | ["bc", string]; 
+function createContentsElement(accumulator: string, rawContents: any):string {
+  let text;
+  let className:string | null = null;
+  let styles:string | null = null;
+  let aTag;
 
-function convertContentType(contentType: ContentType):string {
-  console.log(contentType);
-  if(contentType.length === 1) {
-    switch(contentType[0]) {
-      case BOLD: 
-        return "bk-bold"
-      case ITALY:
-        return "bk-italic"
-      default:
-        return ""
+  if(rawContents.length === 2) {
+    rawContents[1].forEach((content:string[]) => {
+      switch(content[0]) {
+
+        case BOLD:
+          className = className? className + " bk-bold" : "bk-bold";
+          break;
+
+        case ITALY:
+          className = className? className + " bk-italic" : "bk-italic";
+          break;
+
+        case UNDERBAR:
+          className = className? className + " bk-underbar" : "bk-underbar";
+          break;
+
+        case FONT_COLOR:
+          if(content[1][0] === "#") {
+            styles = styles? styles + ` color: ${content[1]};` : `color: ${content[1]};`;
+          } else {
+            className = className? className + ` bk-fc-${content[1]}` : `bk-fc-${content[1]}`
+          }
+          break;
+
+        case BACKGROUND_COLOR:
+          if(content[1][0] === "#") {
+            styles = styles? styles + ` backgroundColor: ${content[1]};` : `backgroundColor: ${content[1]};`;
+          } else {
+            className = className? className + ` bk-bc-${content[1]}` : `bk-bc-${content[1]}`
+          }
+          break;
+          
+        case ANCHOR:
+          aTag = content[1];
+      }
+    })
+    text = `<span${className? ' class="'+ className + '"' : ""}${styles? ' style="' + styles + '"' : ""}>${rawContents[0]}</span>`
+
+    if(aTag) {
+      text = `<a href="${aTag}">${text}</a>`;
     }
   } else {
-    if(contentType[0] === "fc") {
-      switch(contentType[1]) {
-        case "B-P":
-          return "Blue-Primary"
-        default:
-          return "black"
-      }
-    } else {
-      switch(contentType[1]) {
-        case "B-P":
-          return "white"
-      }
-    }
+    text = rawContents[0];
   }
 
-  return ""
+  return  accumulator + text;
 }
 
 interface BlockContentProps {
@@ -71,24 +85,23 @@ interface BlockContentProps {
 }
 
 const ContentEle = ({content}:any) => {
-  return (
-    <>{content}</>);
+  return (<>{content}</>);
 }
 
 const BlockContent = ({content}: BlockContentProps) => {
-  console.log(content)
 
-  const contentType = useMemo(()=> 
-    content[1]? 
-    content[1].map((type: any) => 
-        convertContentType(type)
-      ).join(" ")
-    : ""
-  , [content]);
+  // const contentType = useMemo(()=> 
+  //   content[1] !== undefined? 
+  //   content[1].map((type: any) => 
+  //       convertContentType(type)
+  //     ).join(" ")
+  //   : ""
+  // , [content]);
+  console.log(content);
   
   return (
     <span 
-      className={`bk-content ${contentType}`
+      className={`bk-bold`
     }>
       {content[0]}
     </span>
@@ -100,90 +113,141 @@ interface ChildBlockProps {
 }
 
 const ChildBlock = ({ blockData }: ChildBlockProps) => {
-  console.log(blockData, blockData.children[0]);
+  const [ editing, setEditing ] = useState<boolean>(blockData.children && blockData.children[0] !== undefined? false : true);
 
-  return (
-    <div className={`bklog-child`}>
-      {
-        blockData.children[0] !== undefined? 
+  const BlockChildren = useMemo(()=> {
+    
+    if(blockData.children && blockData.children[0] !== undefined ) {
 
-        blockData.children.map((child: BlockData) => 
-          <ChildBlock 
-            blockData={child}
-            key={child.id}
-          />
-        ) : null
-      }
-      { 
-        blockData.property.contents?
-        blockData.property.contents.map((content:any, idx: number) => {
+      return blockData.children.map((child: any) => 
+        <ChildBlock 
+          blockData={child}
+          key={child.id}
+        />
+      )
+    } else if(blockData.property && blockData.property.contents) {
+
+      return blockData.property.contents.map((content:any, idx: number) => {
           if(content.length === 1) {
             const data = content[0];
             return <ContentEle content={data} key={idx} />
           } else {
             return <BlockContent content={content} key={idx} />
           }
-        }) : null
-      }
+      })
+    } else {
+      return  ""
+    }
+
+  }, [blockData.children, blockData.property]);
+
+  return (
+    <div className={`bklog-child`}>
+      <code>
+      { BlockChildren }
+      </code>
     </div>
   )
 }
 
 const Block = ({ blockData }:BlockProps) => {
 
-  const [ editing, setEditing ] = useState<boolean>(true);
+  const [ editing, setEditing ] = useState<boolean>(blockData.children && blockData.children[0] !== undefined? false : true);
 
-  console.log(blockData);
+  const BlockChildren = useMemo(()=> {
+    
+    if(blockData.children && blockData.children[0] !== undefined ) {
+
+      return blockData.children.map((child: any) => 
+        <ChildBlock 
+          blockData={child}
+          key={child.id}
+        />
+      )
+
+    } else if(blockData.property && blockData.property.contents) {
+
+      return blockData.property.contents.map((content:any, idx: number) => {
+          if(typeof content === 'string') {
+
+            console.log("122", content);
+            const data = content[0];
+            return <ContentEle content={data} key={idx} />
+          } else {
+            return <BlockContent content={content} key={idx} />
+          }
+      })
+    } else {
+      return  null
+    }
+
+  }, [blockData.children, blockData.property]);
 
   // const dispatch = useDispatch();  
 
   // const blockRef = useRef<null>(null);
 
-  // const { 
-  //   getEditAbleId,
-  //   onAddBlock, 
-  //   onEditAble,
-  // } = useBKlog();
+  const { 
+    getEditAbleId,
+    onAddBlock, 
+    onEditAble,
+    onEditBlock,
+    onCommitBlock
+  } = useBKlog();
   
   // const onDeleteBlock = () => {
   //   dispatch(deleteBlock(blockData.id));
   // }
 
-  // const editContent = (e:any) => {
-    
-  //   const selObj = window.getSelection();
-  //   const range = document.createRange();
-    
-  //   // Select paragraph
-  //   const focusOffset = selObj? selObj.focusOffset : 0;
-   
-  //   console.log(focusOffset, selObj? selObj.toString() : "없음", e.target.innerText.slice(focusOffset -2, focusOffset));
+  const editContent = (e:any) => {  
 
-  //   switch(e.key) {
+    switch(e.key) {
  
-  //     case "Enter":
-  //       e.preventDefault();
-  //       break;
+      case "Enter":
+        e.preventDefault();
+        break;
 
-  //     case "ArrowUp": 
-  //       if(blockData.preId) dispatch(editAble(blockData.preId))
-  //       break;
+      case "ArrowUp": 
+        if(blockData.preBlockId) onEditAble(blockData.preBlockId);
+        break;
 
-  //     case "ArrowDown":
-  //       if(blockData.nextId) dispatch(editAble(blockData.nextId));
-  //       break;
+      case "ArrowDown":
+        if(blockData.nextBlockId) onEditAble(blockData.nextBlockId);
+        break;
 
-  //     case "Backspace":
-  //       if(!e.target.innerHTML) {
-  //         onDeleteBlock();
-  //         if(blockData.preId) dispatch(editAble(blockData.preId))
-  //         else if(blockData.nextId) { dispatch(editAble(blockData.nextId))};
-  //         break;
-  //       }
+      case "Backspace":
+        if(!e.target.innerHTML) {
+          // onDeleteBlock();
+          if(blockData.preBlockId) onEditAble(blockData.preBlockId);
+          else if(blockData.nextBlockId) onEditAble(blockData.nextBlockId);
+          break;
+        }
 
-  //   }
+    }
 
-  // }
+    onEditBlock(blockData.id, e.target.innerHTML);
+    console.log(e.target.innerHTML);
+
+  }
+
+  const createMarkup = () => {
+    console.log(blockData)
+    return {
+      __html: 
+      blockData.property && blockData.property.contents[0]?
+      blockData.property.contents.reduce(createContentsElement)
+      : ""
+    }
+  }
+
+  const mouseOver = (e:any) => {
+    
+    if(e.target.parentNode.tagName === "A") {
+      console.log(e.target.parentNode.href);
+      window.open(e.target.parentNode.href);
+      console.log("실행");
+    }
+  }
 
   // const addContent = (e:any) => {
   //   if(e.key === "Enter") {
@@ -238,36 +302,26 @@ const Block = ({ blockData }:BlockProps) => {
 
   return (
     <div id={blockData.id} className="block-zone">
-      <div 
-        // data-id={blockData.id}
-        // ref={blockRef}
-        // className={blockData.type}
-        contentEditable={editing}
-        // onKeyUp={editContent}
-        // onKeyPress={addContent}
-        // onFocus={()=>onEditAble(blockData.id)}
-        // onMouseUp={dragData}
-        // onMouseDown={dragData}
-      >
-        {
-        blockData.children[0]? 
-
-        blockData.children.map((child: any) => 
-          <ChildBlock 
-            blockData={child}
-            key={child.id}
-          />
-        ) : blockData.contents?
-        blockData.contents.map((content:any, idx: number) => {
-          if(content.length === 1) {
-            const data = content[0];
-            return <ContentEle content={data} key={idx} />
-          } else {
-            return <BlockContent content={content} key={idx} />
+          <div 
+            className="bk-block"
+            // data-id={blockData.id}
+            // ref={blockRef}
+            // className={blockData.type}
+            suppressContentEditableWarning={true}
+            contentEditable={editing}
+            onKeyUp={editContent}
+            onBlur={onCommitBlock}
+            dangerouslySetInnerHTML={createMarkup()} 
+            onMouseUp={mouseOver}
+            // onKeyPress={addContent}
+            // onFocus={()=>onEditAble(blockData.id)}
+            // onMouseUp={dragData}
+            // onMouseDown={dragData}
+          >
+          </div>
+          {
+            BlockChildren?<div> { BlockChildren } </div> : null
           }
-        }) : ""
-      }
-      </div>
       <button> 삭제 </button>
     </div>
   )

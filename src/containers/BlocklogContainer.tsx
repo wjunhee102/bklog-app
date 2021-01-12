@@ -2,30 +2,21 @@ import React from 'react';
 import useBKlog from '../hooks/useBKlog';
 import Block from '../components/bklog/Block';
 
+import { BlockData } from '../types/bklog';
+
 function BKlogContainer() {  
   const { state, onAddBlock } = useBKlog();
 
   const click = () => {
     onAddBlock();
   }
-  const blockData:any = state.blocks? state.blocks.map( (block:any) => {
-    return {
-      id: block.id,
-      parentId: block.parentId,
-      preId: block.preBlockId,
-      nextId: block.nextBlockId,
-      type: block.property.type,
-      style: [],
-      contents: block.property.contents,
-      children: block.children
-    }
-  }) : null;
+  const blockData:any = state.blocks? state.blocks : null;
 
   return (
     <div className="blocklog">
       {
         blockData?
-        blockData.map((block:any)=> 
+        blockData.map((block: BlockData)=> 
           <Block 
             blockData={block}
             key={block.id}

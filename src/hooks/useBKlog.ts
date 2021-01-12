@@ -4,10 +4,16 @@ import { RootState } from '../store/modules';
 import {
   addBlock, 
   editAble,
+  editBlock,
+  commitBlock,
   deleteBlock,
-  UUID,
-  BklogState,
+  BklogState
 } from '../store/modules/bklog';
+
+import {
+  UUID,
+  BlockData
+} from '../types/bklog';
 
 function useBklog() {
   
@@ -17,7 +23,7 @@ function useBklog() {
 
   const getStagedBlocks = state.stage;
 
-  const getBlockState = (blockId: UUID) => 
+  const getBlockState= (blockId: UUID): BlockData  => 
     state.blocks.filter(blockState => blockState.id === blockId)[0];
   
   const getStagedBlock = (blockId: UUID) =>
@@ -35,13 +41,13 @@ function useBklog() {
       dispatch(editAble(blockId))
     ,[dispatch]);
 
-  // const onEditBlock = useCallback((blockId: UUID, content: any) =>
-  //     dispatch(editBlock(blockId, content))
-  //   ,[dispatch]);
+  const onEditBlock = useCallback((blockId: UUID, content: string) =>
+      dispatch(editBlock({blockId, text: content}))
+    ,[dispatch]);
 
-  // const onCommitBlock = useCallback(()=>
-  //     dispatch(commitBlock())
-  //   ,[dispatch]);
+  const onCommitBlock = useCallback(()=>
+      dispatch(commitBlock())
+    ,[dispatch]);
 
   const onDeleteBlock = useCallback((blockId: UUID) =>
       dispatch(deleteBlock(blockId))
@@ -55,8 +61,8 @@ function useBklog() {
     getEditAbleId, 
     onAddBlock, 
     onEditAble, 
-    // onEditBlock, 
-    // onCommitBlock, 
+    onEditBlock, 
+    onCommitBlock, 
     onDeleteBlock
   };
 }

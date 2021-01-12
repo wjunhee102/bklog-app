@@ -165,7 +165,7 @@ function Block({blockData}:BlockProps) {
         onKeyUp={editContent}
         onKeyPress={addContent}
         onFocus={onEditable}
-        onBlur={onCommitBlock}
+        // onBlur={onCommitBlock}
         onMouseUp={dragData}
         onClick={onEditable}
         onMouseDown={dragData}

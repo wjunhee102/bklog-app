@@ -5,3 +5,7 @@
 .bk-italic {
   font-style: italic;
 }
+
+.bk-block a {
+  cursor: pointer;
+}

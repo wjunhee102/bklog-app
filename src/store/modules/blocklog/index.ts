@@ -312,7 +312,7 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
         editingId: null
       });
 
-      localStorage.setItem("bklog", JSON.stringify(newState));
+      localStorage.setItem("blocklog", JSON.stringify(newState));
 
       return newState;
 
@@ -382,7 +382,7 @@ function blocklog( state: BlocklogState = initialState, action: BlocklogActions)
 
 
     default: 
-      let preState = localStorage.getItem("bklog")
+      let preState = localStorage.getItem("blocklog")
 
       return preState? JSON.parse(preState) : state;
   }

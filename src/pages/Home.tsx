@@ -16,8 +16,8 @@ function Home() {
       <Form 
         formType="password"
         errorMessage="비밀번호를 입력해주세요."
-      />
-      <Blocklog /> */}
+      /> */}
+      <Blocklog />
     </div>
   )
 }
