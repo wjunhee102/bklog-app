@@ -5,12 +5,13 @@ import Block from '../components/bklog/Block';
 import { BlockData } from '../types/bklog';
 
 function BKlogContainer() {  
-  const { state, onAddBlock } = useBKlog();
+  const { state, initBlock, onAddBlock } = useBKlog();
 
   const click = () => {
     onAddBlock();
   }
-  const blockData:any = state.blocks? state.blocks : null;
+  console.log(initBlock);
+  const blockData:any = initBlock[0]? initBlock : null;
 
   return (
     <div className="blocklog">

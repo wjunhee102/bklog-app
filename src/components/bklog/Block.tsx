@@ -1,83 +1,13 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 
+import { BlockData, UUID } from '../../types/bklog';
 import useBKlog from '../../hooks/useBKlog';
-
-import { BlockData } from '../../types/bklog';
+import { createContentsElement } from './utils';
 
 import './block.css';
 
-export interface BlockProp {
-  type: string;
-  styles?: {
-    color?: string;
-    backgroundColor?: string;
-  }
-  contents: any;
-}
-
 interface BlockProps {
   blockData: BlockData;
-}
-
-const BOLD = "b" as const;
-const ITALY = "i" as const;
-const UNDERBAR = "_" as const;
-const FONT_COLOR = "fc" as const;
-const BACKGROUND_COLOR = "bc" as const;
-const ANCHOR = "a" as const;
-
-function createContentsElement(accumulator: string, rawContents: any):string {
-  let text;
-  let className:string | null = null;
-  let styles:string | null = null;
-  let aTag;
-
-  if(rawContents.length === 2) {
-    rawContents[1].forEach((content:string[]) => {
-      switch(content[0]) {
-
-        case BOLD:
-          className = className? className + " bk-bold" : "bk-bold";
-          break;
-
-        case ITALY:
-          className = className? className + " bk-italic" : "bk-italic";
-          break;
-
-        case UNDERBAR:
-          className = className? className + " bk-underbar" : "bk-underbar";
-          break;
-
-        case FONT_COLOR:
-          if(content[1][0] === "#") {
-            styles = styles? styles + ` color: ${content[1]};` : `color: ${content[1]};`;
-          } else {
-            className = className? className + ` bk-fc-${content[1]}` : `bk-fc-${content[1]}`
-          }
-          break;
-
-        case BACKGROUND_COLOR:
-          if(content[1][0] === "#") {
-            styles = styles? styles + ` backgroundColor: ${content[1]};` : `backgroundColor: ${content[1]};`;
-          } else {
-            className = className? className + ` bk-bc-${content[1]}` : `bk-bc-${content[1]}`
-          }
-          break;
-          
-        case ANCHOR:
-          aTag = content[1];
-      }
-    })
-    text = `<span${className? ' class="'+ className + '"' : ""}${styles? ' style="' + styles + '"' : ""}>${rawContents[0]}</span>`
-
-    if(aTag) {
-      text = `<a href="${aTag}">${text}</a>`;
-    }
-  } else {
-    text = rawContents[0];
-  }
-
-  return  accumulator + text;
 }
 
 interface BlockContentProps {
@@ -152,44 +82,15 @@ const ChildBlock = ({ blockData }: ChildBlockProps) => {
 
 const Block = ({ blockData }:BlockProps) => {
 
-  const [ editing, setEditing ] = useState<boolean>(blockData.children && blockData.children[0] !== undefined? false : true);
-
-  const BlockChildren = useMemo(()=> {
-    
-    if(blockData.children && blockData.children[0] !== undefined ) {
-
-      return blockData.children.map((child: any) => 
-        <ChildBlock 
-          blockData={child}
-          key={child.id}
-        />
-      )
-
-    } else if(blockData.property && blockData.property.contents) {
-
-      return blockData.property.contents.map((content:any, idx: number) => {
-          if(typeof content === 'string') {
-
-            console.log("122", content);
-            const data = content[0];
-            return <ContentEle content={data} key={idx} />
-          } else {
-            return <BlockContent content={content} key={idx} />
-          }
-      })
-    } else {
-      return  null
-    }
-
-  }, [blockData.children, blockData.property]);
+  const [ editing, setEditing ] = useState<boolean>(true);
 
   // const dispatch = useDispatch();  
-
   // const blockRef = useRef<null>(null);
 
   const { 
     getEditAbleId,
     onAddBlock, 
+    getChilrenBlock,
     onEditAble,
     onEditBlock,
     onCommitBlock
@@ -198,6 +99,9 @@ const Block = ({ blockData }:BlockProps) => {
   // const onDeleteBlock = () => {
   //   dispatch(deleteBlock(blockData.id));
   // }
+  const children = useMemo(() => blockData.children[0]?
+    getChilrenBlock(blockData.id) : null,[blockData.children])  
+
 
   const editContent = (e:any) => {  
 
@@ -230,13 +134,15 @@ const Block = ({ blockData }:BlockProps) => {
 
   }
 
+  const contentElement = useMemo(()=> {
+    return blockData.property && blockData.property.contents[0]?
+    blockData.property.contents.reduce(createContentsElement)
+    : ""
+  }, [blockData.property])
+
   const createMarkup = () => {
-    console.log(blockData)
     return {
-      __html: 
-      blockData.property && blockData.property.contents[0]?
-      blockData.property.contents.reduce(createContentsElement)
-      : ""
+      __html: contentElement
     }
   }
 
@@ -301,26 +207,31 @@ const Block = ({ blockData }:BlockProps) => {
   // },[getEditAbleId]);
 
   return (
-    <div id={blockData.id} className="block-zone">
-          <div 
-            className="bk-block"
-            // data-id={blockData.id}
-            // ref={blockRef}
-            // className={blockData.type}
-            suppressContentEditableWarning={true}
-            contentEditable={editing}
-            onKeyUp={editContent}
-            onBlur={onCommitBlock}
-            dangerouslySetInnerHTML={createMarkup()} 
-            onMouseUp={mouseOver}
-            // onKeyPress={addContent}
-            // onFocus={()=>onEditAble(blockData.id)}
-            // onMouseUp={dragData}
-            // onMouseDown={dragData}
-          >
-          </div>
+    <div data-id={blockData.id} className="block-zone">
+      { blockData.property && blockData.property.contents[0]?  
+        <div 
+          // data-id={blockData.id}
+          // ref={blockRef}
+          className={`bk-block ${blockData.type}`}
+          contentEditable={editing}
+          onKeyUp={editContent}
+          onBlur={onCommitBlock}
+          dangerouslySetInnerHTML={createMarkup()} 
+          onMouseUp={mouseOver}
+          // onKeyPress={addContent}
+          // onFocus={()=>onEditAble(blockData.id)}
+          // onMouseUp={dragData}
+          // onMouseDown={dragData}
+        ></div> : null
+        }
           {
-            BlockChildren?<div> { BlockChildren } </div> : null
+            children ? 
+            children.map((child)=> 
+              <Block 
+                blockData={child}
+                key={child.id}
+              />
+            ) : null
           }
       <button> 삭제 </button>
     </div>

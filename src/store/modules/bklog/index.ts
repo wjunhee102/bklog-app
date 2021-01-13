@@ -72,7 +72,7 @@ export function editAble (id: UUID) {
 
 export function editBlock({ 
   blockId,
-  text
+  text,
 }: EditedBlock) {
   return {
     type: EDIT_BLOCK,
@@ -188,7 +188,8 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
           },
           contents: [
           ]
-        }
+        },
+        children: []
       }
 
       if(preBlockId) {
@@ -239,37 +240,36 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
     
     case EDIT_BLOCK: 
       const editedId = action.payload.blockId;
-      const { text } = action.payload;
+      const text = action.payload.text;
 
-      const editedBlock = state.blocks.filter((block)=>
-        block.id === editedId
-      )[0]
+      const preStagedBlock = state.stage.filter(stagedBlock => 
+          stagedBlock.id !== editedId
+        );
 
-      console.log(editedBlock);
+      const newStagedBlock = {
+        id: editedId,
+        contents: text
+      }
 
       return Object.assign({}, state, {
-        stage: [{
-          id: editedId,
-          contents: text
-        }]
+        stage: preStagedBlock? [...preStagedBlock, newStagedBlock] : [newStagedBlock]
       })
       
     case COMMIT_BLOCK: 
-    const stagedBlocks = state.stage.concat();
+    const stagedBlocks = [...state.stage];
 
     const newBlocks = state.blocks.map((block)=> {
 
         for(let i = 0; i < stagedBlocks.length; i++) {
-
+          
           if(block.id === stagedBlocks[i].id) {
-
             return Object.assign({}, block, {
               property: Object.assign({}, block.property, {
                 contents: updateContents(stagedBlocks[i].contents)
               })
             });
-
           }
+
         }
 
         return block;

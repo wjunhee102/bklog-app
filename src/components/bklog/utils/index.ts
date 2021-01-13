@@ -1,11 +1,13 @@
-import {
-  BOLD,
-  ITALY,
-  UNDERBAR,
-  FONT_COLOR,
-  BACKGROUND_COLOR,
-  ANCHOR
-} from "../../../types/bklog";
+const BOLD = "b" as const;
+const ITALY = "i" as const;
+const UNDERBAR = "_" as const;
+const FONT_COLOR = "fc" as const;
+const BACKGROUND_COLOR = "bc" as const;
+const ANCHOR = "a" as const;
+
+const BK_BOLB = "bk-bold";
+const BK_ITALIC = "bk-italic";
+const BK_UNDER = "bk-underbar";
 
 export function createContentsElement(accumulator: string, rawContents: any):string {
   let text;
@@ -18,15 +20,15 @@ export function createContentsElement(accumulator: string, rawContents: any):str
       switch(content[0]) {
 
         case BOLD:
-          className = className? className + " bk-bold" : "bk-bold";
+          className = className? className + ` ${BK_BOLB}` : BK_BOLB;
           break;
 
         case ITALY:
-          className = className? className + " bk-italic" : "bk-italic";
+          className = className? className + ` ${BK_ITALIC}` : BK_ITALIC;
           break;
 
         case UNDERBAR:
-          className = className? className + " bk-underbar" : "bk-underbar";
+          className = className? className + ` ${BK_UNDER}` : BK_UNDER;
           break;
 
         case FONT_COLOR:

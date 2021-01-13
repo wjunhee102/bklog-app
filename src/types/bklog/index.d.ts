@@ -1,18 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export const BOLD = "b" as const;
-export const ITALY = "i" as const;
-export const UNDERBAR = "_" as const;
-export const FONT_COLOR = "fc" as const;
-export const BACKGROUND_COLOR = "bc" as const;
-export const ANCHOR = "a" as const;
-
-export const BK_BOLB = "bk-bold" as const;
-export const BK_ITALIC = "bk-italic" as const;
-export const BK_UNDER = "bk-underbar" as const;
-export const BK_COLOR = "color" as const;
-export const BK_BACKGROUND_COLOR = "background" as const;
-
 export type ContentType = ["b"] | ["i"] | ["_"] | ["a", string] | ["fc", string] | ["bc", string];
 
 /**
@@ -33,7 +20,7 @@ export interface BlockProp {
 }
 
 /**
- * 기본 데이터
+ * Raw Block Data
  */
 export interface BlockData {
   id: UUID | string;
@@ -41,6 +28,7 @@ export interface BlockData {
   parentId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
+  // 수정할 것.
   property?: BlockProp | null;
-  children?: any[];
+  children: UUID[];
 }

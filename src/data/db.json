@@ -4,6 +4,7 @@
     "userId": "admin",
     "blocks": [
       {
+        "index": 1,
         "id": "d5cc2725-97ec-494b-bc80-c16f96379e61",
         "type": "block",
         "parentId": null,
@@ -28,6 +29,7 @@
       },
 
       {
+        "index": 2,
         "id": "d5cc2725-97ec-494b-bc80-c16f96379e11",
         "type": "block",
         "parentId": null,
@@ -47,6 +49,7 @@
       },
       
       {
+        "index": 3,
         "id": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "type": "container",
         "parentId": null,
@@ -54,71 +57,53 @@
         "nextBlockId": null,
         "property": null,
         "children": [ 
-          {
-            "id": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
-            "type": "block",
-            "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
-            "preBlockId": null,
-            "nextBlockId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
-            "property": {
-              "type": "BKlog-h1",
-              "styles": {
-                "color": "black",
-                "backgroudColor": "white"
-              },
-              "contents": [
-                ["블록 "],
-                ["2 입", [["b"]]],
-                ["니다."]
-              ]
-            },
-            "children": [ 
-            ]
+          "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
+          "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8"
+        ]
+      },
+      {
+        "index": 4,
+        "id": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
+        "type": "block",
+        "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+        "preBlockId": null,
+        "nextBlockId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "property": {
+          "type": "BKlog-h1",
+          "styles": {
+            "color": "black",
+            "backgroudColor": "white"
           },
-          {
-            "id": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
-            "type": "block",
-            "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
-            "preBlockId": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
-            "nextBlockId": null,
-            "property": {
-              "type": "BKlog-h1",
-              "styles": {
-                "color": "black",
-                "backgroudColor": "white"
-              },
-              "contents": [
-                ["블록"],
-                ["3 ", [["b"], ["i"], ["fc", "#fc0"]]],
-                ["입 ", [["i"]]],
-                ["니다."]
-              ]
-            },
-            "children": [ 
-              {
-                "id": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce7",
-                "type": "block",
-                "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
-                "preBlockId": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
-                "nextBlockId": null,
-                "property": {
-                  "type": "BKlog-h1",
-                  "styles": {
-                    "color": "black",
-                    "backgroudColor": "white"
-                  },
-                  "contents": [
-                    ["블록"],
-                    ["3 ", [["b"], ["i"], ["fc", "#fc0"]]],
-                    ["입 ", [["i"]]],
-                    ["니다."]
-                  ]
-                },
-                "children": [ 
-                ]
-              }
-            ]
-          }
+          "contents": [
+            ["블록 "],
+            ["2 입", [["b"]]],
+            ["니다."]
+          ]
+        },
+        "children": [ 
+        ]
+      },
+      {
+        "index": 5,
+        "id": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "type": "block",
+        "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+        "preBlockId": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
+        "nextBlockId": null,
+        "property": {
+          "type": "BKlog-h1",
+          "styles": {
+            "color": "black",
+            "backgroudColor": "white"
+          },
+          "contents": [
+            ["블록"],
+            ["3 ", [["b"], ["i"], ["fc", "#fc0"]]],
+            ["입 ", [["i"]]],
+            ["니다."]
+          ]
+        },
+        "children": [ 
         ]
       }
     ]
