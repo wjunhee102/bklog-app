@@ -9,3 +9,15 @@
 .bk-block a {
   cursor: pointer;
 }
+
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+div[contenteditable=true] {
+  border: 1px solid #ddd;
+  color : #333;
+  font-size: 12px;
+  width: 300px;
+  padding: 5px;
+}
