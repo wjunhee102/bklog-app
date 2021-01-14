@@ -31,7 +31,7 @@ function convertType(prop: string):any {
 }
 
 
-export function updateContents(text:string):any {
+export default function updateContents(text:string):any {
 
   const newContents: any[] = [];
   const textLength: number = text.length;
@@ -100,8 +100,11 @@ export function updateContents(text:string):any {
              i += 6;
              propertyToggle = true;
            }
-            break;
+          } else {
+            content[0]? content[0] += text[i] : content[0] = text[i];
           }
+
+          break;
   
         case "c":
           if(!saveToggle) {
@@ -109,9 +112,11 @@ export function updateContents(text:string):any {
               i += 6;
               propertyToggle = true;
             }
-  
-            break;
-          } 
+          } else {
+            content[0]? content[0] += text[i] : content[0] = text[i];
+          }
+
+          break;
         
         case "h":
           if(!saveToggle) {
@@ -119,9 +124,12 @@ export function updateContents(text:string):any {
               i += 5;
               linkToggle = true;
             }
-      
-            break;
+    
+          } else {
+            content[0]? content[0] += text[i] : content[0] = text[i];
           }
+
+          break;
           
         default:
           if(saveToggle) {
