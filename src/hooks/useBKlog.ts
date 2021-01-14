@@ -19,17 +19,17 @@ function useBklog() {
   
   const state:BklogState = useSelector((state: RootState) => state.bklog);
 
-  const initBlock: BlockData[] = useMemo(()=> 
+  const initBlock: BlockData<any>[] = useMemo(()=> 
     state.blocks.filter(block => block.parentId === null), [state.blocks]);
 
   const getEditAbleId = useMemo(() => state.editingId, [state.editingId]);
 
   const getStagedBlocks = state.stage;
 
-  const getChilrenBlock = (blockId: UUID):BlockData[] => 
+  const getChilrenBlock = (blockId: UUID):BlockData<any>[] => 
     state.blocks.filter(block => block.parentId === blockId); 
 
-  const getBlockState = (blockId: UUID): BlockData  => 
+  const getBlockState = (blockId: UUID): BlockData<any>  => 
     state.blocks.filter(blockState => blockState.id === blockId)[0];
   
   const getStagedBlock = (blockId: UUID) =>
@@ -38,8 +38,8 @@ function useBklog() {
   const dispatch = useDispatch();
 
   // Block 추가
-  const onAddBlock = useCallback((preId?: UUID, type?: string) => 
-      dispatch(addBlock(preId, type))
+  const onAddBlock = useCallback((blockIndex?: number, type?: string) => 
+      dispatch(addBlock(blockIndex, type))
     , [dispatch]);
 
   // edit중인 block focus
@@ -47,17 +47,17 @@ function useBklog() {
       dispatch(editAble(blockId))
     ,[dispatch]);
 
-  const onEditBlock = useCallback((blockId: UUID, content: string) =>
-      dispatch(editBlock({blockId, text: content}))
+  const onEditBlock = useCallback((blockId: UUID, blockIndex: number,content: string) =>
+      dispatch(editBlock({blockId, blockIndex, text: content}))
     ,[dispatch]);
 
   const onCommitBlock = useCallback(()=>
       dispatch(commitBlock())
     ,[dispatch]);
 
-  const onDeleteBlock = useCallback((blockId: UUID) =>
-      dispatch(deleteBlock(blockId))
-    , [dispatch]);
+  // const onDeleteBlock = useCallback((blockId: UUID) =>
+  //     dispatch(deleteBlock(blockId))
+  //   , [dispatch]);
 
   return { 
     state, 
@@ -71,7 +71,7 @@ function useBklog() {
     onEditAble, 
     onEditBlock, 
     onCommitBlock, 
-    onDeleteBlock
+    // onDeleteBlock
   };
 }
 

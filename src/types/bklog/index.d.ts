@@ -9,26 +9,44 @@ export type UUID = ReturnType<typeof uuidv4>
 
 /**
  * Block에서 외부로 보여지는 속성
+ * type: string;
+ * style?: {
+ *  color?: string;
+ *  backgroundColor: string;
+ * }
+ * contents: any;
  */
-export interface BlockProp {
+export interface TextProps {
   type: string;
-  styles?: {
-    color?: string;
-    backgroundColor?: string;
+  styles: {
+    color: string | null;
+    backgroundColor: string | null;
   }
   contents: any;
 }
 
-/**
- * Raw Block Data
- */
-export interface BlockData {
+export interface RawBlockData<T> {
   id: UUID | string;
   type: string;
   parentId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.
-  property?: BlockProp | null;
+  property: T;
+  children: UUID[];
+}
+
+/**
+ * Raw Block Data
+ */
+export interface BlockData<T> {
+  index: number;
+  id: UUID | string;
+  type: string;
+  parentId: UUID | string | null;
+  preBlockId: UUID | string | null;
+  nextBlockId: UUID | string | null;
+  // 수정할 것.
+  property: T;
   children: UUID[];
 }

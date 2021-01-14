@@ -1,38 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  BlockProp,
+  TextProps,
   BlockData,
   UUID,
   ContentType
 } from '../../../types/bklog';
 
-import { updateContents } from './utils/converter';
+import { updateContents, orderingBlock, insertChild } from './utils';
 
 import { page } from '../../../data/db.json';
 
-// export type UUID = ReturnType<typeof uuidv4>
-
-// export type ContentType = ["b"] | ["i"] | ["_"] | ["a", string] | ["fc", string] | ["bc", string]; 
-
-// export interface BlockProp {
-//   type: string;
-//   styles?: {
-//     color?: string;
-//     backgroundColor?: string;
-//   }
-//   contents: any;
-// }
-
-// export interface BlockData {
-//   id: UUID | string;
-//   type: string;
-//   parentId: UUID | string | null;
-//   preBlockId: UUID | string | null;
-//   nextBlockId: UUID | string | null;
-//   property?: BlockProp | null;
-//   children?: any[];
-// }
+/**
+ * BlockLog store
+ */
 
 const ADD_BLOCK    = 'bklog/ADD_BLOCK' as const;
 const EDITABLE     = 'bklog/EDITABLE' as const; 
@@ -42,21 +23,18 @@ const DELETE_BLOCK = 'bklog/DELETE_BLOCK' as const;
 const UPDATE_BLOCK = 'bklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
 const SWITCH_BLOCK = 'bklog/SWITCH_BLOCK' as const;
 
-const NEWEDIT_BLOCK = 'bklog/NEWEDIT_BLOCK' as const;
-
-
-
 interface EditedBlock {
   blockId: UUID;
+  blockIndex: number;
   text: string;
 }
 
-export function addBlock(preBlockId?: string, type?: string) {
+export function addBlock(blockIndex?: number, type?: string) {
   return {
     type: ADD_BLOCK,
     payload: {
-      preBlockId,
-      type
+      preBlockIndex: blockIndex,
+      newBlockType: type
     }
   }
 }
@@ -72,12 +50,14 @@ export function editAble (id: UUID) {
 
 export function editBlock({ 
   blockId,
+  blockIndex,
   text,
 }: EditedBlock) {
   return {
     type: EDIT_BLOCK,
     payload: {
       blockId,
+      blockIndex,
       text
     }
   }
@@ -118,49 +98,23 @@ export type BklogActions = ReturnType<typeof addBlock>
 interface StagedBlock{
   id: UUID;
   contents: any;
+  blockIndex: number;
 }
 
 export interface BklogState {
   pageId: UUID;
   userId: string;
   editingId: string | null;
-  blocks: BlockData[];
+  blocks: BlockData<any>[];
   stage: StagedBlock[];
 }
-
-
-// 먼저 기존 기능 대체
-function addContents(preContents: any[], focusOffset:number, text: string[]):string[] {
-  let newContents = ["error"];
-  let count = 0;
-  const startPoint = focusOffset - text.length;
-  const endPoint = focusOffset;
-
-  preContents.forEach((content) => {
-    console.log(content, typeof content ,"addContents");
-    if(typeof content === 'string') {
-      newContents = [`${content.slice(0, startPoint - 1)}${text.join()}${content.slice(endPoint, content.length - 1)}`]
-      console.log(newContents);
-    } else if(Array.isArray(content)) {
-      content.forEach((text)=> {
-
-        if(count >= startPoint && count < endPoint) {
-        
-        } 
-      })
-    } else {
-    }
-  })
-  console.log(newContents);
-  return newContents;
-}
-
+console.log("newOrder",orderingBlock(page.blocks))
 
 const initialState:BklogState = ((): BklogState => {
   return {
     pageId: page.id,
     userId: page.userId,
-    blocks: page.blocks,
+    blocks: orderingBlock(page.blocks),
     editingId: null,
     stage: []
   };
@@ -171,67 +125,69 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
   switch(action.type) {
 
     case ADD_BLOCK:
-      
-      const { preBlockId, type } = action.payload;
+      const { preBlockIndex, newBlockType } = action.payload;
 
-      const blocks = [...state.blocks];
+      let blocks = [...state.blocks];
+      const preBlock: BlockData<any> | null = preBlockIndex? 
+        blocks[preBlockIndex - 1] : null;
 
-      const newBlock: BlockData = {
+      let nextBlockPosition:number = 0;
+      const nextBlock: BlockData<any> | null = preBlock && preBlock.nextBlockId?
+        blocks.filter((block, idx)=> {
+          nextBlockPosition = idx
+          return block.id === preBlock.nextBlockId })[0] : null;
+
+      // block factory 함수를 만들어야 함.
+      const newBlock: BlockData<any> = {
+        index: 0,
         id: uuidv4(),
         type: "block",
         parentId: null,
-        preBlockId: preBlockId?  preBlockId : state.blocks[state.blocks.length - 1].id,
-        nextBlockId: null,
+        preBlockId: preBlock? preBlock.id : blocks[blocks.length - 1].id,
+        nextBlockId: nextBlock? nextBlock.id : null,
         property: {
-          type: type? type : "BKlog-p",
+          type:  newBlockType?  newBlockType  : "BKlog-p",
           styles: {
+            color: null,
+            backgroundColor: null
           },
-          contents: [
-          ]
+          contents: []
         },
         children: []
       }
 
-      if(preBlockId) {
+      if(preBlockIndex) {
+        blocks[preBlockIndex - 1].nextBlockId = newBlock.id;
+        if(preBlock && preBlock.parentId) {
+          blocks = blocks.map((block) => {
+            if(block.id === preBlock.parentId) {
 
-        newBlock.preBlockId = preBlockId;
+              const newChildren = insertChild(block.children,(preBlockIndex - block.index), newBlock.id);
+              console.log("newChildren", newChildren, newBlock.id)
+              return Object.assign({}, block, {
+                children: newChildren
+              });
 
-        for(let i = 0; i < state.blocks.length; i++) {
-          if(state.blocks[i].id === preBlockId) {
-
-            if(i !== state.blocks.length - 1 ) {
-          
-              blocks[i].nextBlockId = newBlock.id;
-              blocks[i+1].preBlockId = newBlock.id;
-              newBlock.nextBlockId = blocks[i+1].id;
-  
-              blocks.splice(i + 1, 0, newBlock);
-
-            } else {
-
-              blocks[i].nextBlockId = newBlock.id;
-
-              blocks.push(newBlock);
-
-            }
-            
-          }
+            } 
+            return block
+          });
+          newBlock.parentId = preBlock.parentId;
         }
-
-        return Object.assign({}, state, {
-          blocks,
-          editingId: newBlock.id
-        })
+      } else {
+        blocks[blocks.length - 1].nextBlockId = newBlock.id; 
       }
 
-      blocks[blocks.length -1].nextBlockId = newBlock.id;
-      
+      if(nextBlockPosition) {
+        blocks[nextBlockPosition - 1].preBlockId = newBlock.id;
+      }
+
       blocks.push(newBlock);
-      
+      console.log(blocks);
+
       return Object.assign({}, state, {
-        blocks,
+        blocks: orderingBlock(blocks),
         editingId: newBlock.id
-      });
+      }) 
 
     case EDITABLE: 
       return Object.assign({}, state, {
@@ -241,6 +197,7 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
     case EDIT_BLOCK: 
       const editedId = action.payload.blockId;
       const text = action.payload.text;
+      const editedBlockIndex = action.payload.blockIndex;
 
       const preStagedBlock = state.stage.filter(stagedBlock => 
           stagedBlock.id !== editedId
@@ -248,6 +205,7 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
 
       const newStagedBlock = {
         id: editedId,
+        blockIndex: editedBlockIndex,
         contents: text
       }
 
@@ -256,24 +214,16 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
       })
       
     case COMMIT_BLOCK: 
+
     const stagedBlocks = [...state.stage];
-
-    const newBlocks = state.blocks.map((block)=> {
-
-        for(let i = 0; i < stagedBlocks.length; i++) {
-          
-          if(block.id === stagedBlocks[i].id) {
-            return Object.assign({}, block, {
-              property: Object.assign({}, block.property, {
-                contents: updateContents(stagedBlocks[i].contents)
-              })
-            });
-          }
-
-        }
-
-        return block;
-      });
+    const newBlocks = [...state.blocks];
+    stagedBlocks.forEach((block)=>{
+      if(newBlocks[block.blockIndex - 1].id === block.id) {
+        newBlocks[block.blockIndex - 1].property.contents = updateContents(block.contents);
+      } else {
+        console.log("block이 제대로 정렬되지 않았습니다.");
+      }
+    });
     
     const newState = Object.assign({}, state, {
       blocks: newBlocks,
@@ -286,74 +236,75 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
     return newState;
 
 
-    case DELETE_BLOCK: 
-      const deletedId = action.payload.id;  
+    // case DELETE_BLOCK: 
+    //   const deletedId = action.payload.id;  
 
-      const deletedBlock = state.blocks.filter((block)=>
-        block.id !== deletedId
-      );
+    //   const deletedBlock = state.blocks.filter((block)=>
+    //     block.id !== deletedId
+    //   );
       
-      let preBlock, nextBlock;
+    //   let preBlock1, nextBlock;
 
-      if(deletedBlock.length === 0) {
+    //   if(deletedBlock.length === 0) {
       
-        deletedBlock.push({
-          id: uuidv4(),
-          type: "block",
-          parentId: null,
-          preBlockId: null,
-          nextBlockId: null,
-          property: {
-            type: "BKlog-p",
-            styles: {
-            },
-            contents: [
-            ]
-          },
-          children: []
-        })
+    //     deletedBlock.push({
+    //       index: 1,
+    //       id: uuidv4(),
+    //       type: "block",
+    //       parentId: null,
+    //       preBlockId: null,
+    //       nextBlockId: null,
+    //       property: {
+    //         type: "BKlog-p",
+    //         styles: {
+    //         },
+    //         contents: [
+    //         ]
+    //       },
+    //       children: []
+    //     })
 
-      } else {
+    //   } else {
 
-        for(let i = 0; i < deletedBlock.length; i++) {
+    //     for(let i = 0; i < deletedBlock.length; i++) {
 
-          if(i === 0) {
-            if(state.blocks[i].id === deletedId) {
-              deletedBlock[i].preBlockId = null
-              break;
-            }
-          } else if(i === deletedBlock.length - 1 ) {
-            if(state.blocks[i+1].id === deletedId) {
-              deletedBlock[i].nextBlockId = null
-            }
-          }
+    //       if(i === 0) {
+    //         if(state.blocks[i].id === deletedId) {
+    //           deletedBlock[i].preBlockId = null
+    //           break;
+    //         }
+    //       } else if(i === deletedBlock.length - 1 ) {
+    //         if(state.blocks[i+1].id === deletedId) {
+    //           deletedBlock[i].nextBlockId = null
+    //         }
+    //       }
 
-          if(deletedBlock[i].nextBlockId === deletedId) {
-            preBlock = {
-              idx: i,
-              id: deletedBlock[i].id
-            }
-          }
+    //       if(deletedBlock[i].nextBlockId === deletedId) {
+    //         preBlock1 = {
+    //           idx: i,
+    //           id: deletedBlock[i].id
+    //         }
+    //       }
   
-          if(deletedBlock[i].preBlockId === deletedId) {
-            nextBlock = {
-              idx: i,
-              id: deletedBlock[i].id
-            }
-          }
+    //       if(deletedBlock[i].preBlockId === deletedId) {
+    //         nextBlock = {
+    //           idx: i,
+    //           id: deletedBlock[i].id
+    //         }
+    //       }
 
-        }
+    //     }
   
-        if(preBlock && nextBlock) {
-          deletedBlock[preBlock.idx].nextBlockId = nextBlock.id
-          deletedBlock[nextBlock.idx].preBlockId = preBlock.id
-        } 
+    //     if(preBlock1 && nextBlock) {
+    //       deletedBlock[preBlock1.idx].nextBlockId = nextBlock.id
+    //       deletedBlock[nextBlock.idx].preBlockId = preBlock1.id
+    //     } 
 
-      }
+    //   }
 
-      return Object.assign({}, state, {
-        blocks: deletedBlock
-      })
+      // return Object.assign({}, state, {
+      //   blocks: deletedBlock
+      // })
 
 
     default: 

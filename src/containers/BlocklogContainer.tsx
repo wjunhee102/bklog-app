@@ -17,7 +17,7 @@ function BKlogContainer() {
     <div className="blocklog">
       {
         blockData?
-        blockData.map((block: BlockData)=> 
+        blockData.map((block: BlockData<any>)=> 
           <Block 
             blockData={block}
             key={block.id}

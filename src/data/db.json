@@ -4,12 +4,11 @@
     "userId": "admin",
     "blocks": [
       {
-        "index": 1,
         "id": "d5cc2725-97ec-494b-bc80-c16f96379e61",
         "type": "block",
         "parentId": null,
         "preBlockId": null,
-        "nextBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+        "nextBlockId": "d5cc2725-97ec-494b-bc80-c16f96379e11",
         "property": {
           "type": "BKlog-h1",
           "styles": {
@@ -27,9 +26,7 @@
         "children": [ 
         ]
       },
-
       {
-        "index": 2,
         "id": "d5cc2725-97ec-494b-bc80-c16f96379e11",
         "type": "block",
         "parentId": null,
@@ -49,20 +46,19 @@
       },
       
       {
-        "index": 3,
         "id": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "type": "container",
         "parentId": null,
         "preBlockId": "d5cc2725-97ec-494b-bc80-c16f96379e11",
-        "nextBlockId": null,
+        "nextBlockId": "s5cc2725-97ec-494b-bc80-c16f96379e61",
         "property": null,
         "children": [ 
           "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
-          "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8"
+          "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+          "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8"
         ]
       },
       {
-        "index": 4,
         "id": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
         "type": "block",
         "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
@@ -84,11 +80,33 @@
         ]
       },
       {
-        "index": 5,
         "id": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
         "type": "block",
         "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "preBlockId": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
+        "nextBlockId": "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "property": {
+          "type": "BKlog-h1",
+          "styles": {
+            "color": "black",
+            "backgroudColor": "white"
+          },
+          "contents": [
+            ["블록"],
+            ["3 ", [["b"], ["i"], ["fc", "#fc0"]]],
+            ["입 ", [["i"]]],
+            ["니다."]
+          ]
+        },
+        "children": [ 
+          "4453c55f-66f0-4ad0-b796-0dbcd8d82ce8"
+        ]
+      },
+      {
+        "id": "4453c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "type": "block",
+        "parentId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "preBlockId": null,
         "nextBlockId": null,
         "property": {
           "type": "BKlog-h1",
@@ -101,6 +119,51 @@
             ["3 ", [["b"], ["i"], ["fc", "#fc0"]]],
             ["입 ", [["i"]]],
             ["니다."]
+          ]
+        },
+        "children": [ 
+        ]
+      },
+      {
+        "id": "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "type": "block",
+        "parentId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+        "preBlockId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+        "nextBlockId": null,
+        "property": {
+          "type": "BKlog-h1",
+          "styles": {
+            "color": "black",
+            "backgroudColor": "white"
+          },
+          "contents": [
+            ["블록"],
+            ["4 ", [["b"], ["i"], ["fc", "#fc0"]]],
+            ["입 ", [["i"]]],
+            ["니다."]
+          ]
+        },
+        "children": [ 
+        ]
+      },
+      {
+        "id": "s5cc2725-97ec-494b-bc80-c16f96379e61",
+        "type": "block",
+        "parentId": null,
+        "preBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+        "nextBlockId": null,
+        "property": {
+          "type": "BKlog-h1",
+          "styles": {
+            "color": "black",
+            "backgroudColor": "white"
+          },
+          "contents": [
+            ["블록 1입니다."],
+            ["저", [["b"], ["fc", "#c0f"], ["bc", "#000"], ["i"],["a", "https://www.naver.com"]]],
+            ["는 ", [["i"]]],
+            ["황준희", [["b"]]],
+            [" 입니다.", [["fc", "#f00"]]]
           ]
         },
         "children": [ 

@@ -4,12 +4,12 @@ import { RawBlockData, BlockData, UUID } from '../../../../types/bklog';
  * block ordering
  * @param block 
  */
-export function orderingBlock(block:any): BlockData<any>[] {
+export default function orderingBlock(block:any): BlockData<any>[] {
   const rawBlocks: RawBlockData<any>[] | BlockData<any>[] = block.concat();
   const newBlocks: BlockData<any>[] = [];
   const deleteCount = 1;
   let splicePoint: number = 0;
-  let blockIndex: number = 0;
+  let blockIndex: number = 1;
   let nextBlockId: UUID | null = null;
   let idStack:UUID[] = [];
 
