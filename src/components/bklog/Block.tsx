@@ -7,7 +7,7 @@ import { createContentsElement } from './utils';
 import './block.css';
 
 interface BlockProps {
-  blockData: BlockData;
+  blockData: BlockData<any>;
 }
 
 interface BlockContentProps {
@@ -84,8 +84,7 @@ const Block = ({ blockData }:BlockProps) => {
 
   const [ editing, setEditing ] = useState<boolean>(true);
 
-  // const dispatch = useDispatch();  
-  // const blockRef = useRef<null>(null);
+  const blockRef = useRef<null>(null);
 
   const { 
     getEditAbleId,
@@ -96,14 +95,12 @@ const Block = ({ blockData }:BlockProps) => {
     onCommitBlock
   } = useBKlog();
   
-  // const onDeleteBlock = () => {
-  //   dispatch(deleteBlock(blockData.id));
-  // }
-  const children = useMemo(() => blockData.children[0]?
-    getChilrenBlock(blockData.id) : null,[blockData.children])  
-
+  // 위치 변경시 어떻게 리프레쉬 될지 고민해야 함.
+  const children = blockData.children[0]? 
+    getChilrenBlock(blockData.id) : null;
 
   const editContent = (e:any) => {  
+    onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
 
     switch(e.key) {
  
@@ -129,9 +126,6 @@ const Block = ({ blockData }:BlockProps) => {
 
     }
 
-    onEditBlock(blockData.id, e.target.innerHTML);
-    console.log(e.target.innerHTML);
-
   }
 
   const contentElement = useMemo(()=> {
@@ -155,12 +149,12 @@ const Block = ({ blockData }:BlockProps) => {
     }
   }
 
-  // const addContent = (e:any) => {
-  //   if(e.key === "Enter") {
-  //     e.preventDefault();
-  //     onAddBlock(blockData.id);
-  //   }
-  // }
+  const addContent = (e:any) => {
+    if(e.key === "Enter") {
+      e.preventDefault();
+      onAddBlock(blockData.index);
+    }
+  }
 
   // const changeTextStyle = (text:string, type: string) => {
   //   return [
@@ -188,40 +182,42 @@ const Block = ({ blockData }:BlockProps) => {
   //   // }
   // }
 
-  // const focus = (ele: any) => {
-  //   const selObj = window.getSelection();
-  //   const range = document.createRange();
+  const focus = (ele: any) => {
+    const selObj = window.getSelection();
+    const range = document.createRange();
     
-  //   ele.focus();
-  //   // if(ele.childNodes[0] && blockData.contents.join().length > 0) {
-  //   //   range.setStart(ele.childNodes[0], 3);
-  //   //   range.setEnd(ele.childNodes[0], 4);
-  //   // }  
-  //   // console.log(ele.childNodes[0], blockData.contents.join().length);
-  // }
+    ele.focus();
+    // if(ele.childNodes[0] && blockData.contents.join().length > 0) {
+    //   range.setStart(ele.childNodes[0], 3);
+    //   range.setEnd(ele.childNodes[0], 4);
+    // }  
+    // console.log(ele.childNodes[0], blockData.contents.join().length);
+  }
 
-  // useEffect(()=> {
-  //  if(getEditAbleId === blockData.id && blockRef.current ) {
-  //   focus(blockRef.current)
-  //  }
-  // },[getEditAbleId]);
+  useEffect(()=> {
+   if(getEditAbleId === blockData.id && blockRef.current ) {
+    focus(blockRef.current)
+   }
+  },[getEditAbleId]);
 
   return (
     <div data-id={blockData.id} className="block-zone">
-      { blockData.property && blockData.property.contents[0]?  
+      { 
+        blockData.property && blockData.type !== "container" ?  
         <div 
           // data-id={blockData.id}
-          // ref={blockRef}
-          className={`bk-block ${blockData.type}`}
+          ref={blockRef}
+          className={`bk-block ${blockData.property.type}`}
           contentEditable={editing}
           onKeyUp={editContent}
           onBlur={onCommitBlock}
           dangerouslySetInnerHTML={createMarkup()} 
           onMouseUp={mouseOver}
-          // onKeyPress={addContent}
-          // onFocus={()=>onEditAble(blockData.id)}
+          onKeyPress={addContent}
+          onFocus={()=>onEditAble(blockData.id)}
           // onMouseUp={dragData}
           // onMouseDown={dragData}
+          placeholder="입력해주세요."
         ></div> : null
         }
           {
