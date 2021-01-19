@@ -39,11 +39,12 @@ export function addBlock(blockIndex?: number, type?: string) {
   }
 }
 
-export function editAble (id: UUID) {
+export function editAble (id: UUID | null, index?: number) {
   return {
     type: EDITABLE,
     payload: {
-      id
+      editingId: id,
+      editingIndex: index
     }
   }
 }
@@ -69,11 +70,11 @@ export function commitBlock() {
   }
 }
 
-export function deleteBlock(id: UUID) {
+export function deleteBlock(deletedId: UUID) {
   return {
     type: DELETE_BLOCK,
     payload: {
-      id
+      deletedId
     }
   }
 }
@@ -107,6 +108,7 @@ export interface BklogState {
   editingId: string | null;
   blocks: BlockData<any>[];
   stage: StagedBlock[];
+  rightToEdit: boolean;
 }
 console.log("newOrder",orderingBlock(page.blocks))
 
@@ -116,7 +118,8 @@ const initialState:BklogState = ((): BklogState => {
     userId: page.userId,
     blocks: orderingBlock(page.blocks),
     editingId: null,
-    stage: []
+    stage: [],
+    rightToEdit: true
   };
 })()
 
@@ -131,11 +134,11 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
       const preBlock: BlockData<any> | null = preBlockIndex? 
         blocks[preBlockIndex - 1] : null;
 
-      let nextBlockPosition:number = 0;
+      let nextBlockPosition:number = preBlock? blocks.findIndex(block => 
+          block.id === preBlock.nextBlockId
+        ) : 0;
       const nextBlock: BlockData<any> | null = preBlock && preBlock.nextBlockId?
-        blocks.filter((block, idx)=> {
-          nextBlockPosition = idx
-          return block.id === preBlock.nextBlockId })[0] : null;
+        blocks[nextBlockPosition] : null;
 
       // block factory 함수를 만들어야 함.
       const newBlock: BlockData<any> = {
@@ -158,31 +161,27 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
 
       if(preBlockIndex) {
         blocks[preBlockIndex - 1].nextBlockId = newBlock.id;
+
         if(preBlock && preBlock.parentId) {
-          blocks = blocks.map((block) => {
-            if(block.id === preBlock.parentId) {
+          const parentBlockPosition = blocks.findIndex(block => block.id === preBlock.parentId);
+          const parentBlock = blocks[parentBlockPosition];
+          const insertPosion = parentBlock.children.indexOf(preBlock.id) + 1;
 
-              const newChildren = insertChild(block.children,(preBlockIndex - block.index), newBlock.id);
-              console.log("newChildren", newChildren, newBlock.id)
-              return Object.assign({}, block, {
-                children: newChildren
-              });
-
-            } 
-            return block
+          blocks[parentBlockPosition] = Object.assign({}, parentBlock, {
+            children: insertChild(parentBlock.children, insertPosion, [newBlock.id])
           });
+
           newBlock.parentId = preBlock.parentId;
         }
       } else {
         blocks[blocks.length - 1].nextBlockId = newBlock.id; 
       }
 
-      if(nextBlockPosition) {
-        blocks[nextBlockPosition - 1].preBlockId = newBlock.id;
+      if(nextBlock) {
+        blocks[nextBlockPosition].preBlockId = newBlock.id;
       }
 
       blocks.push(newBlock);
-      console.log(blocks);
 
       return Object.assign({}, state, {
         blocks: orderingBlock(blocks),
@@ -190,8 +189,22 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
       }) 
 
     case EDITABLE: 
+      const { editingId, editingIndex } = action.payload
+      
+      let editingBlockId: UUID | null;
+      
+      if(editingIndex) {
+        if(editingIndex >= 1 && editingIndex <= state.blocks.length) {
+          editingBlockId = state.blocks[editingIndex - 1].id;
+        } else {
+          editingBlockId = null
+        }
+      } else {
+        editingBlockId = editingId
+      }
+
       return Object.assign({}, state, {
-        editingId: action.payload.id
+        editingId: editingBlockId
       })
     
     case EDIT_BLOCK: 
@@ -215,98 +228,109 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
       
     case COMMIT_BLOCK: 
 
-    const stagedBlocks = [...state.stage];
-    const newBlocks = [...state.blocks];
-    stagedBlocks.forEach((block)=>{
-      if(newBlocks[block.blockIndex - 1].id === block.id) {
-        newBlocks[block.blockIndex - 1].property.contents = updateContents(block.contents);
-      } else {
-        console.log("block이 제대로 정렬되지 않았습니다.");
+      const stagedBlocks = [...state.stage];
+      let newBlocks      = [...state.blocks];
+      stagedBlocks.forEach((block)=>{
+
+        if(newBlocks[block.blockIndex - 1] && block.id === newBlocks[block.blockIndex - 1].id) {
+          
+          newBlocks[block.blockIndex - 1].property = Object.assign({}, 
+            newBlocks[block.blockIndex - 1].property, {
+              contents: updateContents(block.contents)
+          });
+
+        } else {
+          console.log("block이 제대로 정렬되지 않았습니다.");
+        }
+
+      });
+      
+      const newState = Object.assign({}, state, {
+        blocks: newBlocks,
+        stage: [],
+        editingId: null
+      });
+
+      localStorage.setItem("bklog", JSON.stringify(newState));
+
+      return newState;
+
+
+    case DELETE_BLOCK: 
+      const { deletedId } = action.payload;
+      
+      if(deletedId === state.blocks[0].id) return state;
+
+      let deletedBlocks = state.blocks.filter((block) => 
+          block.id !== deletedId
+        );
+
+      const deletedBlock = state.blocks.filter((block)=>
+        block.id === deletedId
+      )[0];
+
+      const preBlockId = deletedBlock.preBlockId;
+      const nextBlockId = deletedBlock.nextBlockId;
+      const parentId = deletedBlock.parentId;
+
+      let newPreBlockId = preBlockId;
+      let newNextBlockId = nextBlockId;
+
+
+      if(deletedBlock.children[0]) {
+        let childPositionList:number[] = [];
+        deletedBlock.children.forEach(child => {
+          childPositionList.push(deletedBlocks.findIndex((block)=> block.id === child));
+        })
+        const firstChild = childPositionList[0];
+        const lastChild = childPositionList[childPositionList.length -1];
+        if(preBlockId) {
+          deletedBlocks[firstChild].preBlockId = preBlockId;
+          newNextBlockId = deletedBlocks[firstChild].id;
+        }
+          
+        if(nextBlockId) {
+          deletedBlocks[lastChild].nextBlockId = nextBlockId;
+          newPreBlockId = deletedBlocks[lastChild].id;
+        }
+        
+        childPositionList.forEach((child)=>{
+          deletedBlocks[child].parentId = parentId;
+        });
+      } 
+
+      if(parentId) {
+        const parentBlockPosition = deletedBlocks.findIndex((block)=> block.id === parentId);
+        const parentBlock = deletedBlocks[parentBlockPosition]
+        const deletePosition = parentBlock.children.indexOf(deletedId);
+
+        deletedBlocks[parentBlockPosition] = Object.assign({}, parentBlock, {
+          children: deletedBlock.children[0] ?
+          insertChild(parentBlock.children, deletePosition, deletedBlock.children, 1)
+          : parentBlock.children.filter((child) => child !== deletedId)
+        })
       }
-    });
-    
-    const newState = Object.assign({}, state, {
-      blocks: newBlocks,
-      stage: [],
-      editingId: null
-    });
 
-    localStorage.setItem("bklog", JSON.stringify(newState));
+      if(preBlockId) {
+        deletedBlocks = deletedBlocks.map((block) => 
+          block.id === preBlockId? Object.assign({}, block, {
+            nextBlockId: newNextBlockId
+          }) : block
+        );
+      }
 
-    return newState;
+      if(nextBlockId) {
+        deletedBlocks = deletedBlocks.map((block) => 
+          block.id === nextBlockId? Object.assign({}, block, {
+            preBlockId: newPreBlockId
+          }) : block
+        );
+      }
 
-
-    // case DELETE_BLOCK: 
-    //   const deletedId = action.payload.id;  
-
-    //   const deletedBlock = state.blocks.filter((block)=>
-    //     block.id !== deletedId
-    //   );
+      return Object.assign({}, state, {
+        blocks: orderingBlock(deletedBlocks)
+      });
       
-    //   let preBlock1, nextBlock;
-
-    //   if(deletedBlock.length === 0) {
-      
-    //     deletedBlock.push({
-    //       index: 1,
-    //       id: uuidv4(),
-    //       type: "block",
-    //       parentId: null,
-    //       preBlockId: null,
-    //       nextBlockId: null,
-    //       property: {
-    //         type: "BKlog-p",
-    //         styles: {
-    //         },
-    //         contents: [
-    //         ]
-    //       },
-    //       children: []
-    //     })
-
-    //   } else {
-
-    //     for(let i = 0; i < deletedBlock.length; i++) {
-
-    //       if(i === 0) {
-    //         if(state.blocks[i].id === deletedId) {
-    //           deletedBlock[i].preBlockId = null
-    //           break;
-    //         }
-    //       } else if(i === deletedBlock.length - 1 ) {
-    //         if(state.blocks[i+1].id === deletedId) {
-    //           deletedBlock[i].nextBlockId = null
-    //         }
-    //       }
-
-    //       if(deletedBlock[i].nextBlockId === deletedId) {
-    //         preBlock1 = {
-    //           idx: i,
-    //           id: deletedBlock[i].id
-    //         }
-    //       }
-  
-    //       if(deletedBlock[i].preBlockId === deletedId) {
-    //         nextBlock = {
-    //           idx: i,
-    //           id: deletedBlock[i].id
-    //         }
-    //       }
-
-    //     }
-  
-    //     if(preBlock1 && nextBlock) {
-    //       deletedBlock[preBlock1.idx].nextBlockId = nextBlock.id
-    //       deletedBlock[nextBlock.idx].preBlockId = preBlock1.id
-    //     } 
-
-    //   }
-
-      // return Object.assign({}, state, {
-      //   blocks: deletedBlock
-      // })
-
-
     default: 
       // let preState = localStorage.getItem("bklog")
       console.log("state:", state)

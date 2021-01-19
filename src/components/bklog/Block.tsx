@@ -1,8 +1,19 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 
+import { useIdleTimer} from 'react-idle-timer';
+
 import { BlockData, UUID } from '../../types/bklog';
 import useBKlog from '../../hooks/useBKlog';
 import { createContentsElement } from './utils';
+import { 
+  getSelectionDirection,
+  getSelectionStart,
+  getSelectionEnd,
+  setSelectionRange,
+  getValue
+} from './utils/selectionText';
+
+import ContentEditableEle from './ContentEditableEle';
 
 import './block.css';
 
@@ -10,85 +21,19 @@ interface BlockProps {
   blockData: BlockData<any>;
 }
 
-interface BlockContentProps {
-  content: any[]
-}
-
-const ContentEle = ({content}:any) => {
-  return (<>{content}</>);
-}
-
-const BlockContent = ({content}: BlockContentProps) => {
-
-  // const contentType = useMemo(()=> 
-  //   content[1] !== undefined? 
-  //   content[1].map((type: any) => 
-  //       convertContentType(type)
-  //     ).join(" ")
-  //   : ""
-  // , [content]);
-  console.log(content);
-  
-  return (
-    <span 
-      className={`bk-bold`
-    }>
-      {content[0]}
-    </span>
-  )
-}
-
-interface ChildBlockProps {
-  blockData: any;
-}
-
-const ChildBlock = ({ blockData }: ChildBlockProps) => {
-  const [ editing, setEditing ] = useState<boolean>(blockData.children && blockData.children[0] !== undefined? false : true);
-
-  const BlockChildren = useMemo(()=> {
-    
-    if(blockData.children && blockData.children[0] !== undefined ) {
-
-      return blockData.children.map((child: any) => 
-        <ChildBlock 
-          blockData={child}
-          key={child.id}
-        />
-      )
-    } else if(blockData.property && blockData.property.contents) {
-
-      return blockData.property.contents.map((content:any, idx: number) => {
-          if(content.length === 1) {
-            const data = content[0];
-            return <ContentEle content={data} key={idx} />
-          } else {
-            return <BlockContent content={content} key={idx} />
-          }
-      })
-    } else {
-      return  ""
-    }
-
-  }, [blockData.children, blockData.property]);
-
-  return (
-    <div className={`bklog-child`}>
-      <code>
-      { BlockChildren }
-      </code>
-    </div>
-  )
-}
-
 const Block = ({ blockData }:BlockProps) => {
 
   const [ editing, setEditing ] = useState<boolean>(true);
 
-  const blockRef = useRef<null>(null);
+  const [ cursurPoint, setCursurPoint ] = useState<number>(0);
+
+  const blockRef = useRef<HTMLDivElement>(null);
 
   const { 
+    getRigthToEdit,
     getEditAbleId,
     onAddBlock, 
+    onDeleteBlock,
     getChilrenBlock,
     onEditAble,
     onEditBlock,
@@ -100,7 +45,19 @@ const Block = ({ blockData }:BlockProps) => {
     getChilrenBlock(blockData.id) : null;
 
   const editContent = (e:any) => {  
+    const range = document.createRange();
+    const selObj = window.getSelection();
+    const data = selObj? selObj.toString() : "없음";
+    const focusOffset = selObj? selObj.focusOffset : null;
+    // e.target.tabindex = 2
+    console.log(selObj, focusOffset, data);
     onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+
+    const caretPosition = getSelectionDirection(e.target) !== 'forward' ? 
+      getSelectionStart(e.target) : getSelectionEnd(e.target)
+    console.log(caretPosition)
+    
+    setCursurPoint(caretPosition);
 
     switch(e.key) {
  
@@ -109,36 +66,40 @@ const Block = ({ blockData }:BlockProps) => {
         break;
 
       case "ArrowUp": 
-        if(blockData.preBlockId) onEditAble(blockData.preBlockId);
+        onEditAble(null, blockData.index - 1);
         break;
 
       case "ArrowDown":
-        if(blockData.nextBlockId) onEditAble(blockData.nextBlockId);
+        onEditAble(null, blockData.index + 1);
+        break;
+      
+      case "ArrowLeft":
+        break;
+      
+      case "ArrowRight":
         break;
 
       case "Backspace":
         if(!e.target.innerHTML) {
-          // onDeleteBlock();
-          if(blockData.preBlockId) onEditAble(blockData.preBlockId);
-          else if(blockData.nextBlockId) onEditAble(blockData.nextBlockId);
+          onDeleteBlock(blockData.id);
+          if(blockData.index > 1) onEditAble(null, blockData.index-1);
           break;
         }
+      
+      case " ":
+        onCommitBlock();
+        break;
 
     }
-
   }
 
-  const contentElement = useMemo(()=> {
-    return blockData.property && blockData.property.contents[0]?
-    blockData.property.contents.reduce(createContentsElement)
-    : ""
-  }, [blockData.property])
-
-  const createMarkup = () => {
+  const createMarkup = useMemo(()=> {
     return {
-      __html: contentElement
+      __html: blockData.property && blockData.property.contents[0]?
+      blockData.property.contents.reduce(createContentsElement)
+      : ""
     }
-  }
+  }, [blockData.property]);
 
   const mouseOver = (e:any) => {
     
@@ -150,6 +111,7 @@ const Block = ({ blockData }:BlockProps) => {
   }
 
   const addContent = (e:any) => {
+    console.log(e.key)
     if(e.key === "Enter") {
       e.preventDefault();
       onAddBlock(blockData.index);
@@ -182,11 +144,28 @@ const Block = ({ blockData }:BlockProps) => {
   //   // }
   // }
 
+  const testMouse = (e:any)=> {
+    const selObj:any = window.getSelection();
+    // console.log(e, selObj.toString(), selObj.focusOffset);
+  }
+
   const focus = (ele: any) => {
-    const selObj = window.getSelection();
+    const selObj:any = window.getSelection();
     const range = document.createRange();
     
     ele.focus();
+    const length = ele.innerText.length;
+    // console.log(selObj.anchorNode,selObj.toString(), selObj.rangeCount);
+    // selObj.selectAllChildren(ele);
+    const caretPosition = getSelectionDirection(ele) !== 'forward' ? 
+      getSelectionStart(ele) : getSelectionEnd(ele)
+
+    setSelectionRange(ele, length, length);
+    console.log(caretPosition, length);
+    
+    // selObj.extend(ele, 3)
+    // selObj.setBaseAndExtent(ele, ele.children.length, ele, ele.children.length);
+    // ele.setSelectionRange(length, length);
     // if(ele.childNodes[0] && blockData.contents.join().length > 0) {
     //   range.setStart(ele.childNodes[0], 3);
     //   range.setEnd(ele.childNodes[0], 4);
@@ -194,32 +173,69 @@ const Block = ({ blockData }:BlockProps) => {
     // console.log(ele.childNodes[0], blockData.contents.join().length);
   }
 
+  const refreshPoint = (ele:any)=> {
+    console.log(cursurPoint, 'commit 됨');
+    setSelectionRange(ele, cursurPoint, cursurPoint);
+  }
+
+
+  useEffect(()=> {
+    if(cursurPoint) {
+      refreshPoint(blockRef.current)
+    }
+    
+  }, [blockData.property])
+
   useEffect(()=> {
    if(getEditAbleId === blockData.id && blockRef.current ) {
-    focus(blockRef.current)
+    focus(blockRef.current);
    }
+
+   if(blockData.type === "container") {
+    if(!blockData.children[0]) onDeleteBlock(blockData.id);
+  }
   },[getEditAbleId]);
 
   return (
     <div data-id={blockData.id} className="block-zone">
-      { 
-        blockData.property && blockData.type !== "container" ?  
-        <div 
-          // data-id={blockData.id}
-          ref={blockRef}
-          className={`bk-block ${blockData.property.type}`}
-          contentEditable={editing}
-          onKeyUp={editContent}
-          onBlur={onCommitBlock}
-          dangerouslySetInnerHTML={createMarkup()} 
-          onMouseUp={mouseOver}
-          onKeyPress={addContent}
-          onFocus={()=>onEditAble(blockData.id)}
-          // onMouseUp={dragData}
-          // onMouseDown={dragData}
-          placeholder="입력해주세요."
-        ></div> : null
+       <div className="bk-block"> 
+        { 
+          blockData.property && blockData.type !== "container" ? 
+            getRigthToEdit? 
+            <>
+            {/* <div 
+            //   ref={blockRef}
+            //   className={`${blockData.property.type}`}
+            //   contentEditable={editing}
+            //   onKeyUp={editContent}
+            //   onBlur={onCommitBlock}
+            //   dangerouslySetInnerHTML={createMarkup()} 
+            //   onMouseUp={mouseOver}
+            //   onKeyPress={addContent}
+            //   onFocus={()=>onEditAble(blockData.id)}
+            //   // onMouseUp={dragData}
+            //   // onMouseDown={dragData}
+            //   placeholder="입력해주세요."
+            // ></div>  */}
+            <ContentEditableEle 
+              dangerouslySetInnerHTML={createMarkup}
+              ref={blockRef}
+              onKeyPress={addContent}
+              onKeyUp={editContent}
+              onFocus={()=>onEditAble(blockData.id)}
+              onBlur={onCommitBlock}
+              onMouseDown={testMouse}
+              onMouseUp={testMouse}
+              placeholder="입력해주세요..."
+            />
+            <button onClick={()=>{onDeleteBlock(blockData.id)}}> 삭제 </button>
+            </>
+            : <div className="bk-block"
+                dangerouslySetInnerHTML={createMarkup}             
+              ></div>
+            : null
         }
+      </div>
           {
             children ? 
             children.map((child)=> 
@@ -229,7 +245,6 @@ const Block = ({ blockData }:BlockProps) => {
               />
             ) : null
           }
-      <button> 삭제 </button>
     </div>
   )
 }

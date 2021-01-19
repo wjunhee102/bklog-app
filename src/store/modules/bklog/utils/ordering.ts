@@ -1,50 +1,39 @@
 import { RawBlockData, BlockData, UUID } from '../../../../types/bklog';
 
+
+type Blocks = RawBlockData<any>[] | BlockData<any>[];
 /**
  * block ordering
  * @param block 
  */
-export default function orderingBlock(block:any): BlockData<any>[] {
-  const rawBlocks: RawBlockData<any>[] | BlockData<any>[] = block.concat();
+export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
+
+  const rawBlocks: Blocks = blocks.concat();
   const newBlocks: BlockData<any>[] = [];
   const deleteCount = 1;
-  let splicePoint: number = 0;
+  const blockLength = blocks.length;
+  
+  let newBlock: BlockData<any> | RawBlockData<any>;
+  let currentPosition: number = 0;
   let blockIndex: number = 1;
   let nextBlockId: UUID | null = null;
   let idStack:UUID[] = [];
 
   /**
    * 첫번째 block 찾기
-   * @param block 
-   * @param idx 
    */
-  const isFirstBlock = (block: RawBlockData<any>, idx: number) => {
-    if(!block.parentId && !block.preBlockId) {
-      splicePoint = idx;
-      nextBlockId = block.nextBlockId;
-      return true;
-    } return false;
-  }
+  const isFirstBlockPoint = (block: RawBlockData<any> | BlockData<any>) => 
+    !block.preBlockId && !block.parentId;
 
   /**
    * 다음 block 찾기
    * @param id 
    */
-  const isNextBlock = (id: string) => (block: RawBlockData<any>, idx: number) => {
-    if(block.id === id) {
-      splicePoint = idx;
-      if(block.children[0]) {
-        nextBlockId = block.children[0];
-        if(block.nextBlockId) idStack.push(block.nextBlockId)
-      } else {
-        nextBlockId = block.nextBlockId
-      }
-      return true;
-    }
-    return false;
-  }
-
-  while(rawBlocks[0]) {
+  const isNextBlockPoint = (id:string) => 
+    (block: RawBlockData<any> | BlockData<any>) => 
+    block.id === id;
+  
+  while(rawBlocks[0] && newBlocks.length < blockLength) {
     let currentId:UUID | undefined | null;
 
     if(nextBlockId) {
@@ -54,21 +43,25 @@ export default function orderingBlock(block:any): BlockData<any>[] {
     }
 
     if(currentId) {
-      newBlocks.push(Object.assign({}, 
-          rawBlocks.filter(isNextBlock(currentId))[0], {
-          index: blockIndex++
-        })
-      );
-    
+      currentPosition = rawBlocks.findIndex(isNextBlockPoint(currentId));
     } else {
-      newBlocks.push(Object.assign({}, 
-        rawBlocks.filter(isFirstBlock)[0], {
-          index: blockIndex++
-        })
-      );
+      currentPosition = rawBlocks.findIndex(isFirstBlockPoint);
     }
-    console.log(blockIndex, newBlocks);
-    rawBlocks.splice(splicePoint, deleteCount);
+
+    newBlock = rawBlocks[currentPosition];
+
+    if(newBlock.children[0] !== undefined) {
+      nextBlockId = newBlock.children[0];
+        if(newBlock.nextBlockId) idStack.push(newBlock.nextBlockId)
+    } else {
+      nextBlockId = newBlock.nextBlockId
+    }
+
+    newBlocks.push(Object.assign({}, newBlock, {
+      index: blockIndex++
+    }));
+  
+    rawBlocks.splice(currentPosition, deleteCount);
   }
   
   return newBlocks;

@@ -34,6 +34,8 @@ function useBklog() {
   
   const getStagedBlock = (blockId: UUID) =>
     state.stage.filter(statedBlock => statedBlock.id === blockId)[0];
+
+  const getRigthToEdit = useMemo(() => state.rightToEdit,[]);
   
   const dispatch = useDispatch();
 
@@ -43,8 +45,8 @@ function useBklog() {
     , [dispatch]);
 
   // edit중인 block focus
-  const onEditAble = useCallback((blockId: UUID) =>
-      dispatch(editAble(blockId))
+  const onEditAble = useCallback((blockId: UUID | null, index?:number) =>
+      dispatch(editAble(blockId, index))
     ,[dispatch]);
 
   const onEditBlock = useCallback((blockId: UUID, blockIndex: number,content: string) =>
@@ -55,13 +57,14 @@ function useBklog() {
       dispatch(commitBlock())
     ,[dispatch]);
 
-  // const onDeleteBlock = useCallback((blockId: UUID) =>
-  //     dispatch(deleteBlock(blockId))
-  //   , [dispatch]);
+  const onDeleteBlock = useCallback((blockId: UUID) =>
+      dispatch(deleteBlock(blockId))
+    , [dispatch]);
 
   return { 
     state, 
     initBlock,
+    getRigthToEdit,
     getChilrenBlock,
     getBlockState,
     getStagedBlocks,
@@ -71,7 +74,7 @@ function useBklog() {
     onEditAble, 
     onEditBlock, 
     onCommitBlock, 
-    // onDeleteBlock
+    onDeleteBlock
   };
 }
 
