@@ -1,3 +1,12 @@
+body {
+  background-color: #333;
+  color: #fff;
+}
+
+.bk-block {
+  display: flex;
+}
+
 .bk-bold {
   font-weight: bold;
 }
@@ -16,7 +25,7 @@
 }
 div[contenteditable=true] {
   border: 1px solid #ddd;
-  color : #333;
+  color : #ccc;
   font-size: 12px;
   width: 300px;
   padding: 5px;

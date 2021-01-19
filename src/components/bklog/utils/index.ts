@@ -56,6 +56,7 @@ export function createContentsElement(accumulator: string, rawContents: any):str
     if(aTag) {
       let preText = text;
       text = `<a href="${aTag}">${preText}</a>`;
+      console.log(text);
     }
   } else {
     text = rawContents[0];

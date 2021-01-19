@@ -5,12 +5,12 @@
     "blocks": [
       {
         "id": "d5cc2725-97ec-494b-bc80-c16f96379e61",
-        "type": "block",
+        "type": "title",
         "parentId": null,
         "preBlockId": null,
         "nextBlockId": "d5cc2725-97ec-494b-bc80-c16f96379e11",
         "property": {
-          "type": "BKlog-h1",
+          "type": "BKlog-title",
           "styles": {
             "color": "black",
             "backgroudColor": "white"

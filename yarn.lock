@@ -1765,11 +1765,6 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
   integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
-"@types/uuidv4@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/uuidv4/-/uuidv4-2.0.0.tgz#9579daf4812281a40c93028012635eed08d7210d"
-  integrity sha512-qMAfgZE8tjisI2/4/rkGvtSYpuI+t/6Q+wa38X3v6RfeaqI1ZM6W6Aye93d1WNPT2SgeFeHVbO+7uEJmIVbiwA==
-
 "@types/yargs-parser@*":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-15.0.0.tgz#cb3f9f741869e20cce330ffbeb9271590483882d"
@@ -8774,6 +8769,11 @@ react-error-overlay@^6.0.7:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
   integrity sha512-TAv1KJFh3RhqxNvhzxj6LeT5NWklP6rDr2a0jaTfsZ5wSZWHOGeqQyejUp3xxLfPt2UpyJEcVQB/zyPcmonNFA==
+
+react-idle-timer@^4.5.1:
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-4.5.1.tgz#ecf13e4b6327f11e2543a4fb730a8457e496339d"
+  integrity sha512-SR1A5XgOfjcXb6JbRHiMremcuLBC1ygkSuMqjwLs98ApM3qfMUfabRgHeXSX7/wK89PF7xRODhm0qQ0hQt+jyw==
 
 react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.9.0:
   version "16.13.1"
