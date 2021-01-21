@@ -31,7 +31,8 @@ function convertType(prop: string):any {
 }
 
 
-export default function updateContents(text:string):any {
+
+function updateContents(text:string):any {
 
   const newContents: any[] = [];
   const textLength: number = text.length;
@@ -223,3 +224,86 @@ export default function updateContents(text:string):any {
 
   return newContents;
 }
+
+function equalsArray(aryA: any[], aryB: any[]): boolean {
+  if(!aryA && !aryB) return true;
+  if(!Array.isArray(aryA) || !Array.isArray(aryB) || aryA.length !== aryB.length ) return false;
+
+  const targetBList = [];
+
+  for(let i = 0; i < aryA.length; i++) {
+    const targetA = JSON.stringify(aryA[i]);
+    if(!i) {
+      for(let ii = 0; ii < aryB.length; ii++) {
+
+        const targetB = JSON.stringify(aryB[ii]);
+        if(targetA === targetB) {
+          
+        } else {
+          targetBList.push(targetB)
+        }
+
+      }
+      if(targetBList.length === aryB.length) return false;
+    } else {
+      const targetBListLength = targetBList.length;
+
+      for(let ii = 0; ii < targetBList.length; ii++) {
+        if(targetBList[ii] === targetA) {
+          targetBList.splice(ii, 1);
+          break;
+        } 
+      }
+
+      if(targetBListLength === targetBList.length) {
+        return false;
+      }
+      
+    }
+  } 
+
+  return targetBList.length? false : true;
+}
+
+
+function addContentsStyle(preTexts: any, startPoint: number, endPoint: number, style: any) {
+  let count = 0;
+  let insertText: any = ["",[]];
+  let newContents = [];
+
+  preTexts.forEach( text => {
+
+    for(let i = 0; i < text[0].length; i++) {
+      if(count >= startPoint && count < endPoint && !insertText[1].includes(style)) {
+        if(!insertText[1].includes(style)) { 
+          newContents.push(insertText);
+          insertText = text[1]? ["", [...text[1], style]] : ["", [style]];
+        } else if(!equalsArray(insertText[1], text[1]? text[1] : []) && i === 0) {
+          newContents.push(insertText);
+          insertText = text[1]?["", [...text[1]]] : ["", []]
+        }
+      } else {
+        if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
+          newContents.push(insertText);
+          insertText = text[1]?["", [...text[1]]] : ["", []]
+        };
+      }
+      insertText[0] += text[0][i];
+      
+      count++;
+    }
+    
+  })
+
+  newContents.push(insertText);
+
+  return newContents.map(content => content[1][0]? content : [content[0]]);
+}
+
+
+const converter = {
+  updateContents,
+  addContentsStyle
+}
+
+export default converter;
