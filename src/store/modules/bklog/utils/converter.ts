@@ -1,17 +1,18 @@
+import { ContentType, TextContents } from '../../../../types/bklog';
+
 const BOLD = "b" as const;
 const ITALY = "i" as const;
 const UNDERBAR = "_" as const;
 const FONT_COLOR = "fc" as const;
 const BACKGROUND_COLOR = "bc" as const;
 const ANCHOR = "a" as const;
+const FONT = "f" as const;
 
 const BK_BOLB = "bk-bold";
 const BK_ITALIC = "bk-italic";
 const BK_UNDER = "bk-underbar";
 const BK_COLOR = "color";
-const BK_BACKGROUND_COLOR = "background";
-
-type ContentType = ["b"] | ["i"] | ["_"] | ["a", string] | ["fc", string] | ["bc", string];
+const BK_BACKGROUND_COLOR = "background-color";
 
 function convertType(prop: string):any {
   switch(prop) {
@@ -30,9 +31,7 @@ function convertType(prop: string):any {
   }
 }
 
-
-
-function updateContents(text:string):any {
+function updateContents(text:string):TextContents[] {
 
   const newContents: any[] = [];
   const textLength: number = text.length;
@@ -131,6 +130,21 @@ function updateContents(text:string):any {
           }
 
           break;
+        
+        // chrome 번역기 동작시 font 태그가 주입될때 오작동 방지
+        case FONT:
+          if(!saveToggle) {
+            if(text[i - 1] === "<") {
+              while(text[i+1] !== ">") {
+                console.log(text[i])
+                i++
+              }
+            }
+          } else {
+            content[0]? content[0] += text[i] : content[0] = text[i];
+          }
+
+          break;
           
         default:
           if(saveToggle) {
@@ -221,7 +235,7 @@ function updateContents(text:string):any {
   if(content[0]) {
     newContents.push(content);
   }
-
+  console.log(newContents);
   return newContents;
 }
 
@@ -265,27 +279,48 @@ function equalsArray(aryA: any[], aryB: any[]): boolean {
   return targetBList.length? false : true;
 }
 
+function arrayFindIndex(array: any[], factor: any): number {
+  const JSONFactor = JSON.stringify(factor);
 
-function addContentsStyle(preTexts: any, startPoint: number, endPoint: number, style: any) {
+  for(let i = 0; i < array.length; i++) {
+    const JSONArray = JSON.stringify(array[i]);
+    if(JSONArray === JSONFactor) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+function addContentsStyle(
+  preTexts: TextContents[], 
+  startPoint: number, 
+  endPoint: number, 
+  style: ContentType
+  ): TextContents[] {
   let count = 0;
   let insertText: any = ["",[]];
   let newContents = [];
 
-  preTexts.forEach( text => {
+  preTexts.forEach( (text: any) => {
 
     for(let i = 0; i < text[0].length; i++) {
-      if(count >= startPoint && count < endPoint && !insertText[1].includes(style)) {
-        if(!insertText[1].includes(style)) { 
+      if(count >= startPoint && count < endPoint) {
+        if(arrayFindIndex(insertText[1], style) === -1) { 
+
           newContents.push(insertText);
           insertText = text[1]? ["", [...text[1], style]] : ["", [style]];
+
         } else if(!equalsArray(insertText[1], text[1]? text[1] : []) && i === 0) {
+
           newContents.push(insertText);
-          insertText = text[1]?["", [...text[1]]] : ["", []]
+          insertText = text[1]?["", [...text[1]]] : ["", []];
+
         }
       } else {
         if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
           newContents.push(insertText);
-          insertText = text[1]?["", [...text[1]]] : ["", []]
+          insertText = text[1]?["", [...text[1]]] : ["", []];
         };
       }
       insertText[0] += text[0][i];
@@ -300,10 +335,65 @@ function addContentsStyle(preTexts: any, startPoint: number, endPoint: number, s
   return newContents.map(content => content[1][0]? content : [content[0]]);
 }
 
+function deleteContentsStyle(
+  preTexts: TextContents[], 
+  startPoint:number, 
+  endPoint:number, 
+  style: ContentType
+  ): TextContents[] {
+  let count = 0;
+  let insertText:any = ["",[]];
+  let newContents = [];
+
+  preTexts.forEach((text: any) => {
+    for(let i = 0; i < text[0].length; i++) {
+
+      if(count >= startPoint && count < endPoint) {
+        let stylePosition = arrayFindIndex(insertText[1], style);
+
+        if(stylePosition > -1) {
+          newContents.push(insertText);
+          const newStyle = [...insertText[1]];
+          newStyle.splice(stylePosition, 1);
+          insertText = ["", [...newStyle]];
+
+        } else if(!equalsArray(insertText[1], text[1]? text[1] : [])) {
+          stylePosition = arrayFindIndex(text[1]? text[1] : [], style);
+          const newStyle = text[1]? [...text[1]] : [];
+          if(stylePosition > -1) {
+            newStyle.splice(stylePosition, 1);
+          } 
+
+          if(!equalsArray(insertText[1], newStyle)) {
+            newContents.push(insertText);
+            insertText = ["", [...newStyle]];
+          }
+
+        }
+      } else {
+        if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
+          newContents.push(insertText);
+          insertText = text[1]? ["", [...text[1]]] : ["", []]
+        };
+      }
+      insertText[0] += text[0][i];
+      
+      count++;
+
+    }
+  });
+
+  if(insertText[0]) {
+    newContents.push(insertText);
+  }
+
+  return newContents.map(content => content[1][0]? content : [content[0]]);
+}
 
 const converter = {
   updateContents,
-  addContentsStyle
+  addContentsStyle,
+  deleteContentsStyle
 }
 
 export default converter;
