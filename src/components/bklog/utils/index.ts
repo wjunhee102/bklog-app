@@ -11,7 +11,7 @@ const BK_BOLB = "bk-bold";
 const BK_ITALIC = "bk-italic";
 const BK_UNDER = "bk-underbar";
 
-export function createContentsElement(accumulator: string, rawContents: any):string {
+function contentsElement(rawContents: any) {
   let text;
   let className:string | null = null;
   let styles:string | null = null;
@@ -64,7 +64,11 @@ export function createContentsElement(accumulator: string, rawContents: any):str
     text = rawContents[0];
   }
 
-  return  accumulator + text;
+  return text;
+}
+
+export function createContentsElement(accumulator: string, rawContents: any, currentIndex: number):string {
+  return currentIndex === 1?  contentsElement(accumulator) + contentsElement(rawContents) : accumulator + contentsElement(rawContents);
 }
 
 export function findTextStyle(
