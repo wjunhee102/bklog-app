@@ -1,3 +1,5 @@
+import { TextContents, ContentType } from "../../../types/bklog";
+
 const BOLD = "b" as const;
 const ITALY = "i" as const;
 const UNDERBAR = "_" as const;
@@ -41,7 +43,7 @@ export function createContentsElement(accumulator: string, rawContents: any):str
 
         case BACKGROUND_COLOR:
           if(content[1][0] === "#") {
-            styles = styles? styles + ` backgroundColor: ${content[1]};` : `backgroundColor: ${content[1]};`;
+            styles = styles? styles + ` background-color: ${content[1]};` : `background-color: ${content[1]};`;
           } else {
             className = className? className + ` bk-bc-${content[1]}` : `bk-bc-${content[1]}`
           }
@@ -63,4 +65,24 @@ export function createContentsElement(accumulator: string, rawContents: any):str
   }
 
   return  accumulator + text;
+}
+
+export function findTextStyle(
+  textContents: TextContents[], 
+  position: number
+  ): ContentType[] | null | undefined {
+
+  let count: number = 0;
+  let style: ContentType[] | null | undefined = null;
+
+  for(let i = 0; i < textContents.length; i++) {
+    count += textContents[i][0].length;
+    
+    if(count >= position) {
+      style = textContents[i].length === 2? textContents[i][1] : null;
+      break;
+    } 
+  }
+
+  return style;
 }
