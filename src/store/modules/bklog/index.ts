@@ -1,13 +1,20 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import {
+  ContentType,
+  TextContents,
   TextProps,
   BlockData,
-  UUID,
-  ContentType
+  UUID
 } from '../../../types/bklog';
 
-import { updateContents, orderingBlock, insertChild } from './utils';
+import { 
+  updateContents, 
+  addContentsStyle,
+  deleteContentsStyle,
+  orderingBlock, 
+  insertChild 
+} from './utils';
 
 import { page } from '../../../data/db.json';
 
@@ -23,18 +30,22 @@ const DELETE_BLOCK = 'bklog/DELETE_BLOCK' as const;
 const UPDATE_BLOCK = 'bklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
 const SWITCH_BLOCK = 'bklog/SWITCH_BLOCK' as const;
 
+const CHANGE_TEXT_STYLE = 'bklog/CHANGE_TEXT_STYLE' as const;
+const DEL_CONTENTS_STYLE = 'bklog/DEL_CONTENTS_STYLE' as const;
+
 interface EditedBlock {
   blockId: UUID;
   blockIndex: number;
   text: string;
 }
 
-export function addBlock(blockIndex?: number, type?: string) {
+export function addBlock(blockIndex?: number, type?: string, block?: BlockData<any>) {
   return {
     type: ADD_BLOCK,
     payload: {
       preBlockIndex: blockIndex,
-      newBlockType: type
+      newBlockType: type,
+      blockData: block
     }
   }
 }
@@ -88,18 +99,44 @@ export function updateBlock(id: UUID) {
   }
 }
 
+export type orderType = "add" | "del" | "color" | "link"  
+
+export function changeTextStyle(
+  index: number, 
+  style: ContentType, 
+  startPoint: number,
+  endPoint: number,
+  order: orderType
+  ) {
+  return {
+    type: CHANGE_TEXT_STYLE,
+    payload: {
+      changedTextStyleBlockIndex: index,
+      styleType: style,
+      startPoint,
+      endPoint,
+      order
+    }
+  }
+}
+
 export type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof editAble>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof updateBlock>
+  | ReturnType<typeof changeTextStyle>
 ;
 
 interface StagedBlock{
   id: UUID;
   contents: any;
   blockIndex: number;
+}
+
+interface Revert {
+  
 }
 
 export interface BklogState {
@@ -128,7 +165,7 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
   switch(action.type) {
 
     case ADD_BLOCK:
-      const { preBlockIndex, newBlockType } = action.payload;
+      const { preBlockIndex, newBlockType, blockData } = action.payload;
 
       let blocks = [...state.blocks];
       const preBlock: BlockData<any> | null = preBlockIndex? 
@@ -141,7 +178,14 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
         blocks[nextBlockPosition] : null;
 
       // block factory 함수를 만들어야 함.
-      const newBlock: BlockData<any> = {
+      const newBlock: BlockData<any> = blockData? Object.assign({}, 
+        blockData, {
+          id: uuidv4(),
+          parentId: null,
+          preBlockId: preBlock? preBlock.id : blocks[blocks.length - 1].id,
+          nextBlockId: nextBlock? nextBlock.id : null,
+          children: []
+        }) : {
         index: 0,
         id: uuidv4(),
         type: "block",
@@ -225,6 +269,86 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
       return Object.assign({}, state, {
         stage: preStagedBlock? [...preStagedBlock, newStagedBlock] : [newStagedBlock]
       })
+
+    case CHANGE_TEXT_STYLE:
+      const { 
+        changedTextStyleBlockIndex, 
+        styleType, 
+        startPoint, 
+        endPoint,
+        order
+       } = action.payload;
+      const changedTextStyleBlock = state.blocks[changedTextStyleBlockIndex -1];
+      let changedTextContents: TextContents[];
+
+      switch(order) {
+        case "add":
+          changedTextContents = addContentsStyle(
+            changedTextStyleBlock.property.contents,
+            startPoint,
+            endPoint,
+            styleType
+          );
+          break;
+
+        case "del":
+          changedTextContents = deleteContentsStyle(
+            changedTextStyleBlock.property.contents,
+            startPoint,
+            endPoint,
+            styleType
+          );
+          break;
+
+        case "color":
+          changedTextContents = addContentsStyle(
+            deleteContentsStyle(
+              changedTextStyleBlock.property.contents,
+              startPoint,
+              endPoint,
+              styleType
+            ),
+            startPoint,
+            endPoint,
+            styleType
+          );
+          break;
+
+        case "link":
+          changedTextContents = addContentsStyle(
+            deleteContentsStyle(
+              changedTextStyleBlock.property.contents,
+              startPoint,
+              endPoint,
+              styleType
+            ),
+            startPoint,
+            endPoint,
+            styleType
+          );
+          break;
+
+        default: 
+          changedTextContents = changedTextStyleBlock.property.contents;
+      }
+
+      const newBLock = Object.assign({}, 
+        changedTextStyleBlock, {
+          property: Object.assign({}, 
+            changedTextStyleBlock.property, {
+              contents: changedTextContents
+          })
+        });
+      
+      console.log(changedTextContents);
+      
+      return Object.assign({}, state, {
+        blocks: state.blocks.map((block)=> 
+          block.index === changedTextStyleBlockIndex? 
+          newBLock : block  
+        )
+      })
+      
       
     case COMMIT_BLOCK: 
 
