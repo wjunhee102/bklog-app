@@ -307,8 +307,9 @@ function addContentsStyle(
     for(let i = 0; i < text[0].length; i++) {
       if(count >= startPoint && count < endPoint) {
         if(arrayFindIndex(insertText[1], style) === -1) { 
-
-          newContents.push(insertText);
+          if(insertText[0]) {
+            newContents.push(insertText);
+          }
           insertText = text[1]? ["", [...text[1], style]] : ["", [style]];
 
         } else if(!equalsArray(insertText[1], text[1]? text[1] : []) && i === 0) {
@@ -324,19 +325,20 @@ function addContentsStyle(
         }
       } else {
         if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
-          newContents.push(insertText);
+          if(insertText[0]) {
+            newContents.push(insertText);
+          }
           insertText = text[1]?["", [...text[1]]] : ["", []];
         };
       }
       insertText[0] += text[0][i];
-      
       count++;
     }
     
   })
 
   newContents.push(insertText);
-  console.log(newContents);
+  console.log("ddd", newContents.map(content => content[1][0]? content : [content[0]]));
 
   return newContents.map(content => content[1][0]? content : [content[0]]);
 }
@@ -358,7 +360,9 @@ function deleteContentsStyle(
         let stylePosition = arrayFindIndex(insertText[1], style);
 
         if(stylePosition > -1) {
-          newContents.push(insertText);
+          if(insertText[0]) {
+            newContents.push(insertText);
+          }
           const newStyle = [...insertText[1]];
           newStyle.splice(stylePosition, 1);
           insertText = ["", [...newStyle]];
@@ -371,14 +375,18 @@ function deleteContentsStyle(
           } 
 
           if(!equalsArray(insertText[1], newStyle)) {
-            newContents.push(insertText);
+            if(insertText[0]) {
+              newContents.push(insertText);
+            }
             insertText = ["", [...newStyle]];
           }
 
         }
       } else {
         if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
-          newContents.push(insertText);
+          if(insertText[0]) {
+            newContents.push(insertText);
+          }
           insertText = text[1]? ["", [...text[1]]] : ["", []]
         };
       }
