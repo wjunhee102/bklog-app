@@ -1,11 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export type ContentType = ["b"] | ["i"] | ["_"] | ["a", string] | ["fc", string] | ["bc", string];
-
 /**
  * UUID v4
  */
 export type UUID = ReturnType<typeof uuidv4>
+
+/**
+ * text block types
+ */
+export type ContentType = ["b"] 
+  | ["i"] 
+  | ["_"] 
+  | ["a", string] 
+  | ["fc", string] 
+  | ["bc", string];
+
+export type TextContents = [string] | [string, ContentType[]];
 
 /**
  * Block에서 외부로 보여지는 속성
@@ -22,7 +32,7 @@ export interface TextProps {
     color: string | null;
     backgroundColor: string | null;
   }
-  contents: any;
+  contents: TextContents[];
 }
 
 export interface RawBlockData<T> {
