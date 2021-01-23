@@ -280,10 +280,10 @@ function equalsArray(aryA: any[], aryB: any[]): boolean {
 }
 
 function arrayFindIndex(array: any[], factor: any): number {
-  const JSONFactor = JSON.stringify(factor);
+  const JSONFactor = JSON.stringify(factor[0]);
 
   for(let i = 0; i < array.length; i++) {
-    const JSONArray = JSON.stringify(array[i]);
+    const JSONArray = JSON.stringify(array[i][0]);
     if(JSONArray === JSONFactor) {
       return i;
     }
@@ -314,7 +314,12 @@ function addContentsStyle(
         } else if(!equalsArray(insertText[1], text[1]? text[1] : []) && i === 0) {
 
           newContents.push(insertText);
-          insertText = text[1]?["", [...text[1]]] : ["", []];
+
+          if(!text[1] || arrayFindIndex(text[1], style) === -1) {
+            insertText = text[1]?["", [...text[1], style]] : ["", [style]];
+          } else {
+            insertText = ["", [...text[1]]];
+          }
 
         }
       } else {
@@ -331,6 +336,7 @@ function addContentsStyle(
   })
 
   newContents.push(insertText);
+  console.log(newContents);
 
   return newContents.map(content => content[1][0]? content : [content[0]]);
 }
