@@ -56,9 +56,7 @@ function updateContents(text:string):TextContents[] {
         case "<": 
   
           if(i && text[i+1] === "/" && (text[i+6] === ">" || text[i+2] === "a")) {
-            if(!content[0]) {
-              // newContents.pop(); 이걸 왜 넣은거지??
-            } else {
+            if(content[0]) {
               newContents.push(content);
               content = [];
             }
@@ -312,8 +310,11 @@ function addContentsStyle(
           }
           insertText = text[1]? ["", [...text[1], style]] : ["", [style]];
 
-        } else if(!equalsArray(insertText[1], text[1]? text[1] : []) && i === 0) {
-
+        } else if(
+          !equalsArray(insertText[1], text[1]? text[1] : [])
+          && !equalsArray(insertText[1], text[1]? [...text[1], style] : [style])
+          && i === 0) {
+ 
           newContents.push(insertText);
 
           if(!text[1] || arrayFindIndex(text[1], style) === -1) {
