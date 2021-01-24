@@ -14,6 +14,10 @@ const BK_UNDER = "bk-underbar";
 const BK_COLOR = "color";
 const BK_BACKGROUND_COLOR = "background-color";
 
+const FONT_WEIGHT = "font-weight";
+const FONT_STYLE = "font-style";
+const TEXT_DECORATION = "text-decoration";
+
 function convertType(prop: string):any {
   switch(prop) {
     case BK_BOLB:
@@ -26,6 +30,19 @@ function convertType(prop: string):any {
       return FONT_COLOR;
     case BK_BACKGROUND_COLOR:
       return BACKGROUND_COLOR;
+    default:
+      return null;
+  }
+}
+
+function convertProperty(prop: string):any {
+  switch(prop) {
+    case "600":
+      return BOLD;
+    case "italic":
+      return ITALY;
+    case "underline":
+      return UNDERBAR;
     default:
       return prop;
   }
@@ -165,7 +182,10 @@ function updateContents(text:string):TextContents[] {
         case ";":
 
           if(type && property) {
-            type.push(property);
+            type.push(convertProperty(property));
+            console.log("type1", type);
+            if(!type[0]) type.shift();
+            console.log("type2", type);
             propertys.push(type);
             type = [];
             property = null;
