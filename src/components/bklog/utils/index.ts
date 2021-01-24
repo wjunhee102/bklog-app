@@ -11,7 +11,7 @@ const BK_BOLB = "bk-bold";
 const BK_ITALIC = "bk-italic";
 const BK_UNDER = "bk-underbar";
 
-function contentsElement(rawContents: any) {
+export function contentsElement(rawContents: any) {
   let text;
   let className:string | null = null;
   let styles:string | null = null;
@@ -22,31 +22,26 @@ function contentsElement(rawContents: any) {
       switch(content[0]) {
 
         case BOLD:
-          className = className? className + ` ${BK_BOLB}` : BK_BOLB;
+          // className = className? className + ` ${BK_BOLB}` : BK_BOLB;
+          styles = styles? styles + " font-weight: 600;" : "font-weight: 600;"
           break;
 
         case ITALY:
-          className = className? className + ` ${BK_ITALIC}` : BK_ITALIC;
+          // className = className? className + ` ${BK_ITALIC}` : BK_ITALIC;
+          styles = styles? styles + " font-style: italic;" : "font-style: italic;"
           break;
 
         case UNDERBAR:
-          className = className? className + ` ${BK_UNDER}` : BK_UNDER;
+          // className = className? className + ` ${BK_UNDER}` : BK_UNDER;
+          styles = styles? styles + " text-decoration: underline;" : "text-decoration: underline;"
           break;
 
         case FONT_COLOR:
-          if(content[1][0] === "#") {
-            styles = styles? styles + ` color: ${content[1]};` : `color: ${content[1]};`;
-          } else {
-            className = className? className + ` bk-fc-${content[1]}` : `bk-fc-${content[1]}`
-          }
+          styles = styles? styles + ` color: ${content[1]};` : `color: ${content[1]};`;
           break;
 
         case BACKGROUND_COLOR:
-          if(content[1][0] === "#") {
-            styles = styles? styles + ` background-color: ${content[1]};` : `background-color: ${content[1]};`;
-          } else {
-            className = className? className + ` bk-bc-${content[1]}` : `bk-bc-${content[1]}`
-          }
+          styles = styles? styles + ` background-color: ${content[1]};` : `background-color: ${content[1]};`;
           break;
           
         case ANCHOR:
@@ -68,6 +63,7 @@ function contentsElement(rawContents: any) {
 }
 
 export function createContentsElement(accumulator: string, rawContents: any, currentIndex: number):string {
+  console.log(rawContents)
   return currentIndex === 1?  contentsElement(accumulator) + contentsElement(rawContents) : accumulator + contentsElement(rawContents);
 }
 
