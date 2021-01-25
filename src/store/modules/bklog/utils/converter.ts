@@ -17,6 +17,7 @@ const BK_BACKGROUND_COLOR = "background-color";
 const FONT_WEIGHT = "font-weight";
 const FONT_STYLE = "font-style";
 const TEXT_DECORATION = "text-decoration";
+const BOLDER_BOTTOM = "border-bottom";
 
 function convertType(prop: string):any {
   switch(prop) {
@@ -30,6 +31,8 @@ function convertType(prop: string):any {
       return FONT_COLOR;
     case BK_BACKGROUND_COLOR:
       return BACKGROUND_COLOR;
+    case BOLDER_BOTTOM:
+      return UNDERBAR;
     default:
       return null;
   }
@@ -41,8 +44,6 @@ function convertProperty(prop: string):any {
       return BOLD;
     case "italic":
       return ITALY;
-    case "underline":
-      return UNDERBAR;
     default:
       return prop;
   }
@@ -146,12 +147,21 @@ function updateContents(text:string):TextContents[] {
 
           break;
         
+        case "&":
+          if(text[i+1] === "n" && text[i+5] === ";") {
+            i += 5;
+            content[0]? content[0] += " " : content[0] = " ";
+          } else {
+            content[0]? content[0] += text[i] : content[0] = text[i];
+          }
+  
+          break;
+        
         // chrome 번역기 동작시 font 태그가 주입될때 오작동 방지
         case FONT:
           if(!saveToggle) {
             if(text[i - 1] === "<") {
               while(text[i+1] !== ">") {
-                console.log(text[i])
                 i++
               }
             }
@@ -183,9 +193,8 @@ function updateContents(text:string):TextContents[] {
 
           if(type && property) {
             type.push(convertProperty(property));
-            console.log("type1", type);
             if(!type[0]) type.shift();
-            console.log("type2", type);
+            if(type[0] === UNDERBAR) type.pop();
             propertys.push(type);
             type = [];
             property = null;
@@ -253,11 +262,11 @@ function updateContents(text:string):TextContents[] {
   if(content[0]) {
     newContents.push(content);
   }
-  console.log(newContents);
+
   return newContents;
 }
 
-function equalsArray(aryA: any[], aryB: any[]): boolean {
+export function equalsArray(aryA: any[], aryB: any[]): boolean {
   if(!aryA && !aryB) return true;
   if(!Array.isArray(aryA) || !Array.isArray(aryB) || aryA.length !== aryB.length ) return false;
 
@@ -297,7 +306,7 @@ function equalsArray(aryA: any[], aryB: any[]): boolean {
   return targetBList.length? false : true;
 }
 
-function arrayFindIndex(array: any[], factor: any): number {
+export function arrayFindIndex(array: any[], factor: any): number {
   const JSONFactor = JSON.stringify(factor[0]);
 
   for(let i = 0; i < array.length; i++) {
@@ -323,35 +332,61 @@ function addContentsStyle(
   preTexts.forEach( (text: any) => {
 
     for(let i = 0; i < text[0].length; i++) {
-      if(count >= startPoint && count < endPoint) {
-        if(arrayFindIndex(insertText[1], style) === -1) { 
-          if(insertText[0]) {
-            newContents.push(insertText);
-          }
-          insertText = text[1]? ["", [...text[1], style]] : ["", [style]];
+      if(count === startPoint 
+        || (count + 1) === endPoint
+        || (count >= startPoint && count < endPoint && i === 0)
+      ) {
+        if(arrayFindIndex(insertText[1], style) === -1) {
 
-        } else if(
-          !equalsArray(insertText[1], text[1]? text[1] : [])
-          && !equalsArray(insertText[1], text[1]? [...text[1], style] : [style])
-          && i === 0) {
- 
-          newContents.push(insertText);
+          if(insertText[0]) newContents.push(insertText);
 
-          if(!text[1] || arrayFindIndex(text[1], style) === -1) {
-            insertText = text[1]?["", [...text[1], style]] : ["", [style]];
+          if(text[1]) {
+            if(arrayFindIndex(text[1], style) !== -1) {
+              insertText = ["", [...text[1]]];
+            } else {
+              insertText = ["", [...text[1], style]];
+            };
           } else {
-            insertText = ["", [...text[1]]];
-          }
+            insertText = ["", [style]];
+          };
 
-        }
-      } else {
+        } else {
+          
+          if(text[1]) {
+            if(arrayFindIndex(text[1], style) !== -1) {
+
+              if(!equalsArray(insertText[1], text[1])) {
+                newContents.push(insertText);
+                insertText = ["", [...text[1]]];
+              };
+
+            } else {
+
+              if(!equalsArray(insertText[1], [...text[1], style])) {
+                newContents.push(insertText);
+                insertText = ["", [...text[1], style]];
+              };
+
+            };
+          } else {
+            
+            if(!equalsArray(insertText[1], [style])) {
+              newContents.push(insertText);
+              insertText = ["", [style]];
+            };
+
+          };
+        };
+
+      } else if(count === endPoint || i === 0){
         if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
           if(insertText[0]) {
             newContents.push(insertText);
           }
           insertText = text[1]?["", [...text[1]]] : ["", []];
         };
-      }
+      };
+
       insertText[0] += text[0][i];
       count++;
     }
@@ -359,7 +394,6 @@ function addContentsStyle(
   })
 
   newContents.push(insertText);
-  console.log("ddd", newContents.map(content => content[1][0]? content : [content[0]]));
 
   return newContents.map(content => content[1][0]? content : [content[0]]);
 }
@@ -377,37 +411,68 @@ function deleteContentsStyle(
   preTexts.forEach((text: any) => {
     for(let i = 0; i < text[0].length; i++) {
 
-      if(count >= startPoint && count < endPoint) {
-        let stylePosition = arrayFindIndex(insertText[1], style);
+      if(count === startPoint 
+        || (count + 1) === endPoint
+        || (count > startPoint && count < endPoint && i === 0)
+      ) {
+        
+        let stylePosition: number;
 
-        if(stylePosition > -1) {
-          if(insertText[0]) {
-            newContents.push(insertText);
-          }
-          const newStyle = [...insertText[1]];
-          newStyle.splice(stylePosition, 1);
-          insertText = ["", [...newStyle]];
+        if(text[1]) {
+          if(equalsArray(insertText[1], text[1])) {
+            stylePosition = arrayFindIndex(insertText[1], style);
 
-        } else if(!equalsArray(insertText[1], text[1]? text[1] : [])) {
-          stylePosition = arrayFindIndex(text[1]? text[1] : [], style);
-          const newStyle = text[1]? [...text[1]] : [];
-          if(stylePosition > -1) {
-            newStyle.splice(stylePosition, 1);
-          } 
-
-          if(!equalsArray(insertText[1], newStyle)) {
-            if(insertText[0]) {
+            if(stylePosition !== -1) {
               newContents.push(insertText);
-            }
-            insertText = ["", [...newStyle]];
-          }
+              const newStyle = [...insertText[1]];
+              newStyle.splice(stylePosition, 1);
+              insertText = ["", [...newStyle]];
+            } 
 
-        }
-      } else {
-        if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
-          if(insertText[0]) {
-            newContents.push(insertText);
+          } else {
+            const textStylePosition = arrayFindIndex(text[1], style);
+            const newText = [...text[1]];
+            stylePosition = arrayFindIndex(insertText[1], style);
+            
+            if(stylePosition !== -1) {
+              if(insertText[0]) newContents.push(insertText);
+              const newStyle = [...insertText[1]];
+
+              if(textStylePosition !== -1) {
+                newText.splice(textStylePosition, 1);
+                insertText = ["", [...newText]];
+              } else {
+                insertText = ["", [...text[1]]];
+              }
+
+            } else {
+
+              if(textStylePosition !== -1) {
+                newText.splice(textStylePosition, 1);
+
+                if(!equalsArray(insertText[1], newText)) {
+                  if(insertText[0]) newContents.push(insertText);
+                  insertText = ["", [...newText]];
+                }
+
+              } else {
+                if(!equalsArray(insertText[1], text[1])) {
+                  if(insertText[0]) newContents.push(insertText);
+                  insertText = ["", [...text[1]]];
+                }
+              }
+              
+            }
+
+
           }
+        } else if(insertText[1][0]){
+          newContents.push(insertText);
+          insertText = ["", []];
+        }
+      } else if(count === endPoint || i === 0) {
+        if(!equalsArray(insertText[1], text[1]? text[1] : [])) { 
+          if(insertText[0]) newContents.push(insertText);
           insertText = text[1]? ["", [...text[1]]] : ["", []]
         };
       }
