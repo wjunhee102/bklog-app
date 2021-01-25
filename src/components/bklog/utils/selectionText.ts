@@ -8,11 +8,11 @@
 
 export function isAfter(container:any, offset:any, node:any):any {
   var c = node;
-  while (c.parentNode != container) {
+  while (c.parentNode !== container) {
     c = c.parentNode;
   }
   var i = offset;
-  while (c != null && i > 0) {
+  while (c !== null && i > 0) {
     c = c.previousSibling;
     i -= 1;
   }

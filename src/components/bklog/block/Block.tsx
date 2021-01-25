@@ -20,6 +20,7 @@ import {
 } from '../utils/selectionText';
 
 import ContentEditableEle from './ContentEditableEle';
+import TextStyleToggle from './TextStyleToggle';
 
 import '../block.css';
 
@@ -45,8 +46,7 @@ const Block = ({ blockData }:BlockProps) => {
     getChilrenBlock,
     onEditAble,
     onEditBlock,
-    onCommitBlock,
-    onChangeTextStyle
+    onCommitBlock
   } = useBKlog();
 
   const createMarkup = useMemo(()=> {
@@ -195,8 +195,8 @@ const Block = ({ blockData }:BlockProps) => {
   }, [blockData.property])
 
   useEffect(()=> {
-    if(getEditAbleId === blockData.id && blockRef.current) {
-      handleFocus(blockRef.current);
+    if(getEditAbleId === blockData.id) {
+      if(blockRef.current) handleFocus(blockRef.current);
     }
 
     if(blockData.type === "container") {
@@ -220,7 +220,7 @@ const Block = ({ blockData }:BlockProps) => {
 
   return (
     <div 
-      data-id={blockData.id} 
+      data-index={blockData.index} 
       className="block-zone"
     >
        <div 
@@ -243,12 +243,11 @@ const Block = ({ blockData }:BlockProps) => {
         <button onClick={()=>{onDeleteBlock(blockData.id)}}> 삭제 </button>
         {
           styleToggle? 
-          <TextStyleMenu
+          <TextStyleToggle
             blockIndex={blockData.index}
             startPosition={cursorStart}
             endPosition={cursorEnd}
-            currentStyles={findTextStyle(blockData.property.contents, cursorStart + 1)}
-            setStyleToggle={setStyleToggle}
+            contents={blockData.property.contents}
             reBlockFocus={reBlockFocus}
           /> : null
         }
@@ -262,49 +261,6 @@ const Block = ({ blockData }:BlockProps) => {
               />
             ) : null
           }
-    </div>
-  )
-}
-
-interface TextStyleMenuProps {
-  blockIndex: number;
-  startPosition: number;
-  endPosition: number;
-  currentStyles:  ContentType[] | null | undefined;
-  setStyleToggle: React.Dispatch<React.SetStateAction<boolean>>;
-  reBlockFocus: any;
-}
-
-function TextStyleMenu({
-  blockIndex, 
-  startPosition,
-  endPosition,
-  currentStyles,
-  setStyleToggle,
-  reBlockFocus
-}: TextStyleMenuProps) {
-  const { onChangeTextStyle, onEditAble } = useBKlog();
-
-
-  const handleBold = () => {
-    onChangeTextStyle(
-      blockIndex, 
-      ["b"],
-      startPosition, 
-      endPosition,
-      "add"
-    )
-    reBlockFocus();
-  }
-
-  return (
-    <div 
-      className="bk-style-toggles"
-    >
-      <button onClick={handleBold} className="bk-style-toggle">B</button>
-      <button className="bk-style-toggle">I</button>
-      <button className="bk-style-toggle">_</button>
-      <button className="bk-style-toggle">COLOR</button>   
     </div>
   )
 }

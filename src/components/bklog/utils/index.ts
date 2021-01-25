@@ -1,4 +1,8 @@
-import { TextContents, ContentType } from "../../../types/bklog";
+import { TextContents, ContentType } from '../../../types/bklog';
+import { 
+  equalsArray, 
+  arrayFindIndex 
+} from '../../../store/modules/bklog/utils/converter';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -11,6 +15,11 @@ const BK_BOLB = "bk-bold";
 const BK_ITALIC = "bk-italic";
 const BK_UNDER = "bk-underbar";
 
+export const arrayUtils = {
+  equalsArray,
+  arrayFindIndex
+};
+
 export function contentsElement(rawContents: any) {
   let text;
   let className:string | null = null;
@@ -22,18 +31,15 @@ export function contentsElement(rawContents: any) {
       switch(content[0]) {
 
         case BOLD:
-          // className = className? className + ` ${BK_BOLB}` : BK_BOLB;
           styles = styles? styles + " font-weight: 600;" : "font-weight: 600;"
           break;
 
         case ITALY:
-          // className = className? className + ` ${BK_ITALIC}` : BK_ITALIC;
           styles = styles? styles + " font-style: italic;" : "font-style: italic;"
           break;
 
         case UNDERBAR:
-          // className = className? className + ` ${BK_UNDER}` : BK_UNDER;
-          styles = styles? styles + " text-decoration: underline;" : "text-decoration: underline;"
+          styles = styles? styles + " border-bottom: 0.05em solid;" : "border-bottom: 0.05em solid;"
           break;
 
         case FONT_COLOR:
@@ -77,8 +83,8 @@ export function findTextStyle(
 
   for(let i = 0; i < textContents.length; i++) {
     count += textContents[i][0].length;
-    
-    if(count >= position) {
+    console.log(count, position);
+    if(count > position) {
       style = textContents[i].length === 2? textContents[i][1] : null;
       break;
     } 

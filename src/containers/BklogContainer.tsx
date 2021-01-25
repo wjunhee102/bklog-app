@@ -1,7 +1,7 @@
 import React from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import useBKlog from '../hooks/useBKlog';
-import Block from '../components/bklog/Block';
+import Block from '../components/bklog/block';
 
 import { BlockData } from '../types/bklog';
 
@@ -44,7 +44,7 @@ function BklogContainer() {
     console.log('last active', getLastActiveTime());
     if(state.stage[0]) {
       console.log('commit');
-      onCommitBlock();
+      // onCommitBlock();
     }
   }
   const handleClick = () => {

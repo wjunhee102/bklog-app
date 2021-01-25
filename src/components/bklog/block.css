@@ -29,4 +29,15 @@ div[contenteditable=true] {
   font-size: 12px;
   width: 300px;
   padding: 5px;
+  word-wrap:break-word;
+  white-space: pre-wrap;
+}
+
+.bk-style-toggles {
+  display: block;
+}
+
+.bk-textStyleToggle.del{
+  background-color: rgb(36, 142, 230);
+  color: rgb(224, 196, 36);
 }

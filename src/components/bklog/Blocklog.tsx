@@ -28,8 +28,6 @@ interface BlockProps {
 
 function Block({blockData}:BlockProps) {
 
-  const [ editing, setEditing ] = useState<boolean>(true);
-
   const state:BlocklogState = useSelector(( state: RootState) => state.blocklog);
 
   const dispatch = useDispatch();  
@@ -161,11 +159,11 @@ function Block({blockData}:BlockProps) {
         ref={blockRef}
         className={blockData.type}
         dangerouslySetInnerHTML={createMarkup()}  
-        contentEditable={editing}
+        contentEditable={true}
         onKeyUp={editContent}
         onKeyPress={addContent}
         onFocus={onEditable}
-        // onBlur={onCommitBlock}
+        onBlur={onCommitBlock}
         onMouseUp={dragData}
         onClick={onEditable}
         onMouseDown={dragData}

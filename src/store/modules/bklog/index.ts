@@ -147,7 +147,6 @@ export interface BklogState {
   stage: StagedBlock[];
   rightToEdit: boolean;
 }
-console.log("newOrder",orderingBlock(page.blocks))
 
 const initialState:BklogState = ((): BklogState => {
   return {
@@ -339,8 +338,6 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
               contents: changedTextContents
           })
         });
-      
-      console.log(changedTextContents);
       
       return Object.assign({}, state, {
         blocks: state.blocks.map((block)=> 

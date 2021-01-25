@@ -7,11 +7,14 @@ import {
   editBlock,
   commitBlock,
   deleteBlock,
-  BklogState
+  changeTextStyle,
+  BklogState,
+  orderType
 } from '../store/modules/bklog';
 
 import {
   UUID,
+  ContentType,
   BlockData
 } from '../types/bklog';
 
@@ -40,9 +43,11 @@ function useBklog() {
   const dispatch = useDispatch();
 
   // Block 추가
-  const onAddBlock = useCallback((blockIndex?: number, type?: string) => 
-      dispatch(addBlock(blockIndex, type))
-    , [dispatch]);
+  const onAddBlock = useCallback((
+      blockIndex?: number, 
+      type?: string, 
+      blockData?: BlockData<any>
+    ) => dispatch(addBlock(blockIndex, type, blockData)), [dispatch]);
 
   // edit중인 block focus
   const onEditAble = useCallback((blockId: UUID | null, index?:number) =>
@@ -61,6 +66,16 @@ function useBklog() {
       dispatch(deleteBlock(blockId))
     , [dispatch]);
 
+  const onChangeTextStyle = useCallback((
+    index: number, 
+    style: ContentType,
+    startPoint: number,
+    endPoint: number,
+    order: orderType
+    ) => 
+      dispatch(changeTextStyle(index, style, startPoint, endPoint, order))
+    , [dispatch]);
+
   return { 
     state, 
     initBlock,
@@ -74,7 +89,8 @@ function useBklog() {
     onEditAble, 
     onEditBlock, 
     onCommitBlock, 
-    onDeleteBlock
+    onDeleteBlock,
+    onChangeTextStyle
   };
 }
 

@@ -1,15 +1,14 @@
 import React from 'react';
 import Home from './pages/Home';
 import Editor from './components/editor/index';
-import BKPage from './pages/BKPage';
-import TaskModule from './containers/TaskModule';
+import BkPage from './pages/BkPage';
 
 function App() {
   return (
     <div className="App">
       <Home />
       <Editor />
-      <BKPage />
+      <BkPage />
     </div>
   );
 }

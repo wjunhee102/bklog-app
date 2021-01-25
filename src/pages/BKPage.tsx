@@ -1,13 +1,13 @@
 import React from 'react';
 
-import BlocklogContainer from '../containers/BlocklogContainer';
+import BklogContainer from '../containers/BklogContainer';
 
-function BKPage() {
+function BkPage() {
   return (
     <div className="bk-page">
-      <BlocklogContainer />
+      <BklogContainer />
     </div>
   )
 }
 
-export default BKPage;
+export default BkPage;
