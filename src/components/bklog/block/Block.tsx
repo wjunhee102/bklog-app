@@ -28,7 +28,7 @@ interface BlockProps {
   blockData: BlockData<any>;
 }
 
-const Block = ({ blockData }:BlockProps) => {
+function Block({ blockData }:BlockProps) {
 
   const [ editing, setEditing ] = useState<boolean>(true);
   const [ cursorStart, setCursorStart ] = useState<number>(0);
@@ -56,8 +56,6 @@ const Block = ({ blockData }:BlockProps) => {
       : blockData.property.contents.reduce(createContentsElement)
     ) : "";
 
-    console.log(htmlElement);
-
     return {
       __html: htmlElement
     }
@@ -72,7 +70,6 @@ const Block = ({ blockData }:BlockProps) => {
   const handleKeyUp = (e:any) => {  
     setCursorStart(getSelectionStart(e.target));
     setCursorEnd(getSelectionEnd(e.target));
-    setStyleToggle(false);
 
     switch(e.key) {
  
@@ -142,16 +139,16 @@ const Block = ({ blockData }:BlockProps) => {
 
   // Focus methods
   const handleBlur = (e:any) => {
-    // if (e.currentTarget === e.target) {
-    //   console.log('unfocused self 1');
-    // } else {
-    //   console.log('unfocused child 2', e.target);
-    // }
+    if (e.currentTarget === e.target) {
+      // console.log('unfocused self 1');
+    } else {
+      // console.log('unfocused child 2', e.target);
+    }
     if (!e.currentTarget.contains(e.relatedTarget)) {
       // Not triggered when swapping focus between children
       setCursorStart(0);
       setCursorEnd(0);
-      // onCommitBlock();
+      onCommitBlock();
     }
   }
 
@@ -198,17 +195,17 @@ const Block = ({ blockData }:BlockProps) => {
     if(getEditAbleId === blockData.id) {
       if(blockRef.current) handleFocus(blockRef.current);
     }
+  },[getEditAbleId]);
 
+  useEffect(()=> {
     if(blockData.type === "container") {
       if(!blockData.children[0]) onDeleteBlock(blockData.id);
     }
-
-  },[getEditAbleId]);
+  }, [blockData.children])
 
   useEffect(()=> {
     if(cursorEnd - cursorStart >= 1) {
       setStyleToggle(true);
-      onCommitBlock();
     } else {
       setStyleToggle(false);
     }
