@@ -44,7 +44,7 @@ function BklogContainer() {
     console.log('last active', getLastActiveTime());
     if(state.stage[0]) {
       console.log('commit');
-      // onCommitBlock();
+      onCommitBlock();
     }
   }
   const handleClick = () => {

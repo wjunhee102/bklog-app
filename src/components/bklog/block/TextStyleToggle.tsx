@@ -2,13 +2,12 @@ import React, { useMemo, useEffect } from 'react';
 import useBKlog from '../../../hooks/useBKlog';
 import { 
   BlockData, 
-  ContentType,
+  ContentType
 } from '../../../types/bklog';
 import { 
   findTextStyle,
-  arrayUtils
+  arrayFindIndex
 } from '../utils';
-
 
 interface TextStyleToggleButtonProps {
   onClick: any;
@@ -23,10 +22,6 @@ function TextStyleToggleButton({
 }: TextStyleToggleButtonProps) {
 
   const addDelClassName = addDelToggle? "del" : "add";
-
-  useEffect(()=> {
-    console.log("refresh", addDelToggle);
-  }, [addDelToggle])
 
   return (
     <button 
@@ -53,27 +48,12 @@ function TextStyleToggles({
   contents,
   reBlockFocus
 }: TextStyleTogglesProps) {
-  const { onChangeTextStyle } = useBKlog();
-  const { arrayFindIndex } = arrayUtils; 
+  const { onChangeTextStyle, onCommitBlock } = useBKlog();
 
   const toggleProps:string[] = ["b", "i", "_"];
-  
-  const colorCode:number[][] = [
-    [191, 63, 63, 1],
-    [191, 127, 63, 1],
-    [191, 191, 63, 1],
-    [127, 191, 63, 1],
-    [63, 191, 63, 1],
-    [63, 191, 127, 1],
-    [63, 127, 191, 1],
-    [63, 63, 191, 1],
-    [63, 63, 191, 1],
-    [127, 63, 191, 1],
-    [191, 63, 191, 1],
-    [191, 63, 127, 1]
-  ];
 
   const handleClick = (type: ContentType, toggle: any) => {
+    onCommitBlock();
     onChangeTextStyle(
       blockIndex, 
       type,
@@ -87,15 +67,15 @@ function TextStyleToggles({
   const testUnder = () => {
     onChangeTextStyle(
       blockIndex, 
-      ["_"],
+      ["fc", "rgba(0, 244, 255, 1)"],
       startPosition, 
       endPosition,
-      "add"
+      "del"
     )
+    reBlockFocus();
   }
 
-  const includedStyle = useMemo(()=>
-    findTextStyle(contents, startPosition),[contents]);
+  const includedStyle = findTextStyle(contents, startPosition);
 
   const addDelToggle = (prop:any):boolean => {
     return arrayFindIndex(includedStyle? includedStyle : [], [prop]) !== -1? true : false;
@@ -115,6 +95,7 @@ function TextStyleToggles({
           />
         )
       }
+      <button onClick={testUnder}>c</button>
     </div>
   )
 }

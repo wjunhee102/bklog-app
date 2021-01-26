@@ -1,7 +1,6 @@
 import { TextContents, ContentType } from '../../../types/bklog';
 import { 
   equalsArray, 
-  arrayFindIndex 
 } from '../../../store/modules/bklog/utils/converter';
 
 const BOLD = "b" as const;
@@ -15,10 +14,7 @@ const BK_BOLB = "bk-bold";
 const BK_ITALIC = "bk-italic";
 const BK_UNDER = "bk-underbar";
 
-export const arrayUtils = {
-  equalsArray,
-  arrayFindIndex
-};
+export const arrayUtils = { equalsArray };
 
 export function contentsElement(rawContents: any) {
   let text;
@@ -59,7 +55,6 @@ export function contentsElement(rawContents: any) {
     if(aTag) {
       let preText = text;
       text = `<a href="${aTag}">${preText}</a>`;
-      console.log(text);
     }
   } else {
     text = rawContents[0];
@@ -69,7 +64,6 @@ export function contentsElement(rawContents: any) {
 }
 
 export function createContentsElement(accumulator: string, rawContents: any, currentIndex: number):string {
-  console.log(rawContents)
   return currentIndex === 1?  contentsElement(accumulator) + contentsElement(rawContents) : accumulator + contentsElement(rawContents);
 }
 
@@ -83,12 +77,25 @@ export function findTextStyle(
 
   for(let i = 0; i < textContents.length; i++) {
     count += textContents[i][0].length;
-    console.log(count, position);
+
     if(count > position) {
       style = textContents[i].length === 2? textContents[i][1] : null;
       break;
     } 
+    
   }
 
   return style;
+}
+
+export function arrayFindIndex(array: any[], factor: any): number {
+  const JSONFactor = JSON.stringify(factor);
+
+  for(let i = 0; i < array.length; i++) {
+    const JSONArray = JSON.stringify(array[i]);
+    if(JSONArray === JSONFactor) {
+      return i;
+    }
+  }
+  return -1;
 }
