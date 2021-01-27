@@ -54,7 +54,7 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
       nextBlockId = newBlock.children[0];
         if(newBlock.nextBlockId) idStack.push(newBlock.nextBlockId)
     } else {
-      nextBlockId = newBlock.nextBlockId
+      nextBlockId = newBlock.nextBlockId;
     }
 
     newBlocks.push(Object.assign({}, newBlock, {

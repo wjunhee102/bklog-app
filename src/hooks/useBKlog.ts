@@ -7,11 +7,9 @@ import {
   editBlock,
   commitBlock,
   deleteBlock,
-  changeTextStyle,
-  BklogState,
-  orderType
+  changeTextStyle
 } from '../store/modules/bklog';
-
+import { BklogState, OrderType } from '../store/modules/bklog/utils';
 import {
   UUID,
   ContentType,
@@ -71,7 +69,7 @@ function useBklog() {
     style: ContentType,
     startPoint: number,
     endPoint: number,
-    order: orderType
+    order: OrderType
     ) => 
       dispatch(changeTextStyle(index, style, startPoint, endPoint, order))
     , [dispatch]);

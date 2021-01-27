@@ -1,4 +1,10 @@
-import { ContentType, TextContents } from '../../../../types/bklog';
+import { 
+  ContentType, 
+  TextContents, 
+  BlockData,
+  TextProps
+} from '../../../../types/bklog';
+import { OrderType } from '.';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -49,7 +55,7 @@ function convertProperty(prop: string):any {
   }
 }
 
-function updateContents(text:string):TextContents[] {
+function parseHtmlContents(text:string):TextContents[] {
 
   const newContents: any[] = [];
   const textLength: number = text.length;
@@ -490,10 +496,92 @@ function deleteContentsStyle(
   return newContents.map(content => content[1][0]? content : [content[0]]);
 }
 
+
+/**
+ * Text contents style 변환 함수
+ * return BlockData<TextProps>
+ * @param changedTextStyleBlock 
+ * @param styleType 
+ * @param startPoint 
+ * @param endPoint 
+ * @param order 
+ */
+function changeStyleTextContents(
+  changedTextStyleBlock: BlockData<TextProps>, 
+  styleType: ContentType,
+  startPoint: number, 
+  endPoint: number,
+  order: OrderType
+):BlockData<TextProps> {
+  
+  let changedTextContents: TextContents[];
+
+  switch(order) {
+    case "add":
+      changedTextContents = addContentsStyle(
+        changedTextStyleBlock.property.contents,
+        startPoint,
+        endPoint,
+        styleType
+      );
+      break;
+
+    case "del":
+      changedTextContents = deleteContentsStyle(
+        changedTextStyleBlock.property.contents,
+        startPoint,
+        endPoint,
+        styleType
+      );
+      break;
+
+    case "color":
+      changedTextContents = addContentsStyle(
+        deleteContentsStyle(
+          changedTextStyleBlock.property.contents,
+          startPoint,
+          endPoint,
+          styleType
+        ),
+        startPoint,
+        endPoint,
+        styleType
+      );
+      break;
+
+    case "link":
+      changedTextContents = addContentsStyle(
+        deleteContentsStyle(
+          changedTextStyleBlock.property.contents,
+          startPoint,
+          endPoint,
+          styleType
+        ),
+        startPoint,
+        endPoint,
+        styleType
+      );
+      break;
+
+    default: 
+      changedTextContents = changedTextStyleBlock.property.contents;
+  }
+
+  return Object.assign({}, 
+    changedTextStyleBlock, {
+      property: Object.assign({}, 
+        changedTextStyleBlock.property, {
+          contents: changedTextContents
+      })
+    }
+  );
+}
+
 const converter = {
-  updateContents,
+  parseHtmlContents,
   addContentsStyle,
-  deleteContentsStyle
+  deleteContentsStyle,
+  changeStyleTextContents
 }
 
 export default converter;
