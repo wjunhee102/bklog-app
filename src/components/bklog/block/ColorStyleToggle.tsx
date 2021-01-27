@@ -2,25 +2,45 @@ import React from 'react';
 
 interface ColorStyleToggleButtonProps {
   colorCode: number[];
+  onStyleChange: any;
+  addDelToggle: any;
 }
 
 
 function ColorStyleToggleButton({
-  colorCode
+  colorCode,
+  onStyleChange,
+  addDelToggle
 }: ColorStyleToggleButtonProps) {
-  return (
-    <button>
+  const RGBA = `rgba(${colorCode[0]}, ${colorCode[1]}, ${colorCode[2]}, ${colorCode[3]})`
 
+  const btnStyle = {
+    color: RGBA
+  }
+
+  const addDel = addDelToggle(["fc", RGBA])? "del" : "color";
+
+  console.log(btnStyle);
+
+  const handleClick = ()=> {
+    onStyleChange(["fc",RGBA], addDel);
+  }
+
+  return (
+    <button style={btnStyle} onClick={handleClick}>
+      Text
+      { addDel === "del"? "v" : null}
     </button>
   )
 }
 
 interface ColorStyleToggleProps {
   addDelToggle: any;
+  onStyleChange: any;
 }
 
 function ColorStyleToggle(
-  { addDelToggle }: ColorStyleToggleProps
+  { addDelToggle, onStyleChange }: ColorStyleToggleProps
   ) {
 
   const colorCodes:number[][] = [
@@ -32,7 +52,6 @@ function ColorStyleToggle(
     [63, 191, 127, 1],
     [63, 127, 191, 1],
     [63, 63, 191, 1],
-    [63, 63, 191, 1],
     [127, 63, 191, 1],
     [191, 63, 191, 1],
     [191, 63, 127, 1]
@@ -40,7 +59,16 @@ function ColorStyleToggle(
 
   return (
     <div className="bk-color-menu">
-
+      {
+        colorCodes.map((code, key) => 
+          <ColorStyleToggleButton 
+            key={key}
+            colorCode={code}
+            onStyleChange={onStyleChange}
+            addDelToggle={addDelToggle}
+          />
+        )
+      }
     </div>
   )
 }

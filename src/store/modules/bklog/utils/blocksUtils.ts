@@ -1,23 +1,27 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BlockData, UUID } from '../../../../types/bklog';
 import { orderingBlock, StagedBlock, parseHtmlContents } from './index';
-
 /**
  * blockData 생성 함수
  * return blockData<any>
  * @param type 
  * @param blockType 
  */
-function createBlockData(type?: string, blockType?: string):BlockData<any> {
+function createBlockData(
+  type: string = "block", 
+  blockType: string = "bk-p", 
+  preBlockId: UUID, 
+  nextBlockId?: UUID | null | undefined
+):BlockData<any> {
   return {
     index: 0,
     id: uuidv4(),
-    type: type? type : "block",
+    type: type,
     parentId: null,
-    preBlockId: null,
-    nextBlockId: null,
+    preBlockId: preBlockId,
+    nextBlockId: nextBlockId? nextBlockId : null,
     property: {
-      type:  blockType?  blockType  : "bk-p",
+      type: blockType,
       styles: {
         color: null,
         backgroundColor: null
@@ -83,22 +87,36 @@ function insertBlock(
 
   const preBlock: BlockData<any> | null = preBlockIndex? 
   newBlocks[preBlockIndex - 1] : null;
+  
+  const nextBlockId = blockData.nextBlockId? blockData.nextBlockId 
+    : (preBlock? preBlock.nextBlockId : null)
 
-  let nextBlockPosition:number = preBlock? newBlocks.findIndex(block => 
-      block.id === preBlock.nextBlockId
-    ) : 0;
-  const nextBlock: BlockData<any> | null = preBlock && preBlock.nextBlockId?
+  const nextBlockPosition:number = nextBlockId? newBlocks.findIndex(block => 
+      block.id === nextBlockId
+    ) : -1;
+
+  const nextBlock: BlockData<any> | null = nextBlockPosition !== -1?
   newBlocks[nextBlockPosition] : null;
+
+  const parentId = blockData.parentId;
 
   // block factory 함수를 만들어야 함.
   const newBlock: BlockData<any> = Object.assign({}, 
     blockData, {
-      parentId: null,
-      preBlockId: preBlock? preBlock.id : newBlocks[newBlocks.length - 1].id,
-      nextBlockId: nextBlock? nextBlock.id : null
+      preBlockId: preBlock? preBlock.id 
+      : ( parentId? null : newBlocks[newBlocks.length - 1].id ),
+      nextBlockId: nextBlockId
     });
 
-  if(preBlockIndex) {
+  if(parentId && !preBlockIndex) {
+    const parentBlockPosition = newBlocks.findIndex(block => block.id === parentId);
+    const parentBlock = newBlocks[parentBlockPosition];
+    const insertPosion = 0;
+
+    newBlocks[parentBlockPosition] = Object.assign({}, parentBlock, {
+      children: insertChild(parentBlock.children, insertPosion, [newBlock.id])
+    });
+  } else if(preBlockIndex) {
     newBlocks[preBlockIndex - 1].nextBlockId = newBlock.id;
 
     if(preBlock && preBlock.parentId) {
@@ -120,13 +138,48 @@ function insertBlock(
     newBlocks[nextBlockPosition].preBlockId = newBlock.id;
   }
 
-  if(newBlock.children) {
+  if(newBlock.children[0]) {
     const newChildrenIndex = newBlock.children.map((child)=>{
-      return newBlocks.filter(block => block.id === child)[0].index;
+      return newBlocks.findIndex(block => block.id === child);
     });
+    console.log(newChildrenIndex, newBlock.children);
+
+    const firstChild = newChildrenIndex[0];
+    const lastChild  = newChildrenIndex[newChildrenIndex.length - 1];
+
+    console.log(newBlocks[firstChild])
+    // firstChild
+    const childParentId = newBlocks[firstChild].parentId;
+    newBlocks[firstChild].parentId = newBlock.id;
+    newBlocks[firstChild].preBlockId = null;
+    
+    // lastChild
+    newBlocks[lastChild].parentId = newBlock.id;
+    const lastChildNextBlockId = newBlocks[lastChild].nextBlockId;
+    newBlocks[lastChild].nextBlockId = null;
+
+    if(lastChildNextBlockId) {
+      const lastChildNextBlockIndex = newBlocks.findIndex(block => 
+        block.id === nextBlockId
+      );
+      
+      newBlocks[lastChildNextBlockIndex].preBlockId = newBlock.id;
+    }
+
+    if(childParentId) {
+      const newParentIndex = newBlocks.findIndex(block => block.id === childParentId);
+      newBlock.children.forEach((child) => {
+        let index = newBlocks[newParentIndex].children.findIndex(removeChild => 
+          removeChild === child
+        );
+        newBlocks[newParentIndex].children.splice(index, 1);
+      })
+    }
+    
   }
 
   newBlocks.push(newBlock);
+  console.log(newBlocks)
   
   return orderingBlock(newBlocks);
 }

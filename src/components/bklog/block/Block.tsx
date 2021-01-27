@@ -156,12 +156,16 @@ function Block({ blockData }:BlockProps) {
     ele.focus();
   }
 
-  const moveStartPoint = (ele: any) => {
-    setSelectionRange(ele, 0, 0);
-  }
+  // const moveStartPoint = (ele: any) => {
+  //   setCursorStart(0);
+  //   setCursorEnd(0);
+  //   setSelectionRange(ele, 0, 0);
+  // }
 
   const moveEndPoint = (ele: any) => {
     const length = ele.innerText.length;
+    setCursorStart(length);
+    setCursorEnd(length);
     setSelectionRange(ele, length, length);
   }
 
@@ -227,6 +231,7 @@ function Block({ blockData }:BlockProps) {
         { 
           blockData.property && blockData.type !== "container" ? 
             <ContentEditableEle 
+              className={blockData.property.type}
               dangerouslySetInnerHTML={createMarkup}
               ref={blockRef}
               onKeyPress={handleKeyPress}

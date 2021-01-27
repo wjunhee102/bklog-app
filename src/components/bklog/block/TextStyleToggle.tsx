@@ -9,24 +9,30 @@ import {
   arrayFindIndex
 } from '../utils';
 
+import ColorStyleToggle  from './ColorStyleToggle';
+
 interface TextStyleToggleButtonProps {
-  onClick: any;
+  onStyleChange: any;
   addDelToggle: boolean;
   styleType: string;
 }
 
 function TextStyleToggleButton({
-  onClick,
+  onStyleChange,
   addDelToggle,
   styleType
 }: TextStyleToggleButtonProps) {
 
   const addDelClassName = addDelToggle? "del" : "add";
 
+  const handleClick = () => {
+    onStyleChange([styleType], addDelClassName)
+  }
+
   return (
     <button 
       className={`bk-textStyleToggle ${addDelClassName}`}
-      onClick={()=>onClick([styleType], addDelClassName)}
+      onClick={handleClick}
     >
       { styleType }
     </button>
@@ -52,11 +58,11 @@ function TextStyleToggles({
 
   const toggleProps:string[] = ["b", "i", "_"];
 
-  const handleClick = (type: ContentType, toggle: any) => {
+  const onStyleChange = (styleType: ContentType, toggle: any) => {
     onCommitBlock();
     onChangeTextStyle(
       blockIndex, 
-      type,
+      styleType,
       startPosition, 
       endPosition,
       toggle
@@ -71,14 +77,18 @@ function TextStyleToggles({
       startPosition, 
       endPosition,
       "del"
-    )
+    );
     reBlockFocus();
   }
 
   const includedStyle = findTextStyle(contents, startPosition);
 
   const addDelToggle = (prop:any):boolean => {
-    return arrayFindIndex(includedStyle? includedStyle : [], [prop]) !== -1? true : false;
+    return arrayFindIndex(
+      includedStyle? 
+      includedStyle : [], 
+      prop
+      ) !== -1? true : false;
   }
 
   return (
@@ -89,13 +99,16 @@ function TextStyleToggles({
         toggleProps.map((prop, idx)=> 
           <TextStyleToggleButton 
             key={idx}
-            onClick={handleClick}
+            onStyleChange={onStyleChange}
             styleType={prop}
-            addDelToggle={addDelToggle(prop)}
+            addDelToggle={addDelToggle([prop])}
           />
         )
       }
-      <button onClick={testUnder}>c</button>
+      <ColorStyleToggle
+        addDelToggle={addDelToggle}
+        onStyleChange={onStyleChange}
+      />
     </div>
   )
 }

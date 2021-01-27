@@ -15,7 +15,7 @@ function BklogContainer() {
   } = useBKlog();
 
   const click = () => {
-    onAddBlock(undefined, undefined, {
+    onAddBlock(1, undefined, {
       index: 0,
       id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
       type: "block",
@@ -36,7 +36,9 @@ function BklogContainer() {
           [" 입니다.", [["fc", "#f00"]]]
         ]
       },
-      children: []
+      children: [
+        "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8"
+      ]
     });
   }
 

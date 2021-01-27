@@ -150,9 +150,16 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
     case ADD_BLOCK:
       const { preBlockIndex, newBlockType, blockData } = action.payload;
 
+      const preBlockId = preBlockIndex? 
+        state.blocks[preBlockIndex - 1].id 
+        : state.blocks[state.blocks.length -1].id;
+      const nextBlockId = preBlockIndex? 
+        state.blocks[preBlockIndex - 1].nextBlockId
+        : null
+
       const newBlock: BlockData<any> = blockData? 
         copyBlockData(blockData) 
-        : createBlockData("block", newBlockType);
+        : createBlockData("block", newBlockType, preBlockId, nextBlockId);
 
       const addedBlocks = insertBlock(state.blocks, newBlock, preBlockIndex);
 

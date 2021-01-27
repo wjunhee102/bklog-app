@@ -10,9 +10,18 @@ const FONT_COLOR = "fc" as const;
 const BACKGROUND_COLOR = "bc" as const;
 const ANCHOR = "a" as const;
 
-const BK_BOLB = "bk-bold";
-const BK_ITALIC = "bk-italic";
-const BK_UNDER = "bk-underbar";
+/**
+ * class 명
+ */
+// const BK_BOLB = "bk-bold";
+// const BK_ITALIC = "bk-italic";
+// const BK_UNDER = "bk-underbar";
+
+const FONT_WEIGHT_BOLD  = "font-weight: 600;";
+const FONT_STYLE_ITALIC = "font-style: italic;";
+const BORDER_BOTTOM     = "border-bottom: 0.05em solid;";
+const COLOR             = "color:";
+const BACKGROUND_C      = "background-color:";
 
 export const arrayUtils = { equalsArray };
 
@@ -27,23 +36,23 @@ export function contentsElement(rawContents: any) {
       switch(content[0]) {
 
         case BOLD:
-          styles = styles? styles + " font-weight: 600;" : "font-weight: 600;"
+          styles = styles? styles + ` ${FONT_WEIGHT_BOLD}` : FONT_WEIGHT_BOLD;
           break;
 
         case ITALY:
-          styles = styles? styles + " font-style: italic;" : "font-style: italic;"
+          styles = styles? styles + ` ${FONT_STYLE_ITALIC}` : FONT_STYLE_ITALIC;
           break;
 
         case UNDERBAR:
-          styles = styles? styles + " border-bottom: 0.05em solid;" : "border-bottom: 0.05em solid;"
+          styles = styles? styles + ` ${BORDER_BOTTOM}` : BORDER_BOTTOM;
           break;
 
         case FONT_COLOR:
-          styles = styles? styles + ` color: ${content[1]};` : `color: ${content[1]};`;
+          styles = styles? styles + ` ${COLOR} ${content[1]};` : `${COLOR} ${content[1]};`;
           break;
 
         case BACKGROUND_COLOR:
-          styles = styles? styles + ` background-color: ${content[1]};` : `background-color: ${content[1]};`;
+          styles = styles? styles + ` ${BACKGROUND_C} ${content[1]};` : `${BACKGROUND_C} ${content[1]};`;
           break;
           
         case ANCHOR:
@@ -82,7 +91,7 @@ export function findTextStyle(
       style = textContents[i].length === 2? textContents[i][1] : null;
       break;
     } 
-    
+
   }
 
   return style;
