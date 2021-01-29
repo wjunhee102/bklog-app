@@ -7,7 +7,8 @@ import {
   editBlock,
   commitBlock,
   deleteBlock,
-  changeTextStyle
+  changeTextStyle,
+  switchBlock
 } from '../store/modules/bklog';
 import { BklogState, OrderType } from '../store/modules/bklog/utils';
 import {
@@ -73,6 +74,9 @@ function useBklog() {
     ) => 
       dispatch(changeTextStyle(index, style, startPoint, endPoint, order))
     , [dispatch]);
+  
+  const onSwitchBlock = useCallback((blockId: UUID, preBlockId: UUID) => 
+    dispatch(switchBlock(blockId, preBlockId)),[dispatch]);
 
   return { 
     state, 
@@ -88,7 +92,8 @@ function useBklog() {
     onEditBlock, 
     onCommitBlock, 
     onDeleteBlock,
-    onChangeTextStyle
+    onChangeTextStyle,
+    onSwitchBlock
   };
 }
 

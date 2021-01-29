@@ -11,7 +11,8 @@ function BklogContainer() {
     initBlock, 
     onAddBlock, 
     onCommitBlock, 
-    onChangeTextStyle 
+    onChangeTextStyle,
+    onSwitchBlock
   } = useBKlog();
 
   const click = () => {
@@ -51,6 +52,10 @@ function BklogContainer() {
   }
   const handleClick = () => {
     onChangeTextStyle (1, ["bc", "#fc0"], 2, 10, "color");
+  }
+
+  const testHandleClick = () => {
+    onSwitchBlock(state.blocks[5].id, state.blocks[3].id);
   }
 
   // const handleOnActive = (event: any) => {
@@ -95,6 +100,7 @@ function BklogContainer() {
       }
       <button onClick={click}>블럭 추가</button>
       <button onClick={handleClick}>스타일 추가</button>
+      <button onClick={testHandleClick}>스위칭</button>
     </div>
   )
 }

@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   ContentType,
   BlockData,
-  UUID
+  UUID,
+  TextProps,
+  RawBlockData
 } from '../../../types/bklog';
 
 import { 
@@ -27,6 +29,7 @@ import {
   updateContents,
   changeStyleTextContents,
   excludeBlock,
+  switchingBlock,
   getContentsToBeChanged
 } from './utils';
 
@@ -120,6 +123,16 @@ export function revertBlock() {
   }
 }
 
+export function switchBlock(blockId: UUID, preBlockId: UUID) {
+  return {
+    type: SWITCH_BLOCK,
+    payload: {
+      switchedId: blockId,
+      positionId: preBlockId
+    }
+  }
+}
+
 export type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof editAble>
   | ReturnType<typeof editBlock>
@@ -128,6 +141,7 @@ export type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof updateBlock>
   | ReturnType<typeof changeTextStyle>
   | ReturnType<typeof revertBlock>
+  | ReturnType<typeof switchBlock>
 ;
 
 const initialState:BklogState = ((): BklogState => {
@@ -280,6 +294,14 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
           type: DELETE_BLOCK,
           data: deletedBlock
         })
+      });
+    
+    case SWITCH_BLOCK:
+      const { switchedId, positionId } = action.payload;
+      const switchedBlocks = switchingBlock(state.blocks, switchedId, positionId);
+
+      return Object.assign({}, state, {
+        blocks: switchedBlocks
       });
       
     default: 

@@ -74,6 +74,7 @@ export const insertBlock     = blocksUtils.insertBlock;
 export const insertChild     = blocksUtils.insertChild;
 export const updateContents  = blocksUtils.updateContents;
 export const excludeBlock    = blocksUtils.excludeBlock;
+export const switchingBlock  = blocksUtils.switchingBlock;
 
 /**
  * tempStoreUtils
