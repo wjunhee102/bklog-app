@@ -1,6 +1,48 @@
 body {
   background-color: #333;
   color: #fff;
+  font-size: 16px;
+}
+
+.blocklog {
+  align-items: center;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+[contenteditable=true]:empty:hover:before{
+  color: rgba(255, 255, 255, 0.3);
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+div[contenteditable=true] {
+  /* border: 1px solid #ddd; */
+  color : #ccc;
+  width: 1024px;
+  padding: 5px;
+  word-wrap:break-word;
+  white-space: pre-wrap;
+}
+
+.bk-style-toggles {
+  display: block;
+}
+
+.bk-textStyleToggle.del{
+  background-color: rgb(36, 142, 230);
+  color: rgb(224, 196, 36);
+}
+
+.bk-title {
+  font-size: 2em;
+}
+
+.bk-h1 {
+  font-size: 2em;
+}
+
+.bk-p {
+  font-size: 1em;
 }
 
 .bk-block {
@@ -17,27 +59,4 @@ body {
 
 .bk-block a {
   cursor: pointer;
-}
-
-[contenteditable=true]:empty:before{
-  content: attr(placeholder);
-  display: block; /* For Firefox */
-}
-div[contenteditable=true] {
-  border: 1px solid #ddd;
-  color : #ccc;
-  font-size: 12px;
-  width: 300px;
-  padding: 5px;
-  word-wrap:break-word;
-  white-space: pre-wrap;
-}
-
-.bk-style-toggles {
-  display: block;
-}
-
-.bk-textStyleToggle.del{
-  background-color: rgb(36, 142, 230);
-  color: rgb(224, 196, 36);
 }

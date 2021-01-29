@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { placeholder } from '@babel/types';
 
 interface ContentEditableEle {
+  className: string;
   onKeyPress?: any;
   onKeyUp?: any;
   onMouseUp?: any;
@@ -16,6 +17,7 @@ interface ContentEditableEle {
 }
 
 const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(({
+  className,
   onKeyPress, 
   onKeyUp,
   onMouseUp,
@@ -29,7 +31,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
   
   return (
     <div 
-      className="bk-contentEditable"
+      className={`bk-contentEditable ${className? className : ""}`}
       ref={ref}
       onKeyUp={onKeyUp}
       onKeyPress={onKeyPress}
