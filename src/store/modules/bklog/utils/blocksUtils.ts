@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { BlockData, UUID } from '../../../../types/bklog';
+import { BlockData, UUID, RawBlockData } from '../../../../types/bklog';
 import { orderingBlock, StagedBlock, parseHtmlContents } from './index';
 /**
  * blockData 생성 함수
@@ -71,17 +71,24 @@ function insertChild(children: UUID[], insertPoint: number, insertChildren: UUID
 } 
 
 /**
+ * block id filter 함수
+ * @param id 
+ */
+const isBlockId = (id: UUID | null) => 
+  (block: BlockData<any> | RawBlockData<any>) => 
+  block.id === id;
+/**
  * 새 block 삽입 함수
  * return BlockData<any>
  * @param preBlocks 
  * @param blockData 
  * @param preBlockIndex 
  */
-function insertBlock(
+function preInsertBlock(
   preBlocks:BlockData<any>[],
   blockData: BlockData<any>,
   preBlockIndex?: number
-  ): BlockData<any>[] {
+): BlockData<any>[] {
 
   let newBlocks:BlockData<any>[] = [...preBlocks];
 
@@ -91,9 +98,8 @@ function insertBlock(
   const nextBlockId = blockData.nextBlockId? blockData.nextBlockId 
     : (preBlock? preBlock.nextBlockId : null)
 
-  const nextBlockPosition:number = nextBlockId? newBlocks.findIndex(block => 
-      block.id === nextBlockId
-    ) : -1;
+  const nextBlockPosition:number = nextBlockId? 
+    newBlocks.findIndex(isBlockId(nextBlockId)) : -1;
 
   const nextBlock: BlockData<any> | null = nextBlockPosition !== -1?
   newBlocks[nextBlockPosition] : null;
@@ -109,7 +115,7 @@ function insertBlock(
     });
 
   if(parentId && !preBlockIndex) {
-    const parentBlockPosition = newBlocks.findIndex(block => block.id === parentId);
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(parentId));
     const parentBlock = newBlocks[parentBlockPosition];
     const insertPosion = 0;
 
@@ -120,7 +126,7 @@ function insertBlock(
     newBlocks[preBlockIndex - 1].nextBlockId = newBlock.id;
 
     if(preBlock && preBlock.parentId) {
-      const parentBlockPosition = newBlocks.findIndex(block => block.id === preBlock.parentId);
+      const parentBlockPosition = newBlocks.findIndex(isBlockId(preBlock.parentId));
       const parentBlock = newBlocks[parentBlockPosition];
       const insertPosion = parentBlock.children.indexOf(preBlock.id) + 1;
 
@@ -140,7 +146,7 @@ function insertBlock(
 
   if(newBlock.children[0]) {
     const newChildrenIndex = newBlock.children.map((child)=>{
-      return newBlocks.findIndex(block => block.id === child);
+      return newBlocks.findIndex(isBlockId(child));
     });
     console.log(newChildrenIndex, newBlock.children);
 
@@ -159,15 +165,13 @@ function insertBlock(
     newBlocks[lastChild].nextBlockId = null;
 
     if(lastChildNextBlockId) {
-      const lastChildNextBlockIndex = newBlocks.findIndex(block => 
-        block.id === nextBlockId
-      );
+      const lastChildNextBlockIndex = newBlocks.findIndex(isBlockId(nextBlockId));
       
       newBlocks[lastChildNextBlockIndex].preBlockId = newBlock.id;
     }
 
     if(childParentId) {
-      const newParentIndex = newBlocks.findIndex(block => block.id === childParentId);
+      const newParentIndex = newBlocks.findIndex(isBlockId(childParentId));
       newBlock.children.forEach((child) => {
         let index = newBlocks[newParentIndex].children.findIndex(removeChild => 
           removeChild === child
@@ -181,6 +185,68 @@ function insertBlock(
   newBlocks.push(newBlock);
   console.log(newBlocks)
   
+  return orderingBlock(newBlocks);
+}
+
+function insertBlock(
+  preBlocks:BlockData<any>[],
+  blockDataList: BlockData<any>[],
+  preBlockId: UUID
+): BlockData<any>[] {
+  let newBlocks = [...preBlocks];
+  const newBlockDataList = [...blockDataList];
+
+  const preBlockPosition = newBlocks.findIndex(isBlockId(preBlockId));
+  const preBlock = newBlocks[preBlockPosition];
+  
+  const nextBlockPosition = preBlock.nextBlockId?
+    newBlocks.findIndex(isBlockId(preBlock.nextBlockId)) : -1;
+  const nextBlock = nextBlockPosition !== -1? 
+    newBlocks[nextBlockPosition] : null;
+  
+  let currentBlockId: UUID | null = newBlockDataList[0].id;
+  let newChildrenList: UUID[] = [];
+
+  while(currentBlockId) {
+    const currentBlockPosition = newBlockDataList.findIndex(isBlockId(currentBlockId));
+    const currentBlock = newBlockDataList[currentBlockPosition];
+
+    if(currentBlockPosition === 0) {
+      newBlockDataList[0].preBlockId = preBlock.id;
+      newBlocks[preBlockPosition].nextBlockId = currentBlockId;
+    }
+  
+    if(preBlock.parentId) {
+      newBlockDataList[currentBlockPosition].parentId = preBlock.parentId;
+      newChildrenList.push(currentBlockId);
+    }
+
+    if(!currentBlock.nextBlockId) {
+      if(nextBlock) {
+        newBlockDataList[currentBlockPosition].nextBlockId = nextBlock.id;
+        newBlocks[nextBlockPosition].preBlockId = currentBlockId;
+      }
+      currentBlockId = null;
+    } else {
+      currentBlockId = currentBlock.nextBlockId;
+    }
+
+  }
+
+  if(preBlock.parentId) {
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(preBlock.parentId));
+    const parentBlock = newBlocks[parentBlockPosition];
+    const insertPosion = parentBlock.children.indexOf(preBlock.id) + 1;
+
+    newBlocks[parentBlockPosition].children = insertChild(
+      parentBlock.children, 
+      insertPosion,
+      newChildrenList  
+    );
+  }
+
+  newBlocks = newBlocks.concat(newBlockDataList);
+
   return orderingBlock(newBlocks);
 }
 
@@ -215,14 +281,12 @@ function updateContents(
   return newBlocks;
 }
 
-function excludeBlock(blocks: BlockData<any>[], deletedId: UUID) {
-  let deletedBlocks = blocks.filter((block) => 
-      block.id !== deletedId
-    );
+function excludeBlock(blocks: BlockData<any>[], id: UUID) {
+  // 왜 이렇게 안하면 값이 바뀌지?
+  const deletedId = id;
+  let deletedBlocks = blocks.filter((block) => block.id !== deletedId);
 
-  const deletedBlock = blocks.filter((block)=>
-    block.id === deletedId
-  )[0];
+  const deletedBlock = blocks.filter(isBlockId(deletedId))[0];
 
   const preBlockId = deletedBlock.preBlockId;
   const nextBlockId = deletedBlock.nextBlockId;
@@ -235,7 +299,7 @@ function excludeBlock(blocks: BlockData<any>[], deletedId: UUID) {
   if(deletedBlock.children[0]) {
     let childPositionList:number[] = [];
     deletedBlock.children.forEach(child => {
-      childPositionList.push(deletedBlocks.findIndex((block)=> block.id === child));
+      childPositionList.push(deletedBlocks.findIndex(isBlockId(child)));
     })
     const firstChild = childPositionList[0];
     const lastChild = childPositionList[childPositionList.length -1];
@@ -255,8 +319,8 @@ function excludeBlock(blocks: BlockData<any>[], deletedId: UUID) {
   } 
 
   if(parentId) {
-    const parentBlockPosition = deletedBlocks.findIndex((block)=> block.id === parentId);
-    const parentBlock = deletedBlocks[parentBlockPosition]
+    const parentBlockPosition = deletedBlocks.findIndex(isBlockId(parentId));
+    const parentBlock = deletedBlocks[parentBlockPosition];
     const deletePosition = parentBlock.children.indexOf(deletedId);
 
     deletedBlocks[parentBlockPosition] = Object.assign({}, parentBlock, {
@@ -282,6 +346,7 @@ function excludeBlock(blocks: BlockData<any>[], deletedId: UUID) {
     );
   }
 
+  console.log("deletedBlocks",deletedBlocks, deletedId, deletedBlock, blocks);
   return orderingBlock(deletedBlocks);
 }
 
