@@ -148,12 +148,10 @@ function preInsertBlock(
     const newChildrenIndex = newBlock.children.map((child)=>{
       return newBlocks.findIndex(isBlockId(child));
     });
-    console.log(newChildrenIndex, newBlock.children);
 
     const firstChild = newChildrenIndex[0];
     const lastChild  = newChildrenIndex[newChildrenIndex.length - 1];
 
-    console.log(newBlocks[firstChild])
     // firstChild
     const childParentId = newBlocks[firstChild].parentId;
     newBlocks[firstChild].parentId = newBlock.id;
@@ -183,7 +181,6 @@ function preInsertBlock(
   }
 
   newBlocks.push(newBlock);
-  console.log(newBlocks)
   
   return orderingBlock(newBlocks);
 }

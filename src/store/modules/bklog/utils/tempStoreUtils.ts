@@ -24,8 +24,8 @@ function getContentsToBeChanged(
 
   stage.forEach(data => {
     changedBlocks.push(blocks[data.blockIndex - 1]);
-    
   });
+  
   console.log(changedBlocks);
   return changedBlocks.map(block => {
     return {

@@ -42,10 +42,10 @@ function useBklog() {
 
   // Block 추가
   const onAddBlock = useCallback((
-      blockIndex?: number, 
+      blockId?: UUID, 
       type?: string, 
       blockData?: BlockData<any>
-    ) => dispatch(addBlock(blockIndex, type, blockData)), [dispatch]);
+    ) => dispatch(addBlock(blockId, type, blockData)), [dispatch]);
 
   // edit중인 block focus
   const onEditAble = useCallback((blockId: UUID | null, index?:number) =>

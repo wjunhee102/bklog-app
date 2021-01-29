@@ -2,6 +2,21 @@ import { RawBlockData, BlockData, UUID } from '../../../../types/bklog';
 
 
 type Blocks = RawBlockData<any>[] | BlockData<any>[];
+
+/**
+ * 첫번째 block 찾기
+ */
+const isFirstBlockPoint = (block: RawBlockData<any> | BlockData<any>) => 
+  !block.preBlockId && !block.parentId;
+
+/**
+ * 다음 block 찾기
+ * @param id 
+ */
+const isNextBlockPoint = (id:string) => 
+  (block: RawBlockData<any> | BlockData<any>) => 
+  block.id === id;
+
 /**
  * block ordering
  * @param block 
@@ -18,20 +33,6 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
   let blockIndex: number = 1;
   let nextBlockId: UUID | null = null;
   let idStack:UUID[] = [];
-
-  /**
-   * 첫번째 block 찾기
-   */
-  const isFirstBlockPoint = (block: RawBlockData<any> | BlockData<any>) => 
-    !block.preBlockId && !block.parentId;
-
-  /**
-   * 다음 block 찾기
-   * @param id 
-   */
-  const isNextBlockPoint = (id:string) => 
-    (block: RawBlockData<any> | BlockData<any>) => 
-    block.id === id;
   
   while(rawBlocks[0] && newBlocks.length < blockLength) {
     let currentId:UUID | undefined | null;

@@ -35,11 +35,11 @@ import { page } from '../../../data/db.json';
 /**
  * BlockLog store
  */
-export function addBlock(blockIndex?: number, type?: string, block?: BlockData<any>) {
+export function addBlock(blockId?: UUID, type?: string, block?: BlockData<any>) {
   return {
     type: ADD_BLOCK,
     payload: {
-      preBlockIndex: blockIndex,
+      preBlockId: blockId,
       newBlockType: type,
       blockData: block
     }
@@ -148,20 +148,19 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
   switch(action.type) {
 
     case ADD_BLOCK:
-      const { preBlockIndex, newBlockType, blockData } = action.payload;
+      const { preBlockId, newBlockType, blockData } = action.payload;
 
-      const preBlockId = preBlockIndex? 
-        state.blocks[preBlockIndex - 1].id 
-        : state.blocks[state.blocks.length -1].id;
-      const nextBlockId = preBlockIndex? 
-        state.blocks[preBlockIndex - 1].nextBlockId
-        : null
+      const preBlock = preBlockId? 
+        state.blocks.filter(block => block.id === preBlockId)[0] 
+        : state.blocks[state.blocks.length - 1];
 
       const newBlock: BlockData<any> = blockData? 
         copyBlockData(blockData) 
-        : createBlockData("block", newBlockType, preBlockId, nextBlockId);
+        : createBlockData("block", newBlockType, preBlock.id);
+      
+      console.log(newBlock);
 
-      const addedBlocks = insertBlock(state.blocks, newBlock, preBlockIndex);
+      const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
 
       return Object.assign({}, state, {
         blocks: addedBlocks,

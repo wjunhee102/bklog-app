@@ -125,7 +125,7 @@ function Block({ blockData }:BlockProps) {
   const handleKeyPress = (e:any) => {
     if(e.key === "Enter") {
       e.preventDefault();
-      onAddBlock(blockData.index);
+      onAddBlock(blockData.id, blockData.property? blockData.property.type : null);
     }
   }
 

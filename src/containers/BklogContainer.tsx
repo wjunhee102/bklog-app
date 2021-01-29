@@ -15,7 +15,7 @@ function BklogContainer() {
   } = useBKlog();
 
   const click = () => {
-    onAddBlock(1, undefined, {
+    onAddBlock(undefined, undefined, {
       index: 0,
       id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
       type: "block",
