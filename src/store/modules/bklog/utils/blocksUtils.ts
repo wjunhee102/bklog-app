@@ -1,6 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BlockData, UUID, RawBlockData } from '../../../../types/bklog';
 import { orderingBlock, StagedBlock, parseHtmlContents } from './index';
+
+interface ChangedData {
+  id: UUID;
+  data: any;
+}
+
 /**
  * blockData 생성 함수
  * return blockData<any>
@@ -55,7 +61,12 @@ function copyBlockData(blockData: BlockData<any>): BlockData<any> {
  * @param insertChildren 
  * @param deleteCount 
  */
-function insertChild(children: UUID[], insertPoint: number, insertChildren: UUID[], deleteCount: number = 0):UUID[] {
+function insertChild(
+  children: UUID[], 
+  insertPoint: number, 
+  insertChildren: UUID[], 
+  deleteCount: number = 0
+):UUID[] {
   let newChildren = children.concat();
 
   if(insertChildren) {
@@ -268,8 +279,8 @@ function switchingBlock(
   blockId: UUID,
   preBlockId: UUID
 ): BlockData<any>[] {
-  const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
   let newBlocks: BlockData<any>[] = preBlocks.filter(isNotBlockId(blockId));
+  const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
 
   if(currentBlock.preBlockId) {
     const preBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
@@ -327,6 +338,136 @@ function switchingBlock(
   return orderingBlock(newBlocks);
 }
 
+
+/**
+ * block 복구
+ * @param preBlocks 
+ * @param blockData 
+ */
+function restoreBlock(
+  preBlocks: BlockData<any>[],
+  blockData: BlockData<any>
+) {
+  
+  const changedData:ChangedData[] = []; 
+
+  const currentBlock = Object.assign({}, blockData);
+  changedData.push({
+    id: currentBlock.id,
+    data: [blockData]
+  });
+
+  const newBlocks = [...preBlocks];
+
+  if(currentBlock.preBlockId) {
+    const preBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
+
+    newBlocks[preBlockPosition].nextBlockId = currentBlock.id;
+    changedData.push({
+      id: newBlocks[preBlockPosition].id,
+      data: [{
+        nextBlockId: newBlocks[preBlockPosition].nextBlockId
+      }]
+    });
+  }
+
+  if(currentBlock.nextBlockId) {
+    const nextBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.nextBlockId));
+
+    newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
+    changedData.push({
+      id: newBlocks[nextBlockPosition].id,
+      data: [{
+        preBlockId: newBlocks[nextBlockPosition].preBlockId
+      }]
+    });
+  }
+  
+  if(currentBlock.parentId) {
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.parentId));
+    let insertPoint: number = 0;
+    if(currentBlock.preBlockId) {
+      insertPoint = newBlocks[parentBlockPosition].children.findIndex(child => 
+        child === currentBlock.preBlockId ) + 1;
+    }
+
+    newBlocks[parentBlockPosition].children = insertChild(
+      newBlocks[parentBlockPosition].children,
+      insertPoint,
+      [currentBlock.id]
+    );
+    changedData.push({
+      id: newBlocks[parentBlockPosition].id,
+      data: [{
+        children: newBlocks[parentBlockPosition].children
+      }]
+    });
+  }
+
+  if(currentBlock.children[0]) {
+
+    for(let i = 0; i < currentBlock.children.length; i++) {
+
+      const childId = currentBlock.children[i];
+      const childPosition = newBlocks.findIndex(isBlockId(childId));
+      const childChangedData: any = [];
+
+      if(i === 0) {
+        newBlocks[childPosition].preBlockId = null;
+        childChangedData.push({
+          preBlockId: null
+        });
+      }
+
+      if(i === currentBlock.children.length -1) {
+        newBlocks[childPosition].nextBlockId = null;
+        childChangedData.push({
+          nextBlockId: null
+        });
+      }
+
+      const preParentId = newBlocks[childPosition].parentId;
+      if(preParentId) {
+        const preParentPosition = newBlocks.findIndex(isBlockId(preParentId));
+        newBlocks[preParentPosition].children = newBlocks[preParentPosition].children.filter(child => 
+          child !== childId
+        );
+
+        if(childPosition === currentBlock.children.length -1) {
+          changedData.push({
+            id: preParentId,
+            data: [
+              {
+                children: newBlocks[preParentPosition].children
+              }
+            ]
+          }); 
+        }
+
+      }
+
+      newBlocks[childPosition].parentId = currentBlock.id;
+      childChangedData.push({
+        parentId: currentBlock.id
+      })
+
+      changedData.push({
+        id: newBlocks[childPosition].id,
+        data: [...childChangedData]
+      });
+
+    }
+    
+  }
+
+  newBlocks.push(currentBlock);
+
+  return {
+    blocks: orderingBlock(newBlocks),
+    changedData
+  };
+}
+
 const blocksUtils = {
   createBlockData,
   copyBlockData,
@@ -334,7 +475,8 @@ const blocksUtils = {
   insertChild,
   updateContents,
   excludeBlock,
-  switchingBlock
+  switchingBlock,
+  restoreBlock
 }
 
 export default blocksUtils;
