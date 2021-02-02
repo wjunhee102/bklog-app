@@ -7,6 +7,8 @@ interface ChangedData {
   data: any;
 }
 
+type Block = BlockData<any> | RawBlockData<any>
+
 /**
  * blockData 생성 함수
  * return blockData<any>
@@ -16,7 +18,7 @@ interface ChangedData {
 function createBlockData(
   type: string = "block", 
   blockType: string = "bk-p", 
-  preBlockId: UUID, 
+  preBlockId: UUID | null, 
   nextBlockId?: UUID | null | undefined
 ):BlockData<any> {
   return {
@@ -53,6 +55,78 @@ function copyBlockData(blockData: BlockData<any>): BlockData<any> {
   })
 }
 
+function copyBlock(
+  preBlock: BlockData<any> | RawBlockData<any>, 
+  preBlockId: UUID | null, 
+  parentBlockId?: UUID
+): BlockData<any> {
+  return Object.assign({}, preBlock, {
+    index: 0,
+    id: uuidv4(),
+    preBlockId,
+    parentBlockId: parentBlockId? parentBlockId : null
+  });
+}
+
+/**
+ * blockList를 복사하는 함수.
+ * @param blockDataList 
+ */
+function copyBlockDataList(
+  blockDataList: Block[]
+): Block[] {
+  let newBlockDataList: Block[] = []; 
+  let newPreBlockData: [UUID, number][] = [];
+  let newParentBlockData: [UUID, number][] = [];
+
+  for(let i = 0; i < blockDataList.length; i++) {
+    const newBlock: Block = Object.assign({}, blockDataList[i], {
+      id: uuidv4(),
+      preBlockId: null,
+      nextBlockId: null,
+      parentId: null,
+      children: []
+    });
+
+    if(blockDataList[i].parentId) {
+      const parentData = newParentBlockData[newParentBlockData.length - 1];
+      newBlock.parentId = parentData[0];
+      const children = newBlockDataList[parentData[1]].children;
+      newBlockDataList[parentData[1]].children = insertChild(children,
+        children.length, 
+        [newBlock.id]);
+    }
+    
+    if(blockDataList[i].children[0]) {
+      newParentBlockData.push([newBlock.id, i]);
+    }
+
+    if(blockDataList[i].preBlockId && newPreBlockData[0]) {
+      const preBlockData = newPreBlockData.pop();
+      if(preBlockData) {
+        newBlock.preBlockId = preBlockData[0];
+        newBlockDataList[preBlockData[1]].nextBlockId = newBlock.id;
+      }
+    }
+
+    const preNextBlockId = blockDataList[i].nextBlockId;
+    if(preNextBlockId) {
+      if(blockDataList.findIndex(isBlockId(preNextBlockId)) === -1) {
+        newBlock.nextBlockId = null;
+      } else {
+        newPreBlockData.push([newBlock.id, i]);
+      }
+    } else {
+      newParentBlockData.pop();
+    };
+    console.log(i, newPreBlockData, newParentBlockData);
+
+    newBlockDataList.push(newBlock);
+  }
+
+  return newBlockDataList;
+}
+
 /**
  * block child 삽입 함수
  * return UUID[]
@@ -67,21 +141,22 @@ function insertChild(
   insertChildren: UUID[], 
   deleteCount: number = 0
 ):UUID[] {
-  let newChildren = children.concat();
+  let newChildren = [...children];
 
   if(insertChildren) {
-    if(children.length <= 1 || children.length === insertPoint) {
-      if(deleteCount) {
+    
+    if(children.length < 1 || children.length === insertPoint) {
+      if(deleteCount && children.length >= 1) {
         newChildren.pop();
       }
       newChildren = newChildren.concat(insertChildren);
     } else {
       newChildren.splice(insertPoint, deleteCount, ...insertChildren);
     }
+
   } else {
     newChildren.splice(insertPoint, deleteCount);
   }
-  
   return newChildren
 } 
 
@@ -100,35 +175,48 @@ const isBlockId = (id: UUID | null) =>
  * @param preBlockId 
  */
 function insertBlock(
-  preBlocks:BlockData<any>[],
-  blockDataList: BlockData<any>[],
-  preBlockId: UUID
-): BlockData<any>[] {
-  let newBlocks: BlockData<any>[] = [...preBlocks];
+  preBlocks:Block[],
+  blockDataList: Block[],
+  preBlockId: UUID | null,
+  parentBlockId?: UUID
+): Block[] {
+  let newBlocks: Block[] = [...preBlocks];
   const newBlockDataList = [...blockDataList];
+  const firstPosition: number = 0;
 
-  const preBlockPosition = newBlocks.findIndex(isBlockId(preBlockId));
-  const preBlock = newBlocks[preBlockPosition];
-  
-  const nextBlockPosition = preBlock.nextBlockId?
-    newBlocks.findIndex(isBlockId(preBlock.nextBlockId)) : -1;
-  const nextBlock = nextBlockPosition !== -1? 
-    newBlocks[nextBlockPosition] : null;
-  
-  let currentBlockId: UUID | null = newBlockDataList[0].id;
+  let currentBlockId: UUID | null = newBlockDataList[firstPosition].id;
   let newChildrenList: UUID[] = [];
 
-  while(currentBlockId) {
-    const currentBlockPosition = newBlockDataList.findIndex(isBlockId(currentBlockId));
-    const currentBlock = newBlockDataList[currentBlockPosition];
+  const preBlockPosition: number = preBlockId? 
+    newBlocks.findIndex(isBlockId(preBlockId)) : -1;
+  const preBlock: Block | null = preBlockId? 
+    newBlocks[preBlockPosition] : null;
+  
+  const nextBlockPosition: number = preBlock && preBlock.nextBlockId?
+    newBlocks.findIndex(isBlockId(preBlock.nextBlockId)) : -1;
+  const nextBlock: Block | null = nextBlockPosition !== -1? 
+    newBlocks[nextBlockPosition] : null;
+  
+  let parentId: UUID | null = parentBlockId
+    ? parentBlockId 
+    : (preBlock && preBlock.parentId? preBlock.parentId : null)
 
-    if(currentBlockPosition === 0) {
-      newBlockDataList[0].preBlockId = preBlock.id;
-      newBlocks[preBlockPosition].nextBlockId = currentBlockId;
+  while(currentBlockId) {
+    const currentBlockPosition: number = newBlockDataList.findIndex(isBlockId(currentBlockId));
+    const currentBlock: Block = newBlockDataList[currentBlockPosition];
+
+    if(currentBlockPosition === firstPosition) {
+      
+      if(preBlock) {
+        newBlockDataList[firstPosition].preBlockId = preBlock.id;
+        newBlocks[preBlockPosition].nextBlockId = currentBlockId;
+      } else {
+        newBlockDataList[firstPosition].preBlockId = null;
+      }
     }
   
-    if(preBlock.parentId) {
-      newBlockDataList[currentBlockPosition].parentId = preBlock.parentId;
+    if(parentId) {
+      newBlockDataList[currentBlockPosition].parentId = parentId;
       newChildrenList.push(currentBlockId);
     }
 
@@ -144,10 +232,20 @@ function insertBlock(
 
   }
 
-  if(preBlock.parentId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(preBlock.parentId));
-    const parentBlock = newBlocks[parentBlockPosition];
-    const insertPosion = parentBlock.children.indexOf(preBlock.id) + 1;
+  if(parentId) {
+    const parentBlockPosition: number = newBlocks.findIndex(isBlockId(parentId));
+    const parentBlock: Block = newBlocks[parentBlockPosition];
+    const insertPosion: number  = preBlockId? 
+      parentBlock.children.indexOf(preBlockId) + 1 : 0;
+    const nextBlockPosition: number = !preBlockId? 
+      newBlocks.findIndex(isBlockId(parentBlock.children[0])) : -1;
+
+    if(nextBlockPosition !== -1) {
+      const newBlockLastChild: UUID = newChildrenList[newChildrenList.length - 1];
+      const newBlocklastChildPosition: number = newBlockDataList.findIndex(isBlockId(newBlockLastChild));
+      newBlocks[nextBlockPosition].preBlockId = newBlockLastChild;
+      newBlockDataList[newBlocklastChildPosition].nextBlockId = newBlocks[nextBlockPosition].id;
+    }
 
     newBlocks[parentBlockPosition].children = insertChild(
       parentBlock.children, 
@@ -158,7 +256,7 @@ function insertBlock(
 
   newBlocks = newBlocks.concat(newBlockDataList);
 
-  return orderingBlock(newBlocks);
+  return newBlocks;
 }
 
 /**
@@ -194,6 +292,7 @@ function updateContents(
 
 const isNotBlockId = (id: UUID) => 
   (block:BlockData<any>) => block.id !== id;
+// blockList를 넣었을 때 삭제하는 것이 필요할것 같음.
 /**
  * block 제외 함수
  * @param blocks 
@@ -268,6 +367,7 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID) {
   return orderingBlock(deletedBlocks);
 }
 
+// 되돌아가기를 했을때 그 전 preBlockId를 기억하고 있으면 될 것 같음.
 /**
  * block의 위치를 바꾸는 함수
  * @param preBlocks 
@@ -277,8 +377,9 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID) {
 function switchingBlock(
   preBlocks:BlockData<any>[],
   blockId: UUID,
-  preBlockId: UUID
-): BlockData<any>[] {
+  preBlockId: UUID | null,
+  parentBlockId?: UUID
+): Block[] {
   let newBlocks: BlockData<any>[] = preBlocks.filter(isNotBlockId(blockId));
   const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
 
@@ -303,28 +404,35 @@ function switchingBlock(
     currentBlock.parentId = null;
   }
 
-  const preBlockPosition = newBlocks.findIndex(isBlockId(preBlockId));
-  const preBlock = newBlocks[preBlockPosition];
+  const preBlockPosition = preBlockId? newBlocks.findIndex(isBlockId(preBlockId)) : -1;
+  const preBlock = parentBlockId? newBlocks[preBlockPosition] : null;
+
+  const parentId = parentBlockId? parentBlockId : (preBlock? preBlock.parentId : null);
   
-  const nextBlockPosition = preBlock.nextBlockId?
+  let nextBlockPosition = preBlock && preBlock.nextBlockId?
     newBlocks.findIndex(isBlockId(preBlock.nextBlockId)) : -1;
-  const nextBlock = nextBlockPosition !== -1? 
+  let nextBlock = nextBlockPosition !== -1? 
     newBlocks[nextBlockPosition] : null;
 
-  currentBlock.preBlockId = preBlock.id;
-  newBlocks[preBlockPosition].nextBlockId = currentBlock.id;
+  currentBlock.preBlockId = preBlock? preBlock.id : null;
 
-  if(nextBlock) {
-    currentBlock.nextBlockId = nextBlock.id;
-    newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
-  } else {
-    currentBlock.nextBlockId = null;
+  if(preBlock) {
+    newBlocks[preBlockPosition].nextBlockId = currentBlock.id;
   }
 
-  if(preBlock.parentId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(preBlock.parentId));
+  if(parentId) {
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(parentId));
     const parentBlock = newBlocks[parentBlockPosition];
-    const insertPosion = parentBlock.children.indexOf(preBlock.id) + 1;
+    const insertPosion = preBlock && preBlock.parentId? 
+      (parentBlock.children.indexOf(preBlock.id) + 1) : 0;
+
+    if(parentBlock.children[0]) {
+      const lastChild = parentBlock.children[parentBlock.children.length - 1];
+      nextBlockPosition = newBlocks.findIndex(isBlockId(lastChild));
+      nextBlock = newBlocks[nextBlockPosition];
+    }
+
+    currentBlock.parentId = parentBlock.id;  
 
     newBlocks[parentBlockPosition].children = insertChild(
       parentBlock.children, 
@@ -333,11 +441,17 @@ function switchingBlock(
     );
   }
 
+  if(nextBlock) {
+    currentBlock.nextBlockId = nextBlock.id;
+    newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
+  } else {
+    currentBlock.nextBlockId = null;
+  }
+
   newBlocks.push(currentBlock)
 
-  return orderingBlock(newBlocks);
+  return newBlocks;
 }
-
 
 /**
  * block 복구
@@ -463,7 +577,7 @@ function restoreBlock(
   newBlocks.push(currentBlock);
 
   return {
-    blocks: orderingBlock(newBlocks),
+    blocks: newBlocks,
     changedData
   };
 }
@@ -471,6 +585,7 @@ function restoreBlock(
 const blocksUtils = {
   createBlockData,
   copyBlockData,
+  copyBlockDataList,
   insertBlock,
   insertChild,
   updateContents,

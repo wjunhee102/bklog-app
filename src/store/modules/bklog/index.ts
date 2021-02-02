@@ -30,10 +30,13 @@ import {
   changeStyleTextContents,
   excludeBlock,
   switchingBlock,
+  restoreBlock,
   getContentsToBeChanged
 } from './utils';
 
 import { page } from '../../../data/db.json';
+
+import { newDataList } from '../../../index.test';
 
 /**
  * BlockLog store
@@ -157,7 +160,7 @@ const initialState:BklogState = ((): BklogState => {
   };
 })();
 
-function bklog( state: BklogState = initialState, action: BklogActions):BklogState {
+function bklog(state: BklogState = initialState, action: BklogActions):BklogState {
 
   switch(action.type) {
 
@@ -177,7 +180,7 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
       const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
 
       return Object.assign({}, state, {
-        blocks: addedBlocks,
+        blocks: orderingBlock(addedBlocks),
         editingId: newBlock.id,
         tempBack: tempDataPush(state.tempBack,{
           type: ADD_BLOCK,
@@ -299,10 +302,25 @@ function bklog( state: BklogState = initialState, action: BklogActions):BklogSta
     case SWITCH_BLOCK:
       const { switchedId, positionId } = action.payload;
       const switchedBlocks = switchingBlock(state.blocks, switchedId, positionId);
+      console.log(switchedBlocks);
 
       return Object.assign({}, state, {
-        blocks: switchedBlocks
+        blocks: orderingBlock(switchedBlocks)
       });
+    
+    case REVERT_BLOCK:  
+      const testBlock = state.tempBack.pop();
+      let restoreBlocks;
+
+      if(testBlock && testBlock.data.id) {
+        restoreBlocks = restoreBlock(state.blocks, testBlock.data);
+      } 
+
+      console.log(restoreBlocks);
+
+      return restoreBlocks? Object.assign({}, state, {
+        blocks: orderingBlock(restoreBlocks.blocks)
+      }) : state
       
     default: 
       // let preState = localStorage.getItem("bklog")

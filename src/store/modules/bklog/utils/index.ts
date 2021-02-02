@@ -68,13 +68,15 @@ export const orderingBlock = ordering.default;
 /**
  * blocksUtils
  */
-export const createBlockData = blocksUtils.createBlockData;
-export const copyBlockData   = blocksUtils.copyBlockData;
-export const insertBlock     = blocksUtils.insertBlock;
-export const insertChild     = blocksUtils.insertChild;
-export const updateContents  = blocksUtils.updateContents;
-export const excludeBlock    = blocksUtils.excludeBlock;
-export const switchingBlock  = blocksUtils.switchingBlock;
+export const createBlockData   = blocksUtils.createBlockData;
+export const copyBlockData     = blocksUtils.copyBlockData;
+export const copyBlockDataList = blocksUtils.copyBlockDataList;
+export const insertBlock       = blocksUtils.insertBlock;
+export const insertChild       = blocksUtils.insertChild;
+export const updateContents    = blocksUtils.updateContents;
+export const excludeBlock      = blocksUtils.excludeBlock;
+export const switchingBlock    = blocksUtils.switchingBlock;
+export const restoreBlock      = blocksUtils.restoreBlock;
 
 /**
  * tempStoreUtils

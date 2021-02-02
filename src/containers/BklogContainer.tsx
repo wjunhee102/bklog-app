@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import useBKlog from '../hooks/useBKlog';
 import Block from '../components/bklog/block';
 
 import { BlockData } from '../types/bklog';
 
-function BklogContainer() {  
+import { TEST_CASE_01, newDataList } from '../index.test';
+
+function BklogContainer() { 
+  
+  const [count, setCount] = useState(1);
+  
   const { 
     state, 
     initBlock, 
     onAddBlock, 
     onCommitBlock, 
     onChangeTextStyle,
-    onSwitchBlock
+    onSwitchBlock,
+    onRevertBlock
   } = useBKlog();
 
   const click = () => {
@@ -55,9 +61,13 @@ function BklogContainer() {
   }
 
   const testHandleClick = () => {
-    onSwitchBlock(state.blocks[5].id, state.blocks[3].id);
+    onSwitchBlock(state.blocks[2].id, state.blocks[6 + count].id);
+    setCount(count+1);
   }
 
+  const revertHandleClick = () => {
+    onRevertBlock();
+  }
   // const handleOnActive = (event: any) => {
   //   console.log('user is active', event)
   //   console.log('time remaining', getRemainingTime())
@@ -74,6 +84,11 @@ function BklogContainer() {
   })
 
   const blockData:any = initBlock[0]? initBlock : null;
+
+  useEffect(() => {
+    console.log("case: blockList 붙혀넣기", TEST_CASE_01);
+    console.log("adsd");
+  }, []);
 
   return (
     <div className="blocklog notranslate">
@@ -101,6 +116,7 @@ function BklogContainer() {
       <button onClick={click}>블럭 추가</button>
       <button onClick={handleClick}>스타일 추가</button>
       <button onClick={testHandleClick}>스위칭</button>
+      <button onClick={revertHandleClick}>되돌리기</button>
     </div>
   )
 }
