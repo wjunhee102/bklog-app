@@ -49,6 +49,11 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
       currentPosition = rawBlocks.findIndex(isFirstBlockPoint);
     }
 
+    if(currentPosition === -1) {
+      console.log("currentId 누락", currentId, newBlocks)
+      return newBlocks
+    }
+
     newBlock = rawBlocks[currentPosition];
 
     if(newBlock.children[0] !== undefined) {
