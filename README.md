@@ -34,3 +34,4 @@ body
 * api 연동
 * style 적용
 * 되돌리기 기능 추가
+* block에 ordering할때 오류 처리 추가
