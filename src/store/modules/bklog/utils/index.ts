@@ -75,6 +75,7 @@ export const insertBlock       = blocksUtils.insertBlock;
 export const insertChild       = blocksUtils.insertChild;
 export const updateContents    = blocksUtils.updateContents;
 export const excludeBlock      = blocksUtils.excludeBlock;
+export const excludeBlockList  = blocksUtils.excludeBlockList;
 export const switchingBlock    = blocksUtils.switchingBlock;
 export const restoreBlock      = blocksUtils.restoreBlock;
 

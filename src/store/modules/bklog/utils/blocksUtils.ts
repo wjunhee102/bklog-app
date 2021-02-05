@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BlockData, UUID, RawBlockData } from '../../../../types/bklog';
-import { orderingBlock, StagedBlock, parseHtmlContents } from './index';
+import { StagedBlock, parseHtmlContents } from './index';
 
 interface ChangedData {
   id: UUID;
@@ -180,7 +180,7 @@ function insertBlock(
   preBlockId: UUID | null,
   parentBlockId?: UUID
 ): Block[] {
-  let newBlocks: Block[] = [...preBlocks];
+  let newBlocks: Block[] = preBlocks.map(block => Object.assign({}, block));
   const newBlockDataList = [...blockDataList];
   const firstPosition: number = 0;
 
@@ -269,7 +269,7 @@ function updateContents(
   stageData: StagedBlock[]
 ):BlockData<any>[] {
 
-  let newBlocks      = [...blockData];
+  let newBlocks = blockData.map(block => Object.assign({}, block));
 
   stageData.forEach((block)=>{
 
@@ -292,22 +292,24 @@ function updateContents(
 
 const isNotBlockId = (id: UUID) => 
   (block:BlockData<any>) => block.id !== id;
-// blockList를 넣었을 때 삭제하는 것이 필요할것 같음.
 /**
  * block 제외 함수
  * @param blocks 
  * @param id 
  */
-function excludeBlock(blocks: BlockData<any>[], id: UUID) {
-  // 왜 이렇게 안하면 값이 바뀌지?
+function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
   const deletedId = id;
-  let deletedBlocks = blocks.filter(isNotBlockId(deletedId));
-
   const deletedBlock = blocks.filter(isBlockId(deletedId))[0];
-
   const preBlockId = deletedBlock.preBlockId;
   const nextBlockId = deletedBlock.nextBlockId;
   const parentId = deletedBlock.parentId;
+
+  if((!preBlockId && !parentId) || deletedBlock.type === "title") {
+    console.log("title은 삭제할 수 없습니다.")
+    return blocks
+  } 
+
+  let deletedBlocks = blocks.filter(isNotBlockId(deletedId));
 
   let newPreBlockId = preBlockId;
   let newNextBlockId = nextBlockId;
@@ -348,23 +350,88 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID) {
   }
 
   if(preBlockId) {
-    deletedBlocks = deletedBlocks.map((block) => 
-      block.id === preBlockId? Object.assign({}, block, {
-        nextBlockId: newNextBlockId
-      }) : block
-    );
+    const preBlockPosition = deletedBlocks.findIndex(isBlockId(preBlockId));
+    deletedBlocks[preBlockPosition].nextBlockId = newNextBlockId;
   }
 
   if(nextBlockId) {
-    deletedBlocks = deletedBlocks.map((block) => 
-      block.id === nextBlockId? Object.assign({}, block, {
-        preBlockId: newPreBlockId
-      }) : block
-    );
+    const nextBlockPosition = deletedBlocks.findIndex(isBlockId(nextBlockId));
+    deletedBlocks[nextBlockPosition].preBlockId = newPreBlockId;
   }
 
   console.log("deletedBlocks",deletedBlocks, deletedId, deletedBlock, blocks);
-  return orderingBlock(deletedBlocks);
+  return deletedBlocks;
+}
+
+/**
+ * 
+ * @param blocks 
+ * @param blockIdList 지워질 blockList들은 서로 연결이 되어 있어야 함.
+ */
+function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
+
+  let deletedBlocks: BlockData<any>[] = blocks.map((block) => Object.assign({}, block));
+  let currentBlockId: UUID | null = blockIdList[0];
+
+  let preBlockData: [UUID, number] | null = null;
+  let nextBlockData: [UUID, number] | null = null;
+
+  while(currentBlockId) {
+    const currentBlock: BlockData<any> = blocks.filter(isBlockId(currentBlockId))[0];
+
+    let preBlockId = currentBlock.preBlockId;
+    let nextBlockId = currentBlock.nextBlockId;
+    let parentBlockId = currentBlock.parentId;
+
+    if((!preBlockId && !parentBlockId) || currentBlock.type === "title") {
+      console.log("title은 삭제할 수 없습니다.")
+      return blocks
+    } 
+
+    if(parentBlockId) {
+      const parentPosition = deletedBlocks.findIndex(isBlockId(parentBlockId));
+
+      deletedBlocks[parentPosition].children = deletedBlocks[parentPosition].children.filter((child)=>
+        child !== currentBlockId
+      );
+    }
+    
+    if(preBlockId) {
+      const findCheck = blockIdList.find((id)=> id === preBlockId);
+      if(!findCheck) {
+        const preBlockPosition = deletedBlocks.findIndex(isBlockId(preBlockId));
+        preBlockData = [preBlockId, preBlockPosition];
+      }
+    }
+
+    if(nextBlockId) {
+      const findCheck = blockIdList.find((id)=> id === nextBlockId);
+      if(!findCheck) {
+        const nextBlockPosition = deletedBlocks.findIndex(isBlockId(nextBlockId));
+        nextBlockData = [nextBlockId, nextBlockPosition];
+
+        currentBlockId = null;
+      }
+    } else {
+      currentBlockId = null;
+    }
+
+  }
+
+  if(preBlockData && nextBlockData) {
+    deletedBlocks[preBlockData[1]].nextBlockId = nextBlockData[0];
+    deletedBlocks[nextBlockData[1]].preBlockId = preBlockData[0];
+  } else if(preBlockData) {
+    deletedBlocks[preBlockData[1]].nextBlockId = null;
+  } else if(nextBlockData) {
+    deletedBlocks[nextBlockData[1]].preBlockId = null;
+  } 
+
+  for(let i = 0; i < blockIdList.length; i++) {
+    deletedBlocks = deletedBlocks.filter(isNotBlockId(blockIdList[i]));
+  }
+
+  return deletedBlocks;
 }
 
 // 되돌아가기를 했을때 그 전 preBlockId를 기억하고 있으면 될 것 같음.
@@ -471,7 +538,7 @@ function restoreBlock(
     data: [blockData]
   });
 
-  const newBlocks = [...preBlocks];
+  const newBlocks = preBlocks.map(block => Object.assign({}, block));
 
   if(currentBlock.preBlockId) {
     const preBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
@@ -590,6 +657,7 @@ const blocksUtils = {
   insertChild,
   updateContents,
   excludeBlock,
+  excludeBlockList,
   switchingBlock,
   restoreBlock
 }

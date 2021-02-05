@@ -1,6 +1,7 @@
 import { 
   insertBlock,
-  copyBlockDataList
+  copyBlockDataList,
+  excludeBlockList
 } from './store/modules/bklog/utils';
 import { page } from './data/db.json';
 import orderingBlock from './store/modules/bklog/utils/ordering';
@@ -113,8 +114,15 @@ function testCopyBlockList() {
   const newDataList = copyBlockDataList(TEST_BLOCKDATALIST);
   const aaa = copyBlockDataList(TEST_BLOCKDATALIST);
   const testDataList = orderingBlock(TEST_BLOCKS);
-  console.log(aaa, testDataList);
-  return orderingBlock(insertBlock(testDataList, newDataList, TEST_PRE_ID));
+  const testDataIdList = newDataList.map(block => block.id);
+  
+  const insertedBlock = orderingBlock(insertBlock(testDataList, newDataList, TEST_PRE_ID));
+  const newInsertedBlock = [...insertedBlock];
+
+  console.log(aaa, testDataList, testDataIdList, insertedBlock);
+  const deletedBlock = orderingBlock(excludeBlockList(newInsertedBlock, testDataIdList));
+  
+  return deletedBlock;
 }
 
 export const newDataList = copyBlockDataList(TEST_BLOCKDATALIST);

@@ -29,6 +29,7 @@ import {
   updateContents,
   changeStyleTextContents,
   excludeBlock,
+  excludeBlockList,
   switchingBlock,
   restoreBlock,
   getContentsToBeChanged
@@ -292,7 +293,7 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
       )[0];
 
       return Object.assign({}, state, {
-        blocks: excludeBlock(state.blocks, deletedId),
+        blocks: orderingBlock(excludeBlock(state.blocks, deletedId)),
         tempBack: tempDataPush(state.tempBack, {
           type: DELETE_BLOCK,
           data: deletedBlock
