@@ -392,7 +392,7 @@ function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
       const parentPosition = deletedBlocks.findIndex(isBlockId(parentBlockId));
 
       deletedBlocks[parentPosition].children = deletedBlocks[parentPosition].children.filter((child)=>
-        child !== currentBlockId
+        child !== currentBlock.id
       );
     }
     
@@ -411,6 +411,8 @@ function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
         nextBlockData = [nextBlockId, nextBlockPosition];
 
         currentBlockId = null;
+      } else {
+        currentBlockId = nextBlockId;
       }
     } else {
       currentBlockId = null;
