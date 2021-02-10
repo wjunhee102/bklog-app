@@ -7,6 +7,7 @@ interface ContentEditableEle {
   onKeyUp?: any;
   onMouseUp?: any;
   onMouseDown?: any;
+  onMouseMove?: any;
   onFocus?:any;
   onBlur?:any;
   placeholder?: string;
@@ -22,6 +23,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
   onKeyUp,
   onMouseUp,
   onMouseDown,
+  onMouseMove,
   onFocus,
   onBlur,
   dangerouslySetInnerHTML,
@@ -37,6 +39,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
       onKeyPress={onKeyPress}
       onMouseUp={onMouseUp}
       onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
       onFocus={onFocus}
       onBlur={onBlur}
       contentEditable={true}

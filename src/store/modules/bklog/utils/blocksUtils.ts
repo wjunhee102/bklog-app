@@ -119,7 +119,6 @@ function copyBlockDataList(
     } else {
       newParentBlockData.pop();
     };
-    console.log(i, newPreBlockData, newParentBlockData);
 
     newBlockDataList.push(newBlock);
   }

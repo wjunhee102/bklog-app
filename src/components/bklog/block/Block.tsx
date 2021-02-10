@@ -107,6 +107,9 @@ function Block({ blockData }:BlockProps) {
           onDeleteBlock(blockData.id);
           if(blockData.index > 1) onEditAble(null, blockData.index-1);
           break;
+        } else {
+          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+          break;
         }
       
       case " ":
@@ -120,6 +123,27 @@ function Block({ blockData }:BlockProps) {
 
     }
 
+  }
+
+  // const moveStartPoint = (ele: any) => {
+  //   setCursorStart(0);
+  //   setCursorEnd(0);
+  //   setSelectionRange(ele, 0, 0);
+  // }
+
+  const moveEndPoint = (ele: any) => {
+    const length = ele.innerText.length;
+    setCursorStart(length);
+    setCursorEnd(length);
+    setSelectionRange(ele, length, length);
+  }
+
+  const refreshPoint = (
+    ele:any, 
+    cursorStart: number, 
+    cursorEnd?: number | null
+    ) => {
+    setSelectionRange(ele, cursorStart, cursorEnd? cursorEnd : cursorStart);
   }
 
   const handleKeyPress = (e:any) => {
@@ -154,27 +178,6 @@ function Block({ blockData }:BlockProps) {
 
   const handleFocus = (ele: any) => {
     ele.focus();
-  }
-
-  // const moveStartPoint = (ele: any) => {
-  //   setCursorStart(0);
-  //   setCursorEnd(0);
-  //   setSelectionRange(ele, 0, 0);
-  // }
-
-  const moveEndPoint = (ele: any) => {
-    const length = ele.innerText.length;
-    setCursorStart(length);
-    setCursorEnd(length);
-    setSelectionRange(ele, length, length);
-  }
-
-  const refreshPoint = (
-    ele:any, 
-    cursorStart: number, 
-    cursorEnd?: number | null
-    ) => {
-    setSelectionRange(ele, cursorStart, cursorEnd? cursorEnd : cursorStart);
   }
 
   const isFocus = (e: any) => {

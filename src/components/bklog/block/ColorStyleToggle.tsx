@@ -34,6 +34,20 @@ function ColorStyleToggleButton({
   )
 }
 
+const colorCodes:number[][] = [
+  [191, 63, 63, 1],
+  [191, 127, 63, 1],
+  [191, 191, 63, 1],
+  [127, 191, 63, 1],
+  [63, 191, 63, 1],
+  [63, 191, 127, 1],
+  [63, 127, 191, 1],
+  [63, 63, 191, 1],
+  [127, 63, 191, 1],
+  [191, 63, 191, 1],
+  [191, 63, 127, 1]
+];
+
 interface ColorStyleToggleProps {
   addDelToggle: any;
   onStyleChange: any;
@@ -42,20 +56,6 @@ interface ColorStyleToggleProps {
 function ColorStyleToggle(
   { addDelToggle, onStyleChange }: ColorStyleToggleProps
   ) {
-
-  const colorCodes:number[][] = [
-    [191, 63, 63, 1],
-    [191, 127, 63, 1],
-    [191, 191, 63, 1],
-    [127, 191, 63, 1],
-    [63, 191, 63, 1],
-    [63, 191, 127, 1],
-    [63, 127, 191, 1],
-    [63, 63, 191, 1],
-    [127, 63, 191, 1],
-    [191, 63, 191, 1],
-    [191, 63, 127, 1]
-  ];
 
   return (
     <div className="bk-color-menu">
