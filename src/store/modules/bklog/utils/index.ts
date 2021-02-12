@@ -1,7 +1,4 @@
 import {
-  ContentType,
-  TextContents,
-  TextProps,
   BlockData,
   UUID
 } from '../../../../types/bklog';

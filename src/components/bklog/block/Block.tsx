@@ -2,18 +2,13 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 
 import useBKlog from '../../../hooks/useBKlog';
 import { 
-  BlockData, 
-  UUID,
-  ContentType,
-  TextContents
+  BlockData
 } from '../../../types/bklog';
 import { 
   contentsElement,
-  createContentsElement,
-  findTextStyle
+  createContentsElement
 } from '../utils';
 import { 
-  getSelectionDirection,
   getSelectionStart,
   getSelectionEnd,
   setSelectionRange
@@ -22,7 +17,7 @@ import {
 import ContentEditableEle from './ContentEditableEle';
 import TextStyleToggle from './TextStyleToggle';
 
-import '../block.css';
+import './block.scss';
 
 interface BlockProps {
   blockData: BlockData<any>;
@@ -228,7 +223,7 @@ function Block({ blockData }:BlockProps) {
       className="block-zone"
     >
        <div 
-        className="bk-block"
+        className="block black-mode"
         onBlur={handleBlur}
        > 
         { 
@@ -245,7 +240,7 @@ function Block({ blockData }:BlockProps) {
             />
           : null
         }
-        <button onClick={()=>{onDeleteBlock(blockData.id)}}> 삭제 </button>
+        <button className="bk-del" onClick={()=>{onDeleteBlock(blockData.id)}}> 삭제 </button>
         {
           styleToggle? 
           <TextStyleToggle

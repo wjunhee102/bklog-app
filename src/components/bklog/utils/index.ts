@@ -17,7 +17,7 @@ const ANCHOR = "a" as const;
 // const BK_ITALIC = "bk-italic";
 // const BK_UNDER = "bk-underbar";
 
-const FONT_WEIGHT_BOLD  = "font-weight: 600;" as const;
+const FONT_WEIGHT_BOLD  = "font-weight: 700;" as const;
 const FONT_STYLE_ITALIC = "font-style: italic;" as const;
 const BORDER_BOTTOM     = "border-bottom: 0.05em solid;" as const;
 const COLOR             = "color:" as const;

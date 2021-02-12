@@ -1,11 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import {
   ContentType,
   BlockData,
-  UUID,
-  TextProps,
-  RawBlockData
+  UUID
 } from '../../../types/bklog';
 
 import { 

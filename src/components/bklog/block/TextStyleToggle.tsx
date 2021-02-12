@@ -11,6 +11,22 @@ import {
 
 import ColorStyleToggle  from './ColorStyleToggle';
 
+const textBlockType = [
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "p"
+];
+
+function TextBlockTypeSelection() {
+  return (
+    <select>
+      { textBlockType.map((type => <option>{ type }</option>)) }
+    </select>
+  )
+}
+
 interface TextStyleToggleButtonProps {
   onStyleChange: any;
   addDelToggle: boolean;
@@ -95,6 +111,8 @@ function TextStyleToggles({
     <div 
       className="bk-style-toggles"
     >
+      <TextBlockTypeSelection 
+      />
       {
         toggleProps.map((prop, idx)=> 
           <TextStyleToggleButton 

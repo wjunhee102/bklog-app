@@ -55,6 +55,12 @@ function convertProperty(prop: string):any {
   }
 }
 
+function specialCharacters(text: string, i: number): string {
+  
+
+  return text;
+}
+
 function parseHtmlContents(text:string):TextContents[] {
 
   const newContents: any[] = [];
