@@ -65,7 +65,7 @@ function specialCharacters(
   text: string, 
   i: number
   ): { word: string, count: number } {
-    
+
   let word:string = text[i];
   let convertedWord: string;
   let count = i + 1;
@@ -387,8 +387,6 @@ function specialCharacters(
     convertedWord = text[i];
     count = i;
   }
-
-  console.log(convertedWord, word, text[count]);
 
   return {
     word: convertedWord,
