@@ -46,7 +46,7 @@ function convertType(prop: string):any {
 
 function convertProperty(prop: string):any {
   switch(prop) {
-    case "600":
+    case "700":
       return BOLD;
     case "italic":
       return ITALY;
@@ -55,10 +55,345 @@ function convertProperty(prop: string):any {
   }
 }
 
-function specialCharacters(text: string, i: number): string {
-  
 
-  return text;
+/**
+ * html 특수문자 컨버팅 함수
+ * @param text 
+ * @param i 
+ */
+function specialCharacters(
+  text: string, 
+  i: number
+  ): { word: string, count: number } {
+    
+  let word:string = text[i];
+  let convertedWord: string;
+  let count = i + 1;
+  let length = text.length;
+
+  while(text[count] !== " " && text[count] !== "&" && count < length) {
+    word += text[count];
+    if(text[count] === ";") break;
+    count++;
+  }
+
+  if(text[count] === ";") {
+    switch(word) {
+      case "&quot;": 
+        convertedWord = `"`;
+        break;
+      case "&amp;":
+        convertedWord = "&";
+        break;
+      case "&lt;":
+        convertedWord = "<";
+        break;
+      case "&gt;":
+        convertedWord = ">";
+        break;
+      case "&nbsp;":
+        convertedWord = " ";
+        break;
+      case "&iexcl;":
+        convertedWord = "¡";
+        break;
+      case "&cent;":
+        convertedWord = "￠";
+        break;
+      case "&pound;":
+        convertedWord = "￡";
+        break;
+      case "&curren;":
+        convertedWord = "¤";
+        break;
+      case "&yen;":
+        convertedWord = "￥";
+        break;
+      case "&brvbar;":
+        convertedWord = "|";
+        break;
+      case "&sect;":
+        convertedWord = "§";
+        break;
+      case "&uml;":
+        convertedWord = "¨";
+        break;
+      case "&copy;":
+        convertedWord = "ⓒ";
+        break;
+      case "&ordf;":
+        convertedWord = "ª";
+        break;
+      case "&laquo;":
+        convertedWord = "≪";
+        break;
+      case "&not;":
+        convertedWord = "￢";
+        break;
+      case "&shy;":
+        convertedWord = "-";
+        break;
+      case "&reg;":
+        convertedWord = "?";
+        break;
+      case "&macr;":
+        convertedWord = word;
+        break;
+      case "&deg;":
+        convertedWord = "°";
+        break;
+      case "&plusmn;":
+        convertedWord = "±";
+        break;
+      case "&sup1;":
+        convertedWord = "¹";
+        break;
+      case "&sup2;":
+        convertedWord = "²";
+        break;
+      case "&sup3;":
+        convertedWord = "³";
+        break;
+      case "&acute;":
+        convertedWord = "´";
+        break;
+      case "&micro;":
+        convertedWord = "μ";
+        break;
+      case "&para;":
+        convertedWord = "¶";
+        break;
+      case "&middot;":
+        convertedWord = "·";
+        break;
+      case "&cedil;":
+        convertedWord = "¸";
+        break;
+      case "&ordm;":
+        convertedWord = "º";
+        break;
+      case "&raquo;":
+        convertedWord = "≫";
+        break;
+      case "&frac14;":
+        convertedWord = "¼";
+        break;
+      case "&frac12;":
+        convertedWord = "½";
+        break;
+      case "&frac34;":
+        convertedWord = "¾";
+        break;
+      case "&iquest;":
+        convertedWord = "¿";
+        break;
+      case "&Agrave;":
+        convertedWord = "A";
+        break;
+      case "&Aacute;":
+        convertedWord = "A";
+        break;
+      case "&Acirc;":
+        convertedWord = "A";
+        break;
+      case "&Atilde;":
+        convertedWord = "A";
+        break;
+      case "&Auml;":
+        convertedWord = "A";
+        break;
+      case "&Aring;":
+        convertedWord = "A";
+        break;
+      case "&AElig;":
+        convertedWord = "Æ";
+        break;
+      case "&Ccedil;":
+        convertedWord = "C";
+        break;
+      case "&Egrave;":
+        convertedWord = "E";
+        break;
+      case "&Eacute;":
+        convertedWord = "E";
+        break;
+      case "&Ecirc;":
+        convertedWord = "E";
+        break;
+      case "&Euml;":
+        convertedWord = "E";
+        break;
+      case "&Igrave;":
+        convertedWord = "I";
+        break;
+      case "&Iacute;":
+        convertedWord = "I";
+        break;
+      case "&Icirc;":
+        convertedWord = "I";
+        break;
+      case "&Iuml;":
+        convertedWord = "I";
+        break;
+      case "&ETH;":
+        convertedWord = "Ð";
+        break;
+      case "&Ntilde;":
+        convertedWord = "N";
+        break;
+      case "&Ograve;":
+        convertedWord = "O";
+        break;
+      case "&Oacute;":
+        convertedWord = "O";
+        break;
+      case "&Ocirc;":
+        convertedWord = "O";
+        break;
+      case "&Otilde;":
+        convertedWord = "O";
+        break;
+      case "&Ouml;":
+        convertedWord = "O";
+        break;
+      case "&times;":
+        convertedWord = "×";
+        break;
+      case "&Oslash;":
+        convertedWord = "Ø";
+        break;
+      case "&Ugrave;":
+        convertedWord = "U";
+        break;
+      case "&Uacute;":
+        convertedWord = "U";
+        break;
+      case "&Ucirc;":
+        convertedWord = "U";
+        break;
+      case "&Uuml;":
+        convertedWord = "U";
+        break;
+      case "&Yacute;":
+        convertedWord = "Y";
+        break;
+      case "&THORN;":
+        convertedWord = "Þ";
+        break;
+      case "&szlig;":
+        convertedWord = "ß";
+        break;
+      case "&agrave;":
+        convertedWord = "a";
+        break;
+      case "&aacute;":
+        convertedWord = "a";
+        break;
+      case "&acirc;":
+        convertedWord = "a";
+        break;
+      case "&atilde;":
+        convertedWord = "a";
+        break;
+      case "&auml;":
+        convertedWord = "a";
+        break;
+      case "&aring;":
+        convertedWord = "a";
+        break;
+      case "&aelig;":
+        convertedWord = "æ";
+        break;
+      case "&ccedil;":
+        convertedWord = "c";
+        break;
+      case "&egrave;":
+        convertedWord = "e";
+        break;
+      case "&eacute;":
+        convertedWord = "e";
+        break;
+      case "&ecirc;":
+        convertedWord = "e";
+        break;
+      case "&euml;":
+        convertedWord = "e";
+        break;
+      case "&igrave;":
+        convertedWord = "i";
+        break;
+      case "&iacute;":
+        convertedWord = "i";
+        break;
+      case "&icirc;":
+        convertedWord = "i";
+        break;
+      case "&iuml;":
+        convertedWord = "i";
+        break;
+      case "&eth;":
+        convertedWord = "ð";
+        break;
+      case "&ntilde;":
+        convertedWord = "n";
+        break;
+      case "&ograve;":
+        convertedWord = "o";
+        break;
+      case "&oacute;":
+        convertedWord = "o";
+        break;
+      case "&ocirc;":
+        convertedWord = "o";
+        break;
+      case "&otilde;":
+        convertedWord = "o";
+        break;
+      case "&ouml;":
+        convertedWord = "o";
+        break;
+      case "&divide;":
+        convertedWord = "÷";
+        break;
+      case "&oslash;":
+        convertedWord = "ø";
+        break;
+      case "&ugrave;":
+        convertedWord = "u";
+        break;
+      case "&uacute;":
+        convertedWord = "u";
+        break;
+      case "&ucirc;":
+        convertedWord = "u";
+        break;
+      case "&uuml;":
+        convertedWord = "u";
+        break;
+      case "&yacute;":
+        convertedWord = "y";
+        break;
+      case "&thorn;":
+        convertedWord = "þ";
+        break;
+      case "&yuml;":
+        convertedWord = "y";
+        break;
+
+      default: 
+        convertedWord = word;
+    }
+  } else {
+    convertedWord = text[i];
+    count = i;
+  }
+
+  console.log(convertedWord, word, text[count]);
+
+  return {
+    word: convertedWord,
+    count
+  };
 }
 
 function parseHtmlContents(text:string):TextContents[] {
@@ -66,6 +401,7 @@ function parseHtmlContents(text:string):TextContents[] {
   const newContents: any[] = [];
   const textLength: number = text.length;
 
+  console.log(text);
 
   let saveToggle:boolean = true;
 
@@ -160,12 +496,15 @@ function parseHtmlContents(text:string):TextContents[] {
           break;
         
         case "&":
-          if(text[i+1] === "n" && text[i+5] === ";") {
-            i += 5;
-            content[0]? content[0] += " " : content[0] = " ";
-          } else {
-            content[0]? content[0] += text[i] : content[0] = text[i];
-          }
+          // if(text[i+1] === "n" && text[i+5] === ";") {
+          //   i += 5;
+          //   content[0]? content[0] += " " : content[0] = " ";
+          // } else {
+          //   content[0]? content[0] += text[i] : content[0] = text[i];
+          // }
+          const { word, count } = specialCharacters(text, i);
+          i = count;
+          content[0]? content[0] += word : content[0] = word;
   
           break;
         
