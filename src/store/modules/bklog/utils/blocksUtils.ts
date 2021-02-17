@@ -608,16 +608,16 @@ function restoreBlock(
         });
       }
 
-      const preparentBlockId = newBlocks[childPosition].parentBlockId;
-      if(preparentBlockId) {
-        const preParentPosition = newBlocks.findIndex(isBlockId(preparentBlockId));
+      const preParentBlockId = newBlocks[childPosition].parentBlockId;
+      if(preParentBlockId) {
+        const preParentPosition = newBlocks.findIndex(isBlockId(preParentBlockId));
         newBlocks[preParentPosition].children = newBlocks[preParentPosition].children.filter(child => 
           child !== childId
         );
 
         if(childPosition === currentBlock.children.length -1) {
           changedData.push({
-            id: preparentBlockId,
+            id: preParentBlockId,
             data: [
               {
                 children: newBlocks[preParentPosition].children
