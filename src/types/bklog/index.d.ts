@@ -38,7 +38,7 @@ export interface TextProps {
 export interface RawBlockData<T> {
   id: UUID | string;
   type: string;
-  parentId: UUID | string | null;
+  parentBlockId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.
@@ -53,7 +53,7 @@ export interface BlockData<T> {
   index: number;
   id: UUID | string;
   type: string;
-  parentId: UUID | string | null;
+  parentBlockId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.

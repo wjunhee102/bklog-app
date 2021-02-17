@@ -7,7 +7,7 @@ type Blocks = RawBlockData<any>[] | BlockData<any>[];
  * 첫번째 block 찾기
  */
 const isFirstBlockPoint = (block: RawBlockData<any> | BlockData<any>) => 
-  !block.preBlockId && !block.parentId;
+  !block.preBlockId && !block.parentBlockId;
 
 /**
  * 다음 block 찾기

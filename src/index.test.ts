@@ -12,7 +12,7 @@ const TEST_BLOCKDATALIST = [
   {
     id: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
     type: "container",
-    parentId: null,
+    parentBlockId: null,
     preBlockId: "d5cc2725-97ec-494b-bc80-c16f96379e11",
     nextBlockId: "s5cc2725-97ec-494b-bc80-c16f96379e61",
     property: null,
@@ -25,7 +25,7 @@ const TEST_BLOCKDATALIST = [
   {
     id: "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
     type: "block",
-    parentId: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+    parentBlockId: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
     preBlockId: null,
     nextBlockId: "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
     property: {
@@ -45,7 +45,7 @@ const TEST_BLOCKDATALIST = [
   {
     id: "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
     type: "block",
-    parentId: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+    parentBlockId: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
     preBlockId: "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
     nextBlockId: "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8",
     property: {
@@ -67,7 +67,7 @@ const TEST_BLOCKDATALIST = [
   {
     id: "4453c55f-66f0-4ad0-b796-0dbcd8d82ce8",
     type: "block",
-    parentId: "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
+    parentBlockId: "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
     preBlockId: null,
     nextBlockId: null,
     property: {
@@ -88,7 +88,7 @@ const TEST_BLOCKDATALIST = [
   {
     id: "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8",
     type: "block",
-    parentId: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
+    parentBlockId: "c7ce6d39-bf2a-4712-9318-d2313a917a62",
     preBlockId: "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
     nextBlockId: null,
     property: {

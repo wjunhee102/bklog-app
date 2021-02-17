@@ -23,14 +23,14 @@ function useBklog() {
   const state:BklogState = useSelector((state: RootState) => state.bklog);
 
   const initBlock: BlockData<any>[] = useMemo(()=> 
-    state.blocks.filter(block => block.parentId === null), [state.blocks]);
+    state.blocks.filter(block => block.parentBlockId === null), [state.blocks]);
 
   const getEditAbleId = useMemo(() => state.editingId, [state.editingId]);
 
   const getStagedBlocks = state.stage;
 
   const getChilrenBlock = (blockId: UUID):BlockData<any>[] => 
-    state.blocks.filter(block => block.parentId === blockId); 
+    state.blocks.filter(block => block.parentBlockId === blockId); 
 
   const getBlockState = (blockId: UUID): BlockData<any>  => 
     state.blocks.filter(blockState => blockState.id === blockId)[0];

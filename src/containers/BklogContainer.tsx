@@ -26,7 +26,7 @@ function BklogContainer() {
       index: 0,
       id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
       type: "block",
-      parentId: null,
+      parentBlockId: null,
       preBlockId: null,
       nextBlockId: null,
       property: {

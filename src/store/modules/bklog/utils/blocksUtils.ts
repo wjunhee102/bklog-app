@@ -25,7 +25,7 @@ function createBlockData(
     index: 0,
     id: uuidv4(),
     type: type,
-    parentId: null,
+    parentBlockId: null,
     preBlockId: preBlockId,
     nextBlockId: nextBlockId? nextBlockId : null,
     property: {
@@ -48,7 +48,7 @@ function createBlockData(
 function copyBlockData(blockData: BlockData<any>): BlockData<any> {
   return Object.assign({}, blockData, {
     id: uuidv4(),
-    parentId: null,
+    parentBlockId: null,
     preBlockId: null,
     nextBlockId: null,
     children: []
@@ -84,13 +84,13 @@ function copyBlockDataList(
       id: uuidv4(),
       preBlockId: null,
       nextBlockId: null,
-      parentId: null,
+      parentBlockId: null,
       children: []
     });
 
-    if(blockDataList[i].parentId) {
+    if(blockDataList[i].parentBlockId) {
       const parentData = newParentBlockData[newParentBlockData.length - 1];
-      newBlock.parentId = parentData[0];
+      newBlock.parentBlockId = parentData[0];
       const children = newBlockDataList[parentData[1]].children;
       newBlockDataList[parentData[1]].children = insertChild(children,
         children.length, 
@@ -177,7 +177,7 @@ function insertBlock(
   preBlocks:Block[],
   blockDataList: Block[],
   preBlockId: UUID | null,
-  parentBlockId?: UUID
+  parentId?: UUID
 ): Block[] {
   let newBlocks: Block[] = preBlocks.map(block => Object.assign({}, block));
   const newBlockDataList = [...blockDataList];
@@ -196,9 +196,9 @@ function insertBlock(
   const nextBlock: Block | null = nextBlockPosition !== -1? 
     newBlocks[nextBlockPosition] : null;
   
-  let parentId: UUID | null = parentBlockId
-    ? parentBlockId 
-    : (preBlock && preBlock.parentId? preBlock.parentId : null)
+  let parentBlockId: UUID | null = parentId
+    ? parentId 
+    : (preBlock && preBlock.parentBlockId? preBlock.parentBlockId : null)
 
   while(currentBlockId) {
     const currentBlockPosition: number = newBlockDataList.findIndex(isBlockId(currentBlockId));
@@ -214,8 +214,8 @@ function insertBlock(
       }
     }
   
-    if(parentId) {
-      newBlockDataList[currentBlockPosition].parentId = parentId;
+    if(parentBlockId) {
+      newBlockDataList[currentBlockPosition].parentBlockId = parentBlockId;
       newChildrenList.push(currentBlockId);
     }
 
@@ -231,8 +231,8 @@ function insertBlock(
 
   }
 
-  if(parentId) {
-    const parentBlockPosition: number = newBlocks.findIndex(isBlockId(parentId));
+  if(parentBlockId) {
+    const parentBlockPosition: number = newBlocks.findIndex(isBlockId(parentBlockId));
     const parentBlock: Block = newBlocks[parentBlockPosition];
     const insertPosion: number  = preBlockId? 
       parentBlock.children.indexOf(preBlockId) + 1 : 0;
@@ -301,9 +301,9 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
   const deletedBlock = blocks.filter(isBlockId(deletedId))[0];
   const preBlockId = deletedBlock.preBlockId;
   const nextBlockId = deletedBlock.nextBlockId;
-  const parentId = deletedBlock.parentId;
+  const parentBlockId = deletedBlock.parentBlockId;
 
-  if((!preBlockId && !parentId) || deletedBlock.type === "title") {
+  if((!preBlockId && !parentBlockId) || deletedBlock.type === "title") {
     console.log("title은 삭제할 수 없습니다.")
     return blocks
   } 
@@ -332,12 +332,12 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
     }
     
     childPositionList.forEach((child)=>{
-      deletedBlocks[child].parentId = parentId;
+      deletedBlocks[child].parentBlockId = parentBlockId;
     });
   } 
 
-  if(parentId) {
-    const parentBlockPosition = deletedBlocks.findIndex(isBlockId(parentId));
+  if(parentBlockId) {
+    const parentBlockPosition = deletedBlocks.findIndex(isBlockId(parentBlockId));
     const parentBlock = deletedBlocks[parentBlockPosition];
     const deletePosition = parentBlock.children.indexOf(deletedId);
 
@@ -380,7 +380,7 @@ function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
 
     let preBlockId = currentBlock.preBlockId;
     let nextBlockId = currentBlock.nextBlockId;
-    let parentBlockId = currentBlock.parentId;
+    let parentBlockId = currentBlock.parentBlockId;
 
     if((!preBlockId && !parentBlockId) || currentBlock.type === "title") {
       console.log("title은 삭제할 수 없습니다.")
@@ -446,7 +446,7 @@ function switchingBlock(
   preBlocks:BlockData<any>[],
   blockId: UUID,
   preBlockId: UUID | null,
-  parentBlockId?: UUID
+  parentId?: UUID
 ): Block[] {
   let newBlocks: BlockData<any>[] = preBlocks.filter(isNotBlockId(blockId));
   const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
@@ -464,18 +464,18 @@ function switchingBlock(
     }
   }
 
-  if(currentBlock.parentId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.parentId));
+  if(currentBlock.parentBlockId) {
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.parentBlockId));
     newBlocks[parentBlockPosition].children = newBlocks[parentBlockPosition].children.filter(child => 
       child !== currentBlock.id);
 
-    currentBlock.parentId = null;
+    currentBlock.parentBlockId = null;
   }
 
   const preBlockPosition = preBlockId? newBlocks.findIndex(isBlockId(preBlockId)) : -1;
-  const preBlock = parentBlockId? newBlocks[preBlockPosition] : null;
+  const preBlock = parentId? newBlocks[preBlockPosition] : null;
 
-  const parentId = parentBlockId? parentBlockId : (preBlock? preBlock.parentId : null);
+  const parentBlockId = parentId? parentId : (preBlock? preBlock.parentBlockId : null);
   
   let nextBlockPosition = preBlock && preBlock.nextBlockId?
     newBlocks.findIndex(isBlockId(preBlock.nextBlockId)) : -1;
@@ -488,10 +488,10 @@ function switchingBlock(
     newBlocks[preBlockPosition].nextBlockId = currentBlock.id;
   }
 
-  if(parentId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(parentId));
+  if(parentBlockId) {
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(parentBlockId));
     const parentBlock = newBlocks[parentBlockPosition];
-    const insertPosion = preBlock && preBlock.parentId? 
+    const insertPosion = preBlock && preBlock.parentBlockId? 
       (parentBlock.children.indexOf(preBlock.id) + 1) : 0;
 
     if(parentBlock.children[0]) {
@@ -500,7 +500,7 @@ function switchingBlock(
       nextBlock = newBlocks[nextBlockPosition];
     }
 
-    currentBlock.parentId = parentBlock.id;  
+    currentBlock.parentBlockId = parentBlock.id;  
 
     newBlocks[parentBlockPosition].children = insertChild(
       parentBlock.children, 
@@ -565,8 +565,8 @@ function restoreBlock(
     });
   }
   
-  if(currentBlock.parentId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.parentId));
+  if(currentBlock.parentBlockId) {
+    const parentBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.parentBlockId));
     let insertPoint: number = 0;
     if(currentBlock.preBlockId) {
       insertPoint = newBlocks[parentBlockPosition].children.findIndex(child => 
@@ -608,16 +608,16 @@ function restoreBlock(
         });
       }
 
-      const preParentId = newBlocks[childPosition].parentId;
-      if(preParentId) {
-        const preParentPosition = newBlocks.findIndex(isBlockId(preParentId));
+      const preparentBlockId = newBlocks[childPosition].parentBlockId;
+      if(preparentBlockId) {
+        const preParentPosition = newBlocks.findIndex(isBlockId(preparentBlockId));
         newBlocks[preParentPosition].children = newBlocks[preParentPosition].children.filter(child => 
           child !== childId
         );
 
         if(childPosition === currentBlock.children.length -1) {
           changedData.push({
-            id: preParentId,
+            id: preparentBlockId,
             data: [
               {
                 children: newBlocks[preParentPosition].children
@@ -628,9 +628,9 @@ function restoreBlock(
 
       }
 
-      newBlocks[childPosition].parentId = currentBlock.id;
+      newBlocks[childPosition].parentBlockId = currentBlock.id;
       childChangedData.push({
-        parentId: currentBlock.id
+        parentBlockId: currentBlock.id
       })
 
       changedData.push({
