@@ -9,14 +9,6 @@ const UNDERBAR = "_" as const;
 const FONT_COLOR = "fc" as const;
 const BACKGROUND_COLOR = "bc" as const;
 const ANCHOR = "a" as const;
-
-/**
- * class 명
- */
-// const BK_BOLB = "bk-bold";
-// const BK_ITALIC = "bk-italic";
-// const BK_UNDER = "bk-underbar";
-
 const FONT_WEIGHT_BOLD  = "font-weight: 700;" as const;
 const FONT_STYLE_ITALIC = "font-style: italic;" as const;
 const BORDER_BOTTOM     = "border-bottom: 0.05em solid;" as const;

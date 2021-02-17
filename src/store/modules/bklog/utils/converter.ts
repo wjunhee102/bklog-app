@@ -44,6 +44,10 @@ function convertType(prop: string):any {
   }
 }
 
+/**
+ * 
+ * @param prop 
+ */
 function convertProperty(prop: string):any {
   switch(prop) {
     case "700":
@@ -54,7 +58,6 @@ function convertProperty(prop: string):any {
       return prop;
   }
 }
-
 
 /**
  * html 특수문자 컨버팅 함수
@@ -494,12 +497,6 @@ function parseHtmlContents(text:string):TextContents[] {
           break;
         
         case "&":
-          // if(text[i+1] === "n" && text[i+5] === ";") {
-          //   i += 5;
-          //   content[0]? content[0] += " " : content[0] = " ";
-          // } else {
-          //   content[0]? content[0] += text[i] : content[0] = text[i];
-          // }
           const { word, count } = specialCharacters(text, i);
           i = count;
           content[0]? content[0] += word : content[0] = word;
