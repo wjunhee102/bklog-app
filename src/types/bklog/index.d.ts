@@ -35,21 +35,21 @@ export interface TextProps {
   contents: TextContents[];
 }
 
-export interface RawBlockData<T> {
+export interface RawBlockData<Props = any> {
   id: UUID | string;
   type: string;
   parentBlockId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.
-  property: T;
+  property: Props;
   children: UUID[];
 }
 
 /**
  * Raw Block Data
  */
-export interface BlockData<T> {
+export interface BlockData<Props = any> {
   index: number;
   id: UUID | string;
   type: string;
@@ -57,6 +57,6 @@ export interface BlockData<T> {
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.
-  property: T;
+  property: Props;
   children: UUID[];
 }

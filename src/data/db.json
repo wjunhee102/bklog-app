@@ -28,7 +28,7 @@
       },
       {
         "id": "d5cc2725-97ec-494b-bc80-c16f96379e11",
-        "type": "block",
+        "type": "text",
         "parentBlockId": null,
         "preBlockId": "d5cc2725-97ec-494b-bc80-c16f96379e61",
         "nextBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
@@ -60,7 +60,7 @@
       },
       {
         "id": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
-        "type": "block",
+        "type": "text",
         "parentBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "preBlockId": null,
         "nextBlockId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
@@ -81,7 +81,7 @@
       },
       {
         "id": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
-        "type": "block",
+        "type": "text",
         "parentBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "preBlockId": "a85758ba-bbb5-45e1-aaa0-e3395e0dfd78",
         "nextBlockId": "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8",
@@ -104,7 +104,7 @@
       },
       {
         "id": "4453c55f-66f0-4ad0-b796-0dbcd8d82ce8",
-        "type": "block",
+        "type": "text",
         "parentBlockId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
         "preBlockId": null,
         "nextBlockId": null,
@@ -126,7 +126,7 @@
       },
       {
         "id": "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8",
-        "type": "block",
+        "type": "text",
         "parentBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "preBlockId": "3723c55f-66f0-4ad0-b796-0dbcd8d82ce8",
         "nextBlockId": null,
@@ -148,7 +148,7 @@
       },
       {
         "id": "s5cc2725-97ec-494b-bc80-c16f96379e61",
-        "type": "block",
+        "type": "text",
         "parentBlockId": null,
         "preBlockId": "c7ce6d39-bf2a-4712-9318-d2313a917a62",
         "nextBlockId": null,

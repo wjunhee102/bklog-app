@@ -144,7 +144,7 @@ export type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof switchBlock>
 ;
 
-const initialState:BklogState = ((): BklogState => {
+const initialState:BklogState = (() => {
   return {
     pageId: page.id,
     userId: page.userId,
@@ -233,7 +233,13 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
         endPoint,
         order
        } = action.payload;
+       
       const changedTextStyleBlock = state.blocks[changedTextStyleBlockIndex -1];
+      if( changedTextStyleBlock.type !== "text") {
+        console.log("text block이 아닙니다.")
+        return state;
+      }
+
       const newTempData = {
         id: changedTextStyleBlock.id,
         contents: changedTextStyleBlock.property.contents,

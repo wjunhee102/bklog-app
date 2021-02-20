@@ -23,7 +23,9 @@ function getContentsToBeChanged(
   let changedBlocks:BlockData<TextProps>[] = [];
 
   stage.forEach(data => {
-    changedBlocks.push(blocks[data.blockIndex - 1]);
+    if(blocks[data.blockIndex - 1].type === "text") {
+      changedBlocks.push(blocks[data.blockIndex - 1]);
+    }
   });
   
   console.log(changedBlocks);

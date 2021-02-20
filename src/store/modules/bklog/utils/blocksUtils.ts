@@ -164,7 +164,7 @@ function insertChild(
  * @param id 
  */
 const isBlockId = (id: UUID | null) => 
-  (block: BlockData<any> | RawBlockData<any>) => 
+  (block: BlockData | RawBlockData) => 
   block.id === id;
 
 /**
@@ -274,12 +274,14 @@ function updateContents(
 
     if(newBlocks[block.blockIndex - 1] && block.id === newBlocks[block.blockIndex - 1].id) {
       
-      newBlocks[block.blockIndex - 1].property = Object.assign({}, 
-        newBlocks[block.blockIndex - 1].property, {
-          contents: typeof block.contents === "string"? 
-                    parseHtmlContents(block.contents) : block.contents
-      });
-
+      if(newBlocks[block.blockIndex - 1].type === "text") {
+        newBlocks[block.blockIndex - 1].property = Object.assign({}, 
+          newBlocks[block.blockIndex - 1].property, {
+            contents: typeof block.contents === "string"? 
+                      parseHtmlContents(block.contents) : block.contents
+        });
+      }
+      
     } else {
       console.log("block이 제대로 정렬되지 않았습니다.");
     }
