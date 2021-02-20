@@ -27,19 +27,4 @@ const configureStore = (() => {
   return store;
 })();
 
-// const store = createStore(rootReducer, applyMiddleware(
-//   composeEnhancers,
-//   sagaMiddleware
-// ));
-
-// sagaMiddleware.run(rootSage);
-
-// const configureStore = (() => {
-//   const store = createStore(rootReducer, applyMiddleware(
-//     sagaMiddleware
-//   ));
-
-//   return store;
-// })();
-
 export default configureStore;
