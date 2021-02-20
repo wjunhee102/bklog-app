@@ -148,6 +148,15 @@ function Block({ blockData }:BlockProps) {
     }
   }
 
+  const handleClick = (e: any) => {
+    const parentNode = e.target.parentNode;
+
+    if(parentNode.tagName === "A") {
+      console.log(parentNode.href);
+      window.open(parentNode.href);
+    }
+  }
+
   // mouse methods
   const handleMouseUp = (e: any) => {
     const getStartPosition = getSelectionStart(blockRef.current);
@@ -234,6 +243,7 @@ function Block({ blockData }:BlockProps) {
               ref={blockRef}
               onKeyPress={handleKeyPress}
               onKeyUp={handleKeyUp}
+              onMouseDown={handleClick}
               onMouseUp={handleMouseUp}
               onFocus={isFocus}
               placeholder="입력해주세요..."
@@ -266,3 +276,7 @@ function Block({ blockData }:BlockProps) {
 }
 
 export default Block;
+
+export function test() {
+
+}

@@ -5,6 +5,7 @@ interface ContentEditableEle {
   className: string;
   onKeyPress?: any;
   onKeyUp?: any;
+  onClick?: any;
   onMouseUp?: any;
   onMouseDown?: any;
   onMouseMove?: any;
@@ -21,6 +22,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
   className,
   onKeyPress, 
   onKeyUp,
+  onClick,
   onMouseUp,
   onMouseDown,
   onMouseMove,
@@ -37,6 +39,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
       ref={ref}
       onKeyUp={onKeyUp}
       onKeyPress={onKeyPress}
+      onClick={onClick}
       onMouseUp={onMouseUp}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
