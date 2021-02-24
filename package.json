@@ -1,5 +1,5 @@
 {
-  "name": "switching-app",
+  "name": "bklog-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,6 +7,7 @@
     "classnames": "^2.2.6",
     "gh-pages": "^3.1.0",
     "node-sass": "^4.0.0",
+    "postcss": "^8.2.6",
     "react": "^16.13.1",
     "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
@@ -22,6 +23,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@tailwindcss/postcss7-compat": "^2.0.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -34,15 +36,19 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/styled-components": "^5.1.4",
     "@types/uuid": "^8.3.0",
+    "autoprefixer": "^9",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "~3.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "yarn build:css &&  react-scripts build",
     "deploy": "gh-pages -d build",
     "predeploy": "yarn build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:css": "postcss src/assets/tailwind.css -o src/assets/main.css"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -59,5 +65,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://wjunhee102.github.io/switching-app/"
+  "homepage": "https://wjunhee102.github.io/bklog-app/"
 }

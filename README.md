@@ -1,4 +1,9 @@
-# Switching App
+# Bklog App
+
+```
+  yarn build:css && npm run build:css
+  yarn start && npm run start
+```
 
 ## App Structure
 ```
