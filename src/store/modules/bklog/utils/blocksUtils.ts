@@ -142,7 +142,7 @@ function insertChild(
 ):UUID[] {
   let newChildren = [...children];
 
-  if(insertChildren) {
+  if(insertChildren[0]) {
     
     if(children.length < 1 || children.length === insertPoint) {
       if(deleteCount && children.length >= 1) {
@@ -305,7 +305,7 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
   const nextBlockId = deletedBlock.nextBlockId;
   const parentBlockId = deletedBlock.parentBlockId;
 
-  if((!preBlockId && !parentBlockId) || deletedBlock.type === "title") {
+  if(deletedBlock.type === "title") {
     console.log("title은 삭제할 수 없습니다.")
     return blocks
   } 
@@ -438,19 +438,20 @@ function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
 }
 
 // 되돌아가기를 했을때 그 전 preBlockId를 기억하고 있으면 될 것 같음.
+// 인자를 좀 더 명확하게 해야겠음.
 /**
  * block의 위치를 바꾸는 함수
  * @param preBlocks 
  * @param blockId 
  * @param preBlockId 
  */
-function switchingBlock(
+function switchingBlock2(
   preBlocks:BlockData<any>[],
   blockId: UUID,
   preBlockId: UUID | null,
   parentId?: UUID
 ): Block[] {
-  let newBlocks: BlockData<any>[] = preBlocks.filter(isNotBlockId(blockId));
+  let newBlocks: BlockData[] = preBlocks.filter(isNotBlockId(blockId));
   const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
 
   if(currentBlock.preBlockId) {
@@ -464,6 +465,8 @@ function switchingBlock(
     } else {
       newBlocks[preBlockPosition].nextBlockId = null;
     }
+  } else {
+    
   }
 
   if(currentBlock.parentBlockId) {
@@ -475,7 +478,8 @@ function switchingBlock(
   }
 
   const preBlockPosition = preBlockId? newBlocks.findIndex(isBlockId(preBlockId)) : -1;
-  const preBlock = parentId? newBlocks[preBlockPosition] : null;
+  // parentId만 있으면 첫번째 자식이니 preBlock은 null이 여야 한다.
+  const preBlock = parentId? null : newBlocks[preBlockPosition];
 
   const parentBlockId = parentId? parentId : (preBlock? preBlock.parentBlockId : null);
   
@@ -496,11 +500,13 @@ function switchingBlock(
     const insertPosion = preBlock && preBlock.parentBlockId? 
       (parentBlock.children.indexOf(preBlock.id) + 1) : 0;
 
-    if(parentBlock.children[0]) {
-      const lastChild = parentBlock.children[parentBlock.children.length - 1];
-      nextBlockPosition = newBlocks.findIndex(isBlockId(lastChild));
-      nextBlock = newBlocks[nextBlockPosition];
-    }
+    //???
+    // if(parentBlock.children[0]) {
+    //   const lastChild = parentBlock.children[parentBlock.children.length - 1];
+    //   nextBlockPosition = newBlocks.findIndex(isBlockId(lastChild));
+    //   nextBlock = newBlocks[nextBlockPosition];
+    // }
+    // if(insertPosion)
 
     currentBlock.parentBlockId = parentBlock.id;  
 
@@ -518,8 +524,99 @@ function switchingBlock(
     currentBlock.nextBlockId = null;
   }
 
-  newBlocks.push(currentBlock)
+  newBlocks.push(currentBlock);
+  console.log(newBlocks, currentBlock, preBlock, nextBlock);
 
+  return newBlocks;
+}
+
+function switchingBlock(
+  preBlocks:BlockData[],
+  blockId: UUID,
+  targetBlockId: UUID,
+  type: string = "preblock"
+): BlockData[] {
+  
+  const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
+  if(!currentBlock) {
+    console.log("currentBlock을 찾을 수 없습니다.");
+    return preBlocks;
+  } 
+  if(currentBlock.children[0]) {
+    if(currentBlock.children.indexOf(targetBlockId) !== -1) {
+      console.log("targetId가 currentId의 자식 요소입니다.")
+      return preBlocks;
+    }
+  }
+  const newBlocks = preBlocks.filter(isNotBlockId(blockId));
+
+  let currentPreBlockPosition: number | null = currentBlock.preBlockId?
+    newBlocks.findIndex(isBlockId(currentBlock.preBlockId)) : null;
+  let currentNextBlockPosition: number | null = currentBlock.nextBlockId?
+    newBlocks.findIndex(isBlockId(currentBlock.nextBlockId)) : null;
+  let currentParentBlockPosition: number | null = currentBlock.parentBlockId?
+    newBlocks.findIndex(isBlockId(currentBlock.parentBlockId)) : null;
+  
+  if(currentPreBlockPosition) {
+    newBlocks[currentPreBlockPosition].nextBlockId = currentBlock.nextBlockId;
+  }
+  if(currentNextBlockPosition) {
+    newBlocks[currentNextBlockPosition].preBlockId = currentBlock.preBlockId;
+  }
+  if(currentParentBlockPosition) {
+    let currentParentBlock = newBlocks[currentParentBlockPosition];
+    currentParentBlock.children = currentParentBlock.children.filter((child) => child !== currentBlock.id);
+  }
+  
+  let targetBlockPosition: number = newBlocks.findIndex(isBlockId(targetBlockId));
+  let preBlock: BlockData | null = type === "preBlock"? 
+    newBlocks[targetBlockPosition] : null;
+
+  let preBlockParentId: string | null = preBlock? preBlock.parentBlockId : null;
+  let parentBlockPosition: number | null = type === "parentBlock"?
+    newBlocks.findIndex(isBlockId(targetBlockId)) 
+    : preBlockParentId? 
+    newBlocks.findIndex(isBlockId(preBlockParentId))
+    : null;  
+  let parentBlock: BlockData | null = parentBlockPosition? 
+    newBlocks[parentBlockPosition] 
+    : null;
+
+  if(preBlock) {
+    let nextBlockId = preBlock.nextBlockId;
+    let nextBlockPosition: number | null = preBlock.nextBlockId? 
+      newBlocks.findIndex(isBlockId(nextBlockId)) : null;
+    
+    preBlock.nextBlockId = currentBlock.id;
+    currentBlock.preBlockId = preBlock.id;
+    if(nextBlockPosition) {
+      newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
+    }
+  }
+
+  if(parentBlock) {
+    const insertPosition = preBlock && preBlock.parentBlockId? 
+      (parentBlock.children.indexOf(preBlock.id) + 1) : 0;
+    let nextBlockId = parentBlock.children[0];
+    parentBlock.children = insertChild(
+                              parentBlock.children, 
+                              insertPosition,
+                              [currentBlock.id]
+                            );               
+    if(nextBlockId) {
+      let nextBlockPosition: number = newBlocks.findIndex(isBlockId(nextBlockId));
+      newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
+      currentBlock.nextBlockId = nextBlockId;
+    }       
+    if(!insertPosition) {
+      currentBlock.preBlockId = null;
+    }
+  }
+
+  currentBlock.parentBlockId = parentBlock? parentBlock.id : null;
+
+  newBlocks.push(currentBlock);
+  
   return newBlocks;
 }
 
