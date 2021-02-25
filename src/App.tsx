@@ -5,7 +5,7 @@ import Editor from './components/editor/index';
 import BkPage from './pages/BkPage';
 import AuthPage from './pages/AuthPage';
 
-import './App.scss';
+import './assets/App.scss';
 
 // hashRouter?
 function App() {
