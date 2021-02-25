@@ -123,12 +123,13 @@ export function revertBlock() {
   }
 }
 
-export function switchBlock(blockId: UUID, preBlockId: UUID) {
+export function switchBlock(blockId: UUID, targetBlockId: UUID, targetType: boolean) {
   return {
     type: SWITCH_BLOCK,
     payload: {
       switchedId: blockId,
-      positionId: preBlockId
+      targetBlockId,
+      targetType
     }
   }
 }
@@ -170,7 +171,7 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
 
       const newBlock: BlockData<any> = blockData? 
         copyBlockData(blockData) 
-        : createBlockData("block", newBlockType, preBlock.id);
+        : createBlockData("text", newBlockType, preBlock.id);
       
       console.log(newBlock);
 
@@ -303,8 +304,8 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
       });
     
     case SWITCH_BLOCK:
-      const { switchedId, positionId } = action.payload;
-      const switchedBlocks = switchingBlock(state.blocks, switchedId, positionId);
+      const { switchedId, targetBlockId, targetType } = action.payload;
+      const switchedBlocks = switchingBlock(state.blocks, switchedId, targetBlockId, targetType);
       console.log(switchedBlocks);
 
       return Object.assign({}, state, {
@@ -318,8 +319,6 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
       if(testBlock && testBlock.data.id) {
         restoreBlocks = restoreBlock(state.blocks, testBlock.data);
       } 
-
-      console.log(restoreBlocks);
 
       return restoreBlocks? Object.assign({}, state, {
         blocks: orderingBlock(restoreBlocks.blocks)

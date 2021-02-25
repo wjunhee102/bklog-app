@@ -76,8 +76,8 @@ function useBklog() {
       dispatch(changeTextStyle(index, style, startPoint, endPoint, order))
     , [dispatch]);
   
-  const onSwitchBlock = useCallback((blockId: UUID, preBlockId: UUID) => 
-    dispatch(switchBlock(blockId, preBlockId)), [dispatch]);
+  const onSwitchBlock = useCallback((blockId: UUID, preBlockId: UUID, parentType: boolean) => 
+    dispatch(switchBlock(blockId, preBlockId, parentType)), [dispatch]);
 
   const onRevertBlock = useCallback(()=> 
       dispatch(revertBlock()), [dispatch]);

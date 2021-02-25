@@ -1,61 +1,15 @@
-import { AuthState, SIGNIN, SIGNIN_ASYNC } from './utils';
+import { AuthState, SIGNIN, SIGNIN_ASYNC, SIGNOUT_ASYNC, REFRESH_TOKEN } from './utils';
 import { call, delay, put, takeEvery } from 'redux-saga/effects';
 import axios from 'axios';
-
-const sleep = (n: number) => new Promise(resolve => resolve);
-
-const posts = [
-  {
-    id: 1,
-    title: '리덕스 미들웨어를 배워봅시다',
-    body: '리덕스 미들웨어를 직접 만들어보면 이해하기 쉽죠.'
-  },
-  {
-    id: 2,
-    title: 'redux-thunk를 사용해봅시다',
-    body: 'redux-thunk를 사용해서 비동기 작업을 처리해봅시다!'
-  },
-  {
-    id: 3,
-    title: 'redux-saga도 사용해봅시다',
-    body:
-      '나중엔 redux-saga를 사용해서 비동기 작업을 처리하는 방법도 배워볼 거예요.'
-  }
-];
-
-// 포스트 목록을 가져오는 비동기 함수
-export const TestPosts = async () => {
-  await sleep(500); // 0.5초 쉬고
-  return posts; // posts 배열
-};
-
-// ID로 포스트를 조회하는 비동기 함수
-export const TestPostById = async (id: any) => {
-  await sleep(500); // 0.5초 쉬고
-  return posts.find(post => post.id === id); // id 로 찾아서 반환
-};
-
-export const getPosts = () => async () => {
-  try {
-    const posts = TestPosts(); // API 호출
-    console.log(posts);
-    return {
-      email: "test@test.com",
-      name: "test"
-    }
-  } catch (e) {
-    console.log("test");
-  }
-};
  
 async function getUserInfo() {
   try {
     const response = await axios({
       method: "post",
-      url: 'http://localhost:4500/v2/auth/user/login',
+      url: 'http://localhost:4500/v2/auth/sign-in',
       data: {
-        email: "test@test.com",
-        password: "Password123!"
+        email: "admin@admin.com",
+        password: "admin12!"
       },
       withCredentials: true
     });
@@ -66,8 +20,8 @@ async function getUserInfo() {
       email: string,
       name: string
     } = {
-      email: response.data.data.email,
-      name: response.data.data.name
+      email: response.data.data.userInfo.email,
+      name: response.data.data.userInfo.name
     }
 
     console.log("userInfo",userInfo);
@@ -80,10 +34,78 @@ async function getUserInfo() {
   
 }
 
+async function refreshToken() {
+  try {
+    const response = await axios({
+      method: "get",
+      url: 'http://localhost:4500/v2/auth/reissue-token',
+      withCredentials: true
+    });
+
+    console.log("userInfo", response);
+
+    return response.data;
+  } catch(e) {
+    console.log(e);
+    return null
+  }
+  
+}
+
+async function signOutUser() {
+  try {
+    const response = await axios({
+      method: "get",
+      url: 'http://localhost:4500/v2/auth/sign-out',
+      withCredentials: true
+    });
+
+    console.log("userInfo", response);
+
+    return response.data;
+  } catch(e) {
+    console.log(e);
+    return null
+  }
+  
+}
+
+function* refreshTokenSage() {
+  try {
+    const data = yield call(refreshToken);
+    console.log("success", data);
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+function* signOutUserSaga() {
+  try {
+    const data = yield call(signOutUser);
+    console.log("success", data);
+
+    yield put(signInUser({
+      email: "",
+      name: ""
+    }))
+
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+//인자로 액션을 받아서 실행하면 될듯? 아닌가?? 흠인자를 두개 받으면 될듯
 function* getPostsSaga() {
   try {
     const data = yield call(getUserInfo);
     console.log("data", data);
+    if(!data) {
+      yield put(signInUser({
+        email: "asdasd",
+        name: "sdadad"
+      }))
+      return 
+    }
     yield put(signInUser({
       email: data.email,
       name: data.name
@@ -95,10 +117,20 @@ function* getPostsSaga() {
 
 export function* postsSaga() {
   yield takeEvery(SIGNIN_ASYNC, getPostsSaga);
+  yield takeEvery(SIGNOUT_ASYNC, signOutUserSaga);
+  yield takeEvery(REFRESH_TOKEN, refreshTokenSage);
 }
 
 export const signInAsync = () => {
-  return {type: SIGNIN_ASYNC}
+  return { type: SIGNIN_ASYNC }
+}
+
+export const signOutAsync = () => {
+  return { type: SIGNOUT_ASYNC }
+}
+
+export const refreshTokenAsync = () => {
+  return { type: REFRESH_TOKEN }
 }
 
 type UserInfo = {

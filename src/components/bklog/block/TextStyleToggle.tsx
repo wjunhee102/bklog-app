@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import useBKlog from '../../../hooks/useBKlog';
 import { 
   BlockData, 
@@ -70,6 +70,7 @@ function TextStyleToggles({
   contents,
   reBlockFocus
 }: TextStyleTogglesProps) {
+  const [currentStyle, setStyle] = useState(findTextStyle(contents, startPosition));
   const { onChangeTextStyle, onCommitBlock } = useBKlog();
 
   const toggleProps:string[] = ["b", "i", "_"];
@@ -97,15 +98,17 @@ function TextStyleToggles({
     reBlockFocus();
   }
 
-  const includedStyle = findTextStyle(contents, startPosition);
-
   const addDelToggle = (prop:any):boolean => {
     return arrayFindIndex(
-      includedStyle? 
-      includedStyle : [], 
+      currentStyle? 
+      currentStyle : [], 
       prop
       ) !== -1? true : false;
   }
+
+  useEffect(()=> {
+    setStyle(findTextStyle(contents, startPosition));
+  }, [contents, startPosition]);
 
   return (
     <div 

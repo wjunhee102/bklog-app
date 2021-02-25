@@ -25,7 +25,7 @@ function BklogContainer() {
     onAddBlock(undefined, undefined, {
       index: 0,
       id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-      type: "block",
+      type: "text",
       parentBlockId: null,
       preBlockId: null,
       nextBlockId: null,
@@ -61,7 +61,7 @@ function BklogContainer() {
   }
 
   const testHandleClick = () => {
-    onSwitchBlock(state.blocks[2].id, state.blocks[6 + count].id);
+    onSwitchBlock(state.blocks[3].id, state.blocks[7].id, false);
     setCount(count+1);
   }
 

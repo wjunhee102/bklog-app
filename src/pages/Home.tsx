@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Form from '../components/Form';
 import Blocklog from '../components/bklog/Blocklog';
 import { useDispatch } from 'react-redux';
-import { signInAsync } from '../store/modules/auth/index';
+import { signInAsync, signOutAsync, refreshTokenAsync } from '../store/modules/auth/index';
 import { useCookies, withCookies } from 'react-cookie';
 
 function Home(props: any) {
@@ -12,6 +12,14 @@ function Home(props: any) {
 
   const handleClick = () => {
     dispatch(signInAsync());
+  }
+
+  const logOutHandleClick = () => {
+    dispatch(signOutAsync());
+  }
+
+  const refreshToken = () => {
+    dispatch(refreshTokenAsync());
   }
 
   // useEffect(()=> {
@@ -35,8 +43,15 @@ function Home(props: any) {
       /> */}
       <Blocklog />
       <button onClick={handleClick}> 
-        테스트
+        로그인
       </button>
+      <button onClick={logOutHandleClick}>
+        로그아웃
+      </button>
+      <button onClick={refreshToken}>
+        재발행
+      </button> 
+
     </div>
   )
 }

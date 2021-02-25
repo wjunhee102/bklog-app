@@ -99,6 +99,7 @@ function Block({ blockData }:BlockProps) {
 
       case "Backspace":
         if(!e.target.innerHTML && cursorStart === 0 && cursorEnd === 0) {
+          onCommitBlock();
           onDeleteBlock(blockData.id);
           if(blockData.index > 1) onEditAble(null, blockData.index-1);
           break;
@@ -232,7 +233,7 @@ function Block({ blockData }:BlockProps) {
       className="block-zone"
     >
        <div 
-        className="block black-mode"
+        className="bk-block black-mode"
         onBlur={handleBlur}
        > 
         { 
