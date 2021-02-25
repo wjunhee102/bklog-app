@@ -20,8 +20,6 @@ function ColorStyleToggleButton({
 
   const addDel = addDelToggle(["fc", RGBA])? "del" : "color";
 
-  console.log(btnStyle);
-
   const handleClick = ()=> {
     onStyleChange(["fc",RGBA], addDel);
   }

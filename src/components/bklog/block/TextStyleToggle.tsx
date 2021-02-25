@@ -22,7 +22,7 @@ const textBlockType = [
 function TextBlockTypeSelection() {
   return (
     <select>
-      { textBlockType.map((type => <option>{ type }</option>)) }
+      { textBlockType.map(((type, idx) => <option key={idx}>{ type }</option>)) }
     </select>
   )
 }
