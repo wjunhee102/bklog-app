@@ -16,7 +16,7 @@ type Block = BlockData<any> | RawBlockData<any>
  * @param blockType 
  */
 function createBlockData(
-  type: string = "block", 
+  type: string = "text", 
   blockType: string = "bk-p", 
   preBlockId: UUID | null, 
   nextBlockId?: UUID | null | undefined
@@ -439,104 +439,21 @@ function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
 
 // 되돌아가기를 했을때 그 전 preBlockId를 기억하고 있으면 될 것 같음.
 // 인자를 좀 더 명확하게 해야겠음.
+
 /**
- * block의 위치를 바꾸는 함수
+ * block의 위치를 바꾸는 함수.
  * @param preBlocks 
  * @param blockId 
- * @param preBlockId 
+ * @param targetBlockId 
+ * @param type 
  */
-function switchingBlock2(
-  preBlocks:BlockData<any>[],
-  blockId: UUID,
-  preBlockId: UUID | null,
-  parentId?: UUID
-): Block[] {
-  let newBlocks: BlockData[] = preBlocks.filter(isNotBlockId(blockId));
-  const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
-
-  if(currentBlock.preBlockId) {
-    const preBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
-    const preBlockId = newBlocks[preBlockPosition].id;
-    if(currentBlock.nextBlockId) {
-      const nextBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.nextBlockId));
-      const nextBlockId = newBlocks[nextBlockPosition].id;
-      newBlocks[nextBlockPosition].preBlockId = preBlockId;
-      newBlocks[preBlockPosition].nextBlockId = nextBlockId;
-    } else {
-      newBlocks[preBlockPosition].nextBlockId = null;
-    }
-  } else {
-    
-  }
-
-  if(currentBlock.parentBlockId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.parentBlockId));
-    newBlocks[parentBlockPosition].children = newBlocks[parentBlockPosition].children.filter(child => 
-      child !== currentBlock.id);
-
-    currentBlock.parentBlockId = null;
-  }
-
-  const preBlockPosition = preBlockId? newBlocks.findIndex(isBlockId(preBlockId)) : -1;
-  // parentId만 있으면 첫번째 자식이니 preBlock은 null이 여야 한다.
-  const preBlock = parentId? null : newBlocks[preBlockPosition];
-
-  const parentBlockId = parentId? parentId : (preBlock? preBlock.parentBlockId : null);
-  
-  let nextBlockPosition = preBlock && preBlock.nextBlockId?
-    newBlocks.findIndex(isBlockId(preBlock.nextBlockId)) : -1;
-  let nextBlock = nextBlockPosition !== -1? 
-    newBlocks[nextBlockPosition] : null;
-
-  currentBlock.preBlockId = preBlock? preBlock.id : null;
-
-  if(preBlock) {
-    newBlocks[preBlockPosition].nextBlockId = currentBlock.id;
-  }
-
-  if(parentBlockId) {
-    const parentBlockPosition = newBlocks.findIndex(isBlockId(parentBlockId));
-    const parentBlock = newBlocks[parentBlockPosition];
-    const insertPosion = preBlock && preBlock.parentBlockId? 
-      (parentBlock.children.indexOf(preBlock.id) + 1) : 0;
-
-    //???
-    // if(parentBlock.children[0]) {
-    //   const lastChild = parentBlock.children[parentBlock.children.length - 1];
-    //   nextBlockPosition = newBlocks.findIndex(isBlockId(lastChild));
-    //   nextBlock = newBlocks[nextBlockPosition];
-    // }
-    // if(insertPosion)
-
-    currentBlock.parentBlockId = parentBlock.id;  
-
-    newBlocks[parentBlockPosition].children = insertChild(
-      parentBlock.children, 
-      insertPosion,
-      [currentBlock.id]  
-    );
-  }
-
-  if(nextBlock) {
-    currentBlock.nextBlockId = nextBlock.id;
-    newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
-  } else {
-    currentBlock.nextBlockId = null;
-  }
-
-  newBlocks.push(currentBlock);
-  console.log(newBlocks, currentBlock, preBlock, nextBlock);
-
-  return newBlocks;
-}
-
 function switchingBlock(
   preBlocks:BlockData[],
   blockId: UUID,
   targetBlockId: UUID,
-  type: string = "preblock"
+  parentType: boolean = false
 ): BlockData[] {
-  
+
   const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
   if(!currentBlock) {
     console.log("currentBlock을 찾을 수 없습니다.");
@@ -550,30 +467,35 @@ function switchingBlock(
   }
   const newBlocks = preBlocks.filter(isNotBlockId(blockId));
 
-  let currentPreBlockPosition: number | null = currentBlock.preBlockId?
-    newBlocks.findIndex(isBlockId(currentBlock.preBlockId)) : null;
-  let currentNextBlockPosition: number | null = currentBlock.nextBlockId?
-    newBlocks.findIndex(isBlockId(currentBlock.nextBlockId)) : null;
-  let currentParentBlockPosition: number | null = currentBlock.parentBlockId?
-    newBlocks.findIndex(isBlockId(currentBlock.parentBlockId)) : null;
+  let currentPreBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
+  let currentNextBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.nextBlockId));
+  let currentParentBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.parentBlockId));
+
+  console.log(currentPreBlockPosition, currentNextBlockPosition, currentParentBlockPosition);
+  console.log(newBlocks.map(block => Object.assign({}, block)));
   
-  if(currentPreBlockPosition) {
+  if(currentPreBlockPosition !== -1) {
     newBlocks[currentPreBlockPosition].nextBlockId = currentBlock.nextBlockId;
   }
-  if(currentNextBlockPosition) {
+  if(currentNextBlockPosition !== -1) {
     newBlocks[currentNextBlockPosition].preBlockId = currentBlock.preBlockId;
   }
-  if(currentParentBlockPosition) {
+  if(currentParentBlockPosition !== -1) {
     let currentParentBlock = newBlocks[currentParentBlockPosition];
     currentParentBlock.children = currentParentBlock.children.filter((child) => child !== currentBlock.id);
   }
+  console.log(newBlocks.map(block => Object.assign({}, block)));
+
+  currentBlock.preBlockId = null;
+  currentBlock.nextBlockId = null;
+  currentBlock.parentBlockId = null;
   
   let targetBlockPosition: number = newBlocks.findIndex(isBlockId(targetBlockId));
-  let preBlock: BlockData | null = type === "preBlock"? 
+  let preBlock: BlockData | null = !parentType? 
     newBlocks[targetBlockPosition] : null;
 
   let preBlockParentId: string | null = preBlock? preBlock.parentBlockId : null;
-  let parentBlockPosition: number | null = type === "parentBlock"?
+  let parentBlockPosition: number | null = parentType?
     newBlocks.findIndex(isBlockId(targetBlockId)) 
     : preBlockParentId? 
     newBlocks.findIndex(isBlockId(preBlockParentId))
@@ -584,25 +506,30 @@ function switchingBlock(
 
   if(preBlock) {
     let nextBlockId = preBlock.nextBlockId;
-    let nextBlockPosition: number | null = preBlock.nextBlockId? 
-      newBlocks.findIndex(isBlockId(nextBlockId)) : null;
-    
+    let nextBlockPosition: number = newBlocks.findIndex(isBlockId(nextBlockId));
+    console.log("preblock",  preBlock);
     preBlock.nextBlockId = currentBlock.id;
     currentBlock.preBlockId = preBlock.id;
-    if(nextBlockPosition) {
+    if(nextBlockPosition !== -1) {
       newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
+      currentBlock.nextBlockId = newBlocks[nextBlockPosition].id;
+    } else {
+      currentBlock.nextBlockId = null;
     }
   }
 
   if(parentBlock) {
     const insertPosition = preBlock && preBlock.parentBlockId? 
       (parentBlock.children.indexOf(preBlock.id) + 1) : 0;
-    let nextBlockId = parentBlock.children[0];
+
+    // 문제가 될 수 있는 요소
+    let nextBlockId = preBlock && preBlock.nextBlockId? null : parentBlock.children[0];
     parentBlock.children = insertChild(
                               parentBlock.children, 
                               insertPosition,
                               [currentBlock.id]
-                            );               
+                            );            
+                            
     if(nextBlockId) {
       let nextBlockPosition: number = newBlocks.findIndex(isBlockId(nextBlockId));
       newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
