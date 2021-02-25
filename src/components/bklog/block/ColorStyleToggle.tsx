@@ -12,7 +12,8 @@ function ColorStyleToggleButton({
   onStyleChange,
   addDelToggle
 }: ColorStyleToggleButtonProps) {
-  const RGBA = `rgba(${colorCode[0]}, ${colorCode[1]}, ${colorCode[2]}, ${colorCode[3]})`
+  // 붙혀야 commit 해당 색을 찾을 수 있음.
+  const RGBA = `rgba(${colorCode[0]},${colorCode[1]},${colorCode[2]},${colorCode[3]})`
 
   const btnStyle = {
     color: RGBA
