@@ -1,35 +1,21 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import { RequestArg, ResType } from './index'; 
 
-const baseURL = "http://localhost:4500";
+const baseURL = "http://localhost:4500/v2";
 
-type baseFetchType = {
-  success: boolean,
-  response: any
-}; 
-
-async function baseFetch(
-  url: string, 
-  reqData: any,
-  method: AxiosRequestConfig["method"] = "get"
-): Promise<baseFetchType> {
+export async function baseFetch(req: RequestArg): Promise<ResType> {
   try {
-    const response = await axios({
-      method: method,
-      url,
-      data: reqData,
+    const { data } = await axios(Object.assign({
       baseURL,
       responseType: 'json'
-    });
+    }, req));
 
-    return {
-      success: true,
-      response
-    };
+    return data;
 
   } catch(e) {
     return {
       success: false,
-      response: e
+      error: e
     };
   }
 }
@@ -38,4 +24,4 @@ const apiUtils = {
   baseFetch
 }
 
-export default apiUtils
+export default apiUtils;

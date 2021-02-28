@@ -5,7 +5,7 @@ import Block from '../components/bklog/block';
 
 import { BlockData } from '../types/bklog';
 
-import { TEST_CASE_01, newDataList } from '../index.test';
+import { TEST_CASE_01 } from '../index.test';
 
 function BklogContainer() { 
   

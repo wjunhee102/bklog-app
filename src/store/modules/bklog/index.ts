@@ -134,7 +134,7 @@ export function switchBlock(blockId: UUID, targetBlockId: UUID, targetType: bool
   }
 }
 
-export type BklogActions = ReturnType<typeof addBlock>
+type BklogActions = ReturnType<typeof addBlock>
   | ReturnType<typeof editAble>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>

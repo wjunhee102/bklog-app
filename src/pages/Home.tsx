@@ -1,12 +1,8 @@
 import React, { useEffect } from 'react';
-import Form from '../components/Form';
-import Blocklog from '../components/bklog/Blocklog';
 import { useDispatch } from 'react-redux';
 import { signInAsync, signOutAsync, refreshTokenAsync } from '../store/modules/auth/index';
-import { useCookies, withCookies } from 'react-cookie';
 
 function Home(props: any) {
-  const [cookie, setCookie] = useCookies(["cert"]);
 
   const dispatch = useDispatch();
 
@@ -41,7 +37,6 @@ function Home(props: any) {
         formType="password"
         errorMessage="비밀번호를 입력해주세요."
       /> */}
-      <Blocklog />
       <button onClick={handleClick}> 
         로그인
       </button>
@@ -56,4 +51,4 @@ function Home(props: any) {
   )
 }
 
-export default withCookies(Home);
+export default Home;

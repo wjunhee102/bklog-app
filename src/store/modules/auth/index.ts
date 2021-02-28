@@ -1,54 +1,46 @@
-import { AuthState, SIGNIN, SIGNIN_ASYNC, SIGNOUT_ASYNC, REFRESH_TOKEN } from './utils';
-import { call, delay, put, takeEvery } from 'redux-saga/effects';
+import { AuthState, SIGNIN, SIGNIN_ASYNC, SIGNOUT_ASYNC, REFRESH_TOKEN, User } from './utils';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import axios from 'axios';
+import { baseFetch } from '../../../utils/api-utils/apiUtils';
+import { ResType } from '../../../utils/api-utils';
  
 async function getUserInfo() {
-  try {
-    const response = await axios({
-      method: "post",
-      url: 'http://localhost:4500/v2/auth/sign-in',
-      data: {
-        email: "admin@admin.com",
-        password: "admin12!"
-      },
-      withCredentials: true
-    });
 
-    console.log(response);
+  const data: ResType<{
+    success: boolean;
+    userInfo: any;
+    error?: any;
+  }> = await baseFetch({
+    method: "post",
+    url: 'auth/sign-in',
+    data: {
+      email: "admin@admin.com",
+      password: "Admin123!"
+    },
+    withCredentials: true
+  })
 
-    const userInfo: {
-      email: string,
-      name: string
-    } = {
-      email: response.data.data.userInfo.email,
-      name: response.data.data.userInfo.name
-    }
-
-    console.log("userInfo",userInfo);
-
-    return userInfo;
-  } catch(e) {
-    console.log(e);
-    return null
-  }
-  
+  console.log("response", data);
+  return data.userInfo;
 }
 
-async function refreshToken() {
-  try {
-    const response = await axios({
-      method: "get",
-      url: 'http://localhost:4500/v2/auth/reissue-token',
-      withCredentials: true
-    });
+async function refreshToken(userId: string) {
 
-    console.log("userInfo", response);
+  const data = await baseFetch({
+    method: "post",
+    data: {
+      userId
+    },
+    url: "auth/reissue-token",
+    withCredentials: true
+  }) 
 
-    return response.data;
-  } catch(e) {
-    console.log(e);
-    return null
+  console.log("userInfo", data);
+  if(!data.success) {
+    console.log(data.error);
   }
+
+  return data;
   
 }
 
@@ -72,7 +64,7 @@ async function signOutUser() {
 
 function* refreshTokenSage() {
   try {
-    const data = yield call(refreshToken);
+    const data = yield call(refreshToken, "4782b042d62467c2a62e1e6dd80701c5");
     console.log("success", data);
   } catch(e) {
     console.log(e);
@@ -84,10 +76,7 @@ function* signOutUserSaga() {
     const data = yield call(signOutUser);
     console.log("success", data);
 
-    yield put(signInUser({
-      email: "",
-      name: ""
-    }))
+    yield put(signInUser(null))
 
   } catch(e) {
     console.log(e);
@@ -100,16 +89,10 @@ function* getPostsSaga() {
     const data = yield call(getUserInfo);
     console.log("data", data);
     if(!data) {
-      yield put(signInUser({
-        email: "asdasd",
-        name: "sdadad"
-      }))
+      yield put(signInUser(null))
       return 
     }
-    yield put(signInUser({
-      email: data.email,
-      name: data.name
-    }));
+    yield put(signInUser(data.userInfo));
   } catch(e) {
     console.log(e);
   }
@@ -133,17 +116,11 @@ export const refreshTokenAsync = () => {
   return { type: REFRESH_TOKEN }
 }
 
-type UserInfo = {
-  email: string;
-  name: string;
-}
-
-export function signInUser(userInfo: UserInfo) {
+export function signInUser(userInfo: User | null) {
   return {
     type: SIGNIN,
     payload: {
-      email: userInfo.email,
-      name: userInfo.name
+      user: userInfo
     }
   }
 }
@@ -159,18 +136,17 @@ export type AuthActions = ReturnType<typeof signInUser>
 
 const initialState: AuthState = (() => {
   return {
-    email: "test@naver.com",
-    name: "test"
+    user: null
   }
 })();
 
 export default function auth(state: AuthState = initialState, action: AuthActions) {
   switch (action.type) {
     case SIGNIN:
+      const { user } = action.payload;
       console.log(action);
       return Object.assign({}, state, {
-        email: action.payload.email,
-        name: action.payload.name
+        user
       });
   
     default:

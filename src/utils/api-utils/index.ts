@@ -1,5 +1,19 @@
 import apiUtils    from './apiUtils';
 import cookieUtils from './cookieUtils';
+import { AxiosRequestConfig } from 'axios';
+
+
+export type ResType<T = any> = T & {
+  success: boolean;
+};
+
+export type RequestArg<Data = any , Params = any> = {
+  method: AxiosRequestConfig["method"];
+  url: string;
+  data?: Data;
+  params?: Params;
+  withCredentials?: boolean;
+}
 
 /**
  * Api Utils

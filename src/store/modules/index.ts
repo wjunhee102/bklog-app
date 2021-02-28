@@ -1,19 +1,16 @@
 import { combineReducers } from 'redux';
 import { all } from 'redux-saga/effects';
 
-import counter  from './counter';
-import todos    from './todos';
-import blocklog from './blocklog';
 import bklog    from './bklog';
 import auth, { postsSaga } from './auth';
+import page from './page';
 
 const rootReducer = combineReducers({
-  counter,
-  todos,
-  blocklog,
+  auth,
   bklog,
-  auth
+  page
 });
+
 export function* rootSage() {
   yield all([postsSaga()]);
 }
