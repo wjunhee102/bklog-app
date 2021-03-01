@@ -57,6 +57,7 @@ export default function page(state: PageState = initialState, action: PageAction
       });
 
     default: 
+      console.log(state);
       return state;
   }
 

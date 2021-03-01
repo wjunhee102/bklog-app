@@ -2,8 +2,9 @@ import { combineReducers } from 'redux';
 import { all } from 'redux-saga/effects';
 
 import bklog    from './bklog';
-import auth, { postsSaga } from './auth';
+import auth from './auth';
 import page from './page';
+import authSaga from './auth/authSaga';
 
 const rootReducer = combineReducers({
   auth,
@@ -12,8 +13,9 @@ const rootReducer = combineReducers({
 });
 
 export function* rootSage() {
-  yield all([postsSaga()]);
+  yield all([authSaga()]); 
 }
+
 
 export default rootReducer;
 
