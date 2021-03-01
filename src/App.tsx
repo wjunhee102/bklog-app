@@ -10,15 +10,15 @@ import './assets/App.scss';
 // hashRouter?
 function App() {
   return (
-    <div className="App black-mode">
-      <HashRouter basename="/bk">
+    <div className="App white-mode">
+      <Router basename="/">
         <Switch>
           <Route path='/' component={Home} exact />
           <Route path='/edit' component={Editor} />
-          <Route path='/bklog/:id' component={BkPage} />
+          <Route path='/bklog' component={BkPage} />
           <Route path='/auth/:id' component={AuthPage} />
         </Switch>
-      </HashRouter>
+      </Router>
     </div>
   );
 }

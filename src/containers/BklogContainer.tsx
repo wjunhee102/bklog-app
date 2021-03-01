@@ -6,6 +6,7 @@ import Block from '../components/bklog/block';
 import { BlockData } from '../types/bklog';
 
 import { TEST_CASE_01 } from '../index.test';
+import Sibebar from '../components/sidebar';
 
 function BklogContainer() { 
   
@@ -91,33 +92,37 @@ function BklogContainer() {
   }, []);
 
   return (
-    <div className="blocklog notranslate">
-      {
-        blockData?
-        blockData.map((block: BlockData<any>)=> 
-          <Block 
-            blockData={block}
-            key={block.id}
-          />
-        ) : <div>""</div>
-      }
-      {
-        blockData.length <= 1? 
-        <div className="bk-zone"> 
-          <div 
-            className="bk-block" 
-            placeholder="입력해주세요..."
-            onFocus={()=>onAddBlock()}
-            onClick={()=>onAddBlock()}
-            contentEditable="true"
-          ></div>
-        </div> : null
-      }
-      <button onClick={click}>블럭 추가</button>
-      <button onClick={handleClick}>스타일 추가</button>
-      <button onClick={testHandleClick}>스위칭</button>
-      <button onClick={revertHandleClick}>되돌리기</button>
+    <div>
+      <Sibebar />
+      <div className="blocklog notranslate">
+        {
+          blockData?
+          blockData.map((block: BlockData<any>)=> 
+            <Block 
+              blockData={block}
+              key={block.id}
+            />
+          ) : <div>""</div>
+        }
+        {
+          blockData.length <= 1? 
+          <div className="bk-zone"> 
+            <div 
+              className="bk-block" 
+              placeholder="입력해주세요..."
+              onFocus={()=>onAddBlock()}
+              onClick={()=>onAddBlock()}
+              contentEditable="true"
+            ></div>
+          </div> : null
+        }
+        <button onClick={click}>블럭 추가</button>
+        <button onClick={handleClick}>스타일 추가</button>
+        <button onClick={testHandleClick}>스위칭</button>
+        <button onClick={revertHandleClick}>되돌리기</button>
+      </div>
     </div>
+    
   )
 }
 

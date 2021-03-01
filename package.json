@@ -1,5 +1,5 @@
 {
-  "name": "bklog-app",
+  "name": "bklog",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -65,5 +65,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://wjunhee102.github.io/bklog-app/"
+  "homepage": "https://wjunhee102.github.io/bklog/"
 }

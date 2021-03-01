@@ -1,21 +1,24 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { signInAsync, signOutAsync, refreshTokenAsync } from '../store/modules/auth/index';
+import { signInUser, signOutUser } from '../store/modules/auth/index';
+import { Link } from 'react-router-dom';
 
 function Home(props: any) {
 
   const dispatch = useDispatch();
 
   const handleClick = () => {
-    dispatch(signInAsync());
+    dispatch(signInUser({
+      email: "admin@admin.com",
+      password: "Admin123!"
+    }));
   }
 
   const logOutHandleClick = () => {
-    dispatch(signOutAsync());
+    dispatch(signOutUser());
   }
 
   const refreshToken = () => {
-    dispatch(refreshTokenAsync());
   }
 
   // useEffect(()=> {
@@ -25,18 +28,9 @@ function Home(props: any) {
 
   return (
     <div className="home">
-      {/* <Form 
-        formType="number"
-        errorMessage="숫자를 입력해주세요."
-      />
-      <Form 
-        formType="text"
-        errorMessage="문자를 입력해주세요."
-      />
-      <Form 
-        formType="password"
-        errorMessage="비밀번호를 입력해주세요."
-      /> */}
+      <Link to="/bklog">
+        bklog 이동
+      </Link>
       <button onClick={handleClick}> 
         로그인
       </button>
@@ -45,7 +39,7 @@ function Home(props: any) {
       </button>
       <button onClick={refreshToken}>
         재발행
-      </button> 
+      </button>
 
     </div>
   )

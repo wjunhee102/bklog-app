@@ -153,7 +153,6 @@ function Block({ blockData }:BlockProps) {
     const parentNode = e.target.parentNode;
 
     if(parentNode.tagName === "A") {
-      console.log(parentNode.href);
       window.open(parentNode.href);
     }
   }
