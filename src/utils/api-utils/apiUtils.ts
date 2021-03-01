@@ -3,13 +3,12 @@ import { RequestArg, ResType } from './index';
 
 const baseURL = "http://localhost:4500/v2";
 
-export async function baseFetch(req: RequestArg): Promise<ResType> {
+async function baseFetch(req: RequestArg): Promise<ResType> {
   try {
-    const { data } = await axios(Object.assign({
-      baseURL,
-      responseType: 'json'
-    }, req));
 
+    console.log(req);
+    const data = await axios(Object.assign({baseURL, responseType: "json"}, req));
+    
     return data;
 
   } catch(e) {

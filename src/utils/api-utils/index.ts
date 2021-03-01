@@ -5,6 +5,7 @@ import { AxiosRequestConfig } from 'axios';
 
 export type ResType<T = any> = T & {
   success: boolean;
+  error?: any;
 };
 
 export type RequestArg<Data = any , Params = any> = {
