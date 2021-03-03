@@ -274,7 +274,7 @@ function updateContents(
 
     if(newBlocks[block.blockIndex - 1] && block.id === newBlocks[block.blockIndex - 1].id) {
       
-      if(newBlocks[block.blockIndex - 1].type === "text") {
+      if(newBlocks[block.blockIndex - 1].type === "text" || newBlocks[block.blockIndex - 1].type === "title") {
         newBlocks[block.blockIndex - 1].property = Object.assign({}, 
           newBlocks[block.blockIndex - 1].property, {
             contents: typeof block.contents === "string"? 

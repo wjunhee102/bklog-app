@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 
 import useBKlog from '../../../hooks/useBKlog';
 import { 
@@ -34,7 +34,7 @@ function Block({ blockData }:BlockProps) {
   const blockRef = useRef<HTMLDivElement>(null);
 
   const { 
-    getRigthToEdit,
+    getRightToEdit,
     getEditAbleId,
     onAddBlock, 
     onDeleteBlock,
@@ -158,7 +158,7 @@ function Block({ blockData }:BlockProps) {
   }
 
   // mouse methods
-  const handleMouseUp = (e: any) => {
+  const handleMouseUp = () => {
     const getStartPosition = getSelectionStart(blockRef.current);
     const getEndPosition = getSelectionEnd(blockRef.current);
     setCursorStart(getStartPosition);
@@ -232,7 +232,7 @@ function Block({ blockData }:BlockProps) {
       className="block-zone"
     >
        <div 
-        className="bk-block black-mode"
+        className="bk-block relative pr-8"
         onBlur={handleBlur}
        > 
         { 
@@ -250,7 +250,11 @@ function Block({ blockData }:BlockProps) {
             />
           : null
         }
-        <button className="bk-del" onClick={()=>{onDeleteBlock(blockData.id)}}> 삭제 </button>
+        {/* <button 
+          className="bk-del absolute right-0" 
+          onClick={()=>{onDeleteBlock(blockData.id)}}> 
+          삭제 
+        </button> */}
         {
           styleToggle? 
           <TextStyleToggle
@@ -276,7 +280,3 @@ function Block({ blockData }:BlockProps) {
 }
 
 export default Block;
-
-export function test() {
-
-}

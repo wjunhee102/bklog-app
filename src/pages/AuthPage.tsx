@@ -1,20 +1,19 @@
 import React from 'react';
-import { Route, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
-interface MatchParams {
-  id?: string;
-}
 
-export default function AuthPage({ match }: RouteComponentProps<MatchParams>) {
 
-  if(match.params.id) {
-    console.log(match.params.id);
-    return <Redirect to="/" />
-  }
+
+function AuthPage() {
 
   return (
-    <div>
-      asdasd
+    <div className="auth-page">
+      <Switch>
+        <Route path="/sign-up" />
+        <Route path="/sign-in" />
+      </Switch>
     </div>
   )
 }
+
+export default AuthPage;

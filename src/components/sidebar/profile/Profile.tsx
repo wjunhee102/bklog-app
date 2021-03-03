@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from '../../../hooks/useAuth';
 
-import UserBlock from './UserBlock';
+import EditorBlock from './EditorBlock';
 
 import './profile.scss';
+import usePage from '../../../hooks/usePage';
 
 function Profile() {
 
@@ -13,6 +14,10 @@ function Profile() {
     onReSignInUser
   } = useAuth();
 
+  const {
+    pageEditor
+  } = usePage();
+
   useEffect(() => {
     if(!getUserInfo) {
       onSignInUser({email: "wjunhee102@gmail.com", password: "Admin123!"});
@@ -21,16 +26,15 @@ function Profile() {
   }, [getUserInfo]);
 
   return (
-    <div className={`user-profile w-full px-6 py-4 whitespace-nowrap`}>
+    <div className={`user-profile flex-none w-full whitespace-nowrap border-b mb-12`}>
       { 
         getUserInfo? 
         <>
-          <UserBlock
-            penName={getUserInfo.penName}
-            name={getUserInfo.name}
-            userPhoto={getUserInfo.userPhoto}
+          <EditorBlock
+            penName={pageEditor.penName}
+            userPhoto={pageEditor.userPhoto}
+            bio={pageEditor.bio}
           />
-          <div className="mt-4">{ getUserInfo.penName }이동 -> </div>
         </>
         : <div></div>
       }

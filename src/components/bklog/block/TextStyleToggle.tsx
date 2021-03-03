@@ -70,7 +70,7 @@ function TextStyleToggles({
   contents,
   reBlockFocus
 }: TextStyleTogglesProps) {
-  const [currentStyle, setStyle] = useState(findTextStyle(contents, startPosition));
+  const [ currentStyle, setStyle ] = useState(findTextStyle(contents, startPosition));
   const { onChangeTextStyle, onCommitBlock } = useBKlog();
 
   const toggleProps:string[] = ["b", "i", "_"];
@@ -112,7 +112,8 @@ function TextStyleToggles({
 
   return (
     <div 
-      className="bk-style-toggles"
+      style={{left: `${startPosition * 16}px`}}
+      className="bk-style-toggles absolute bg-white -top-full border"
     >
       <TextBlockTypeSelection 
       />

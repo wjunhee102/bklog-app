@@ -172,8 +172,6 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
       const newBlock: BlockData<any> = blockData? 
         copyBlockData(blockData) 
         : createBlockData("text", newBlockType, preBlock.id);
-      
-      console.log(newBlock);
 
       const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
 
@@ -236,7 +234,7 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
        } = action.payload;
        
       const changedTextStyleBlock = state.blocks[changedTextStyleBlockIndex -1];
-      if( changedTextStyleBlock.type !== "text") {
+      if( changedTextStyleBlock.type !== "text" && changedTextStyleBlock.type !== "title") {
         console.log("text block이 아닙니다.")
         return state;
       }
@@ -325,8 +323,7 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
       }) : state
       
     default: 
-      // let preState = localStorage.getItem("bklog")
-      console.log("state:", state);
+
       return state;
   }
 

@@ -15,7 +15,7 @@ function BkPage({ match }: RouteComponentProps<MatchParams>) {
   console.log(match.params.id, match);
 
   return (
-    <div className={classNames("bk-page", {"white-mode": mode})}>
+    <div className={classNames("bk-page", "h-full", "overflow-scroll", {"white-mode": mode})}>
       <BklogContainer />
     </div>
   );

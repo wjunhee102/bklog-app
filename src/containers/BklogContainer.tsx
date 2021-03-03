@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
+import classNames from 'classnames';
 import useBKlog from '../hooks/useBKlog';
 import Block from '../components/bklog/block';
 
@@ -7,6 +8,7 @@ import { BlockData } from '../types/bklog';
 
 import { TEST_CASE_01 } from '../index.test';
 import Sibebar from '../components/sidebar';
+import usePage from '../hooks/usePage';
 
 function BklogContainer() { 
   
@@ -86,40 +88,49 @@ function BklogContainer() {
 
   const blockData:any = initBlock[0]? initBlock : null;
 
-  useEffect(() => {
-    console.log("case: blockList 붙혀넣기", TEST_CASE_01);
-    console.log("adsd");
-  }, []);
+  // useEffect(() => {
+  //   console.log("case: blockList 붙혀넣기", TEST_CASE_01);
+  //   console.log("adsd");
+  // }, []);
+
+  const { pageToggle } = usePage();
 
   return (
-    <div>
+    <div className="flex h-full relative overflow-auto">
       <Sibebar />
-      <div className="blocklog notranslate">
-        {
-          blockData?
-          blockData.map((block: BlockData<any>)=> 
-            <Block 
-              blockData={block}
-              key={block.id}
-            />
-          ) : <div>""</div>
-        }
-        {
-          blockData.length <= 1? 
-          <div className="bk-zone"> 
-            <div 
-              className="bk-block" 
-              placeholder="입력해주세요..."
-              onFocus={()=>onAddBlock()}
-              onClick={()=>onAddBlock()}
-              contentEditable="true"
-            ></div>
-          </div> : null
-        }
-        <button onClick={click}>블럭 추가</button>
-        <button onClick={handleClick}>스타일 추가</button>
-        <button onClick={testHandleClick}>스위칭</button>
-        <button onClick={revertHandleClick}>되돌리기</button>
+      <div className={classNames(
+        "flex-auto w-full h-full py-2 pr-2 ml-2"
+      )}>
+        <div className="blocklog items-center overflow-auto w-full notranslate text-gray-700 bg-white border border-gray-300 h-full rounded-md shadow">
+          <div className="cover mb-8"></div>
+          <div className="m-auto h-full block-container">
+            {
+              blockData?
+              blockData.map((block: BlockData<any>)=> 
+                <Block 
+                  blockData={block}
+                  key={block.id}
+                />
+              ) : <div>""</div>
+            }
+            {
+              blockData.length <= 1? 
+              <div className="bk-zone"> 
+                <div 
+                  className="bk-block" 
+                  placeholder="입력해주세요..."
+                  onFocus={()=>onAddBlock()}
+                  onClick={()=>onAddBlock()}
+                  contentEditable="true"
+                ></div>
+              </div> : null
+            }
+            <button onClick={click}>블럭 추가</button>
+            <button onClick={handleClick}>스타일 추가</button>
+            <button onClick={testHandleClick}>스위칭</button>
+            <button onClick={revertHandleClick}>되돌리기</button>
+          </div>
+        </div>
       </div>
     </div>
     

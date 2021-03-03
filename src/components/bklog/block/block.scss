@@ -1,18 +1,19 @@
-// body {
- 
+
+
+.block-container {
+  max-width: 900px;
+}
+
+.cover {
+  height: 25vh;
+  background-color: lightcoral;
+}
+
+// .blocklog {
+//   align-items: center;
+//   width: 1200px;
+//   margin: 0 auto;
 // }
-
-:root {
-  heading {
-    font-weight: 600;
-  }
-}
-
-.blocklog {
-  align-items: center;
-  width: 1200px;
-  margin: 0 auto;
-}
 
 .bk-block {
   display: flex;

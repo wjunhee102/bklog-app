@@ -1,6 +1,42 @@
 
 
-.gnb {
-  width: 240px;
-  height: 100%;
+.sidebar {
+  position: relative;
+  transform: translateX(0%) scaleX(1);
+  animation-name: slideOn;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.23, 1, 0.320, 1);
+
+  &.off {
+    position: absolute;
+    transform: translateX(-100%);
+    animation-name: slideOff;
+    animation-duration: 1s;
+  }
+}
+
+@keyframes slideOn {
+  0% {
+    position: absolute;
+    transform: translateX(-100%);
+  }
+
+  99% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    position: relative;
+  }
+}
+
+@keyframes slideOff {
+  from {
+    position: absolute;
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
 }

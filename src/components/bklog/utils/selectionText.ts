@@ -50,7 +50,7 @@ export function stringifyElementStart(node: any, isLineStart: any): any {
 }
 
 export function* positions(node:any, isLineStart = true):any {
-  console.assert(node.nodeType === Node.ELEMENT_NODE);
+  // console.assert(node.nodeType === Node.ELEMENT_NODE);
   let child = node.firstChild;
   let offset = 0;
   yield {node: node, offset: offset, text: stringifyElementStart(node, isLineStart)};
@@ -86,6 +86,10 @@ export function getCaretPosition(contenteditable: any, textPosition: any): any {
 export function getTextOffset(contenteditable: any, selectionNode: any, selectionOffset: any): any {
   let textOffset = 0;
   for (let p of positions(contenteditable)) {
+    // console.log(selectionNode, selectionNode.nodeType)
+    if(!selectionNode || !selectionNode.nodeType) {
+      return textOffset += p.text.length;
+    }
     if (selectionNode.nodeType !== Node.TEXT_NODE && selectionNode === p.node && selectionOffset === p.offset) {
       return textOffset;
     }

@@ -27,13 +27,17 @@ export interface AuthState {
   user: User;
 }
 
-export type UserInfo = {
-  name: string;
-  email: string;
+export type UserProfile = {
   penName: string;
-  userId: string;
   profileId: string;
   userPhoto: string;
+  bio: string; 
+}
+
+export type UserInfo = UserProfile & {
+  name: string;
+  email: string;
+  userId: string;
 }
 
 export type UserError = {

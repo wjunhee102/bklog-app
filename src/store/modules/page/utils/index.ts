@@ -1,11 +1,18 @@
-export type Page = {
+import { UserProfile } from "../../auth/utils";
+
+export const CHANGE_PAGE_TITLE = "page/CHANGE_PAGE_TITLE" as const;
+export const CHANGE_TOGGLE = "page/CHANGE_TOGGLE" as const;    
+
+export interface Page {
   pageId: string;
   pageTitle: string;
 }
 
+
 export interface PageState {
-  pageEditor: string,
+  toggle: boolean;
+  loading: boolean;
+  pageEditor: UserProfile;
   pageList: Page[];
 }
 
-export const CHANGE_PAGE_TITLE = "page/CHANGE_PAGE_TITLE" as const;

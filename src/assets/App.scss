@@ -3,18 +3,29 @@
 
 
 body {
-  background-color: #333;
   font-family: 'Noto Sans KR', sans-serif;
 }
-
-.App {
-  &.black-mode {
-    background-color: #333;
-    color: #fff;
-  }
-  
-  &.white-mode {
-    background-color: #fff;
-    color: #000;
-  }
+button {
+  outline: none;
 }
+button:active {
+  outline: none;
+}
+button:hover {
+  outline: none;
+}
+button:focus {
+  outline: none !important;
+}
+
+// .App {
+//   &.black-mode {
+//     background-color: #333;
+//     color: #fff;
+//   }
+  
+//   &.white-mode {
+//     background-color: #fff;
+//     color: #000;
+//   }
+// }
