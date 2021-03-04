@@ -193,6 +193,10 @@ function Block({ blockData }:BlockProps) {
     onEditAble(blockData.id);
   }
 
+  const reBlockFocus = ()=> {
+    handleFocus(blockRef.current);
+  }
+
   useEffect(()=> {
     const focused = document.activeElement;
     
@@ -221,10 +225,6 @@ function Block({ blockData }:BlockProps) {
       setStyleToggle(false);
     }
   }, [cursorStart, cursorEnd]);
-
-  const reBlockFocus = ()=> {
-    handleFocus(blockRef.current);
-  }
 
   return (
     <div 

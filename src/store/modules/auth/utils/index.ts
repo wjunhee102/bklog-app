@@ -1,10 +1,7 @@
 import authApiUtils from './apiUtils';
+import actions, {
 
-export const SIGNUP = "auth/SIGNUP" as const;
-export const SIGNIN = "auth/SIGNIN" as const;
-export const SIGNIN_ASYNC = "auth/SIGNIN_ASYNC" as const;
-export const SIGNOUT_ASYNC = "auth/SIGNOUT_ASYNC" as const;
-export const REFRESH_TOKEN = "suth/REFRESH_TOKEN" as const;
+} from './actions';
 
 export const SIGNUPUSER = "auth/SIGN_UP_USER" as const;
 export const SIGNUPUSER_SUCCESS = "auth/SIGN_UP_USER_SUCCESS" as const;
@@ -22,31 +19,34 @@ export const RESIGNINUSER = "auth/RESIGN_IN_USER" as const;
 export const RESIGNINUSER_SUCCESS = "auth/RESIGN_IN_USER_SUCCESS" as const;
 export const RESIGNINUSER_ERROR = "auth/RESIGN_IN_USER_ERROR" as const;
 
+export const REISSUETOKEN = "REISSUETOKEN" as const;
+export const REISSUETOKEN_ERROR = "REISSUETOKEN_ERROR" as const;
+
 export interface AuthState {
   loading: boolean;
   user: User;
 }
 
-export type UserProfile = {
+export interface UserProfile {
   penName: string;
   profileId: string;
   userPhoto: string;
   bio: string; 
 }
 
-export type UserInfo = UserProfile & {
+export interface UserInfo extends UserProfile {
   name: string;
   email: string;
   userId: string;
 }
 
-export type UserError = {
+export interface UserError {
   countOfFail: number;
   isActive: boolean;
   isNotDormant: boolean;
 }
 
-export type User = {
+export interface User {
   userInfo: UserInfo | null;
   error: {
     signIn: UserError | null;
@@ -55,22 +55,22 @@ export type User = {
   };
 }
 
-export type AuthReq<T = any> = {
+export interface AuthReq<T = any> {
   url: string,
   data: T
 }
 
-export type UserAuthInfo = {
+export interface UserAuthInfo {
   email: string;
   password: string;
 }
 
-export type RequiredUserInfo = UserAuthInfo & {
+export interface RequiredUserInfo extends UserAuthInfo {
   penName: string;
   name: string;
 }
 
-export type ResSignUpUser = {
+export interface ResSignUpUser {
   error?: {
     emailValid: boolean;
     passwordValid: boolean;
@@ -79,6 +79,45 @@ export type ResSignUpUser = {
     penNameUsed: boolean;
   }
 }
+
+
+/**
+ * actions
+ */
+export const signUpUser = actions.signUpUser;
+export const signInUser = actions.signInUser;
+export const signOutUser = actions.signOutUser;
+export const reSignInUser = actions.reSignInUser;
+
+export const reissueToken = actions.reissueToken;
+
+const { 
+  signUpUserSuccess,
+  signUpUserError,
+  signInUserSuccess, 
+  signInUserError,
+  signOutUserSuccess,
+  signOutUserError,
+  reSignInUserError,
+  reSignInUserSuccess,
+  reissueTokenError
+} = actions;
+
+export type AuthActions = 
+  ReturnType<typeof signUpUser>
+  | ReturnType<typeof signUpUserSuccess>
+  | ReturnType<typeof signUpUserError>
+  | ReturnType<typeof signInUser>
+  | ReturnType<typeof signOutUser>
+  | ReturnType<typeof signInUserSuccess>
+  | ReturnType<typeof signInUserError>
+  | ReturnType<typeof signOutUserSuccess>
+  | ReturnType<typeof signOutUserError>
+  | ReturnType<typeof reSignInUser>
+  | ReturnType<typeof reSignInUserSuccess>
+  | ReturnType<typeof reSignInUserError>
+  | ReturnType<typeof reissueTokenError>
+;
 
 export const authFetchPost = authApiUtils.authFetchPost;
 export const authFetchGet  = authApiUtils.authFetchGet;

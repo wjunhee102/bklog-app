@@ -24,6 +24,7 @@ function BklogContainer() {
     onRevertBlock
   } = useBKlog();
 
+
   const click = () => {
     onAddBlock(undefined, undefined, {
       index: 0,
@@ -101,7 +102,7 @@ function BklogContainer() {
       <div className={classNames(
         "flex-auto w-full h-full py-2 pr-2 ml-2"
       )}>
-        <div className="blocklog items-center overflow-auto w-full notranslate text-gray-700 bg-white border border-gray-300 h-full rounded-md shadow">
+        <div className="blocklog items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
           <div className="cover mb-8"></div>
           <div className="m-auto h-full block-container">
             {

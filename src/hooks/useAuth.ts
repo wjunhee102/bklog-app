@@ -1,8 +1,16 @@
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { AuthState, User, UserAuthInfo, UserInfo } from '../store/modules/auth/utils';
+import { 
+  AuthState, 
+  UserAuthInfo, 
+  UserInfo,
+  signInUser, 
+  reSignInUser, 
+  signOutUser,
+  reissueToken
+} from '../store/modules/auth/utils';
 import { RootState } from '../store/modules';
-import { useMemo, useCallback } from 'react';
-import { signInUser, reSignInUser } from '../store/modules/auth';
+import authApiUtils from '../store/modules/auth/utils/apiUtils';
 
 function useAuth() {
   const state: AuthState = useSelector((state: RootState) => state.auth);
@@ -15,15 +23,44 @@ function useAuth() {
       dispatch(signInUser(userAuthInfo))
     ,[dispatch]);
   
-  const onReSignInUser = useCallback(()=> 
-      dispatch(reSignInUser())
-    ,[dispatch]);
+  const onReSignInUser = useCallback(()=> dispatch(reSignInUser()),[dispatch]);
+
+  const onSignOutUser = useCallback(()=> dispatch(signOutUser()),[dispatch]);
+
+  const onReissueToke = useCallback(()=> dispatch(reissueToken()),[dispatch]);
+
+  const onCheckToken = async () => {
+    const { data } = await authApiUtils.authFetchGet('check-token');
+     if(!data.success) {
+
+       if(getUserInfo) {
+        onReissueToke();
+       }
+
+     } else {
+
+       if(!getUserInfo) {
+
+         onReSignInUser();
+       
+        } else {
+         
+          if(getUserInfo.userId !== data.userId) {
+            onSignOutUser();
+          }
+
+       }
+     }
+  }
 
   return {
     stateAuth: state,
     getUserInfo,
     onSignInUser,
-    onReSignInUser
+    onReSignInUser,
+    onSignOutUser,
+    onReissueToke,
+    onCheckToken
   }
 }
 

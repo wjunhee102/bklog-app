@@ -17,7 +17,7 @@ function Sidebar() {
       )}
     >
       <div className="h-full py-2 pl-2">
-        <nav className={`border border-gray-300 h-full rounded-md shadow bg-white overflow-hidden relative flex flex-col`}>
+        <nav className={` h-full rounded-md shadow-md bg-white overflow-hidden relative flex flex-col`}>
           <Profile />
           <PageList
             pageEditor={pageState.pageEditor}

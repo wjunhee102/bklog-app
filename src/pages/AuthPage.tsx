@@ -1,5 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import SignIn from '../components/auth/sign-in';
+import SignUp from '../components/auth/sign-up';
 
 
 
@@ -7,10 +9,14 @@ import { Route, Switch } from 'react-router-dom';
 function AuthPage() {
 
   return (
-    <div className="auth-page">
+    <div className="auth-page w-full h-full items-center p-4 overflow-auto">
       <Switch>
-        <Route path="/sign-up" />
-        <Route path="/sign-in" />
+        <Route path="/auth/sign-up">
+          <SignUp />
+        </Route>
+        <Route path="/auth/sign-in">
+          <SignIn />
+        </Route>
       </Switch>
     </div>
   )

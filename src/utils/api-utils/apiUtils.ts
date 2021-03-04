@@ -6,7 +6,6 @@ const baseURL = "http://localhost:4500/v2";
 async function baseFetch(req: RequestArg): Promise<ResType> {
   try {
 
-    console.log(req);
     const data = await axios(Object.assign({baseURL, responseType: "json"}, req));
     
     return data;

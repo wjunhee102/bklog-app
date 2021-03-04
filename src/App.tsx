@@ -4,13 +4,11 @@ import Home from './pages/HomePage';
 import Editor from './components/editor/index';
 import BkPage from './pages/BkPage';
 import AuthPage from './pages/AuthPage';
-
-import './assets/App.scss';
 import GlobalNav from './components/gnb/GlobalNav';
+import './assets/App.scss';
 
-
-// hashRouter?
 function App() {
+
   return (
     <div className="App white-mode bg-gray-100 w-full h-screen pt-12">
       <Router basename="/">

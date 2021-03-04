@@ -1,4 +1,5 @@
 import { call, put } from 'redux-saga/effects'; 
+import { REISSUETOKEN } from '../modules/auth/utils';
 
 function createPromiseSaga(type: string, promiseCreator: any) {
   const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
@@ -17,8 +18,15 @@ function createPromiseSaga(type: string, promiseCreator: any) {
         console.log("success");
         yield put({ type: SUCCESS, payload });
       } else {
-        console.log("false");
-        yield put({ type: ERROR, payload });
+
+        if(data.error.accessTokken) {
+          console.log(action);
+          yield put({ type: REISSUETOKEN, payload: action });
+        } else {
+          console.log("false");
+          yield put({ type: ERROR, payload });
+        }
+  
       }
     } catch(e) {
       console.log(e);
