@@ -1,8 +1,11 @@
 import { CHANGE_PAGE_TITLE, PageState, CHANGE_TOGGLE } from "./utils";
 
-export function changeToggle() {
+export function changeToggle(toggle?: boolean) {
   return {
-    type: CHANGE_TOGGLE
+    type: CHANGE_TOGGLE,
+    payload: {
+      toggle
+    }
   }
 }
 
@@ -20,7 +23,7 @@ type PageActions = ReturnType<typeof changePageTitle>
   | ReturnType<typeof changeToggle>;
 
 const initialState: PageState = {
-  toggle: true,
+  toggle: false,
   loading: false,
   pageEditor: {
     penName: "Junhee",
@@ -97,7 +100,7 @@ export default function page(state: PageState = initialState, action: PageAction
   switch(action.type) {
     case CHANGE_TOGGLE:
       return Object.assign({}, state, {
-        toggle: !state.toggle
+        toggle: action.payload.toggle !== undefined? action.payload : !state.toggle
       });
 
     case CHANGE_PAGE_TITLE:

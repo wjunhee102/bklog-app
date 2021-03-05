@@ -22,9 +22,12 @@ function useBklog() {
   
   const state:BklogState = useSelector((state: RootState) => state.bklog);
 
+
+  // 이거가 메로리가 2중으로드는 거 같음... 아닌가? referance를 가지고 있으니까 상관없나.
   const initBlock: BlockData<any>[] = useMemo(()=> 
     state.blocks.filter(block => block.parentBlockId === null ), [state.blocks]);
 
+  // 사파리 커밋 문제를 이걸로 해결하려고 함
   const getEditAbleId = useMemo(() => state.editingId, [state.editingId]);
 
   const getStagedBlocks = state.stage;
@@ -54,6 +57,8 @@ function useBklog() {
       dispatch(editAble(blockId, index))
     ,[dispatch]);
 
+
+  // 이거를 각 블럭마다 state값으로 하려고 함.
   const onEditBlock = useCallback((blockId: UUID, blockIndex: number,content: string) =>
       dispatch(editBlock({blockId, blockIndex, text: content}))
     ,[dispatch]);

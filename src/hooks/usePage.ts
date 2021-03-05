@@ -14,7 +14,8 @@ function usePage() {
 
   const dispatch = useDispatch();
 
-  const onChangeToggle = useCallback(()=> dispatch(changeToggle()),[dispatch]);
+  const onChangeToggle = useCallback((toggle?: boolean)=> 
+    dispatch(changeToggle(toggle)),[dispatch]);
 
   const onChangePageTitle = useCallback((pageId: string, title: string) => 
     dispatch(changePageTitle(pageId, title)), [dispatch]);

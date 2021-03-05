@@ -5,12 +5,20 @@ import Editor from './components/editor/index';
 import BkPage from './pages/BkPage';
 import AuthPage from './pages/AuthPage';
 import GlobalNav from './components/gnb/GlobalNav';
+import classNames from 'classnames';
 import './assets/App.scss';
+import useBase from './hooks/useBase';
 
 function App() {
 
+  const { baseState: { dark } } = useBase();
+
   return (
-    <div className="App white-mode bg-gray-100 w-full h-screen pt-12">
+    <div className={classNames(
+      "App white-mode bg-gray-100 w-full h-screen pt-14",
+      {"dark": dark},
+      {"light": !dark}
+    )}>
       <Router basename="/">
         <GlobalNav />
         <Switch>

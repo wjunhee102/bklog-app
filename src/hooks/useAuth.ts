@@ -17,6 +17,8 @@ function useAuth() {
  
   const getUserInfo: UserInfo| null = state.user.userInfo;
 
+  const getError = state.user.error;
+
   const dispatch = useDispatch();
 
   const onSignInUser = useCallback((userAuthInfo: UserAuthInfo) => 
@@ -56,6 +58,7 @@ function useAuth() {
   return {
     stateAuth: state,
     getUserInfo,
+    getError,
     onSignInUser,
     onReSignInUser,
     onSignOutUser,
