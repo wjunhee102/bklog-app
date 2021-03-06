@@ -6,25 +6,36 @@ function createPromiseSaga(type: string, promiseCreator: any) {
   return function* saga(action: any) {
     try {
       console.log("action", action);
-      const { data } = yield call(promiseCreator, action.payload);
+      const response = yield call(promiseCreator, action.payload);
 
-      const payload = Object.assign({}, data);
+      const data = response.data? response.data : null;
+      const success = response.data? response.data.success : null;
+      const error = response.data? 
+        response.data.error? 
+        response.data.error 
+        : null 
+        : response.error;
 
-      console.log("payload", payload, data);
-
-      delete payload.success;
-
-      if(data.success) {
+      if(data) {
+        delete data.success;
+      }
+      
+      if(success) {
         console.log("success");
-        yield put({ type: SUCCESS, payload });
+        yield put({ type: SUCCESS, data });
       } else {
 
-        if(data.error.accessTokken) {
+        if(error.accessTokken) {
           console.log(action);
           yield put({ type: REISSUETOKEN, payload: action });
         } else {
-          console.log("false");
-          yield put({ type: ERROR, payload });
+          if(data) {
+            console.log("false");
+            yield put({ type: ERROR, data });
+          } else {
+            yield put({ type: ERROR, payload: { error }});
+          }
+          
         }
   
       }

@@ -32,8 +32,12 @@ function useAuth() {
   const onReissueToke = useCallback(()=> dispatch(reissueToken()),[dispatch]);
 
   const onCheckToken = async () => {
-    const { data } = await authApiUtils.authFetchGet('check-token');
-     if(!data.success) {
+    const response = await authApiUtils.authFetchGet('check-token');
+    console.log(response);
+    const data = response.data? response.data : null;
+    const success = response.data? response.data.success : false;
+
+     if(!success) {
 
        if(getUserInfo) {
         onReissueToke();
@@ -56,7 +60,7 @@ function useAuth() {
   }
 
   return {
-    stateAuth: state,
+    authState: state,
     getUserInfo,
     getError,
     onSignInUser,

@@ -45,9 +45,11 @@ async function reissueToken(): Promise<ResType> {
 function* reissueTokenSaga(action: any) {
   try {
     console.log(action);
-    const { data } = yield call(reissueToken);
+    const response = yield call(reissueToken);
+    const data = response.data? response.data : null;
+    const success = response.data? response.data.success : null;
 
-    if(data.success) {
+    if(success) {
       console.log("success", action, data);
       if(action.payload) {
         yield put({ type: action.payload.type, payload: action.payload.payload });
