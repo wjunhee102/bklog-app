@@ -8,30 +8,31 @@ function createPromiseSaga(type: string, promiseCreator: any) {
       console.log("action", action);
       const response = yield call(promiseCreator, action.payload);
 
-      const data = response.data? response.data : null;
-      const success = response.data? response.data.success : null;
+      const payload = response.data? response.data : null;
+      const success = response.data? response.data.success : false;
       const error = response.data? 
         response.data.error? 
         response.data.error 
         : null 
         : response.error;
 
-      if(data) {
-        delete data.success;
+      if(payload) {
+        delete payload.success;
       }
+      console.log(response, payload);
       
       if(success) {
         console.log("success");
-        yield put({ type: SUCCESS, data });
+        yield put({ type: SUCCESS, payload });
       } else {
 
         if(error.accessTokken) {
           console.log(action);
           yield put({ type: REISSUETOKEN, payload: action });
         } else {
-          if(data) {
+          if(payload) {
             console.log("false");
-            yield put({ type: ERROR, data });
+            yield put({ type: ERROR, payload });
           } else {
             yield put({ type: ERROR, payload: { error }});
           }

@@ -9,22 +9,22 @@ import usePage from '../hooks/usePage';
 
 
 function AuthPage() {
-  const { getUserInfo } = useAuth();
+  const { authState: { user } } = useAuth();
   const { onChangeToggle } = usePage();
 
   useEffect(() => {
-    if(getUserInfo) {
+    if(user) {
       onChangeToggle(true);
     }
     
-  },[getUserInfo]);
+  },[user]);
 
-  if(getUserInfo) {
-    return <Redirect to={`/bklog/${getUserInfo.penName}`} />
+  if(user) {
+    return <Redirect to={`/bklog/${user.penName}`} />
   }
 
   return (
-    <div className="auth-page w-full h-full items-center p-4 overflow-auto rounded">
+    <div className="auth-page w-full h-full items-center p-4 rounded overflow-hidden">
       <Switch>
         <Route path="/auth/sign-up">
           <SignUp />

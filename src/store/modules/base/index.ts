@@ -1,20 +1,8 @@
-
-const CHANGE_DARK_MODE = "base/CHANGE_DARK_MODE";
-
-export const changeDarkMode = () => {
-  return {
-    type: CHANGE_DARK_MODE
-  }
-}
-
-type BaseActions = ReturnType<typeof changeDarkMode>;
-
-export interface BaseState {
-  dark: boolean;
-}
+import { BaseState, BaseActions, CHANGE_DARK_MODE, SERVER_DISCONNECTED } from "./utils";
 
 const initState: BaseState = {
-  dark: false
+  dark: false,
+  error: null
 }
 
 function base(state: BaseState = initState, action: BaseActions) {
@@ -22,6 +10,11 @@ function base(state: BaseState = initState, action: BaseActions) {
     case CHANGE_DARK_MODE:
       return Object.assign({}, state, {
         dark: !state.dark
+      });
+
+    case SERVER_DISCONNECTED:
+      return Object.assign({}, state, {
+        error: action.payload.error
       });
 
     default: 

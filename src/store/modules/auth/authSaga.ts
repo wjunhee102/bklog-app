@@ -11,10 +11,55 @@ import {
   SIGNUPUSER,
   RESIGNINUSER,
   REISSUETOKEN,
-  SIGNINUSER_ERROR
+  SIGNINUSER_ERROR,
+  RESET_AUTH
 } from './utils/index';
 import { ResType } from '../../../utils/api-utils';
-import { createPromiseSaga } from '../../utils';
+import { SERVER_DISCONNECTED } from '../base/utils';
+
+function createPromiseSateAuth(type: string, promiseCreator: any) {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+  return function* saga(action: any) {
+    try {
+      const response = yield call(promiseCreator, action.payload);
+
+      const payload = response.data? response.data : null;
+      const success = response.data? response.data.success : false;
+      const error = response.data? 
+        response.data.error? 
+        response.data.error 
+        : null 
+        : response.error;
+
+      if(payload) {
+        delete payload.success;
+      }
+      
+      if(success) {
+        yield put({ type: SUCCESS, payload });
+      } else {
+
+        if(error.accessTokken) {
+          yield put({ type: REISSUETOKEN, payload: action });
+        } else {
+          if(payload) {
+            yield put({ type: ERROR, payload });
+          } else {
+            yield put({ type: ERROR, payload: { error }});
+          }
+          
+        }
+  
+      }
+    } catch(e) {
+      yield put({ type: RESET_AUTH });
+      yield put({ type: SERVER_DISCONNECTED, payload: {
+        error: e
+      }});
+
+    }
+  }
+}
 
 
 async function signInUser(userAuthInfo: UserAuthInfo): Promise<ResType<User>> {
@@ -73,6 +118,9 @@ function* reissueTokenSaga(action: any) {
 
   } catch(e) {
     console.log("error2", e);
+    yield put({ type: SERVER_DISCONNECTED, payload: {
+      error: e
+    }})
     if(action.payload) {
       yield put({ type: `${action.payload.type}_ERROR`, payload: {
         error: e
@@ -81,10 +129,10 @@ function* reissueTokenSaga(action: any) {
   }
 }
 
-const signInUserSaga = createPromiseSaga(SIGNINUSER, signInUser);
-const signOutUserSaga = createPromiseSaga(SIGNOUTUSER, signOutUser);
-const signUpUserSaga = createPromiseSaga(SIGNUPUSER, signUpUser);
-const reSignInUserSaga = createPromiseSaga(RESIGNINUSER, reSignInUser);
+const signInUserSaga = createPromiseSateAuth(SIGNINUSER, signInUser);
+const signOutUserSaga = createPromiseSateAuth(SIGNOUTUSER, signOutUser);
+const signUpUserSaga = createPromiseSateAuth(SIGNUPUSER, signUpUser);
+const reSignInUserSaga = createPromiseSateAuth(RESIGNINUSER, reSignInUser);
 
 export default function* authSaga() {
   yield takeEvery(SIGNINUSER, signInUserSaga);

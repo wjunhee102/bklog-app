@@ -11,8 +11,6 @@ interface MatchParams {
 
 function BkPage({ match }: RouteComponentProps<MatchParams>) {
 
-  const [ mode, setMode ] = useState<boolean>(true);
-
   const {
     onCheckToken
   } = useAuth();
@@ -24,7 +22,7 @@ function BkPage({ match }: RouteComponentProps<MatchParams>) {
   },[]);
 
   return (
-    <div className={classNames("bk-page", "h-full", "overflow-scroll", {"white-mode": mode})}>
+    <div className={classNames("bk-page", "h-full", "overflow-scroll")}>
       <BklogContainer />
     </div>
   );

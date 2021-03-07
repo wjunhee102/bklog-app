@@ -1,4 +1,4 @@
-import { BaseState, changeDarkMode } from "../store/modules/base";
+import { BaseState, changeDarkMode } from "../store/modules/base/utils";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/modules";
 import { useCallback } from "react";
