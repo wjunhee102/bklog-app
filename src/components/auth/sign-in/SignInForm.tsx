@@ -3,133 +3,116 @@ import classNames from 'classnames';
 import useAuth from '../../../hooks/useAuth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
+import InputComponent from '../InputComponent';
+import useChange from '../../../hooks/useChange';
 
-interface InputComponentProps {
-  onChange: any;
-  value: string | number; 
-  placeholder: string;
-  label: string;
-  className?: string;
-  type: string;
+interface InputPropsType {
+  value: string;
+  onChange: (e: any) => void;
+  id: string;
   name: string;
-  id?: string;
-}
-
-const defaultInputStyle = "appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 focus:ring-1 sm:text-sm";
-
-function InputComponent({
-  onChange,
-  value,
-  placeholder,
-  label,
-  className,
-  type,
-  name,
-  id,
-}: InputComponentProps) {
-  return (
-    <div>
-      <label 
-        htmlFor={type} 
-        className="sr-only"
-      >
-        { label }
-      </label>
-      <input 
-        id={id} 
-        name={name} 
-        type={type} 
-        className={
-          classNames(
-            className,
-            defaultInputStyle
-          )
-        }
-        placeholder={placeholder} 
-        value={value}
-        onChange={onChange}
-      />
-    </div>
-  )
+  type: string;
+  label: string;
+  placeholder: string;
+  autoComplete: string;
+  error: boolean;
+  style: string;
 }
 
 function SignInForm() {
 
   const {
-    getError,
+    authState : { error: { signInUser } },
     onSignInUser
   } = useAuth();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
 
-  const handleInputEmail = (e:any) => {
-    if(error) {
-      console.log("2")
-      setError(false);
-    }
-    setEmail(e.target.value);
-  }
+  const [ email, handleInputEmail, errorEmail, handleErrorEmail ] = useChange<string>("");
+  const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange<string>("");
 
-  const handleInputPwd = (e:any) => {
-    if(error) {
-      setError(false);
+  const inputProps: InputPropsType[] = [
+    {
+      value: email,
+      onChange: handleInputEmail,
+      id: "email-address",
+      name: "email",
+      type: "email",
+      label: "Email address",
+      placeholder: "example@example.com",
+      autoComplete: "on",
+      error: errorEmail,
+      style: "rounded-t-md"
+    },
+    {
+      value: password,
+      onChange: handleInputPwd,
+      id: "password",
+      name: "password",
+      type: "password",
+      label: "password",
+      placeholder: "비밀번호",
+      autoComplete: "off",
+      error: errorPwd,
+      style: "rounded-b-md"
     }
-    setPassword(e.target.value);
-  }
+  ]
 
-  const handleClickSubmit = () => {
+  const handleClickSubmit = (e: any) => {
+    e.preventDefault();
     if(email && password) {
       onSignInUser({email, password});
     } else {
-      setError(true);
+      handleErrorEmail(email? false : true);
+      handleErrorPwd(password? false : true);
     }
   }
 
-  const cancelFormEvent = (e: React.FormEvent) => {
-    e.preventDefault();
-  } 
-
   useEffect(() => {
-    if(getError && getError.signIn) {
-      console.log("1")
+    if(signInUser) {
       setError(true);
     }
-  },[getError]);
+  },[signInUser]);
 
   return (
-    <form className="mt-12" onSubmit={cancelFormEvent} action="#">
+    <form className="mt-12" onSubmit={handleClickSubmit} action="#">
       <div className="rounded-md shadow-sm -space-y-px">
-        <InputComponent
-          className="rounded-t-md"
-          value={email}
-          onChange={handleInputEmail}
-          id="email-address" 
-          name="email"
-          type="email"
-          label="Email address"
-          placeholder="Email address"
-        />
-        <InputComponent 
-          className="rounded-b-md"
-          value={password}
-          onChange={handleInputPwd}
-          id="password" 
-          name="password"
-          type="password"
-          label="Password"
-          placeholder="Password"
-        />
+        {
+          inputProps.map((props)=>
+            <InputComponent
+              key={props.id}
+              labelClass="sr-only"
+              className={classNames(
+                "dark:bg-gray-100 appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 focus:ring-1 sm:text-sm",
+                props.style,
+                {"border-red-500": props.error}
+              )}
+              value={props.value}
+              onChange={props.onChange}
+              id={props.id} 
+              name={props.name}
+              type={props.type}
+              label={props.label}
+              placeholder={props.placeholder}
+              autoComplete={props.autoComplete}
+            />
+          )
+        }
       </div>
       <div 
         className="mb-8 leading-6 h-6 block text-red-500 text-sm font-semibold text-left px-2"
       > 
-        { error? `가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.` : null } 
+        { 
+          error? 
+          `가입하지 않은 계정이거나, 잘못된 비밀번호입니다.` 
+          : errorEmail || errorPwd 
+          ? `계정과 패스워드를 입력해주세요.` 
+          : null 
+        } 
       </div>
 
       <div>
-        <button type="submit" onClick={handleClickSubmit} className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600">
+        <button type="submit" onClick={handleClickSubmit} className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-500 hover:bg-purple-600 active:outline-none active:ring-2 active:ring-offset-2 active:ring-purple-600">
           <span className="absolute left-0 inset-y-0 flex items-center pl-3">
             <FontAwesomeIcon className="text-base text-purple-300 group-hover:text-purple-200" icon={faLock} />
           </span>

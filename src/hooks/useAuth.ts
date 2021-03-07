@@ -7,19 +7,20 @@ import {
   signInUser, 
   reSignInUser, 
   signOutUser,
-  reissueToken
+  reissueToken,
+  RequiredUserInfo,
+  signUpUser
 } from '../store/modules/auth/utils';
 import { RootState } from '../store/modules';
 import authApiUtils from '../store/modules/auth/utils/apiUtils';
 
 function useAuth() {
   const state: AuthState = useSelector((state: RootState) => state.auth);
- 
-  const getUserInfo: UserInfo| null = state.user.userInfo;
-
-  const getError = state.user.error;
 
   const dispatch = useDispatch();
+
+  const onSignUpUser = useCallback((requiredUserInfo: RequiredUserInfo) => 
+    dispatch(signUpUser(requiredUserInfo)), [dispatch]);
 
   const onSignInUser = useCallback((userAuthInfo: UserAuthInfo) => 
       dispatch(signInUser(userAuthInfo))
@@ -29,7 +30,7 @@ function useAuth() {
 
   const onSignOutUser = useCallback(()=> dispatch(signOutUser()),[dispatch]);
 
-  const onReissueToke = useCallback(()=> dispatch(reissueToken()),[dispatch]);
+  const onReissueToken = useCallback(()=> dispatch(reissueToken()),[dispatch]);
 
   const onCheckToken = async () => {
     const response = await authApiUtils.authFetchGet('check-token');
@@ -39,19 +40,19 @@ function useAuth() {
 
      if(!success) {
 
-       if(getUserInfo) {
-        onReissueToke();
+       if(state.user) {
+        onReissueToken();
        }
 
      } else {
 
-       if(!getUserInfo) {
+       if(!state.user) {
 
          onReSignInUser();
        
         } else {
          
-          if(getUserInfo.userId !== data.userId) {
+          if(state.user.userId !== data.userId) {
             onSignOutUser();
           }
 
@@ -61,12 +62,11 @@ function useAuth() {
 
   return {
     authState: state,
-    getUserInfo,
-    getError,
+    onSignUpUser,
     onSignInUser,
     onReSignInUser,
     onSignOutUser,
-    onReissueToke,
+    onReissueToken,
     onCheckToken
   }
 }

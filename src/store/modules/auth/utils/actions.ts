@@ -15,7 +15,8 @@ import {
   SIGNUPUSER_SUCCESS,
   SIGNUPUSER_ERROR,
   REISSUETOKEN_ERROR,
-  REISSUETOKEN
+  REISSUETOKEN,
+  RESET_AUTH
  } from ".";
 
 const signUpUser = ( requiredUserInfo: RequiredUserInfo ) => {
@@ -112,6 +113,12 @@ const reissueTokenError = (payload: User) => {
   }
 }
 
+const resetAuth = () => {
+  return {
+    type: RESET_AUTH
+  }
+}
+
 const actions = {
   signUpUser,
   signUpUserSuccess,
@@ -126,7 +133,8 @@ const actions = {
   reSignInUserError,
   reSignInUserSuccess,
   reissueToken,
-  reissueTokenError
+  reissueTokenError,
+  resetAuth
 }
 
 export default actions;
