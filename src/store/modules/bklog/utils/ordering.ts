@@ -22,11 +22,10 @@ const isNextBlockPoint = (id:string) =>
  * @param block 
  */
 export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
-
+  const DELETE_COUNT = 1;
+  const BLOCK_LENGTH = blocks.length;
   const rawBlocks: Blocks = blocks.concat();
   const newBlocks: BlockData<any>[] = [];
-  const deleteCount = 1;
-  const blockLength = blocks.length;
   
   let newBlock: BlockData<any> | RawBlockData<any>;
   let currentPosition: number = 0;
@@ -34,7 +33,7 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
   let nextBlockId: UUID | null = null;
   let idStack:UUID[] = [];
   
-  while(rawBlocks[0] && newBlocks.length < blockLength) {
+  while(rawBlocks[0] && newBlocks.length < BLOCK_LENGTH) {
     let currentId:UUID | undefined | null;
 
     if(nextBlockId) {
@@ -67,7 +66,7 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
       index: blockIndex++
     }));
   
-    rawBlocks.splice(currentPosition, deleteCount);
+    rawBlocks.splice(currentPosition, DELETE_COUNT);
   }
   
   return newBlocks;

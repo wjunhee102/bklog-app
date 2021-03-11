@@ -32,6 +32,7 @@ interface InputPropsType {
   errorMessage?: string;
 }
 
+// 전송 전에 validation 체크
 function SignUpForm() {
 
   const [ lastName, handleInputLName, errorLastName, handleErrorLName ] = useChange<string>("");
