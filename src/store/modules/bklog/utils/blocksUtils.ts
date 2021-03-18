@@ -156,7 +156,8 @@ function insertChild(
   } else {
     newChildren.splice(insertPoint, deleteCount);
   }
-  return newChildren
+
+  return newChildren;
 } 
 
 /**
