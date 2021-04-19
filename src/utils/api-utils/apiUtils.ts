@@ -23,3 +23,18 @@ const apiUtils = {
 }
 
 export default apiUtils;
+
+
+// 여기서 access token 관리하는게 좋을 것 같음.
+// async function baseFetch2(req: RequestArg) : Promise<ResType> {
+//   try {
+//     const data = await axios(Object.assign({baseURL, responseType: "json"}, req));
+
+//     if(data.success = false){
+//       return {
+//         suc
+//       }
+//     }
+
+//   }
+// }

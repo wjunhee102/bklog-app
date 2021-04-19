@@ -17,7 +17,7 @@ function createPromiseSaga(type: string, promiseCreator: any) {
         : response.error;
 
       if(payload) {
-        delete payload.success;
+        payload.success = undefined;
       }
       console.log(response, payload);
       

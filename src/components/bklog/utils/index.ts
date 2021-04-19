@@ -18,10 +18,10 @@ const BACKGROUND_C      = "background-color:" as const;
 export const arrayUtils = { equalsArray };
 
 export function contentsElement(rawContents: any) {
-  let text;
+  let text: string;
   let className:string | null = null;
   let styles:string | null = null;
-  let aTag;
+  let aTag: any;
 
   if(rawContents.length === 2) {
     rawContents[1].forEach((content:string[]) => {
@@ -89,12 +89,12 @@ export function findTextStyle(
   return style;
 }
 
-export function arrayFindIndex(array: any[], factor: any): number {
-  const JSONFactor = JSON.stringify(factor);
+export function arrayFindIndex(array: any[], props: any): number {
+  const JSONProps = JSON.stringify(props);
 
   for(let i = 0; i < array.length; i++) {
     const JSONArray = JSON.stringify(array[i]);
-    if(JSONArray === JSONFactor) {
+    if(JSONArray === JSONProps) {
       return i;
     }
   }

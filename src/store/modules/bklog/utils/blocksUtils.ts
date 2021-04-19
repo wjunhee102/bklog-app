@@ -7,7 +7,16 @@ interface ChangedData {
   data: any;
 }
 
-type Block = BlockData<any> | RawBlockData<any>
+type Block = BlockData | RawBlockData;
+
+/**
+ * 
+ * @param array 
+ */
+function copyToNewObjectArray<T = any>(array: T[]): T[] {
+  return array.map((object: T) => Object.assign({}, object));
+}
+  
 
 /**
  * blockData 생성 함수
@@ -20,7 +29,7 @@ function createBlockData(
   blockType: string = "bk-p", 
   preBlockId: UUID | null, 
   nextBlockId?: UUID | null | undefined
-):BlockData<any> {
+): BlockData {
   return {
     index: 0,
     id: uuidv4(),
@@ -110,6 +119,7 @@ function copyBlockDataList(
     }
 
     const preNextBlockId = blockDataList[i].nextBlockId;
+    
     if(preNextBlockId) {
       if(blockDataList.findIndex(isBlockId(preNextBlockId)) === -1) {
         newBlock.nextBlockId = null;
@@ -180,7 +190,7 @@ function insertBlock(
   preBlockId: UUID | null,
   parentId?: UUID
 ): Block[] {
-  let newBlocks: Block[] = preBlocks.map(block => Object.assign({}, block));
+  let newBlocks: Block[] = copyToNewObjectArray<Block>(preBlocks);
   const newBlockDataList = [...blockDataList];
   const firstPosition: number = 0;
 
@@ -269,7 +279,7 @@ function updateContents(
   stageData: StagedBlock[]
 ):BlockData<any>[] {
 
-  let newBlocks = blockData.map(block => Object.assign({}, block));
+  let newBlocks = copyToNewObjectArray<BlockData>(blockData);
 
   stageData.forEach((block)=>{
 
@@ -370,9 +380,9 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
  * @param blocks 
  * @param blockIdList 지워질 blockList들은 서로 연결이 되어 있어야 함.
  */
-function excludeBlockList(blocks: BlockData<any>[], blockIdList: UUID[]) {
+function excludeBlockList(blocks: BlockData[], blockIdList: UUID[]) {
 
-  let deletedBlocks: BlockData<any>[] = blocks.map((block) => Object.assign({}, block));
+  let deletedBlocks: BlockData[] = copyToNewObjectArray<BlockData>(blocks);
   let currentBlockId: UUID | null = blockIdList[0];
 
   let preBlockData: [UUID, number] | null = null;
@@ -471,9 +481,6 @@ function switchingBlock(
   let currentPreBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
   let currentNextBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.nextBlockId));
   let currentParentBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.parentBlockId));
-
-  console.log(currentPreBlockPosition, currentNextBlockPosition, currentParentBlockPosition);
-  console.log(newBlocks.map(block => Object.assign({}, block)));
   
   if(currentPreBlockPosition !== -1) {
     newBlocks[currentPreBlockPosition].nextBlockId = currentBlock.nextBlockId;
@@ -485,7 +492,6 @@ function switchingBlock(
     let currentParentBlock = newBlocks[currentParentBlockPosition];
     currentParentBlock.children = currentParentBlock.children.filter((child) => child !== currentBlock.id);
   }
-  console.log(newBlocks.map(block => Object.assign({}, block)));
 
   currentBlock.preBlockId = null;
   currentBlock.nextBlockId = null;
@@ -508,15 +514,16 @@ function switchingBlock(
   if(preBlock) {
     let nextBlockId = preBlock.nextBlockId;
     let nextBlockPosition: number = newBlocks.findIndex(isBlockId(nextBlockId));
-    console.log("preblock",  preBlock);
     preBlock.nextBlockId = currentBlock.id;
     currentBlock.preBlockId = preBlock.id;
+
     if(nextBlockPosition !== -1) {
       newBlocks[nextBlockPosition].preBlockId = currentBlock.id;
       currentBlock.nextBlockId = newBlocks[nextBlockPosition].id;
     } else {
       currentBlock.nextBlockId = null;
     }
+
   }
 
   if(parentBlock) {
@@ -566,7 +573,7 @@ function restoreBlock(
     data: [blockData]
   });
 
-  const newBlocks = preBlocks.map(block => Object.assign({}, block));
+  const newBlocks = copyToNewObjectArray<BlockData>(preBlocks);
 
   if(currentBlock.preBlockId) {
     const preBlockPosition = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));

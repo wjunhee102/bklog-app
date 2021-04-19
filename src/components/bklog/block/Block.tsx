@@ -168,12 +168,13 @@ function Block({ blockData }:BlockProps) {
   // Focus methods
   const handleBlur = (e:any) => {
     if (e.currentTarget === e.target) {
-      // console.log('unfocused self 1');
+      console.log('unfocused self 1');
     } else {
-      // console.log('unfocused child 2', e.target);
+      console.log('unfocused child 2', e.target);
     }
     if (!e.currentTarget.contains(e.relatedTarget)) {
       // Not triggered when swapping focus between children
+      console.log('unfocused child 3', e.target);
       setCursorStart(0);
       setCursorEnd(0);
       onCommitBlock();
@@ -181,6 +182,7 @@ function Block({ blockData }:BlockProps) {
   }
 
   const handleFocus = (ele: any) => {
+    console.log("ok")
     ele.focus();
   }
 
@@ -193,7 +195,7 @@ function Block({ blockData }:BlockProps) {
     onEditAble(blockData.id);
   }
 
-  const reBlockFocus = ()=> {
+  const reBlockFocus = () => {
     handleFocus(blockRef.current);
   }
 
@@ -208,6 +210,7 @@ function Block({ blockData }:BlockProps) {
 
   useEffect(()=> {
     if(getEditAbleId === blockData.id) {
+      console.log("sadsad");
       if(blockRef.current) handleFocus(blockRef.current);
     }
   },[getEditAbleId]);

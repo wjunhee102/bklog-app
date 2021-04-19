@@ -32,7 +32,7 @@ function createPromiseSateAuth(type: string, promiseCreator: any) {
         : response.error;
 
       if(payload) {
-        delete payload.success;
+        payload.success = undefined;
       }
       
       if(success) {
