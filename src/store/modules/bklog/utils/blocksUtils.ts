@@ -1,6 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
+import { Token } from '../../../../utils/token';
 import { BlockData, UUID, RawBlockData } from '../../../../types/bklog';
 import { StagedBlock, parseHtmlContents } from './index';
+
 
 interface ChangedData {
   id: UUID;
@@ -32,7 +33,7 @@ function createBlockData(
 ): BlockData {
   return {
     index: 0,
-    id: uuidv4(),
+    id: Token.getUUID(),
     type: type,
     parentBlockId: null,
     preBlockId: preBlockId,
@@ -56,7 +57,7 @@ function createBlockData(
  */
 function copyBlockData(blockData: BlockData<any>): BlockData<any> {
   return Object.assign({}, blockData, {
-    id: uuidv4(),
+    id: Token.getUUID(),
     parentBlockId: null,
     preBlockId: null,
     nextBlockId: null,
@@ -71,7 +72,7 @@ function copyBlock(
 ): BlockData<any> {
   return Object.assign({}, preBlock, {
     index: 0,
-    id: uuidv4(),
+    id: Token.getUUID(),
     preBlockId,
     parentBlockId: parentBlockId? parentBlockId : null
   });
@@ -90,7 +91,7 @@ function copyBlockDataList(
 
   for(let i = 0; i < blockDataList.length; i++) {
     const newBlock: Block = Object.assign({}, blockDataList[i], {
-      id: uuidv4(),
+      id: Token.getUUID(),
       preBlockId: null,
       nextBlockId: null,
       parentBlockId: null,
@@ -698,3 +699,47 @@ const blocksUtils = {
 }
 
 export default blocksUtils;
+
+// private async modifyBlock(modifyBlockDataList: ModifyBlockType[]) {
+
+  //   const param = modifyBlockDataList.reduce((acc, currentValue)=>{
+  //     acc[currentValue.command].push({
+  //       set: currentValue.set,
+  //       payload: currentValue.payload
+  //     });
+
+  //     return acc;
+
+  //   }, {
+  //     create: [],
+  //     update: [],
+  //     delete: []
+  //   });
+
+  //   console.log(param);
+
+  //   for(const { command, set, payload } of modifyBlockDataList) {
+  //     switch(command) {
+  //       case "create":
+  //         const resCreate: boolean = await this.blockService.createData(set, payload);
+  //         if(!resCreate) return resCreate;
+  //         break;
+
+  //       case "update":
+  //         const resUpdate: boolean = await this.blockService.updateData(set, payload);
+  //         if(!resUpdate) return resUpdate;
+  //         break;
+
+  //       case "delete":
+  //         const resDelete: boolean = await this.blockService.deleteData(set, payload);
+  //         if(!resDelete) return resDelete;
+  //         break;
+
+  //       default: 
+  //         return false;
+  //     }
+  //   }
+
+  //   return true;
+  // }
+

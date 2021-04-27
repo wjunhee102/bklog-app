@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Token } from '../../utils/token';
 
 /**
  * UUID v4
  */
-export type UUID = ReturnType<typeof uuidv4>
+export type UUID = ReturnType<typeof Token.getUUID>
 
 /**
  * text block types
@@ -35,21 +36,21 @@ export interface TextProps {
   contents: TextContents[];
 }
 
-export interface RawBlockData<Props = any> {
+export interface RawBlockData<T = any> {
   id: UUID | string;
   type: string;
   parentBlockId: UUID | string | null;
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.
-  property: Props;
+  property: T;
   children: UUID[];
 }
 
 /**
  * Raw Block Data
  */
-export interface BlockData<Props = any> {
+export interface BlockData<T = any> {
   index: number;
   id: UUID | string;
   type: string;
@@ -57,6 +58,6 @@ export interface BlockData<Props = any> {
   preBlockId: UUID | string | null;
   nextBlockId: UUID | string | null;
   // 수정할 것.
-  property: Props;
+  property: T;
   children: UUID[];
 }
