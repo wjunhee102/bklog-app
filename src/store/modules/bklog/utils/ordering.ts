@@ -22,7 +22,6 @@ const isNextBlockPoint = (id:string) =>
  * @param block 
  */
 export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
-  const DELETE_COUNT = 1;
   const BLOCK_LENGTH = blocks.length;
   const rawBlocks: Blocks = blocks.concat();
   const newBlocks: BlockData<any>[] = [];
