@@ -31,7 +31,6 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
   let blockIndex: number = 1;
   let nextBlockId: UUID | null = null;
   let idStack:UUID[] = [];
-  let rawBlockLength: number = BLOCK_LENGTH - 1;
   let newBlockLength: number = 0;
 
   
@@ -67,12 +66,10 @@ export default function orderingBlock(blocks: Blocks): BlockData<any>[] {
     newBlocks.push(Object.assign({}, newBlock, {
       index: blockIndex++
     }));
-  
-    rawBlocks[currentPosition] = rawBlocks[rawBlockLength];
-    rawBlocks.pop();
-
-    rawBlockLength--;
     newBlockLength++;
+  
+    rawBlocks[currentPosition] = rawBlocks[BLOCK_LENGTH - newBlockLength];
+    rawBlocks.pop();
   }
   
   return newBlocks;
