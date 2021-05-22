@@ -28,124 +28,14 @@ import {
   excludeBlockList,
   switchingBlock,
   restoreBlock,
-  getContentsToBeChanged
+  getContentsToBeChanged,
+  RESET_BLOCK,
+  BklogActions
 } from './utils';
 
 import { page } from '../../../data/db.json';
 
-import { newDataList } from '../../../index.test';
-
-/**
- * BlockLog store
- */
-export function addBlock(blockId?: UUID, type?: string, block?: BlockData<any>) {
-  return {
-    type: ADD_BLOCK,
-    payload: {
-      preBlockId: blockId,
-      newBlockType: type,
-      blockData: block
-    }
-  }
-}
-
-export function editAble (id: UUID | null, index?: number) {
-  return {
-    type: EDITABLE,
-    payload: {
-      editingId: id,
-      editingIndex: index
-    }
-  }
-}
-
-export function editBlock({ 
-  blockId,
-  blockIndex,
-  text,
-}: EditedBlock) {
-  return {
-    type: EDIT_BLOCK,
-    payload: {
-      blockId,
-      blockIndex,
-      text
-    }
-  }
-}
-
-export function commitBlock() {
-  return {
-    type: COMMIT_BLOCK
-  }
-}
-
-export function deleteBlock(deletedId: UUID) {
-  return {
-    type: DELETE_BLOCK,
-    payload: {
-      deletedId
-    }
-  }
-}
-
-export function updateBlock(id: UUID) {
-  return {
-    type: UPDATE_BLOCK,
-    payload: {
-      id
-    }
-  }
-}
-
-export function changeTextStyle(
-  index: number, 
-  style: ContentType, 
-  startPoint: number,
-  endPoint: number,
-  order: OrderType
-  ) {
-  return {
-    type: CHANGE_TEXT_STYLE,
-    payload: {
-      changedTextStyleBlockIndex: index,
-      styleType: style,
-      startPoint,
-      endPoint,
-      order
-    }
-  }
-}
-
-export function revertBlock() {
-  return {
-    type: REVERT_BLOCK
-  }
-}
-
-export function switchBlock(blockId: UUID, targetBlockId: UUID, targetType: boolean) {
-  return {
-    type: SWITCH_BLOCK,
-    payload: {
-      switchedId: blockId,
-      targetBlockId,
-      targetType
-    }
-  }
-}
-
-type BklogActions = ReturnType<typeof addBlock>
-  | ReturnType<typeof editAble>
-  | ReturnType<typeof editBlock>
-  | ReturnType<typeof commitBlock>
-  | ReturnType<typeof deleteBlock>
-  | ReturnType<typeof updateBlock>
-  | ReturnType<typeof changeTextStyle>
-  | ReturnType<typeof revertBlock>
-  | ReturnType<typeof switchBlock>
-;
-
-const initialState:BklogState = (() => {
+const initialState2:BklogState = (() => {
   return {
     pageId: page.id,
     userId: page.userId,
@@ -158,9 +48,24 @@ const initialState:BklogState = (() => {
   };
 })();
 
-function bklog(state: BklogState = initialState, action: BklogActions):BklogState {
+const initialState:BklogState = (() => {
+  return {
+    pageId: null,
+    userId: null,
+    blocks: [],
+    editingId: null,
+    stage: [],
+    rightToEdit: false,
+    tempBack: [],
+    tempFront: []
+  };
+})();
+
+function bklog(state: BklogState = initialState2, action: BklogActions):BklogState {
 
   switch(action.type) {
+    case RESET_BLOCK: 
+      return initialState;
 
     case ADD_BLOCK:
       const { preBlockId, newBlockType, blockData } = action.payload;
@@ -222,7 +127,7 @@ function bklog(state: BklogState = initialState, action: BklogActions):BklogStat
 
       return Object.assign({}, state, {
         stage: preStagedBlock? [...preStagedBlock, newStagedBlock] : [newStagedBlock]
-      })
+      });
 
     case CHANGE_TEXT_STYLE:
       const { 
