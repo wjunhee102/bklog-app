@@ -10,7 +10,7 @@ import {
   changeTextStyle,
   switchBlock,
   revertBlock
-} from '../store/modules/bklog';
+} from '../store/modules/bklog/utils';
 import { BklogState, OrderType } from '../store/modules/bklog/utils';
 import {
   UUID,
@@ -72,11 +72,11 @@ function useBklog() {
     , [dispatch]);
 
   const onChangeTextStyle = useCallback((
-    index: number, 
-    style: ContentType,
-    startPoint: number,
-    endPoint: number,
-    order: OrderType
+      index: number, 
+      style: ContentType,
+      startPoint: number,
+      endPoint: number,
+      order: OrderType
     ) => 
       dispatch(changeTextStyle(index, style, startPoint, endPoint, order))
     , [dispatch]);
@@ -85,7 +85,7 @@ function useBklog() {
     dispatch(switchBlock(blockId, preBlockId, parentType)), [dispatch]);
 
   const onRevertBlock = useCallback(()=> 
-      dispatch(revertBlock()), [dispatch]);
+    dispatch(revertBlock()), [dispatch]);
 
   return { 
     state, 

@@ -1,4 +1,17 @@
-import { RESET_BLOCK, ADD_BLOCK, EDITABLE, EditedBlock, EDIT_BLOCK, COMMIT_BLOCK, DELETE_BLOCK, UPDATE_BLOCK, OrderType, CHANGE_TEXT_STYLE, REVERT_BLOCK, SWITCH_BLOCK } from ".";
+import { 
+  RESET_BLOCK, 
+  ADD_BLOCK, 
+  EDITABLE, 
+  EditedBlock, 
+  EDIT_BLOCK, 
+  COMMIT_BLOCK, 
+  DELETE_BLOCK, 
+  UPDATE_BLOCK, 
+  OrderType, 
+  CHANGE_TEXT_STYLE, 
+  REVERT_BLOCK, 
+  SWITCH_BLOCK 
+} from ".";
 import { UUID, BlockData, ContentType } from "../../../../types/bklog";
 
 export function resetBlock() {
