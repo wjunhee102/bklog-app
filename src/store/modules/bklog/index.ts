@@ -32,26 +32,8 @@ import {
   BklogActions
 } from './utils';
 import { page } from '../../../data/db.json';
-import { ActionType } from '@redux-saga/types';
-import { createCustomAction } from 'typesafe-actions';
+import { updateObject, createHandler, createReducerAction, createHandlers, createReducer } from '../../utils';
 
-interface Action {
-  type: string
-}
-
-type Test<T = Action> = Action & T ;
-
-const TEST = "test";
-
-function createReducer<T = any, P = any>(initialState: T, handlers: any) {
-  return function reducer(state = initialState, action: Action & P) {
-    if (handlers.hasOwnProperty(action.type)) {
-      return handlers[action.type](state, action);
-    } else {
-      return state;
-    }
-  }
-}
 
 const initialState2:BklogState = (() => {
   return {
@@ -78,6 +60,34 @@ const initialState:BklogState = (() => {
     tempFront: []
   };
 })();
+
+function addBlock(state: BklogState, action: any) {
+  const { preBlockId, newBlockType, blockData } = action.payload;
+
+  const preBlock = preBlockId? 
+    state.blocks.filter(block => block.id === preBlockId)[0] 
+    : state.blocks[state.blocks.length - 1];
+
+  const newBlock: BlockData<any> = blockData? 
+    copyBlockData(blockData) 
+    : createBlockData("text", newBlockType, preBlock.id);
+
+  const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
+
+  return updateObject(state, {
+    blocks: orderingBlock(addedBlocks),
+    editingId: newBlock.id,
+    tempBack: tempDataPush(state.tempBack,{
+      type: ADD_BLOCK,
+      data: {
+        id: newBlock.id
+      }
+    })
+  });
+}
+
+const addReducer = createReducer<BklogState, BklogActions>(initialState, addBlock);
+
 
 function bklog(state: BklogState = initialState2, action: BklogActions):BklogState {
 

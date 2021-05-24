@@ -74,6 +74,32 @@ export type BklogActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof switchBlock>
 ;
 
+
+function addBlock1(state: BklogState, action: ReturnType<typeof addBlock>) {
+  const { preBlockId, newBlockType, blockData } = action.payload;
+
+  const preBlock = preBlockId? 
+    state.blocks.filter(block => block.id === preBlockId)[0] 
+    : state.blocks[state.blocks.length - 1];
+
+  const newBlock: BlockData<any> = blockData? 
+    copyBlockData(blockData) 
+    : createBlockData("text", newBlockType, preBlock.id);
+
+  const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
+
+  return Object.assign({}, state, {
+    blocks: orderingBlock(addedBlocks),
+    editingId: newBlock.id,
+    tempBack: tempDataPush(state.tempBack,{
+      type: ADD_BLOCK,
+      data: {
+        id: newBlock.id
+      }
+    })
+  }); 
+}
+
 /**
  * converter
  */
