@@ -52,9 +52,9 @@ function useAuth() {
        
         } else {
          
-          if(state.user.userId !== data.userId) {
-            onSignOutUser();
-          }
+          // if(state.user.userId !== data.userId) {
+          //   onSignOutUser();
+          // }
 
        }
      }

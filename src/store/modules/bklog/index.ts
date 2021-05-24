@@ -3,7 +3,6 @@ import {
   BlockData,
   UUID
 } from '../../../types/bklog';
-
 import { 
   ADD_BLOCK,
   EDITABLE,
@@ -32,8 +31,27 @@ import {
   RESET_BLOCK,
   BklogActions
 } from './utils';
-
 import { page } from '../../../data/db.json';
+import { ActionType } from '@redux-saga/types';
+import { createCustomAction } from 'typesafe-actions';
+
+interface Action {
+  type: string
+}
+
+type Test<T = Action> = Action & T ;
+
+const TEST = "test";
+
+function createReducer<T = any, P = any>(initialState: T, handlers: any) {
+  return function reducer(state = initialState, action: Action & P) {
+    if (handlers.hasOwnProperty(action.type)) {
+      return handlers[action.type](state, action);
+    } else {
+      return state;
+    }
+  }
+}
 
 const initialState2:BklogState = (() => {
   return {

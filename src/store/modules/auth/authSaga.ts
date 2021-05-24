@@ -21,41 +21,19 @@ function createPromiseSateAuth(type: string, promiseCreator: any) {
   const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
   return function* saga(action: any) {
     try {
-      const response = yield call(promiseCreator, action.payload);
-
-      const payload = response.data? response.data : null;
-      const success = response.data? response.data.success : false;
-      const error = response.data? 
-        response.data.error? 
-        response.data.error 
-        : null 
-        : response.error;
-
-      if(payload) {
-        payload.success = undefined;
-      }
+      const payload = yield call(promiseCreator, action.payload);
       
-      if(success) {
-        yield put({ type: SUCCESS, payload });
-      } else {
+      yield put({ type: SUCCESS, payload });
 
-        if(error.accessTokken) {
-          yield put({ type: REISSUETOKEN, payload: action });
-        } else {
-          if(payload) {
-            yield put({ type: ERROR, payload });
-          } else {
-            yield put({ type: ERROR, payload: { error }});
-          }
-          
-        }
-  
+    } catch(error) {
+      if(error.type === "AUTH" && error.code === "001") {
+        yield put({ type: REISSUETOKEN, payload: action });
+      } else {
+        yield put({ type: RESET_AUTH });
+        yield put({ type: SERVER_DISCONNECTED, payload: {
+          error: error
+        }});
       }
-    } catch(e) {
-      yield put({ type: RESET_AUTH });
-      yield put({ type: SERVER_DISCONNECTED, payload: {
-        error: e
-      }});
 
     }
   }
@@ -90,42 +68,22 @@ async function reissueToken(): Promise<ResType> {
 function* reissueTokenSaga(action: any) {
   try {
     console.log(action);
-    const response = yield call(reissueToken);
-    const data = response.data? response.data : null;
-    const success = response.data? response.data.success : null;
+    yield call(reissueToken);
 
-    if(success) {
-      console.log("success", action, data);
-      if(action.payload) {
-        yield put({ type: action.payload.type, payload: action.payload.payload });
-      }
-      
-    } else {
-      console.log("error1", action);
-      yield put({ type: SIGNINUSER_ERROR, payload: {
-        userInfo: null,
-        error: null
-      }});
-
-      if(action.payload) {
-        yield put({ type: `${action.action.type}_ERROR`, payload: {
-          error: {
-            auth: true
-          }
-        }});
-      }
+    if(action.payload) {
+      yield put({ type: action.payload.type, payload: action.payload.payload });
     }
 
-  } catch(e) {
-    console.log("error2", e);
-    yield put({ type: SERVER_DISCONNECTED, payload: {
-      error: e
-    }})
+
+  } catch(error) {
+    yield put({ type: SIGNINUSER_ERROR, payload: {
+      userInfo: null,
+      error: null
+    }});
+
     if(action.payload) {
-      yield put({ type: `${action.payload.type}_ERROR`, payload: {
-        error: e
-      }});
-    }    
+      yield put({ type: `${action.action.type}_ERROR`, payload: error });
+    }  
   }
 }
 

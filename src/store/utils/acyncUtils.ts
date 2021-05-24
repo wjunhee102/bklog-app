@@ -1,5 +1,5 @@
 import { call, put } from 'redux-saga/effects'; 
-import { REISSUETOKEN } from '../modules/auth/utils';
+import { REISSUETOKEN, reissueToken, SIGNINUSER_ERROR } from '../modules/auth/utils';
 
 function createPromiseSaga(type: string, promiseCreator: any) {
   const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
@@ -46,6 +46,28 @@ function createPromiseSaga(type: string, promiseCreator: any) {
         error: e
       }})
     }
+  }
+}
+
+function* reissueTokenSaga(action: any) {
+  try {
+    console.log(action);
+    yield call(reissueToken);
+
+    if(action.payload) {
+      yield put({ type: action.payload.type, payload: action.payload.payload });
+    }
+
+
+  } catch(error) {
+    yield put({ type: SIGNINUSER_ERROR, payload: {
+      userInfo: null,
+      error: null
+    }});
+
+    if(action.payload) {
+      yield put({ type: `${action.action.type}_ERROR`, payload: error });
+    }  
   }
 }
 

@@ -6,6 +6,7 @@ import converter from './converter';
 import * as ordering  from './ordering';
 import blocksUtils from './blocksUtils';
 import tempStoreUtils from './tempStoreUtils';
+import actionBklog from './actionTypes';
 
 /**
  * types
@@ -25,8 +26,8 @@ export interface TempData {
   data: any;
 }
 export interface BklogState {
-  pageId: UUID;
-  userId: string;
+  pageId: UUID | null;
+  userId: string | null;
   editingId: string | null;
   blocks: BlockData<any>[];
   stage: StagedBlock[];
@@ -39,15 +40,39 @@ export type OrderType = "add" | "del" | "color" | "link";
 /**
  * action Type
  */
-export const ADD_BLOCK    = 'bklog/ADD_BLOCK' as const;
-export const EDITABLE     = 'bklog/EDITABLE' as const; 
-export const EDIT_BLOCK   = 'bklog/EDIT_BLOCK' as const; // 임시 데이터로 이동
-export const COMMIT_BLOCK = 'bklog/COMMIT_BLOCK' as const;
-export const DELETE_BLOCK = 'bklog/DELETE_BLOCK' as const;
-export const UPDATE_BLOCK = 'bklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
-export const SWITCH_BLOCK = 'bklog/SWITCH_BLOCK' as const;
-export const REVERT_BLOCK = 'bklog/REVERT_BLOKC' as const;
+export const RESET_BLOCK       = 'bklog/RESET_BLOCK' as const;
+export const ADD_BLOCK         = 'bklog/ADD_BLOCK' as const;
+export const EDITABLE          = 'bklog/EDITABLE' as const; 
+export const EDIT_BLOCK        = 'bklog/EDIT_BLOCK' as const; // 임시 데이터로 이동
+export const COMMIT_BLOCK      = 'bklog/COMMIT_BLOCK' as const;
+export const DELETE_BLOCK      = 'bklog/DELETE_BLOCK' as const;
+export const UPDATE_BLOCK      = 'bklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
+export const SWITCH_BLOCK      = 'bklog/SWITCH_BLOCK' as const;
+export const REVERT_BLOCK      = 'bklog/REVERT_BLOKC' as const;
 export const CHANGE_TEXT_STYLE = 'bklog/CHANGE_TEXT_STYLE' as const;
+
+export const resetBlock      = actionBklog.resetBlock;
+export const addBlock        = actionBklog.addBlock;
+export const editAble        = actionBklog.editAble;
+export const editBlock       = actionBklog.editBlock;
+export const commitBlock     = actionBklog.commitBlock;
+export const deleteBlock     = actionBklog.deleteBlock;
+export const updateBlock     = actionBklog.updateBlock;
+export const changeTextStyle = actionBklog.changeTextStyle;
+export const revertBlock     = actionBklog.revertBlock;
+export const switchBlock     = actionBklog.switchBlock;
+
+export type BklogActions = ReturnType<typeof resetBlock>
+  | ReturnType<typeof addBlock>
+  | ReturnType<typeof editAble>
+  | ReturnType<typeof editBlock>
+  | ReturnType<typeof commitBlock>
+  | ReturnType<typeof deleteBlock>
+  | ReturnType<typeof updateBlock>
+  | ReturnType<typeof changeTextStyle>
+  | ReturnType<typeof revertBlock>
+  | ReturnType<typeof switchBlock>
+;
 
 /**
  * converter

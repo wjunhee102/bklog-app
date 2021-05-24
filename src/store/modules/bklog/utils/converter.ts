@@ -781,8 +781,13 @@ function deleteContentsStyle(
             stylePosition = arrayFindIndex(insertText[1], style);
             
             if(stylePosition !== -1) {
-              if(insertText[0]) newContents.push(insertText);
+              if(insertText[0]) {
+                newContents.push(insertText);
+              } 
+              // 확인 필요
               const newStyle = [...insertText[1]];
+
+              console.log("new style", newStyle)
 
               if(textStylePosition !== -1) {
                 newText.splice(textStylePosition, 1);

@@ -112,10 +112,10 @@ function BklogContainer() {
                   blockData={block}
                   key={block.id}
                 />
-              ) : <div>""</div>
+              ) : <div></div>
             }
             {
-              blockData.length <= 1? 
+              !blockData || blockData.length <= 1? 
               <div className="bk-zone"> 
                 <div 
                   className="bk-block" 
@@ -124,12 +124,15 @@ function BklogContainer() {
                   onClick={()=>onAddBlock()}
                   contentEditable="true"
                 ></div>
-              </div> : null
+              </div> 
+              : <>
+                <button onClick={click}>블럭 추가</button>
+                <button onClick={handleClick}>스타일 추가</button>
+                <button onClick={testHandleClick}>스위칭</button>
+                <button onClick={revertHandleClick}>되돌리기</button>
+              </>
             }
-            <button onClick={click}>블럭 추가</button>
-            <button onClick={handleClick}>스타일 추가</button>
-            <button onClick={testHandleClick}>스위칭</button>
-            <button onClick={revertHandleClick}>되돌리기</button>
+            
           </div>
         </div>
       </div>

@@ -1,13 +1,25 @@
 import { ResType, RequestArg } from "../../../../utils/api-utils";
 import { baseFetch } from "../../../../utils/api-utils";
+import { Rest } from "../../../../utils/api-utils/apiUtils";
 
-async function authFetchPost(url: string, data: object): Promise<ResType> {
-  return await baseFetch({
+const AuthFetch = new Rest("http://localhost:4500/v2");
+
+function authFetchPost(url: string, data: object): Promise<ResType> {
+    // return baseFetch({
+    //   method: "post",
+    //   url: `/auth/${url}`,
+    //   withCredentials: true,
+    //   data
+    // });
+  
+
+  return AuthFetch.restApi({
     method: "post",
-    url: `/auth/${url}`,
+    url: `auth/${url}`,
     withCredentials: true,
     data
   })
+
 }
 
 async function authFetchGet(url: string): Promise<ResType> {
