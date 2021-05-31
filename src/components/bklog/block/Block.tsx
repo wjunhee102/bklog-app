@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
-import useBKlog from './hooks/useBKlog';
+import useBlock from './hooks/useBlock';
 import BlockElement from './BlockEle';
 
 import { BlockData, UUID } from '../../../types/bklog';
@@ -16,7 +16,8 @@ function Block() {
   const [ mouseOn, setMouseOn ] = useState<boolean>(false);
   const [ clipOn, setClipOn ]   = useState<boolean>(false);
   const [ stage, setStage ]     = useState<StagedBlock[]>([]);
-  
+  const actions                 = useBlock();
+
   const { 
     state, 
     initBlock, 
@@ -25,8 +26,7 @@ function Block() {
     onChangeTextStyle,
     onSwitchBlock,
     onRevertBlock
-  } = useBKlog();
-
+  } = actions;
 
   const click = () => {
     onAddBlock(undefined, undefined, {
@@ -91,6 +91,7 @@ function Block() {
           blockData?
           blockData.map((block: BlockData<any>)=> 
             <BlockElement
+              actions={actions}
               blockData={block}
               key={block.id}
             />

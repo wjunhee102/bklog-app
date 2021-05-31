@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import useBKlog from './hooks/useBKlog';
+import { BlockActions } from './hooks/useBlock';
 import { 
   BlockData
 } from './types';
 import { 
   contentsElement,
   createContentsElement
-} from '../utils';
+} from './utils';
 import { 
   getSelectionStart,
   getSelectionEnd,
   setSelectionRange
-} from '../utils/selectionText';
+} from './utils/selectionText';
 import ContentEditableEle from './ContentEditableEle';
 import TextStyleToggle from './TextStyleToggle';
 import './block.scss';
@@ -19,9 +19,10 @@ import classNames from 'classnames';
 
 interface BlockProps {
   blockData: BlockData<any>;
+  actions: BlockActions;
 }
 
-function BlockElement({ blockData }:BlockProps) {
+function BlockElement({ blockData, actions }:BlockProps) {
 
   const [ editing, setEditing ] = useState<boolean>(true);
   const [ cursorStart, setCursorStart ] = useState<number>(0);
@@ -41,7 +42,7 @@ function BlockElement({ blockData }:BlockProps) {
     onEditAble,
     onEditBlock,
     onCommitBlock
-  } = useBKlog();
+  } = actions;
 
   const createMarkup = useMemo(()=> {
     const htmlElement = blockData.property && blockData.property.contents[0]?
@@ -286,8 +287,9 @@ function BlockElement({ blockData }:BlockProps) {
       </div>
           {
             childrenBlock ? 
-            childrenBlock.map((child)=> 
+            childrenBlock.map((child: any)=> 
               <BlockElement
+                actions={actions}
                 blockData={child}
                 key={child.id}
               />

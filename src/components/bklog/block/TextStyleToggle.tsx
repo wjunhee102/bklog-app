@@ -7,7 +7,7 @@ import {
 import { 
   findTextStyle,
   arrayFindIndex
-} from '../utils';
+} from './utils';
 
 import ColorStyleToggle  from './ColorStyleToggle';
 

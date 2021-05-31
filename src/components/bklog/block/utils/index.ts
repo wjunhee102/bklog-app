@@ -1,7 +1,7 @@
-import { TextContents, ContentType } from '../../../types/bklog';
+import { TextContents, ContentType } from '../types';
 import { 
   equalsArray, 
-} from '../../../store/modules/bklog/utils/converter';
+} from '../reducer/utils/converter';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;

@@ -74,6 +74,8 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
 
       const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
 
+      console.log(action, addedBlocks, newBlock);
+
       return Object.assign({}, state, {
         blocks: orderingBlock(addedBlocks),
         editingId: newBlock.id,

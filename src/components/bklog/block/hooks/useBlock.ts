@@ -18,7 +18,11 @@ import {
   BlockData
 } from '../types';
 
+/**
+ * 임시
+ */
 import { page } from '../../../../data/db.json';
+//
 
 const initialState:BlockState = (() => {
   return {
@@ -31,7 +35,7 @@ const initialState:BlockState = (() => {
   };
 })();
 
-function useBklog() {
+function useBlock() {
   
   const [ state, dispatch ] = useReducer(blockState, initialState);
 
@@ -117,4 +121,6 @@ function useBklog() {
   };
 }
 
-export default useBklog;
+export type BlockActions = ReturnType<typeof useBlock>;
+
+export default useBlock;
