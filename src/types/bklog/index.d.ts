@@ -1,22 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Token } from '../../utils/token';
-
+import BlockTypes from '../../components/block/types';
 /**
  * UUID v4
  */
-export type UUID = ReturnType<typeof Token.getUUID>
+export type UUID = BlockTypes.UUID;
 
 /**
  * text block types
  */
-export type ContentType = ["b"] 
-  | ["i"] 
-  | ["_"] 
-  | ["a", string] 
-  | ["fc", string] 
-  | ["bc", string];
+export type ContentType = BlockTypes.ContentType;
 
-export type TextContents = [string] | [string, ContentType[]];
+export type TextContents = BlockTypes.TextContents
 
 /**
  * Block에서 외부로 보여지는 속성
@@ -27,37 +22,8 @@ export type TextContents = [string] | [string, ContentType[]];
  * }
  * contents: any;
  */
-export interface TextProps {
-  type: string;
-  styles: {
-    color: string | null;
-    backgroundColor: string | null;
-  }
-  contents: TextContents[];
-}
+export type TextProps = BlockTypes.TextProps;
 
-export interface RawBlockData<T = any> {
-  id: UUID | string;
-  type: string;
-  parentBlockId: UUID | string | null;
-  preBlockId: UUID | string | null;
-  nextBlockId: UUID | string | null;
-  // 수정할 것.
-  property: T;
-  children: UUID[];
-}
+export type RawBlockData<T = any> = BlockTypes.RawBlockData<T>;
 
-/**
- * Raw Block Data
- */
-export interface BlockData<T = any> {
-  index: number;
-  id: UUID | string;
-  type: string;
-  parentBlockId: UUID | string | null;
-  preBlockId: UUID | string | null;
-  nextBlockId: UUID | string | null;
-  // 수정할 것.
-  property: T;
-  children: UUID[];
-}
+export type BlockData<T = any> = BlockTypes.BlockData<T>;

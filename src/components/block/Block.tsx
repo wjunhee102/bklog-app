@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import useBlock from './hooks/useBlock';
 import BlockElement from './BlockEle';
 
-import { BlockData, UUID } from '../../../types/bklog';
+import { BlockData, UUID } from './types';
 
 interface StagedBlock{
   id: UUID;
@@ -84,7 +84,7 @@ function Block() {
   const blockData:any = initBlock[0]? initBlock : null;
 
   return (
-    <div className="blocklog items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
+    <div className="blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
       <div className="cover mb-8"></div>
       <div className="m-auto h-full block-container">
         {

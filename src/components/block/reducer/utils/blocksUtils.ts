@@ -1,6 +1,6 @@
-import { Token } from '../../../../utils/token';
-import { BlockData, UUID, RawBlockData } from '../../../../types/bklog';
-import { StagedBlock, parseHtmlContents } from './index';
+import { Token } from "../../utils/token";
+import { BlockData, UUID, RawBlockData } from "../../types";
+import { StagedBlock, parseHtmlContents } from ".";
 
 
 interface ChangedData {
@@ -18,7 +18,6 @@ function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
 }
   
-
 /**
  * blockData 생성 함수
  * return blockData<any>

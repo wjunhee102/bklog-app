@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { BlockActions } from './hooks/useBlock';
+import { UseBlockTypes } from './hooks/useBlock';
 import { 
   BlockData
 } from './types';
@@ -19,7 +19,7 @@ import classNames from 'classnames';
 
 interface BlockProps {
   blockData: BlockData<any>;
-  actions: BlockActions;
+  actions: UseBlockTypes;
 }
 
 function BlockElement({ blockData, actions }:BlockProps) {
@@ -282,6 +282,7 @@ function BlockElement({ blockData, actions }:BlockProps) {
             endPosition={cursorEnd}
             contents={blockData.property.contents}
             reBlockFocus={reBlockFocus}
+            actions={actions}
           /> : null
         }
       </div>

@@ -1,15 +1,15 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import useBKlog from '../../../hooks/useBKlog';
 import { 
   BlockData, 
   ContentType
-} from '../../../types/bklog';
+} from './types';
 import { 
   findTextStyle,
   arrayFindIndex
 } from './utils';
 
 import ColorStyleToggle  from './ColorStyleToggle';
+import { UseBlockTypes } from './hooks/useBlock';
 
 const textBlockType = [
   "h1",
@@ -61,6 +61,7 @@ interface TextStyleTogglesProps {
   endPosition: number;
   contents: any;
   reBlockFocus: any;
+  actions: UseBlockTypes;
 }
 
 function TextStyleToggles({
@@ -68,10 +69,11 @@ function TextStyleToggles({
   startPosition,
   endPosition,
   contents,
-  reBlockFocus
+  reBlockFocus,
+  actions
 }: TextStyleTogglesProps) {
   const [ currentStyle, setStyle ] = useState(findTextStyle(contents, startPosition));
-  const { onChangeTextStyle, onCommitBlock } = useBKlog();
+  const { onChangeTextStyle, onCommitBlock } = actions;
 
   const toggleProps:string[] = ["b", "i", "_"];
 

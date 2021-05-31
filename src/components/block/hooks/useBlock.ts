@@ -8,7 +8,8 @@ import {
   deleteBlock,
   changeTextStyle,
   switchBlock,
-  revertBlock
+  revertBlock,
+  initialState
 } from '../reducer/utils';
 import { BlockState, OrderType } from '../reducer/utils';
 import orderingBlock from '../reducer/utils/ordering';
@@ -21,10 +22,10 @@ import {
 /**
  * 임시
  */
-import { page } from '../../../../data/db.json';
+import { page } from '../../../data/db.json';
 //
 
-const initialState:BlockState = (() => {
+export const initialState2: BlockState = (() => {
   return {
     blocks: orderingBlock(page.blocks),
     editingId: null,
@@ -37,7 +38,7 @@ const initialState:BlockState = (() => {
 
 function useBlock() {
   
-  const [ state, dispatch ] = useReducer(blockState, initialState);
+  const [ state, dispatch ] = useReducer(blockState, initialState2);
 
   // 이거가 메모리가 2중으로드는 거 같음... 아닌가? referance 값으로 가지고 있으니까 상관없나?
   const initBlock: BlockData<any>[] = useMemo(()=> 
@@ -121,6 +122,6 @@ function useBlock() {
   };
 }
 
-export type BlockActions = ReturnType<typeof useBlock>;
+export type UseBlockTypes = ReturnType<typeof useBlock>;
 
 export default useBlock;

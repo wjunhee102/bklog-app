@@ -38,16 +38,16 @@ export type OrderType = "add" | "del" | "color" | "link";
 /**
  * action Type
  */
-export const RESET_BLOCK       = 'bklog/RESET_BLOCK' as const;
-export const ADD_BLOCK         = 'bklog/ADD_BLOCK' as const;
-export const EDITABLE          = 'bklog/EDITABLE' as const; 
-export const EDIT_BLOCK        = 'bklog/EDIT_BLOCK' as const; // 임시 데이터로 이동
-export const COMMIT_BLOCK      = 'bklog/COMMIT_BLOCK' as const;
-export const DELETE_BLOCK      = 'bklog/DELETE_BLOCK' as const;
-export const UPDATE_BLOCK      = 'bklog/UPDATE_BLOCK' as const; // DB에 업데이트할 때
-export const SWITCH_BLOCK      = 'bklog/SWITCH_BLOCK' as const;
-export const REVERT_BLOCK      = 'bklog/REVERT_BLOKC' as const;
-export const CHANGE_TEXT_STYLE = 'bklog/CHANGE_TEXT_STYLE' as const;
+export const RESET_BLOCK       = 'RESET_BLOCK' as const;
+export const ADD_BLOCK         = 'ADD_BLOCK' as const;
+export const EDITABLE          = 'EDITABLE' as const; 
+export const EDIT_BLOCK        = 'EDIT_BLOCK' as const; // 임시 데이터로 이동
+export const COMMIT_BLOCK      = 'COMMIT_BLOCK' as const;
+export const DELETE_BLOCK      = 'DELETE_BLOCK' as const;
+export const UPDATE_BLOCK      = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
+export const SWITCH_BLOCK      = 'SWITCH_BLOCK' as const;
+export const REVERT_BLOCK      = 'REVERT_BLOKC' as const;
+export const CHANGE_TEXT_STYLE = 'CHANGE_TEXT_STYLE' as const;
 
 export const resetBlock      = actionBlock.resetBlock;
 export const addBlock        = actionBlock.addBlock;
@@ -104,3 +104,14 @@ export const restoreBlock      = blocksUtils.restoreBlock;
  */
 export const tempDataPush           = tempStoreUtils.tempDataPush;
 export const getContentsToBeChanged = tempStoreUtils.getContentsToBeChanged;
+
+export const initialState:BlockState = (() => {
+  return {
+    blocks: [],
+    editingId: null,
+    stage: [],
+    rightToEdit: false,
+    tempBack: [],
+    tempFront: []
+  };
+})();

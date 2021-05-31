@@ -29,31 +29,9 @@ import {
   restoreBlock,
   getContentsToBeChanged,
   RESET_BLOCK,
-  BlockActions
+  BlockActions,
+  initialState
 } from './utils'; 
-import { page } from '../../../../data/db.json';
-
-const initialState2:BlockState = (() => {
-  return {
-    blocks: orderingBlock(page.blocks),
-    editingId: null,
-    stage: [],
-    rightToEdit: true,
-    tempBack: [],
-    tempFront: []
-  };
-})();
-
-const initialState:BlockState = (() => {
-  return {
-    blocks: [],
-    editingId: null,
-    stage: [],
-    rightToEdit: false,
-    tempBack: [],
-    tempFront: []
-  };
-})();
 
 function blockReducer(state: BlockState = initialState, action: BlockActions): BlockState {
 
