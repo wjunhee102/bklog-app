@@ -31,25 +31,13 @@ import {
   BlockActions,
   editBlock,
   editAble,
-  changeTextStyle
+  changeTextStyle,
+  initialState
 } from './utils';
 
 function updateObject<T = any>(oldObject: T, newValues: any): T {
   return Object.assign({}, oldObject, newValues);
 };
-
-const initialState:BlockState = (() => {
-  return {
-    pageId: null,
-    userId: null,
-    blocks: [],
-    editingId: null,
-    stage: [],
-    rightToEdit: false,
-    tempBack: [],
-    tempFront: []
-  };
-})();
 
 function resetBlockHandler (state: BlockState, action: ReturnType<typeof resetBlock>) {
   return initialState;

@@ -9,7 +9,12 @@ import {
   changeTextStyle,
   switchBlock,
   revertBlock,
-  initialState
+  initialState,
+  setClipboard,
+  clearClipboard,
+  setTempClip,
+  clearTempClip,
+  addBlockList
 } from '../reducer/utils';
 import { BlockState, OrderType } from '../reducer/utils';
 import orderingBlock from '../reducer/utils/ordering';
@@ -32,7 +37,9 @@ export const initialState2: BlockState = (() => {
     stage: [],
     rightToEdit: true,
     tempBack: [],
-    tempFront: []
+    tempFront: [],
+    tempClip: [],
+    clipboard: []
   };
 })();
 
@@ -60,6 +67,10 @@ function useBlock() {
 
   const getRightToEdit = useMemo(() => state.rightToEdit,[]);
 
+  const getTempClip = state.tempClip;
+
+  const getClipboard = state.clipboard;
+
   // Block 추가
   const onAddBlock = useCallback((
       blockId?: UUID, 
@@ -67,11 +78,13 @@ function useBlock() {
       blockData?: BlockData<any>
     ) => dispatch(addBlock(blockId, type, blockData)), [dispatch]);
 
+  const onAddBlockList = useCallback((preBlockId: string, blockList: BlockData[]) => 
+    dispatch(addBlockList(preBlockId, blockList)), [dispatch]);
+
   // edit중인 block focus
   const onEditAble = useCallback((blockId: UUID | null, index?:number) =>
       dispatch(editAble(blockId, index))
     ,[dispatch]);
-
 
   // 이거를 각 블럭마다 state값으로 하려고 함.
   const onEditBlock = useCallback((blockId: UUID, blockIndex: number,content: string) =>
@@ -99,8 +112,20 @@ function useBlock() {
   const onSwitchBlock = useCallback((blockId: UUID, preBlockId: UUID, parentType: boolean) => 
     dispatch(switchBlock(blockId, preBlockId, parentType)), [dispatch]);
 
-  const onRevertBlock = useCallback(()=> 
+  const onRevertBlock = useCallback(() => 
     dispatch(revertBlock()), [dispatch]);
+
+  const onSetTempClip = useCallback((index: number) => 
+    dispatch(setTempClip(index)), [dispatch]);
+
+  const onClearTempClip = useCallback(() => 
+    dispatch(clearTempClip()), [dispatch]);
+
+  const onSetClipboard = useCallback(() => 
+    dispatch(setClipboard()), [dispatch]);
+
+  const onClearClipboard = useCallback(() => 
+    dispatch(clearClipboard()), [dispatch]);
 
   return { 
     state, 
@@ -111,14 +136,21 @@ function useBlock() {
     getStagedBlocks,
     getStagedBlock,
     getEditAbleId, 
-    onAddBlock, 
+    getTempClip,
+    getClipboard,
+    onAddBlock,
+    onAddBlockList,
     onEditAble, 
     onEditBlock, 
     onCommitBlock, 
     onDeleteBlock,
     onChangeTextStyle,
     onSwitchBlock,
-    onRevertBlock
+    onRevertBlock,
+    onSetTempClip,
+    onClearTempClip,
+    onSetClipboard,
+    onClearClipboard
   };
 }
 

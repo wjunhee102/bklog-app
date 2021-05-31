@@ -30,7 +30,14 @@ import {
   getContentsToBeChanged,
   RESET_BLOCK,
   BlockActions,
-  initialState
+  initialState,
+  SET_CLIPBOARD,
+  updateObject,
+  CLEAR_CLIPBOARD,
+  SET_TEMPCLIP,
+  CLEAR_TEMPCLIP,
+  ADD_BLOCKLIST,
+  copyBlockDataList
 } from './utils'; 
 
 function blockReducer(state: BlockState = initialState, action: BlockActions): BlockState {
@@ -50,20 +57,33 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         copyBlockData(blockData) 
         : createBlockData("text", newBlockType, preBlock.id);
 
-      const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
+      const addedBlocks = insertBlock(state.blocks, [ newBlock ], preBlock.id);
 
-      console.log(action, addedBlocks, newBlock);
-
-      return Object.assign({}, state, {
+      return updateObject(state, {
         blocks: orderingBlock(addedBlocks),
         editingId: newBlock.id,
-        tempBack: tempDataPush(state.tempBack,{
+        tempBack: tempDataPush(state.tempBack, {
           type: ADD_BLOCK,
           data: {
             id: newBlock.id
           }
         })
-      }) 
+      });
+    
+    case ADD_BLOCKLIST:
+      const newBlocks = copyBlockDataList(action.payload.blockList);
+
+      console.log("실행2", newBlocks, action.payload.blockList);
+
+      return updateObject(state, {
+        blocks: orderingBlock(insertBlock(state.blocks, newBlocks, action.payload.preBlockId)),
+        tempBack: tempDataPush(state.tempBack, {
+          type: ADD_BLOCKLIST,
+          data: {
+            idList: newBlocks.map((block)=> block.id)
+          }
+        })
+      });
 
     case EDITABLE: 
       const { editingId, editingIndex } = action.payload
@@ -158,7 +178,7 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         })
       });
 
-      localStorage.setItem("bklog", JSON.stringify(newState));
+      localStorage.setItem("block", JSON.stringify(newState));
 
       return newState;
 
@@ -183,7 +203,6 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
     case SWITCH_BLOCK:
       const { switchedId, targetBlockId, targetType } = action.payload;
       const switchedBlocks = switchingBlock(state.blocks, switchedId, targetBlockId, targetType);
-      console.log(switchedBlocks);
 
       return Object.assign({}, state, {
         blocks: orderingBlock(switchedBlocks)
@@ -199,11 +218,65 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
 
       return restoreBlocks? Object.assign({}, state, {
         blocks: orderingBlock(restoreBlocks.blocks)
-      }) : state
-      
+      }) : state;
+
+    case SET_TEMPCLIP: 
+      if(state.tempClip[0]) {
+        const length = state.tempClip.length;
+        let tempClip = state.tempClip.concat();
+
+        if(length > 1) {
+          if(tempClip[length - 2] === action.payload) {
+            console.log(tempClip[length - 2], action.payload);
+            tempClip.pop();
+          } else {
+            tempClip.push(action.payload);
+          }
+        } else {
+          tempClip.push(action.payload);
+        }
+
+        console.log(state.tempClip);
+
+        return updateObject(state, {
+          tempClip
+        });
+
+      } else {
+        console.log(state.tempClip);
+
+        return updateObject(state, {
+          tempClip: [action.payload]
+        });
+
+      }
+    
+    case CLEAR_TEMPCLIP:
+      return updateObject(state, {
+        tempClip: []
+      });
+
+    case SET_CLIPBOARD:
+      console.log("실행")
+      if(state.tempClip[0]) {
+        const tempClip = state.tempClip.sort();
+        console.log("실행1", tempClip.map((idx) => state.blocks[idx - 1]));
+        return updateObject(state, {
+          clipboard: tempClip.map((idx) => state.blocks[idx - 1])
+        });
+
+      } else {
+        return state;
+      }
+
+    case CLEAR_CLIPBOARD: 
+      return updateObject(state, {
+        clipboard: []
+      });
+
     default: 
 
-      return state;
+    return state;
   }
 
 }

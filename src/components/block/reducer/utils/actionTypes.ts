@@ -10,7 +10,12 @@ import {
   OrderType, 
   CHANGE_TEXT_STYLE, 
   REVERT_BLOCK, 
-  SWITCH_BLOCK 
+  SWITCH_BLOCK, 
+  SET_CLIPBOARD,
+  CLEAR_CLIPBOARD,
+  CLEAR_TEMPCLIP,
+  SET_TEMPCLIP,
+  ADD_BLOCKLIST
 } from ".";
 import { UUID, BlockData, ContentType } from "../../types";
 
@@ -27,6 +32,16 @@ function addBlock(blockId?: UUID, type?: string, block?: BlockData<any>) {
       preBlockId: blockId,
       newBlockType: type,
       blockData: block
+    }
+  }
+}
+
+function addBlockList(preBlockId: string, blockList: BlockData[]) {
+  return {
+    type: ADD_BLOCKLIST,
+    payload: {
+      preBlockId,
+      blockList
     }
   }
 }
@@ -116,9 +131,35 @@ function switchBlock(blockId: UUID, targetBlockId: UUID, targetType: boolean) {
   }
 }
 
+function setClipboard() {
+  return {
+    type: SET_CLIPBOARD
+  }
+}
+
+function clearClipboard() {
+  return {
+    type: CLEAR_CLIPBOARD
+  }
+}
+
+function setTempClip(index: number) {
+  return  {
+    type: SET_TEMPCLIP,
+    payload: index
+  }
+}
+
+function clearTempClip() {
+  return {
+    type: CLEAR_TEMPCLIP
+  }
+}
+
 const actionBlock = {
   resetBlock,
   addBlock,
+  addBlockList,
   editAble,
   editBlock,
   commitBlock,
@@ -126,7 +167,11 @@ const actionBlock = {
   updateBlock,
   changeTextStyle,
   revertBlock,
-  switchBlock
+  switchBlock,
+  setClipboard,
+  clearClipboard,
+  setTempClip,
+  clearTempClip
 }
 
 export default actionBlock;

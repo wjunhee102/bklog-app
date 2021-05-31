@@ -6,18 +6,11 @@ import BlockElement from './BlockEle';
 
 import { BlockData, UUID } from './types';
 
-interface StagedBlock{
-  id: UUID;
-  contents: any;
-  blockIndex: number;
-}
-
 function Block() { 
   const [ mouseOn, setMouseOn ] = useState<boolean>(false);
   const [ clipOn, setClipOn ]   = useState<boolean>(false);
-  const [ stage, setStage ]     = useState<StagedBlock[]>([]);
-  const actions                 = useBlock();
-
+  
+  const actions = useBlock();
   const { 
     state, 
     initBlock, 
@@ -25,7 +18,9 @@ function Block() {
     onCommitBlock, 
     onChangeTextStyle,
     onSwitchBlock,
-    onRevertBlock
+    onRevertBlock,
+    onClearClipboard,
+    onClearTempClip
   } = actions;
 
   const click = () => {
@@ -63,8 +58,39 @@ function Block() {
       onCommitBlock();
     }
   }
+
+  const handleClipOn = (on: boolean) => {
+    setClipOn(on);
+  }
+
+  const handleMouseDown = () => {
+    setMouseOn(true);
+  }
+
+  const handleMouseUp = () => {
+    setMouseOn(false);
+    setClipOn(false);
+  }
+
+  const handleMouseLeave = () => {
+    setClipOn(false);
+    setMouseOn(false);
+  }
+
+  const clipboardReset = () => {
+    setClipOn(false);
+    setMouseOn(false);
+    onClearClipboard();
+  }
+
+  const handleBlur = () => {
+    // clipboardReset();
+  }
+
   const handleClick = () => {
-    onChangeTextStyle (1, ["bc", "#fc0"], 2, 10, "color");
+    // onChangeTextStyle (1, ["bc", "#fc0"], 2, 10, "color");
+    setClipOn(false);
+    onClearTempClip();
   }
 
   const testHandleClick = () => {
@@ -84,16 +110,24 @@ function Block() {
   const blockData:any = initBlock[0]? initBlock : null;
 
   return (
-    <div className="blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
+    <div 
+      className="blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md"
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onBlur={handleBlur}
+    >
       <div className="cover mb-8"></div>
       <div className="m-auto h-full block-container">
         {
           blockData?
           blockData.map((block: BlockData<any>)=> 
             <BlockElement
-              actions={actions}
-              blockData={block}
               key={block.id}
+              blockData={block}
+              actions={actions}
+              clipboard={{clipOn, handleClipOn}}
+              mouseOn={mouseOn}
             />
           ) : <div></div>
         }

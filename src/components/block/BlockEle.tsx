@@ -20,15 +20,23 @@ import classNames from 'classnames';
 interface BlockProps {
   blockData: BlockData<any>;
   actions: UseBlockTypes;
+  clipboard: {
+    clipOn: boolean;
+    handleClipOn: (on: boolean) => void;
+  };
+  mouseOn: boolean;
 }
 
-function BlockElement({ blockData, actions }:BlockProps) {
+function BlockElement({ 
+  blockData, 
+  actions, 
+  clipboard: { clipOn, handleClipOn },
+  mouseOn
+ }:BlockProps) {
 
-  const [ editing, setEditing ] = useState<boolean>(true);
   const [ cursorStart, setCursorStart ] = useState<number>(0);
   const [ cursorEnd, setCursorEnd ] = useState<number>(0);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
-  const [ mouseOn, setMouseOn ] = useState<boolean>(false);
   const [ select, setSelect ] = useState<boolean>(false);
 
   const blockRef = useRef<HTMLDivElement>(null);
@@ -36,12 +44,19 @@ function BlockElement({ blockData, actions }:BlockProps) {
   const { 
     getRightToEdit,
     getEditAbleId,
+    getTempClip,
+    getClipboard,
     onAddBlock, 
+    onAddBlockList,
     onDeleteBlock,
     getChilrenBlock,
     onEditAble,
     onEditBlock,
-    onCommitBlock
+    onCommitBlock,
+    onSetTempClip,
+    onClearTempClip,
+    onSetClipboard,
+    onClearClipboard
   } = actions;
 
   const createMarkup = useMemo(()=> {
@@ -64,74 +79,106 @@ function BlockElement({ blockData, actions }:BlockProps) {
   const handleKeyUp = (e:any) => {  
     setCursorStart(getSelectionStart(e.target));
     setCursorEnd(getSelectionEnd(e.target));
+    console.log(e.key, e.metaKey);
 
-    switch(e.key) {
- 
-      case "Enter":
-        setCursorStart(0);
-        setCursorEnd(0);
-        e.preventDefault();
-        break;
-
-      case "ArrowUp": 
-      // cursor가 앞으로 튐
-        
-        if(cursorStart === 0) {
-          e.preventDefault();
-          setCursorStart(0);
-          setCursorEnd(0);
-          onEditAble(null, blockData.index - 1);
+    if(e.ctrlKey) {
+      if(e.key === "c") {
+        console.log("실행5")
+        if(getTempClip) onSetClipboard();
+      } else if(e.key === "v") {
+        e.returnValue = false;
+        if(getClipboard[0]) {
+          console.log("실행6", getClipboard);
+          e.returnValue = false;
+          // onAddBlockList(blockData.id, getClipboard);
+          // onClearClipboard();
         }
-        
-        break;
 
-      case "ArrowDown":
 
-        if(cursorEnd === e.target.innerText.length) {
+      }
+    } else {
+
+      switch(e.key) {
+  
+        case "Enter":
           setCursorStart(0);
           setCursorEnd(0);
           e.preventDefault();
-          onEditAble(null, blockData.index + 1);
-        }
-        
-        break;
+          break;
 
-      case "Backspace":
-        if(cursorStart === 0 && cursorEnd === 0) {
-          if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
-            onCommitBlock();
-            onDeleteBlock(blockData.id);
-            if(blockData.index > 1) onEditAble(null, blockData.index-1);
+        case "ArrowUp": 
+        // cursor가 앞으로 튐
+          
+          if(cursorStart === 0) {
+            e.preventDefault();
+            setCursorStart(0);
+            setCursorEnd(0);
+            onEditAble(null, blockData.index - 1);
           }
+          
           break;
 
-        } else {
+        case "ArrowDown":
+
+          if(cursorEnd === e.target.innerText.length) {
+            setCursorStart(0);
+            setCursorEnd(0);
+            e.preventDefault();
+            onEditAble(null, blockData.index + 1);
+          }
+          
+          break;
+
+        case "Backspace":
+          if(cursorStart === 0 && cursorEnd === 0) {
+            if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
+              onCommitBlock();
+              onDeleteBlock(blockData.id);
+              if(blockData.index > 1) onEditAble(null, blockData.index - 1);
+            }
+            break;
+
+          } else {
+            onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+            break;
+          }
+        
+        case " ":
+          setCursorEnd(0);
           onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+          onCommitBlock();
           break;
-        }
-      
-      case " ":
-        setCursorEnd(0);
-        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-        onCommitBlock();
-        break;
-      
-      default:
-        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+        
+        default:
+          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
 
+      }
     }
 
   }
 
   const handleKeyDown = (e: any) => {
-    console.log(e.target);
-  }
+    console.log(e.key, e.metaKey);
+    if(e.ctrlKey || e.metaKey) {
+      if(e.key === "c") {
+        console.log("실행3")
+        if(getTempClip[0]) {
+          onSetClipboard();
+        }
+      } else if(e.key === "v") {
 
-  // const moveStartPoint = (ele: any) => {
-  //   setCursorStart(0);
-  //   setCursorEnd(0);
-  //   setSelectionRange(ele, 0, 0);
-  // }
+        if(getClipboard[0]) {
+          console.log("실행4", getClipboard);
+          e.returnValue = false;
+          onAddBlockList(blockData.id, getClipboard);
+          onClearClipboard();
+          onClearTempClip();
+        }
+
+
+      }
+    }
+  }
 
   const moveEndPoint = (ele: any) => {
     const length = ele.innerText.length;
@@ -149,11 +196,19 @@ function BlockElement({ blockData, actions }:BlockProps) {
   }
 
   const handleKeyPress = (e:any) => {
-    console.log("keyPress");
+    console.log("keyPress 7", e.key);
+    if(e.ctrlKey) {
+      if(getClipboard) e.returnValue = false;
+    }
     if(e.key === "Enter") {
       e.preventDefault();
       onAddBlock(blockData.id, blockData.property? blockData.property.type : null);
     }
+  }
+
+  const clearTempClip = () => {
+    if(clipOn) handleClipOn(false)
+    if(getTempClip[0]) onClearTempClip();
   }
 
   const handleClick = (e: any) => {
@@ -162,11 +217,9 @@ function BlockElement({ blockData, actions }:BlockProps) {
     if(parentNode.tagName === "A") {
       window.open(parentNode.href);
     }
-  }
 
-  // const handleMouseDown = (e: any) => {
-  //   setMouseOn(true);
-  // }
+    clearTempClip();
+  }
 
   // mouse methods
   const handleMouseUp = (e: any) => {
@@ -174,14 +227,34 @@ function BlockElement({ blockData, actions }:BlockProps) {
     const getEndPosition = getSelectionEnd(blockRef.current);
     setCursorStart(getStartPosition);
     setCursorEnd(getEndPosition);
+    if(clipOn) handleClipOn(false);
   }
 
-  // const handleMouseMove = (e: any) => {
-  //   console.log(e.target.innerText.length, (cursorEnd - cursorStart));
-  //   if(e.target.innerText.length === (cursorEnd - cursorStart)) {
-  //     setSelect(true);
-  //   }
-  // }
+  const handleMouseEnter = (e: any) => {
+    if(clipOn && mouseOn) { 
+      onSetTempClip(blockData.index);
+    } 
+  }
+
+  const handleMouseLeave = (e: any) => {
+    if(clipOn && mouseOn) {
+      const getStartPosition = getSelectionStart(blockRef.current);
+      const getEndPosition = getSelectionEnd(blockRef.current);
+      if((getStartPosition - getEndPosition)) {
+        onSetTempClip(blockData.index);
+        handleBlur(e);
+      } 
+    }
+  }
+
+  const handleMouseMove = (e: any) => {
+    if(mouseOn) {
+      handleClipOn(true);
+      // if(e.target.innerText.length === Math.abs(cursorEnd - cursorStart)) {
+      //   handleClipOn(true);
+      // }
+    }
+  }
 
   // Focus methods
   const handleBlur = (e:any) => {
@@ -210,16 +283,16 @@ function BlockElement({ blockData, actions }:BlockProps) {
     handleFocus(blockRef.current);
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     const focused = document.activeElement;
     
     if((cursorStart | cursorEnd) && focused === blockRef.current) {
       refreshPoint(blockRef.current, cursorStart, cursorEnd);
     }
 
-  }, [blockData.property])
+  }, [blockData.property]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if(getEditAbleId === blockData.id) {
       if(blockRef.current) {
         handleFocus(blockRef.current);
@@ -229,19 +302,27 @@ function BlockElement({ blockData, actions }:BlockProps) {
     }
   },[getEditAbleId]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if(blockData.type === "container") {
       if(!blockData.children[0]) onDeleteBlock(blockData.id);
     }
-  }, [blockData.children])
+  }, [blockData.children]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if(cursorEnd - cursorStart >= 1) {
       setStyleToggle(true);
     } else {
       setStyleToggle(false);
     }
   }, [cursorStart, cursorEnd]);
+
+  useEffect(() => {
+    if(getTempClip.includes(blockData.index)) {
+      setSelect(true);
+    } else {
+      setSelect(false);
+    }
+  }, [getTempClip]);
 
   return (
     <div 
@@ -252,6 +333,9 @@ function BlockElement({ blockData, actions }:BlockProps) {
         className="bk-block relative pr-8"
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
        > 
         { 
           blockData.property && blockData.type !== "container" ? 
@@ -285,22 +369,26 @@ function BlockElement({ blockData, actions }:BlockProps) {
             actions={actions}
           /> : null
         }
+        <div 
+          className={classNames(
+            "cover",
+            {"selectable": select}
+          )}
+          onClick={handleClick}
+        ></div>
       </div>
           {
             childrenBlock ? 
             childrenBlock.map((child: any)=> 
               <BlockElement
-                actions={actions}
-                blockData={child}
                 key={child.id}
+                blockData={child}
+                actions={actions}
+                clipboard={{clipOn, handleClipOn}}
+                mouseOn={mouseOn}
               />
             ) : null
           }
-
-      <div className={classNames(
-        "cover",
-        {"selectable": select}
-      )}></div>
     </div>
   )
 }
