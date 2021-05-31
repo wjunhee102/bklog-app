@@ -1,3 +1,5 @@
+import { ActionDefaultType, InitialHandler, RootAction } from '.';
+
 const settingsReducer = {
   initial: (initialData = null) => ({
     loading: false,
@@ -46,61 +48,30 @@ function handleAsyncActions (type: any, key: any, keepData: boolean = false) {
   };
 }
 
-type ActionDefaultType = { type: string };
+// type InitialHandler<TState, TRootAction> = {
+//   [P in ActionDefaultType["type"]]: (state: TState, action: TRootAction & ActionDefaultType) => TState;
+// };
+
+// export type InitialHandler<TState, TRootAction> = {
+//   [key: string]: (state: TState, action: TRootAction & ActionDefaultType) => TState;
+// };
+
+// type InitialHandler<TState, TRootAction = ActionDefaultType> = {
+//   [P in keyof TRootAction & ActionDefaultType["type"]]?: (state: TState, action: P) => TState | any;
+// };
+
+// type InitialHandler<TState, TRootAction extends ActionDefaultType> = {
+//   [type: string]: (state: TState, action: TRootAction) => TState;
+// };
+
 
 function updateObject<T = any>(oldObject: T, newValues: any): T {
   return Object.assign({}, oldObject, newValues);
 };
 
-function createReducerAction<T = any>(updateState: Function) {
-  return function(state: T, action: any): T {
-    return updateState(state, action) as T;
-  }
-}
-
-function createHandler(type: string, handler: ReturnType<typeof createReducerAction>) {
-  return {
-    [type]: handler
-  }
-}
-
-function createHandlers(handlers: ReturnType<typeof createHandler>[]) {
-  return Object.assign({}, ...handlers);
-}
-
-
-class Handers<T = any> {
-  handlers: ReturnType<typeof createHandler>[] = [];
-  state: T
-
-  constructor(state: T) {
-    this.state = state;
-  }
-
-  createAction(updateState: Function) {
-    return function(state: T, action: any): T {
-      return updateState(state, action) as T;
-    }
-  }
-
-  createHandler(type: string, handler: ReturnType<typeof createReducerAction>) {
-    return {
-      [type]: handler
-    } as const;
-  }
-
-  createHandlers(handlers: ReturnType<typeof createHandler>[]) {
-    return Object.assign({}, ...handlers);
-  }
-
-  setAction(type: string, updateState: Function) {
-
-  }
-}
-
-function createReducer<T = any, P = any>(initialState: T, handlers: ReturnType<typeof createHandlers>) {
-  return function reducer(state: T = initialState, action: ActionDefaultType & P ) {
-    if (handlers.hasOwnProperty(action.type)) {
+function createReducer<T, P extends ActionDefaultType = RootAction>(initialState: T, handlers: any ) {
+  return function reducer(state: T = initialState, action: P) {
+    if (action.type) {
       return handlers[action.type](state, action) as T;
     } else {
       return state;
@@ -110,9 +81,6 @@ function createReducer<T = any, P = any>(initialState: T, handlers: ReturnType<t
 
 const reducerUtils = {
   updateObject,
-  createReducerAction,
-  createHandler,
-  createHandlers,
   createReducer
 }
 

@@ -1,6 +1,6 @@
-import { Token } from '../../../../utils/token';
-import { BlockData, UUID, RawBlockData } from '../../../../types/bklog';
-import { StagedBlock, parseHtmlContents } from './index';
+import { Token } from "../../utils/token";
+import { BlockData, UUID, RawBlockData } from "../../types";
+import { StagedBlock, parseHtmlContents } from ".";
 
 
 interface ChangedData {

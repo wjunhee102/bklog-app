@@ -1,16 +1,16 @@
 import React, { useMemo } from 'react';
-import { placeholder } from '@babel/types';
 
 interface ContentEditableEle {
   className: string;
-  onKeyPress?: any;
-  onKeyUp?: any;
-  onClick?: any;
-  onMouseUp?: any;
-  onMouseDown?: any;
-  onMouseMove?: any;
-  onFocus?:any;
-  onBlur?:any;
+  onKeyDown?: (e: any) => void;
+  onKeyPress?: (e: any) => void;
+  onKeyUp?: (e: any) => void;
+  onClick?: (e: any) => void;
+  onMouseUp?: (e: any) => void;
+  onMouseDown?: (e: any) => void;
+  onMouseMove?: (e: any) => void;
+  onFocus?: (e: any) => void;
+  onBlur?: (e: any) => void;
   placeholder?: string;
   dangerouslySetInnerHTML?: {
     __html: any

@@ -1,5 +1,6 @@
 import authApiUtils from './apiUtils';
 import actions from './actions';
+import { ApiErrorType } from '../../../../utils/api-utils';
 
 export const SIGNUPUSER = "auth/SIGN_UP_USER" as const;
 export const SIGNUPUSER_SUCCESS = "auth/SIGN_UP_USER_SUCCESS" as const;
@@ -22,6 +23,8 @@ export const REISSUETOKEN_ERROR = "REISSUETOKEN_ERROR" as const;
 
 export const RESET_AUTH = "auth/RESET_AUTH" as const;
 
+export const ERROR_AUTH = 'auth/RESET_AUTH' as const;
+
 export interface AuthState {
   loading: boolean;
   user: UserInfo | null;
@@ -30,6 +33,13 @@ export interface AuthState {
     signUpUser: SignUpError,
     signOutUser: any
   }
+}
+
+export interface AuthState2 {
+  loading: boolean;
+  user: UserInfo | null;
+  signUp: SignUpError; 
+  error: ApiErrorType;
 }
 
 export interface UserProfile {

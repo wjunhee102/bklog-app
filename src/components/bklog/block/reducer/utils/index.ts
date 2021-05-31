@@ -1,12 +1,12 @@
 import {
   BlockData,
   UUID
-} from '../../../../types/bklog';
+} from "../../types";
 import converter from './converter';
 import * as ordering  from './ordering';
 import blocksUtils from './blocksUtils';
 import tempStoreUtils from './tempStoreUtils';
-import actionBklog from './actionTypes';
+import actionBlock from './actionTypes';
 
 /**
  * types
@@ -25,9 +25,7 @@ export interface TempData {
   type: string;
   data: any;
 }
-export interface BklogState {
-  pageId: UUID | null;
-  userId: string | null;
+export interface BlockState {
   editingId: string | null;
   blocks: BlockData<any>[];
   stage: StagedBlock[];
@@ -51,18 +49,18 @@ export const SWITCH_BLOCK      = 'bklog/SWITCH_BLOCK' as const;
 export const REVERT_BLOCK      = 'bklog/REVERT_BLOKC' as const;
 export const CHANGE_TEXT_STYLE = 'bklog/CHANGE_TEXT_STYLE' as const;
 
-export const resetBlock      = actionBklog.resetBlock;
-export const addBlock        = actionBklog.addBlock;
-export const editAble        = actionBklog.editAble;
-export const editBlock       = actionBklog.editBlock;
-export const commitBlock     = actionBklog.commitBlock;
-export const deleteBlock     = actionBklog.deleteBlock;
-export const updateBlock     = actionBklog.updateBlock;
-export const changeTextStyle = actionBklog.changeTextStyle;
-export const revertBlock     = actionBklog.revertBlock;
-export const switchBlock     = actionBklog.switchBlock;
+export const resetBlock      = actionBlock.resetBlock;
+export const addBlock        = actionBlock.addBlock;
+export const editAble        = actionBlock.editAble;
+export const editBlock       = actionBlock.editBlock;
+export const commitBlock     = actionBlock.commitBlock;
+export const deleteBlock     = actionBlock.deleteBlock;
+export const updateBlock     = actionBlock.updateBlock;
+export const changeTextStyle = actionBlock.changeTextStyle;
+export const revertBlock     = actionBlock.revertBlock;
+export const switchBlock     = actionBlock.switchBlock;
 
-export type BklogActions = ReturnType<typeof resetBlock>
+export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
   | ReturnType<typeof editAble>
   | ReturnType<typeof editBlock>

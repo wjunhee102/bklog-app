@@ -1,7 +1,10 @@
 import { call, put } from 'redux-saga/effects'; 
-import { REISSUETOKEN, reissueToken, SIGNINUSER_ERROR } from '../modules/auth/utils';
+import { REISSUETOKEN, reissueToken, SIGNINUSER_ERROR, RESET_AUTH } from '../modules/auth/utils';
+import { ResType } from '../../utils/api-utils';
+import { ApiError } from '../../utils/api-utils';
+import { RESET_BLOCK } from '../modules/bklog/utils';
 
-function createPromiseSaga(type: string, promiseCreator: any) {
+function createPromiseSaga2(type: string, promiseCreator: any) {
   const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
   return function* saga(action: any) {
     try {
@@ -49,30 +52,37 @@ function createPromiseSaga(type: string, promiseCreator: any) {
   }
 }
 
-function* reissueTokenSaga(action: any) {
-  try {
-    console.log(action);
-    yield call(reissueToken);
+function createPromiseSaga(
+  type: string, 
+  promiseCreator: any, 
+  errorType?: string, 
+  successType?: string
+) {
+  const [ SUCCESS, ERROR ] = [successType?  successType: `${type}_SUCCESS`, errorType? errorType: `${type}_ERROR`];
 
-    if(action.payload) {
-      yield put({ type: action.payload.type, payload: action.payload.payload });
+  return function* (action: any) {
+    try {
+      const data = yield call(promiseCreator, action.payload);
+
+      yield put({ type: SUCCESS, payload: data });
+    } catch(error) {
+      if(error.type === "AUTH" && error.code === "001") {
+        yield put({ type: REISSUETOKEN, payload: action });
+      } else {
+        yield put({ type: ERROR, error: new ApiError().build(error).get });
+      }
     }
+  } 
+} 
 
-
-  } catch(error) {
-    yield put({ type: SIGNINUSER_ERROR, payload: {
-      userInfo: null,
-      error: null
-    }});
-
-    if(action.payload) {
-      yield put({ type: `${action.action.type}_ERROR`, payload: error });
-    }  
-  }
+function* allResetSaga(action: any) {
+  yield put({ type: RESET_AUTH });
+  yield put({ type: RESET_BLOCK });
 }
 
 const acyncUtils = {
-  createPromiseSaga
+  createPromiseSaga,
+  allResetSaga
 }
 
 export default acyncUtils;

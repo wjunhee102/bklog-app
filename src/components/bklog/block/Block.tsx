@@ -1,283 +1,121 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useIdleTimer } from 'react-idle-timer';
+import classNames from 'classnames';
+import useBKlog from './hooks/useBKlog';
+import BlockElement from './BlockEle';
 
-import useBKlog from '../../../hooks/useBKlog';
-import { 
-  BlockData
-} from '../../../types/bklog';
-import { 
-  contentsElement,
-  createContentsElement
-} from '../utils';
-import { 
-  getSelectionStart,
-  getSelectionEnd,
-  setSelectionRange
-} from '../utils/selectionText';
+import { BlockData, UUID } from '../../../types/bklog';
 
-import ContentEditableEle from './ContentEditableEle';
-import TextStyleToggle from './TextStyleToggle';
-
-import './block.scss';
-
-interface BlockProps {
-  blockData: BlockData<any>;
+interface StagedBlock{
+  id: UUID;
+  contents: any;
+  blockIndex: number;
 }
 
-function Block({ blockData }:BlockProps) {
-
-  const [ editing, setEditing ] = useState<boolean>(true);
-  const [ cursorStart, setCursorStart ] = useState<number>(0);
-  const [ cursorEnd, setCursorEnd ] = useState<number>(0);
-
-  const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
-
-  const blockRef = useRef<HTMLDivElement>(null);
-
+function Block() { 
+  const [ mouseOn, setMouseOn ] = useState<boolean>(false);
+  const [ clipOn, setClipOn ]   = useState<boolean>(false);
+  const [ stage, setStage ]     = useState<StagedBlock[]>([]);
+  
   const { 
-    getRightToEdit,
-    getEditAbleId,
+    state, 
+    initBlock, 
     onAddBlock, 
-    onDeleteBlock,
-    getChilrenBlock,
-    onEditAble,
-    onEditBlock,
-    onCommitBlock
+    onCommitBlock, 
+    onChangeTextStyle,
+    onSwitchBlock,
+    onRevertBlock
   } = useBKlog();
 
-  const createMarkup = useMemo(()=> {
-    const htmlElement = blockData.property && blockData.property.contents[0]?
-    (blockData.property.contents.length === 1? 
-      contentsElement(blockData.property.contents[0])
-      : blockData.property.contents.reduce(createContentsElement)
-    ) : "";
 
-    return {
-      __html: htmlElement
-    }
-  }, [blockData.property]);
-  
-  // 위치 변경시 어떻게 리프레쉬 될지 고민해야 함.
-  const childrenBlock = blockData.children[0]? 
-    getChilrenBlock(blockData.id) : null;
-
-
-  // keyboard methods
-  const handleKeyUp = (e:any) => {  
-    setCursorStart(getSelectionStart(e.target));
-    setCursorEnd(getSelectionEnd(e.target));
-
-    switch(e.key) {
- 
-      case "Enter":
-        setCursorStart(0);
-        setCursorEnd(0);
-        e.preventDefault();
-        break;
-
-      case "ArrowUp": 
-      // cursor가 앞으로 튐
-        
-        if(cursorStart === 0) {
-          e.preventDefault();
-          setCursorStart(0);
-          setCursorEnd(0);
-          onEditAble(null, blockData.index - 1);
-        }
-        
-        break;
-
-      case "ArrowDown":
-
-        if(cursorEnd === e.target.innerText.length) {
-          setCursorStart(0);
-          setCursorEnd(0);
-          e.preventDefault();
-          onEditAble(null, blockData.index + 1);
-        }
-        
-        break;
-
-      case "Backspace":
-        if(!e.target.innerHTML && cursorStart === 0 && cursorEnd === 0) {
-          onCommitBlock();
-          onDeleteBlock(blockData.id);
-          if(blockData.index > 1) onEditAble(null, blockData.index-1);
-          break;
-        } else {
-          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-          break;
-        }
-      
-      case " ":
-        setCursorEnd(0);
-        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-        onCommitBlock();
-        break;
-      
-      default:
-        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-
-    }
-
+  const click = () => {
+    onAddBlock(undefined, undefined, {
+      index: 0,
+      id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+      type: "text",
+      parentBlockId: null,
+      preBlockId: null,
+      nextBlockId: null,
+      property: {
+        type:  "BKlog-h1",
+        styles: {
+          color: null,
+          backgroundColor: null
+        },
+        contents: [
+          ["블록 1입니다."],
+          ["저", [["b"], ["fc", "#c0f"], ["bc", "#000"], ["i"],["a", "https://www.naver.com"]]],
+          ["는 ", [["i"]]],
+          ["황준희", [["b"]]],
+          [" 입니다.", [["fc", "#f00"]]]
+        ]
+      },
+      children: [
+        "2453d55f-66f0-4ad0-b796-0dbcd8d82ce8"
+      ]
+    });
   }
 
-  // const moveStartPoint = (ele: any) => {
-  //   setCursorStart(0);
-  //   setCursorEnd(0);
-  //   setSelectionRange(ele, 0, 0);
-  // }
-
-  const moveEndPoint = (ele: any) => {
-    const length = ele.innerText.length;
-    setCursorStart(length);
-    setCursorEnd(length);
-    setSelectionRange(ele, length, length);
-  }
-
-  const refreshPoint = (
-    ele:any, 
-    cursorStart: number, 
-    cursorEnd?: number | null
-    ) => {
-    setSelectionRange(ele, cursorStart, cursorEnd? cursorEnd : cursorStart);
-  }
-
-  const handleKeyPress = (e:any) => {
-    if(e.key === "Enter") {
-      e.preventDefault();
-      onAddBlock(blockData.id, blockData.property? blockData.property.type : null);
-    }
-  }
-
-  const handleClick = (e: any) => {
-    const parentNode = e.target.parentNode;
-
-    if(parentNode.tagName === "A") {
-      window.open(parentNode.href);
-    }
-  }
-
-  // mouse methods
-  const handleMouseUp = () => {
-    const getStartPosition = getSelectionStart(blockRef.current);
-    const getEndPosition = getSelectionEnd(blockRef.current);
-    setCursorStart(getStartPosition);
-    setCursorEnd(getEndPosition);
-  }
-
-  // Focus methods
-  const handleBlur = (e:any) => {
-    if (e.currentTarget === e.target) {
-      console.log('unfocused self 1');
-    } else {
-      console.log('unfocused child 2', e.target);
-    }
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      // Not triggered when swapping focus between children
-      console.log('unfocused child 3', e.target);
-      setCursorStart(0);
-      setCursorEnd(0);
+  const handleOnIdle = () => {
+    console.log('last active', getLastActiveTime());
+    if(state.stage[0]) {
+      console.log('commit');
       onCommitBlock();
     }
   }
-
-  const handleFocus = (ele: any) => {
-    console.log("ok")
-    ele.focus();
+  const handleClick = () => {
+    onChangeTextStyle (1, ["bc", "#fc0"], 2, 10, "color");
   }
 
-  const isFocus = (e: any) => {
-    if(!styleToggle) {
-      moveEndPoint(blockRef.current);
-    } else if((cursorStart | cursorEnd)) {
-      refreshPoint(blockRef.current, cursorStart, cursorEnd);
-    } 
-    onEditAble(blockData.id);
+  const testHandleClick = () => {
+    onSwitchBlock(state.blocks[3].id, state.blocks[7].id, false);
   }
 
-  const reBlockFocus = () => {
-    handleFocus(blockRef.current);
+  const revertHandleClick = () => {
+    onRevertBlock();
   }
 
-  useEffect(()=> {
-    const focused = document.activeElement;
-    
-    if((cursorStart | cursorEnd) && focused === blockRef.current) {
-      refreshPoint(blockRef.current, cursorStart, cursorEnd);
-    }
+  const { getLastActiveTime } = useIdleTimer({
+    timeout: 10 * 60 * 5,
+    onIdle: handleOnIdle,
+    debounce: 500
+  })
 
-  }, [blockData.property])
-
-  useEffect(()=> {
-    if(getEditAbleId === blockData.id) {
-      console.log("sadsad");
-      if(blockRef.current) handleFocus(blockRef.current);
-    }
-  },[getEditAbleId]);
-
-  useEffect(()=> {
-    if(blockData.type === "container") {
-      if(!blockData.children[0]) onDeleteBlock(blockData.id);
-    }
-  }, [blockData.children])
-
-  useEffect(()=> {
-    if(cursorEnd - cursorStart >= 1) {
-      setStyleToggle(true);
-    } else {
-      setStyleToggle(false);
-    }
-  }, [cursorStart, cursorEnd]);
+  const blockData:any = initBlock[0]? initBlock : null;
 
   return (
-    <div 
-      data-index={blockData.index} 
-      className="block-zone"
-    >
-       <div 
-        className="bk-block relative pr-8"
-        onBlur={handleBlur}
-       > 
-        { 
-          blockData.property && blockData.type !== "container" ? 
-            <ContentEditableEle 
-              className={blockData.property.type}
-              dangerouslySetInnerHTML={createMarkup}
-              ref={blockRef}
-              onKeyPress={handleKeyPress}
-              onKeyUp={handleKeyUp}
-              onMouseDown={handleClick}
-              onMouseUp={handleMouseUp}
-              onFocus={isFocus}
-              placeholder="입력해주세요..."
-            />
-          : null
-        }
-        {/* <button 
-          className="bk-del absolute right-0" 
-          onClick={()=>{onDeleteBlock(blockData.id)}}> 
-          삭제 
-        </button> */}
+    <div className="blocklog items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
+      <div className="cover mb-8"></div>
+      <div className="m-auto h-full block-container">
         {
-          styleToggle? 
-          <TextStyleToggle
-            blockIndex={blockData.index}
-            startPosition={cursorStart}
-            endPosition={cursorEnd}
-            contents={blockData.property.contents}
-            reBlockFocus={reBlockFocus}
-          /> : null
+          blockData?
+          blockData.map((block: BlockData<any>)=> 
+            <BlockElement
+              blockData={block}
+              key={block.id}
+            />
+          ) : <div></div>
         }
+        {
+          !blockData || blockData.length <= 1? 
+          <div className="bk-zone"> 
+            <div 
+              className="bk-block" 
+              placeholder="입력해주세요..."
+              onFocus={()=>onAddBlock()}
+              onClick={()=>onAddBlock()}
+              contentEditable="true"
+            ></div>
+          </div> 
+          : <>
+            <button onClick={click}>블럭 추가</button>
+            <button onClick={handleClick}>스타일 추가</button>
+            <button onClick={testHandleClick}>스위칭</button>
+            <button onClick={revertHandleClick}>되돌리기</button>
+          </>
+        }
+        
       </div>
-          {
-            childrenBlock ? 
-            childrenBlock.map((child)=> 
-              <Block 
-                blockData={child}
-                key={child.id}
-              />
-            ) : null
-          }
     </div>
   )
 }

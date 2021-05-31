@@ -9,14 +9,6 @@ import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
 
 
-function dummyUserBlock() {
-  return (
-    <div>
-
-    </div>
-  )
-}
-
 const LinkClasses = "hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium";
 
 function GlobalNav() {
@@ -53,7 +45,6 @@ function GlobalNav() {
     <nav className="bg-white dark:bg-black absolute left-0 top-0 z-10 shadow w-full">
       <div className="w-full pr-4 pl-1">
         <div className="flex items-center justify-between h-14">
-
         <div className="hidden md:block">
           <div className="flex items-center space-x-4">
           <div className="flex-shrink-0">

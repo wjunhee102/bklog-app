@@ -2,7 +2,7 @@ import {
   ContentType,
   BlockData,
   UUID
-} from '../../../types/bklog';
+} from '../types';
 import { 
   ADD_BLOCK,
   EDITABLE,
@@ -14,7 +14,7 @@ import {
   REVERT_BLOCK,
   CHANGE_TEXT_STYLE,
   EditedBlock,
-  BklogState,
+  BlockState,
   OrderType,
   orderingBlock,
   createBlockData,
@@ -29,15 +29,12 @@ import {
   restoreBlock,
   getContentsToBeChanged,
   RESET_BLOCK,
-  BklogActions
+  BlockActions
 } from './utils'; 
-import { page } from '../../../data/db.json';
-// import { createReducer, createAction } from 'typesafe-actions';
+import { page } from '../../../../data/db.json';
 
-const initialState2:BklogState = (() => {
+const initialState2:BlockState = (() => {
   return {
-    pageId: page.id,
-    userId: page.userId,
     blocks: orderingBlock(page.blocks),
     editingId: null,
     stage: [],
@@ -47,10 +44,8 @@ const initialState2:BklogState = (() => {
   };
 })();
 
-const initialState:BklogState = (() => {
+const initialState:BlockState = (() => {
   return {
-    pageId: null,
-    userId: null,
     blocks: [],
     editingId: null,
     stage: [],
@@ -60,7 +55,7 @@ const initialState:BklogState = (() => {
   };
 })();
 
-function bklog(state: BklogState = initialState2, action: BklogActions):BklogState {
+function blockReducer(state: BlockState = initialState, action: BlockActions): BlockState {
 
   switch(action.type) {
     case RESET_BLOCK: 
@@ -233,4 +228,5 @@ function bklog(state: BklogState = initialState2, action: BklogActions):BklogSta
 
 }
 
-export default bklog;
+
+export default blockReducer;

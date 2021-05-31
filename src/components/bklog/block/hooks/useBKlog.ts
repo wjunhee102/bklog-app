@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store/modules';
+import { useCallback, useMemo, useReducer } from 'react';
+import blockState from '../reducer';
 import {
   addBlock, 
   editAble,
@@ -10,17 +9,31 @@ import {
   changeTextStyle,
   switchBlock,
   revertBlock
-} from '../store/modules/bklog/utils';
-import { BklogState, OrderType } from '../store/modules/bklog/utils';
+} from '../reducer/utils';
+import { BlockState, OrderType } from '../reducer/utils';
+import orderingBlock from '../reducer/utils/ordering';
 import {
   UUID,
   ContentType,
   BlockData
-} from '../types/bklog';
+} from '../types';
+
+import { page } from '../../../../data/db.json';
+
+const initialState:BlockState = (() => {
+  return {
+    blocks: orderingBlock(page.blocks),
+    editingId: null,
+    stage: [],
+    rightToEdit: true,
+    tempBack: [],
+    tempFront: []
+  };
+})();
 
 function useBklog() {
   
-  const state:BklogState = useSelector((state: RootState) => state.bklog);
+  const [ state, dispatch ] = useReducer(blockState, initialState);
 
   // 이거가 메모리가 2중으로드는 거 같음... 아닌가? referance 값으로 가지고 있으니까 상관없나?
   const initBlock: BlockData<any>[] = useMemo(()=> 
@@ -41,8 +54,6 @@ function useBklog() {
     state.stage.filter(statedBlock => statedBlock.id === blockId)[0];
 
   const getRightToEdit = useMemo(() => state.rightToEdit,[]);
-  
-  const dispatch = useDispatch();
 
   // Block 추가
   const onAddBlock = useCallback((

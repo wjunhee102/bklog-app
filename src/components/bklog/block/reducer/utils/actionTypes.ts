@@ -12,7 +12,7 @@ import {
   REVERT_BLOCK, 
   SWITCH_BLOCK 
 } from ".";
-import { UUID, BlockData, ContentType } from "../../../../types/bklog";
+import { UUID, BlockData, ContentType } from "../../types";
 
 function resetBlock() {
   return {
@@ -116,7 +116,7 @@ function switchBlock(blockId: UUID, targetBlockId: UUID, targetType: boolean) {
   }
 }
 
-const actionBklog = {
+const actionBlock = {
   resetBlock,
   addBlock,
   editAble,
@@ -129,4 +129,4 @@ const actionBklog = {
   switchBlock
 }
 
-export default actionBklog;
+export default actionBlock;

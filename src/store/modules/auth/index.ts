@@ -16,7 +16,7 @@ import {
   RESET_AUTH,
 } from './utils';
 
-const initialState = (): AuthState  => {
+const initialState = ((): AuthState  => {
   return {
     loading: false,
     user: null,
@@ -32,7 +32,7 @@ const initialState = (): AuthState  => {
       signOutUser: null
     }
   }
-};
+})();
 
 const initialError = ()=> {
   return  {
@@ -50,7 +50,7 @@ const initialError = ()=> {
 
 
 //server와 연결이 끊겼을 때 error 핸들링 필요.
-export default function auth(state: AuthState = initialState(), action: AuthActions) {
+export default function auth(state: AuthState = initialState, action: AuthActions) {
   switch (action.type) {
     case SIGNUPUSER:
       return Object.assign({}, initialState, { loading: true, 
@@ -80,14 +80,14 @@ export default function auth(state: AuthState = initialState(), action: AuthActi
       console.log("aaa", action);
       const { userInfo, error } = action.payload;
       return Object.assign({}, state, {loading: false, 
-        user: userInfo, 
+        user: action.payload, 
         error: Object.assign({}, state.error, {
           signInUser: error
         })
       });
 
     case SIGNOUTUSER:
-      return initialState();
+      return initialState;
 
     case SIGNOUTUSER_SUCCESS:
       return Object.assign({}, state, { loading: false });
@@ -100,7 +100,7 @@ export default function auth(state: AuthState = initialState(), action: AuthActi
       });
 
     case RESET_AUTH:
-      return initialState();
+      return initialState;
   
     default:
       console.log(state);
