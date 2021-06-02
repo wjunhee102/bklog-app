@@ -34,6 +34,7 @@ export interface BlockState {
   tempFront: TempData[];
   tempClip: number[];
   clipboard: BlockData<any>[];
+  test: any;
 }
 export type OrderType = "add" | "del" | "color" | "link";
 
@@ -56,6 +57,9 @@ export const CLEAR_CLIPBOARD   = 'CLEAR_CLIPBOARD' as const;
 export const SET_TEMPCLIP      = 'SET_TEMPCLIP' as const;
 export const CLEAR_TEMPCLIP    = 'CLEAR_TEMPCLIP' as const;
 
+export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
+
+
 export const resetBlock      = actionBlock.resetBlock;
 export const addBlock        = actionBlock.addBlock;
 export const addBlockList    = actionBlock.addBlockList;
@@ -72,6 +76,8 @@ export const clearClipboard  = actionBlock.clearClipboard;
 export const setTempClip     = actionBlock.setTempClip;
 export const clearTempClip   = actionBlock.clearTempClip;
 
+export const testClipAdd     = actionBlock.testClipAdd;
+
 export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
   | ReturnType<typeof addBlockList>
@@ -87,6 +93,7 @@ export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof clearClipboard>
   | ReturnType<typeof setTempClip>
   | ReturnType<typeof clearTempClip>
+  | ReturnType<typeof testClipAdd>
 ;
 
 /**
@@ -135,6 +142,7 @@ export const initialState:BlockState = (() => {
     tempBack: [],
     tempFront: [],
     tempClip: [],
-    clipboard: []
+    clipboard: [],
+    test: null
   };
 })();

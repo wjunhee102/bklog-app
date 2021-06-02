@@ -14,7 +14,8 @@ import {
   clearClipboard,
   setTempClip,
   clearTempClip,
-  addBlockList
+  addBlockList,
+  testClipAdd
 } from '../reducer/utils';
 import { BlockState, OrderType } from '../reducer/utils';
 import orderingBlock from '../reducer/utils/ordering';
@@ -39,7 +40,8 @@ export const initialState2: BlockState = (() => {
     tempBack: [],
     tempFront: [],
     tempClip: [],
-    clipboard: []
+    clipboard: [],
+    test: null
   };
 })();
 
@@ -70,6 +72,15 @@ function useBlock() {
   const getTempClip = state.tempClip;
 
   const getClipboard = state.clipboard;
+
+  const getTest = state.test;
+
+  const getBlocksContents = (): any[] => state
+    .tempClip
+    .sort((a, b) => a - b)
+    .map((idx) => state.blocks[idx - 1].type === "text"? state.blocks[idx - 1].property.contents : null)
+    .filter((content) => content !== null);
+
 
   // Block 추가
   const onAddBlock = useCallback((
@@ -127,6 +138,9 @@ function useBlock() {
   const onClearClipboard = useCallback(() => 
     dispatch(clearClipboard()), [dispatch]);
 
+  const onTestClipAdd = useCallback((dom: any) => 
+    dispatch(testClipAdd(dom)), [dispatch]);
+
   return { 
     state, 
     initBlock,
@@ -138,6 +152,7 @@ function useBlock() {
     getEditAbleId, 
     getTempClip,
     getClipboard,
+    getBlocksContents,
     onAddBlock,
     onAddBlockList,
     onEditAble, 
@@ -150,7 +165,9 @@ function useBlock() {
     onSetTempClip,
     onClearTempClip,
     onSetClipboard,
-    onClearClipboard
+    onClearClipboard,
+    onTestClipAdd,
+    getTest
   };
 }
 

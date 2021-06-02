@@ -37,7 +37,8 @@ import {
   SET_TEMPCLIP,
   CLEAR_TEMPCLIP,
   ADD_BLOCKLIST,
-  copyBlockDataList
+  copyBlockDataList,
+  TEST_CLIPBOARD
 } from './utils'; 
 
 function blockReducer(state: BlockState = initialState, action: BlockActions): BlockState {
@@ -178,7 +179,7 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         })
       });
 
-      localStorage.setItem("block", JSON.stringify(newState));
+      // localStorage.setItem("block", JSON.stringify(newState));
 
       return newState;
 
@@ -225,26 +226,16 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         const length = state.tempClip.length;
         let tempClip = state.tempClip.concat();
 
-        if(length > 1) {
-          if(tempClip[length - 2] === action.payload) {
-            console.log(tempClip[length - 2], action.payload);
-            tempClip.pop();
-          } else {
-            tempClip.push(action.payload);
-          }
+        if(length > 1 && tempClip[length - 2] === action.payload) {
+          tempClip.pop();
         } else {
-          tempClip.push(action.payload);
+          if(tempClip[length - 1] !== action.payload) tempClip.push(action.payload);
         }
-
-        console.log(state.tempClip);
 
         return updateObject(state, {
           tempClip
         });
-
       } else {
-        console.log(state.tempClip);
-
         return updateObject(state, {
           tempClip: [action.payload]
         });
@@ -257,10 +248,8 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
       });
 
     case SET_CLIPBOARD:
-      console.log("실행")
       if(state.tempClip[0]) {
-        const tempClip = state.tempClip.sort();
-        console.log("실행1", tempClip.map((idx) => state.blocks[idx - 1]));
+        const tempClip = state.tempClip.sort((a, b) => a - b);
         return updateObject(state, {
           clipboard: tempClip.map((idx) => state.blocks[idx - 1])
         });
@@ -274,7 +263,14 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         clipboard: []
       });
 
-    default: 
+    case TEST_CLIPBOARD:
+      console.log(action.payload);
+
+      return updateObject(state, {
+        test: state.test? [...state.test, action.payload] : [action.payload]
+      });
+
+    default:
 
     return state;
   }

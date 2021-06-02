@@ -2,9 +2,12 @@ import React from 'react';
 
 interface ContentEditableEle {
   className: string;
+  editable: boolean;
   onKeyDown?: (e: any) => void;
   onKeyPress?: (e: any) => void;
   onKeyUp?: (e: any) => void;
+  onCopy?: (e: any) => void;
+  onPaste?: (e: any) => void;
   onClick?: (e: any) => void;
   onMouseUp?: (e: any) => void;
   onMouseDown?: (e: any) => void;
@@ -20,8 +23,12 @@ interface ContentEditableEle {
 
 const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(({
   className,
+  editable,
   onKeyPress, 
   onKeyUp,
+  onKeyDown,
+  onCopy,
+  onPaste,
   onClick,
   onMouseUp,
   onMouseDown,
@@ -39,13 +46,16 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
       ref={ref}
       onKeyUp={onKeyUp}
       onKeyPress={onKeyPress}
+      onKeyDown={onKeyDown}
+      onCopy={onCopy}
+      onPaste={onPaste}
       onClick={onClick}
       onMouseUp={onMouseUp}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onFocus={onFocus}
       onBlur={onBlur}
-      contentEditable={true}
+      contentEditable={editable}
       dangerouslySetInnerHTML={dangerouslySetInnerHTML}
       placeholder={placeholder} 
     >

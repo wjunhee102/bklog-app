@@ -15,7 +15,8 @@ import {
   CLEAR_CLIPBOARD,
   CLEAR_TEMPCLIP,
   SET_TEMPCLIP,
-  ADD_BLOCKLIST
+  ADD_BLOCKLIST,
+  TEST_CLIPBOARD
 } from ".";
 import { UUID, BlockData, ContentType } from "../../types";
 
@@ -156,6 +157,13 @@ function clearTempClip() {
   }
 }
 
+function testClipAdd(payload: any) {
+  return {
+    type: TEST_CLIPBOARD,
+    payload
+  }
+}
+
 const actionBlock = {
   resetBlock,
   addBlock,
@@ -171,7 +179,8 @@ const actionBlock = {
   setClipboard,
   clearClipboard,
   setTempClip,
-  clearTempClip
+  clearTempClip,
+  testClipAdd
 }
 
 export default actionBlock;

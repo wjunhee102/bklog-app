@@ -101,6 +101,9 @@ function Block() {
     onRevertBlock();
   }
 
+  const handleKeyDown = (e: any) => {
+  }
+
   const { getLastActiveTime } = useIdleTimer({
     timeout: 10 * 60 * 5,
     onIdle: handleOnIdle,
@@ -109,6 +112,10 @@ function Block() {
 
   const blockData:any = initBlock[0]? initBlock : null;
 
+  useEffect(() => {
+    console.log(state.blocks);
+  } ,[state]);
+
   return (
     <div 
       className="blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md"
@@ -116,6 +123,7 @@ function Block() {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
     >
       <div className="cover mb-8"></div>
       <div className="m-auto h-full block-container">

@@ -68,6 +68,19 @@ export function createContentsElement(accumulator: string, rawContents: any, cur
   return currentIndex === 1?  contentsElement(accumulator) + contentsElement(rawContents) : accumulator + contentsElement(rawContents);
 }
 
+export function createContentsText(accumulator: string, rawContents: any, currentIndex: number): string {
+  return currentIndex === 1? accumulator[0] + rawContents[0] : accumulator + rawContents[0];
+}
+
+export function createClipboardContentsText(contents: any[]): string {
+  console.log(contents);
+  const newTextList: string[] = contents.map((content) => {
+    return content? content.reduce(createContentsText) : "";
+  });
+
+  return newTextList.reduce((a: string, b: string) => a + `\n ${b}`);
+}
+
 export function findTextStyle(
   textContents: TextContents[], 
   position: number

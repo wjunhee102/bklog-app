@@ -5,7 +5,9 @@ import {
 } from './types';
 import { 
   contentsElement,
-  createContentsElement
+  createClipboardContentsText,
+  createContentsElement,
+  createContentsText
 } from './utils';
 import { 
   getSelectionStart,
@@ -46,6 +48,7 @@ function BlockElement({
     getEditAbleId,
     getTempClip,
     getClipboard,
+    getBlocksContents,
     onAddBlock, 
     onAddBlockList,
     onDeleteBlock,
@@ -56,12 +59,13 @@ function BlockElement({
     onSetTempClip,
     onClearTempClip,
     onSetClipboard,
-    onClearClipboard
+    onClearClipboard,
+    getTest
   } = actions;
 
   const createMarkup = useMemo(()=> {
     const htmlElement = blockData.property && blockData.property.contents[0]?
-    (blockData.property.contents.length === 1? 
+    (!blockData.property.contents[1]? 
       contentsElement(blockData.property.contents[0])
       : blockData.property.contents.reduce(createContentsElement)
     ) : "";
@@ -79,104 +83,119 @@ function BlockElement({
   const handleKeyUp = (e:any) => {  
     setCursorStart(getSelectionStart(e.target));
     setCursorEnd(getSelectionEnd(e.target));
-    console.log(e.key, e.metaKey);
 
-    if(e.ctrlKey) {
-      if(e.key === "c") {
-        console.log("실행5")
-        if(getTempClip) onSetClipboard();
-      } else if(e.key === "v") {
-        e.returnValue = false;
-        if(getClipboard[0]) {
-          console.log("실행6", getClipboard);
-          e.returnValue = false;
-          // onAddBlockList(blockData.id, getClipboard);
-          // onClearClipboard();
+    switch(e.key) {
+
+      case "Enter":
+        setCursorStart(0);
+        setCursorEnd(0);
+        e.preventDefault();
+        break;
+
+      case "ArrowUp": 
+      // cursor가 앞으로 튐
+        
+        if(cursorStart === 0) {
+          e.preventDefault();
+          setCursorStart(0);
+          setCursorEnd(0);
+          onEditAble(null, blockData.index - 1);
         }
+        
+        break;
 
+      case "ArrowDown":
 
-      }
-    } else {
-
-      switch(e.key) {
-  
-        case "Enter":
+        if(cursorEnd === e.target.innerText.length) {
           setCursorStart(0);
           setCursorEnd(0);
           e.preventDefault();
-          break;
-
-        case "ArrowUp": 
-        // cursor가 앞으로 튐
-          
-          if(cursorStart === 0) {
-            e.preventDefault();
-            setCursorStart(0);
-            setCursorEnd(0);
-            onEditAble(null, blockData.index - 1);
-          }
-          
-          break;
-
-        case "ArrowDown":
-
-          if(cursorEnd === e.target.innerText.length) {
-            setCursorStart(0);
-            setCursorEnd(0);
-            e.preventDefault();
-            onEditAble(null, blockData.index + 1);
-          }
-          
-          break;
-
-        case "Backspace":
-          if(cursorStart === 0 && cursorEnd === 0) {
-            if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
-              onCommitBlock();
-              onDeleteBlock(blockData.id);
-              if(blockData.index > 1) onEditAble(null, blockData.index - 1);
-            }
-            break;
-
-          } else {
-            onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-            break;
-          }
+          onEditAble(null, blockData.index + 1);
+        }
         
-        case " ":
-          setCursorEnd(0);
-          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-          onCommitBlock();
-          break;
-        
-        default:
-          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+        break;
 
-      }
+      case "Backspace":
+        if(cursorStart === 0 && cursorEnd === 0) {
+          if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
+            onCommitBlock();
+            onDeleteBlock(blockData.id);
+            if(blockData.index > 1) onEditAble(null, blockData.index - 1);
+          }
+          break;
+
+        } else {
+          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+          break;
+        }
+      
+      case " ":
+        setCursorEnd(0);
+        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+        onCommitBlock();
+        break;
+      
+      default:
+        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+
     }
+    
 
   }
 
   const handleKeyDown = (e: any) => {
-    console.log(e.key, e.metaKey);
-    if(e.ctrlKey || e.metaKey) {
-      if(e.key === "c") {
-        console.log("실행3")
-        if(getTempClip[0]) {
-          onSetClipboard();
-        }
-      } else if(e.key === "v") {
+    // console.log(e.key, e.metaKey);
+    // if(select) {
+    //   e.preventDefault();
+    //   if((e.metaKey || e.ctrlKey) && e.key === "c") {
+    //     onSetClipboard();
+    //   }
+    //   if((e.metaKey || e.ctrlKey) && e.key === "v") {
+    //     // const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    //     // console.log("Down", text);
+    //     // e.returnValue = false;
+    //     onAddBlockList(blockData.id, getClipboard);
+    //     onClearClipboard();
+    //     onClearTempClip();
 
-        if(getClipboard[0]) {
-          console.log("실행4", getClipboard);
-          e.returnValue = false;
-          onAddBlockList(blockData.id, getClipboard);
-          onClearClipboard();
-          onClearTempClip();
-        }
+    //   }
+    // }
+  }
 
+  const copyBlocks = () => {
+    const textarea = document.createElement("textarea");
+    const value = createClipboardContentsText(getBlocksContents());
+    console.log("copy", value);
+    textarea.value = value;
+    document.body.appendChild(textarea);
+    textarea.select();    
 
-      }
+    const returnValue = document.execCommand("copy");
+    console.log(returnValue, "copy")
+    document.body.removeChild(textarea);
+  }
+
+  const handleCopy = (e: any) => {
+    onClearClipboard();
+    if(select) {
+      e.preventDefault();
+      onSetClipboard();
+      copyBlocks();
+    }
+  }
+
+  const handlePaste = (e: any) => {
+    if(getClipboard[0]) {
+      e.preventDefault();
+      console.log("paste", getClipboard);
+      onAddBlockList(blockData.id, getClipboard);
+    }
+  }
+
+  const handleKeyPress = (e:any) => {
+    if(e.key === "Enter") {
+      e.preventDefault();
+      onAddBlock(blockData.id, blockData.property? blockData.property.type : null);
     }
   }
 
@@ -193,17 +212,6 @@ function BlockElement({
     cursorEnd?: number | null
     ) => {
     setSelectionRange(ele, cursorStart, cursorEnd? cursorEnd : cursorStart);
-  }
-
-  const handleKeyPress = (e:any) => {
-    console.log("keyPress 7", e.key);
-    if(e.ctrlKey) {
-      if(getClipboard) e.returnValue = false;
-    }
-    if(e.key === "Enter") {
-      e.preventDefault();
-      onAddBlock(blockData.id, blockData.property? blockData.property.type : null);
-    }
   }
 
   const clearTempClip = () => {
@@ -240,9 +248,15 @@ function BlockElement({
     if(clipOn && mouseOn) {
       const getStartPosition = getSelectionStart(blockRef.current);
       const getEndPosition = getSelectionEnd(blockRef.current);
-      if((getStartPosition - getEndPosition)) {
+      if((getStartPosition - getEndPosition) || !getTempClip[0]) {
         onSetTempClip(blockData.index);
         handleBlur(e);
+
+        //test 
+        const text = document.createElement("textarea");
+        document.body.appendChild(text);
+        text.select();
+        document.body.removeChild(text);
       } 
     }
   }
@@ -317,12 +331,17 @@ function BlockElement({
   }, [cursorStart, cursorEnd]);
 
   useEffect(() => {
+    console.log(getTempClip);
     if(getTempClip.includes(blockData.index)) {
       setSelect(true);
     } else {
       setSelect(false);
     }
   }, [getTempClip]);
+
+  useEffect(() => {
+    console.log(getTest);
+  }, [getTest]);
 
   return (
     <div 
@@ -341,10 +360,14 @@ function BlockElement({
           blockData.property && blockData.type !== "container" ? 
             <ContentEditableEle 
               className={blockData.property.type}
+              editable={true}
               dangerouslySetInnerHTML={createMarkup}
               ref={blockRef}
               onKeyPress={handleKeyPress}
               onKeyUp={handleKeyUp}
+              onKeyDown={handleKeyDown}
+              onCopy={handleCopy}
+              onPaste={handlePaste}
               onClick={handleClick}
               onMouseDown={isFocus}
               onMouseUp={handleMouseUp}
@@ -374,7 +397,7 @@ function BlockElement({
             "cover",
             {"selectable": select}
           )}
-          onClick={handleClick}
+          onClick={clearTempClip}
         ></div>
       </div>
           {
