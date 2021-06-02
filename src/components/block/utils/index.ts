@@ -78,7 +78,7 @@ export function createClipboardContentsText(contents: any[]): string {
     return content? content.reduce(createContentsText) : "";
   });
 
-  return newTextList.reduce((a: string, b: string) => a + `\n ${b}`);
+  return newTextList.reduce((a: string, b: string) => `${a}\n${b}`);
 }
 
 export function findTextStyle(

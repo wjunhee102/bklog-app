@@ -195,6 +195,7 @@ function BlockElement({
   const handleKeyPress = (e:any) => {
     if(e.key === "Enter") {
       e.preventDefault();
+      onCommitBlock();
       onAddBlock(blockData.id, blockData.property? blockData.property.type : null);
     }
   }
