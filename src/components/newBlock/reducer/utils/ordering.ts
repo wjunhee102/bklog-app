@@ -19,6 +19,7 @@ function parsePosition(position: string): string[] {
 
 function convertPosition(arg: string[]) {
   let position = arg.shift();
+  console.log("convertPosition", arg, position);
   if(arg[0]) {
     for(const part of arg) {
       position = `${position}-${part}`;
@@ -53,42 +54,34 @@ export function sortBlock(blockDataList: BlockData[] | RawBlockData[]): BlockDat
 
   let preBlockListIdx: number = preBlockDataList.findIndex(isPosition(currentPosition));
 
-  while(length !== -1) {
+  while(length) {
     sortedBlockDataList.push(Object.assign({}, preBlockDataList[preBlockListIdx], {
       index
     }));
     preBlockDataList[preBlockListIdx] = preBlockDataList[length];
     preBlockDataList.pop();
-    length -= 1;
+    length--;
     index++;
 
-    let nextPosition: string | undefined | null = `${currentPosition}-1`;
+    let nextPosition: string = currentPosition.concat("-1");
 
     preBlockListIdx = preBlockDataList.findIndex(isPosition(nextPosition));
 
-    if(preBlockListIdx === -1) {
-
-      let positionArray = parsePosition(currentPosition);
-      let positionLength = positionArray.length;
-      
-
-      while(preBlockListIdx !== -1 || !nextPosition || positionLength) {
-        positionArray[--positionLength] = positionArray[positionArray.length] + 1;
-        nextPosition = convertPosition(positionArray);
-        
-        if(nextPosition) {
-          preBlockListIdx = preBlockDataList.findIndex(isPosition(nextPosition));
-        } else {
-          console.log("position 불일치");
-          return resetPosition(blockDataList);
-        }
-       
-      }
-
+    while(preBlockListIdx === -1 && nextPosition) {
+      const lastNumber: string = `${Number(nextPosition.slice(-3, -2)) + 1}`;
+      nextPosition = nextPosition.slice(0, -3).concat(lastNumber);
+      preBlockListIdx = preBlockDataList.findIndex(isPosition(nextPosition));
+      console.log("1", nextPosition, preBlockListIdx);
     }
 
     currentPosition = nextPosition;
   }
+
+  console.log("currentPosition", currentPosition);
+
+  sortedBlockDataList.push(Object.assign({}, preBlockDataList[0], {
+    index
+  }));
 
   return sortedBlockDataList;
 }

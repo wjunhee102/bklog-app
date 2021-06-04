@@ -18,6 +18,11 @@ function useBlock() {
   
   const [ state, dispatch ] = useReducer(blockReducer, initialState);
 
+  const initBlock: BlockData[] = useMemo(()=>
+    state.blockList.filter(block => block.position.length === 1), [state.blockList]);
+
+  const getChildrenBlock = ( position: string ): BlockData[] =>
+    state.blockList.filter(block => block.position.slice(0, -2) === position);
 
   return { 
     state
