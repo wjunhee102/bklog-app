@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import Block from '../components/block';
+import Block from '../components/newBlock';
 
 import { BlockData } from '../types/bklog';
 

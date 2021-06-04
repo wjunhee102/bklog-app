@@ -113,8 +113,12 @@ function Block() {
   const blockData:any = initBlock[0]? initBlock : null;
 
   useEffect(() => {
-    console.log(state.blocks);
-  } ,[state]);
+    onCommitBlock();
+  } ,[clipOn]);
+
+  useEffect(() => {
+    console.log('modify', state.modifyData);
+  }, [state.modifyData])
 
   return (
     <div 

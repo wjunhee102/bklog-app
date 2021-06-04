@@ -1,0 +1,139 @@
+
+
+.block-container {
+  max-width: 900px;
+}
+
+.cover {
+  height: 25vh;
+  background-color: lightcoral;
+}
+
+// .blocklog {
+//   align-items: center;
+//   width: 1200px;
+//   margin: 0 auto;
+// }
+
+.block-zone {
+  position: relative;
+
+  .bk-block {
+    position: relative;
+    
+    .cover {
+      display: none;
+  
+      &.selectable {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(46, 170, 220, 0.2);
+        z-index: 81;
+        opacity: 1;
+      }
+  }
+  
+  }
+
+}
+
+.bk-block {
+  display: flex;
+
+  [contenteditable=true]:empty:hover:before{
+    color: rgba(255, 255, 255, 0.3);
+    content: attr(placeholder);
+    display: block; /* For Firefox */
+    font-size: 1em;
+  }
+
+  .bk-del {
+    display: none;
+    color: #ccc;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+  }
+
+  &:hover {
+    .bk-del {
+      display: block;
+    }   
+  }
+
+  div[contenteditable=true] {
+    /* border: 1px solid #ddd; */
+    color : inherit;
+    width: 1024px;
+    word-wrap:break-word;
+    white-space: pre-wrap;
+    box-sizing: border-box;
+    padding: 3px 2px;
+    cursor: text;
+
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  .bk-style-toggles {
+    display: block;
+  }
+  
+  .bk-textStyleToggle.del{
+    background-color: rgb(36, 142, 230);
+    color: rgb(224, 196, 36);
+  }
+
+  .heading {
+    font-weight: 600;
+  }
+
+  .bk-title {
+    font: {
+      size: 2em;
+    }
+  }
+
+  .bk-h1 {
+    font: {
+      size: 2em;
+      weight: 600;
+    }
+    line-height: 1.2;
+  }
+  
+  .bk-h2 {
+    font-size: 1.75em;
+  }
+  
+  .bk-h3 {
+    font-size: 1.5em;
+  }
+  
+  .bk-h4 {
+    font-size: 1.25em;
+  }
+  
+  .bk-p {
+    font-size: 1em;
+    line-height: 1.5;
+  }
+
+  .bk-bold {
+    font-weight: bold;
+  }
+
+  .bk-italic {
+    font-style: italic;
+  }
+
+  .a {
+    cursor: pointer;
+  }
+}

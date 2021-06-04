@@ -41,7 +41,8 @@ export const initialState2: BlockState = (() => {
     tempFront: [],
     tempClip: [],
     clipboard: [],
-    test: null
+    test: null,
+    modifyData: []
   };
 })();
 

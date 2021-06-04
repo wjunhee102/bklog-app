@@ -5,9 +5,9 @@ import {
 } from './types';
 import { 
   contentsElement,
+  copyInClipboard,
   createClipboardContentsText,
-  createContentsElement,
-  createContentsText
+  createContentsElement
 } from './utils';
 import { 
   getSelectionStart,
@@ -37,9 +37,9 @@ function BlockElement({
  }:BlockProps) {
 
   const [ cursorStart, setCursorStart ] = useState<number>(0);
-  const [ cursorEnd, setCursorEnd ] = useState<number>(0);
+  const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
-  const [ select, setSelect ] = useState<boolean>(false);
+  const [ select, setSelect ]           = useState<boolean>(false);
 
   const blockRef = useRef<HTMLDivElement>(null);
 
@@ -144,35 +144,11 @@ function BlockElement({
   }
 
   const handleKeyDown = (e: any) => {
-    // console.log(e.key, e.metaKey);
-    // if(select) {
-    //   e.preventDefault();
-    //   if((e.metaKey || e.ctrlKey) && e.key === "c") {
-    //     onSetClipboard();
-    //   }
-    //   if((e.metaKey || e.ctrlKey) && e.key === "v") {
-    //     // const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-    //     // console.log("Down", text);
-    //     // e.returnValue = false;
-    //     onAddBlockList(blockData.id, getClipboard);
-    //     onClearClipboard();
-    //     onClearTempClip();
-
-    //   }
-    // }
   }
 
   const copyBlocks = () => {
-    const textarea = document.createElement("textarea");
     const value = createClipboardContentsText(getBlocksContents());
-    console.log("copy", value);
-    textarea.value = value;
-    document.body.appendChild(textarea);
-    textarea.select();    
-
-    const returnValue = document.execCommand("copy");
-    console.log(returnValue, "copy")
-    document.body.removeChild(textarea);
+    copyInClipboard(value);
   }
 
   const handleCopy = (e: any) => {
@@ -187,7 +163,6 @@ function BlockElement({
   const handlePaste = (e: any) => {
     if(getClipboard[0]) {
       e.preventDefault();
-      console.log("paste", getClipboard);
       onAddBlockList(blockData.id, getClipboard);
     }
   }
@@ -265,9 +240,6 @@ function BlockElement({
   const handleMouseMove = (e: any) => {
     if(mouseOn) {
       handleClipOn(true);
-      // if(e.target.innerText.length === Math.abs(cursorEnd - cursorStart)) {
-      //   handleClipOn(true);
-      // }
     }
   }
 
@@ -339,10 +311,6 @@ function BlockElement({
       setSelect(false);
     }
   }, [getTempClip]);
-
-  useEffect(() => {
-    console.log(getTest);
-  }, [getTest]);
 
   return (
     <div 

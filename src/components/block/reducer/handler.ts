@@ -57,7 +57,7 @@ function addBlockHandler (state: BlockState, action: ReturnType<typeof addBlock>
   const addedBlocks = insertBlock(state.blocks, [newBlock], preBlock.id);
 
   return updateObject(state, {
-    blocks: orderingBlock(addedBlocks),
+    blocks: orderingBlock(addedBlocks.blocks),
     editingId: newBlock.id,
     tempBack: tempDataPush(state.tempBack,{
       type: ADD_BLOCK,

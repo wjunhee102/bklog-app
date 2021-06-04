@@ -1,7 +1,8 @@
-import { TextContents, ContentType } from '../types';
+import { TextContents, ContentType, RawBlockData } from '../types';
 import { 
   equalsArray, 
 } from '../reducer/utils/converter';
+import { createBlockData, parseHtmlContents } from '../reducer/utils';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -81,6 +82,16 @@ export function createClipboardContentsText(contents: any[]): string {
   return newTextList.reduce((a: string, b: string) => `${a}\n${b}`);
 }
 
+export function copyInClipboard(value: string) {
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  document.body.appendChild(textarea);
+  textarea.select();
+  textarea.setSelectionRange(0, 9999); // 모바일
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
+
 export function findTextStyle(
   textContents: TextContents[], 
   position: number
@@ -112,4 +123,30 @@ export function arrayFindIndex(array: any[], props: any): number {
     }
   }
   return -1;
+}
+
+export function divideText(text: string): string | string[] {
+  const reg = /[\n]|[<br>]|[<br/>]/;
+  const res = text.split(reg);
+  return res.length === 1? text : res;
+}
+
+export function createBlockList(contentsList: string[]) {
+  let preBlockId: string | null = null;
+  return contentsList.map((contents) => {
+    const newBlock = createBlockData("text", "bk-p", preBlockId);
+
+    preBlockId = newBlock.id;
+
+    return Object.assign({}, newBlock, {
+      property: Object.assign({}, newBlock.property, {
+        contents: parseHtmlContents(contents)
+      })
+    });
+  });
+}
+
+export function pasteText(text: string): string | RawBlockData[] {
+  const contents = divideText(text);
+  return typeof contents !== "string"? createBlockList(contents) : contents;
 }

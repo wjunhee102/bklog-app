@@ -38,7 +38,9 @@ import {
   CLEAR_TEMPCLIP,
   ADD_BLOCKLIST,
   copyBlockDataList,
-  TEST_CLIPBOARD
+  TEST_CLIPBOARD,
+  updateModifyData,
+  BlockStateProps
 } from './utils'; 
 
 function blockReducer(state: BlockState = initialState, action: BlockActions): BlockState {
@@ -60,30 +62,37 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
 
       const addedBlocks = insertBlock(state.blocks, [ newBlock ], preBlock.id);
 
-      return updateObject(state, {
-        blocks: orderingBlock(addedBlocks),
+      console.log("modify", addedBlocks.modifyData);
+
+      return updateObject<BlockState, BlockStateProps>(state, {
+        blocks: orderingBlock(addedBlocks.blocks),
         editingId: newBlock.id,
         tempBack: tempDataPush(state.tempBack, {
           type: ADD_BLOCK,
           data: {
             id: newBlock.id
           }
-        })
+        }),
+        modifyData: updateModifyData(state.modifyData, addedBlocks.modifyData)
       });
     
     case ADD_BLOCKLIST:
       const newBlocks = copyBlockDataList(action.payload.blockList);
 
       console.log("실행2", newBlocks, action.payload.blockList);
+      const addedBlockList = insertBlock(state.blocks, newBlocks, action.payload.preBlockId);
 
-      return updateObject(state, {
-        blocks: orderingBlock(insertBlock(state.blocks, newBlocks, action.payload.preBlockId)),
+      console.log(addedBlockList.modifyData);
+
+      return updateObject<BlockState, BlockStateProps>(state, {
+        blocks: orderingBlock(addedBlockList.blocks),
         tempBack: tempDataPush(state.tempBack, {
           type: ADD_BLOCKLIST,
           data: {
             idList: newBlocks.map((block)=> block.id)
           }
-        })
+        }),
+        modifyData: updateModifyData(state.modifyData, addedBlockList.modifyData)
       });
 
     case EDITABLE: 
@@ -101,9 +110,9 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         editingBlockId = editingId
       }
 
-      return Object.assign({}, state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         editingId: editingBlockId
-      })
+      });
     
     case EDIT_BLOCK: 
       const editedId = action.payload.blockId;
@@ -120,7 +129,7 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         contents: text
       }
 
-      return Object.assign({}, state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         stage: preStagedBlock? [...preStagedBlock, newStagedBlock] : [newStagedBlock]
       });
 
@@ -145,7 +154,7 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         blockIndex: changedTextStyleBlock.index
       }
       
-      return Object.assign({}, state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         blocks: state.blocks.map((block)=> 
           block.index === changedTextStyleBlockIndex? 
           changeStyleTextContents(
@@ -169,14 +178,17 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
 
       const newTempBack = getContentsToBeChanged(state.blocks, state.stage);
       
-      const newState = Object.assign({}, state, {
-        blocks: updateContents(state.blocks, state.stage),
+      const resUpdateContents = updateContents(state.blocks, state.stage)
+
+      const newState = updateObject<BlockState, BlockStateProps>(state, {
+        blocks: resUpdateContents.blocks,
         stage: [],
         editingId: null,
         tempBack: tempDataPush(state.tempBack, {
           type: COMMIT_BLOCK,
           data: newTempBack
-        })
+        }),
+        modifyData: updateModifyData(state.modifyData, resUpdateContents.modifyData)
       });
 
       // localStorage.setItem("block", JSON.stringify(newState));
@@ -193,19 +205,22 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         block.id === deletedId
       )[0];
 
-      return Object.assign({}, state, {
-        blocks: orderingBlock(excludeBlock(state.blocks, deletedId)),
+      const resExcludeBlock = excludeBlock(state.blocks, deletedId);
+
+      return updateObject<BlockState, BlockStateProps>(state, {
+        blocks: orderingBlock(resExcludeBlock.blocks),
         tempBack: tempDataPush(state.tempBack, {
           type: DELETE_BLOCK,
           data: deletedBlock
-        })
+        }),
+        modifyData: updateModifyData(state.modifyData, resExcludeBlock.modifyData)
       });
     
     case SWITCH_BLOCK:
       const { switchedId, targetBlockId, targetType } = action.payload;
       const switchedBlocks = switchingBlock(state.blocks, switchedId, targetBlockId, targetType);
 
-      return Object.assign({}, state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         blocks: orderingBlock(switchedBlocks)
       });
     
@@ -217,7 +232,7 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
         restoreBlocks = restoreBlock(state.blocks, testBlock.data);
       } 
 
-      return restoreBlocks? Object.assign({}, state, {
+      return restoreBlocks? updateObject<BlockState, BlockStateProps>(state, {
         blocks: orderingBlock(restoreBlocks.blocks)
       }) : state;
 
@@ -232,25 +247,25 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
           if(tempClip[length - 1] !== action.payload) tempClip.push(action.payload);
         }
 
-        return updateObject(state, {
+        return updateObject<BlockState, BlockStateProps>(state, {
           tempClip
         });
       } else {
-        return updateObject(state, {
+        return updateObject<BlockState, BlockStateProps>(state, {
           tempClip: [action.payload]
         });
 
       }
     
     case CLEAR_TEMPCLIP:
-      return updateObject(state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         tempClip: []
       });
 
     case SET_CLIPBOARD:
       if(state.tempClip[0]) {
         const tempClip = state.tempClip.sort((a, b) => a - b);
-        return updateObject(state, {
+        return updateObject<BlockState, BlockStateProps>(state, {
           clipboard: tempClip.map((idx) => state.blocks[idx - 1])
         });
 
@@ -259,14 +274,14 @@ function blockReducer(state: BlockState = initialState, action: BlockActions): B
       }
 
     case CLEAR_CLIPBOARD: 
-      return updateObject(state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         clipboard: []
       });
 
     case TEST_CLIPBOARD:
       console.log(action.payload);
 
-      return updateObject(state, {
+      return updateObject<BlockState, BlockStateProps>(state, {
         test: state.test? [...state.test, action.payload] : [action.payload]
       });
 

@@ -1,6 +1,6 @@
 import { Token } from "../../utils/token";
 import { BlockData, UUID, RawBlockData } from "../../types";
-import { StagedBlock, parseHtmlContents } from ".";
+import { StagedBlock, parseHtmlContents, ModifyBlockType, ModifyData, ModifyCommand, ModifySet, ModifyBlockData } from ".";
 
 
 interface ChangedData {
@@ -10,12 +10,31 @@ interface ChangedData {
 
 type Block = BlockData | RawBlockData;
 
+interface ResBlocks<T = Block[]> {
+  blocks: T,
+  modifyData: ModifyData[]
+}
+
 /**
  * 
  * @param array 
  */
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
+}
+
+function createModifyData<T = any>(
+  command: ModifyCommand, 
+  set: ModifySet,
+  blockId: string, 
+  payload?: T
+): ModifyData {
+  return {
+    command,
+    set,
+    blockId,
+    payload
+  }
 }
   
 /**
@@ -185,14 +204,16 @@ const isBlockId = (id: UUID | null) =>
  * @param preBlockId 
  */
 function insertBlock(
-  preBlocks:Block[],
+  preBlocks: Block[],
   blockDataList: Block[],
   preBlockId: UUID | null,
   parentId?: UUID
-): Block[] {
+): ResBlocks {
   let newBlocks: Block[] = copyToNewObjectArray<Block>(preBlocks);
   const newBlockDataList = [...blockDataList];
   const firstPosition: number = 0;
+
+  const modifyData: ModifyData[] = [];
 
   let currentBlockId: UUID | null = newBlockDataList[firstPosition].id;
   let newChildrenList: UUID[] = [];
@@ -220,6 +241,10 @@ function insertBlock(
       if(preBlock) {
         newBlockDataList[firstPosition].preBlockId = preBlock.id;
         newBlocks[preBlockPosition].nextBlockId = currentBlockId;
+
+        modifyData.push(createModifyData<ModifyBlockData>("update", "block", preBlock.id, {
+          nextBlockId: currentBlockId
+        }));
       } else {
         newBlockDataList[firstPosition].preBlockId = null;
       }
@@ -234,6 +259,10 @@ function insertBlock(
       if(nextBlock) {
         newBlockDataList[currentBlockPosition].nextBlockId = nextBlock.id;
         newBlocks[nextBlockPosition].preBlockId = currentBlockId;
+
+        modifyData.push(createModifyData<ModifyBlockData>("update", "block", nextBlock.id, {
+          preBlockId: currentBlockId
+        }));
       }
       currentBlockId = null;
     } else {
@@ -245,7 +274,7 @@ function insertBlock(
   if(parentBlockId) {
     const parentBlockPosition: number = newBlocks.findIndex(isBlockId(parentBlockId));
     const parentBlock: Block = newBlocks[parentBlockPosition];
-    const insertPosion: number  = preBlockId? 
+    const insertPosition: number  = preBlockId? 
       parentBlock.children.indexOf(preBlockId) + 1 : 0;
     const nextBlockPosition: number = !preBlockId? 
       newBlocks.findIndex(isBlockId(parentBlock.children[0])) : -1;
@@ -255,19 +284,36 @@ function insertBlock(
       const newBlocklastChildPosition: number = newBlockDataList.findIndex(isBlockId(newBlockLastChild));
       newBlocks[nextBlockPosition].preBlockId = newBlockLastChild;
       newBlockDataList[newBlocklastChildPosition].nextBlockId = newBlocks[nextBlockPosition].id;
+
+      modifyData.push(createModifyData<ModifyBlockData>("update", "block", newBlocks[nextBlockPosition].id, {
+        preBlockId: newBlockLastChild
+      }));
+      modifyData.push(createModifyData<ModifyBlockData>("update", "block", newBlockDataList[newBlocklastChildPosition].id, {
+        nextBlockId: newBlocks[nextBlockPosition].id
+      }));
     }
 
     newBlocks[parentBlockPosition].children = insertChild(
       parentBlock.children, 
-      insertPosion,
+      insertPosition,
       newChildrenList  
     );
+
+    modifyData.push(createModifyData<ModifyBlockData>("update", "block", parentBlockId, {
+      children: newBlocks[parentBlockPosition].children
+    }));
   }
 
-  newBlocks = newBlocks.concat(newBlockDataList);
-
-  return newBlocks;
+  return {
+    blocks: newBlocks.concat(newBlockDataList),
+    modifyData: modifyData.concat(newBlockDataList.map(block => 
+      createModifyData<ModifyBlockData>("create", "block", block.id, Object.assign({}, block, {
+        index: undefined
+      }))
+    ))
+  }
 }
+
 
 /**
  * 
@@ -277,9 +323,11 @@ function insertBlock(
 function updateContents(
   blockData:BlockData<any>[], 
   stageData: StagedBlock[]
-):BlockData<any>[] {
+): ResBlocks<BlockData[]> {
 
   let newBlocks = copyToNewObjectArray<BlockData>(blockData);
+
+  const modifyData: ModifyData[] = [];
 
   stageData.forEach((block)=>{
 
@@ -291,6 +339,12 @@ function updateContents(
             contents: typeof block.contents === "string"? 
                       parseHtmlContents(block.contents) : block.contents
         });
+
+        modifyData.push(createModifyData<ModifyBlockData>("update", "block", newBlocks[block.blockIndex - 1].id, {
+          property: {
+            contents: newBlocks[block.blockIndex - 1].property.contents
+          }
+        }));
       }
       
     } else {
@@ -299,7 +353,10 @@ function updateContents(
 
   });
   
-  return newBlocks;
+  return { 
+    blocks: newBlocks,
+    modifyData
+  };
 }
 
 const isNotBlockId = (id: UUID) => 
@@ -309,23 +366,26 @@ const isNotBlockId = (id: UUID) =>
  * @param blocks 
  * @param id 
  */
-function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
+function excludeBlock(blocks: BlockData<any>[], id: UUID): ResBlocks {
   const deletedId = id;
   const deletedBlock = blocks.filter(isBlockId(deletedId))[0];
   const preBlockId = deletedBlock.preBlockId;
   const nextBlockId = deletedBlock.nextBlockId;
   const parentBlockId = deletedBlock.parentBlockId;
+  const modifyData: ModifyData[] = [];
 
   if(deletedBlock.type === "title") {
     console.log("title은 삭제할 수 없습니다.")
-    return blocks
+    return {
+      blocks,
+      modifyData
+    }
   } 
 
   let deletedBlocks = blocks.filter(isNotBlockId(deletedId));
 
   let newPreBlockId = preBlockId;
   let newNextBlockId = nextBlockId;
-
 
   if(deletedBlock.children[0]) {
     let childPositionList:number[] = [];
@@ -337,15 +397,36 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
     if(preBlockId) {
       deletedBlocks[firstChild].preBlockId = preBlockId;
       newNextBlockId = deletedBlocks[firstChild].id;
+
+      modifyData.push(createModifyData<ModifyBlockData>(
+        "update",
+        "block",
+        deletedBlocks[firstChild].id,
+        { preBlockId }
+      ));
     }
       
     if(nextBlockId) {
       deletedBlocks[lastChild].nextBlockId = nextBlockId;
       newPreBlockId = deletedBlocks[lastChild].id;
+
+      modifyData.push(createModifyData<ModifyBlockData>(
+        "update",
+        "block",
+        deletedBlocks[lastChild].id,
+        { nextBlockId }
+      ));
     }
     
     childPositionList.forEach((child)=>{
       deletedBlocks[child].parentBlockId = parentBlockId;
+
+      modifyData.push(createModifyData<ModifyBlockData>(
+        "update",
+        "block",
+        deletedBlocks[child].id,
+        { parentBlockId }
+      ));
     });
   } 
 
@@ -358,21 +439,52 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
       children: deletedBlock.children[0] ?
       insertChild(parentBlock.children, deletePosition, deletedBlock.children, 1)
       : parentBlock.children.filter((child) => child !== deletedId)
-    })
+    });
+
+    modifyData.push(createModifyData<ModifyBlockData>(
+      "update",
+      "block",
+      deletedBlocks[parentBlockPosition].id,
+      {
+        children: deletedBlocks[parentBlockPosition].children
+      }
+    ));
   }
 
   if(preBlockId) {
     const preBlockPosition = deletedBlocks.findIndex(isBlockId(preBlockId));
     deletedBlocks[preBlockPosition].nextBlockId = newNextBlockId;
+
+    modifyData.push(createModifyData<ModifyBlockData>(
+      "update",
+      "block",
+      deletedBlocks[preBlockPosition].id,
+      { nextBlockId: newNextBlockId }
+    ));
   }
 
   if(nextBlockId) {
     const nextBlockPosition = deletedBlocks.findIndex(isBlockId(nextBlockId));
     deletedBlocks[nextBlockPosition].preBlockId = newPreBlockId;
+
+    modifyData.push(createModifyData<ModifyBlockData>(
+      "update",
+      "block",
+      deletedBlocks[nextBlockPosition].id,
+      { preBlockId: newPreBlockId }
+    ));
   }
 
-  console.log("deletedBlocks",deletedBlocks, deletedId, deletedBlock, blocks);
-  return deletedBlocks;
+  modifyData.push(createModifyData<ModifyBlockData>(
+    "delete",
+    "block",
+    deletedId
+  ));
+
+  return {
+    blocks: deletedBlocks,
+    modifyData
+  };
 }
 
 /**
@@ -380,13 +492,15 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): BlockData<any>[] {
  * @param blocks 
  * @param blockIdList 지워질 blockList들은 서로 연결이 되어 있어야 함.
  */
-function excludeBlockList(blocks: BlockData[], blockIdList: UUID[]) {
+function excludeBlockList(blocks: BlockData[], blockIdList: UUID[]): ResBlocks {
 
   let deletedBlocks: BlockData[] = copyToNewObjectArray<BlockData>(blocks);
   let currentBlockId: UUID | null = blockIdList[0];
 
   let preBlockData: [UUID, number] | null = null;
   let nextBlockData: [UUID, number] | null = null;
+
+  const modifyData: ModifyData[] = [];
 
   while(currentBlockId) {
     const currentBlock: BlockData<any> = blocks.filter(isBlockId(currentBlockId))[0];
@@ -397,7 +511,10 @@ function excludeBlockList(blocks: BlockData[], blockIdList: UUID[]) {
 
     if((!preBlockId && !parentBlockId) || currentBlock.type === "title") {
       console.log("title은 삭제할 수 없습니다.")
-      return blocks
+      return {
+        blocks,
+        modifyData
+      }
     } 
 
     if(parentBlockId) {
@@ -406,6 +523,22 @@ function excludeBlockList(blocks: BlockData[], blockIdList: UUID[]) {
       deletedBlocks[parentPosition].children = deletedBlocks[parentPosition].children.filter((child)=>
         child !== currentBlock.id
       );
+
+      if(modifyData[0]) {
+        const idx = modifyData.findIndex((data) => data.blockId === deletedBlocks[parentPosition].id);
+        if(idx !== -1) {
+          modifyData.splice(idx, 1);
+        } 
+      }
+
+      modifyData.push(createModifyData<ModifyBlockData>(
+        "update", 
+        "block", 
+        deletedBlocks[parentPosition].id, {
+          children: deletedBlocks[parentPosition].children
+        })
+      );
+    
     }
     
     if(preBlockId) {
@@ -435,17 +568,38 @@ function excludeBlockList(blocks: BlockData[], blockIdList: UUID[]) {
   if(preBlockData && nextBlockData) {
     deletedBlocks[preBlockData[1]].nextBlockId = nextBlockData[0];
     deletedBlocks[nextBlockData[1]].preBlockId = preBlockData[0];
+
+    modifyData.push(createModifyData<ModifyBlockData>("update", "block", preBlockData[0], {
+      nextBlockId: nextBlockData[0]
+    }));
+    modifyData.push(createModifyData<ModifyBlockData>("update", "block", nextBlockData[0], {
+      preBlockId: preBlockData[0]
+    }));
+
   } else if(preBlockData) {
     deletedBlocks[preBlockData[1]].nextBlockId = null;
+
+    modifyData.push(createModifyData<ModifyBlockData>("update", "block", preBlockData[0], {
+      nextBlockId: null
+    }));
   } else if(nextBlockData) {
     deletedBlocks[nextBlockData[1]].preBlockId = null;
+
+    modifyData.push(createModifyData<ModifyBlockData>("update", "block", nextBlockData[0], {
+      preBlockId: null
+    }));
   } 
 
-  for(let i = 0; i < blockIdList.length; i++) {
-    deletedBlocks = deletedBlocks.filter(isNotBlockId(blockIdList[i]));
+  for(const blockId of blockIdList) {
+    deletedBlocks = deletedBlocks.filter(isNotBlockId(blockId));
+
+    modifyData.push(createModifyData<ModifyBlockData>("delete", "block", blockId));
   }
 
-  return deletedBlocks;
+  return {
+    blocks: deletedBlocks,
+    modifyData
+  };
 }
 
 // 되돌아가기를 했을때 그 전 preBlockId를 기억하고 있으면 될 것 같음.
@@ -466,16 +620,20 @@ function switchingBlock(
 ): BlockData[] {
 
   const currentBlock = preBlocks.filter(isBlockId(blockId))[0];
+  const modifyData: ModifyData[] = [];
+
   if(!currentBlock) {
     console.log("currentBlock을 찾을 수 없습니다.");
     return preBlocks;
   } 
+
   if(currentBlock.children[0]) {
     if(currentBlock.children.indexOf(targetBlockId) !== -1) {
       console.log("targetId가 currentId의 자식 요소입니다.")
-      return preBlocks;
+      return preBlocks
     }
   }
+
   const newBlocks = preBlocks.filter(isNotBlockId(blockId));
 
   let currentPreBlockPosition: number = newBlocks.findIndex(isBlockId(currentBlock.preBlockId));
@@ -484,6 +642,10 @@ function switchingBlock(
   
   if(currentPreBlockPosition !== -1) {
     newBlocks[currentPreBlockPosition].nextBlockId = currentBlock.nextBlockId;
+
+    modifyData.push(createModifyData<ModifyBlockData>("update", "block", newBlocks[currentPreBlockPosition].id, {
+      nextBlockId: currentBlock.nextBlockId
+    }));
   }
   if(currentNextBlockPosition !== -1) {
     newBlocks[currentNextBlockPosition].preBlockId = currentBlock.preBlockId;
@@ -620,7 +782,7 @@ function restoreBlock(
     });
   }
 
-  if(currentBlock.children[0]) {
+  if(currentBlock.children[0] !== undefined) {
     const length = currentBlock.children.length;
 
     for(let i = 0; i < length; i++) {

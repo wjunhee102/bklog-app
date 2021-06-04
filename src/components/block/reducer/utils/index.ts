@@ -5,7 +5,7 @@ import {
 import converter from './converter';
 import * as ordering  from './ordering';
 import blocksUtils from './blocksUtils';
-import tempStoreUtils from './tempStoreUtils';
+import sideStoreUtils from './sideUtils';
 import actionBlock from './actionTypes';
 
 /**
@@ -25,6 +25,58 @@ export interface TempData {
   type: string;
   data: any;
 }
+export type ModifyCommand = "update" | "create" | "delete";
+export type ModifySet = "block" | "property" | "comment"; 
+
+export interface ParamModifyBlock {
+  blockId: string;
+  set: ModifySet;
+  payload: any;
+}
+
+export interface ParamCreateBlock {
+  blockId: string;
+  set: "block";
+  payload: BlockData;
+}
+
+export interface ParamCreateComment {
+  blockId: string;
+  set: "comment";
+  payload: any;
+}
+
+export type ParamCreateModifyBlock = ParamCreateBlock | ParamCreateComment;
+
+export class ParamDeleteModity {
+  blockIdList?: string[];
+  commentIdList?: string[];
+}
+
+export interface ModifyBlockType {
+  create?: ParamCreateModifyBlock[];
+  update?: ParamModifyBlock[];
+  delete?: ParamDeleteModity;
+}
+
+export interface ModifyBlockData<T = any> {
+  id?: UUID | string;
+  type?: string;
+  parentBlockId?: UUID | string | null;
+  preBlockId?: UUID | string | null;
+  nextBlockId?: UUID | string | null;
+  // 수정할 것.
+  property?: T;
+  children?: UUID[];
+}
+
+export interface ModifyData<T = any> {
+  command: ModifyCommand;
+  blockId: string;
+  set: ModifySet;
+  payload: T;
+}
+
 export interface BlockState {
   editingId: string | null;
   blocks: BlockData<any>[];
@@ -35,7 +87,22 @@ export interface BlockState {
   tempClip: number[];
   clipboard: BlockData<any>[];
   test: any;
+  modifyData: ModifyData[];
 }
+
+export interface BlockStateProps {
+  editingId?: string | null;
+  blocks?: BlockData<any>[];
+  stage?: StagedBlock[];
+  rightToEdit?: boolean;
+  tempBack?: TempData[];
+  tempFront?: TempData[];
+  tempClip?: number[];
+  clipboard?: BlockData<any>[];
+  test?: any;
+  modifyData?: ModifyData[];
+}
+
 export type OrderType = "add" | "del" | "color" | "link";
 
 /**
@@ -126,10 +193,11 @@ export const restoreBlock      = blocksUtils.restoreBlock;
 /**
  * tempStoreUtils
  */
-export const tempDataPush           = tempStoreUtils.tempDataPush;
-export const getContentsToBeChanged = tempStoreUtils.getContentsToBeChanged;
+export const tempDataPush           = sideStoreUtils.tempDataPush;
+export const getContentsToBeChanged = sideStoreUtils.getContentsToBeChanged;
+export const updateModifyData       = sideStoreUtils.updateModifyData;
 
-export function updateObject<T = any>(oldObject: T, newValues: any): T {
+export function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
   return Object.assign({}, oldObject, newValues);
 };
 
@@ -143,6 +211,7 @@ export const initialState:BlockState = (() => {
     tempFront: [],
     tempClip: [],
     clipboard: [],
-    test: null
+    test: null,
+    modifyData: []
   };
 })();

@@ -3,19 +3,19 @@ import React from 'react';
 interface ContentEditableEle {
   className: string;
   editable: boolean;
-  onKeyDown?: (e: any) => void;
-  onKeyPress?: (e: any) => void;
-  onKeyUp?: (e: any) => void;
-  onCopy?: (e: any) => void;
-  onPaste?: (e: any) => void;
-  onClick?: (e: any) => void;
-  onMouseUp?: (e: any) => void;
-  onMouseDown?: (e: any) => void;
-  onMouseMove?: (e: any) => void;
-  onFocus?: (e: any) => void;
-  onBlur?: (e: any) => void;
-  placeholder?: string;
-  dangerouslySetInnerHTML?: {
+  onKeyDown?: any;
+  onKeyPress?: any;
+  onKeyUp?: any;
+  onCopy?: any;
+  onPaste?: any;
+  onClick?: any;
+  onMouseUp?: any;
+  onMouseDown?: any;
+  onMouseMove?: any;
+  onFocus?: any;
+  onBlur?: any;
+  placeholder: string;
+  dangerouslySetInnerHTML: {
     __html: any
   }
   contents?: string;
