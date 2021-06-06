@@ -1,31 +1,68 @@
 import { useCallback, useMemo, useReducer } from 'react';
+import { testDB } from '../db';
 import blockReducer, {BlockState} from '../reducer';
-import { BlockData } from '../types';
+import { sortBlock } from '../reducer/utils/ordering';
+import { BlockData, RawBlockData } from '../types';
+
+interface TypesAcc {
+  root: any[],
+  children: any
+}
+
+const covertArg = (arg: any[]) => {
+  return arg.reduce((acc, cur) =>  !acc? `${cur}` : `${acc}-${cur}`);
+}
+
+/**
+ * accutator type;
+  {
+    root: [],
+    children: [
+      {
+        "1": [],
+        "2": []
+      },
+      {
+        "10": []
+      }
+    ]
+  }
+
+*/
+const reducer = (acc: TypesAcc, cur: RawBlockData) => {
+  const position = cur.position.split(/-/);
+  let length = position.length;
+
+  if(length === 1) {
+    acc.root.push(cur);
+  } else {
+    position.pop();
+    const parentPosition = covertArg(position);
+
+    if(!acc.children.hasOwnProperty([parentPosition])) {
+      acc.children[parentPosition] = [];
+    }
+
+    acc.children[parentPosition].push(cur);
+  }
+
+  return acc;
+}
 
 const initialState: BlockState = {
-  blockList: []
-}
-
-interface BlockDataTree extends BlockData {
-  children: BlockDataTree | null;
-}
-
-function createBlockTree(blockList: BlockData[]) {
-
+  blockList: sortBlock(testDB)
 }
 
 function useBlock() {
   
   const [ state, dispatch ] = useReducer(blockReducer, initialState);
 
-  const initBlock: BlockData[] = useMemo(()=>
-    state.blockList.filter(block => block.position.length === 1), [state.blockList]);
-
-  const getChildrenBlock = ( position: string ): BlockData[] =>
-    state.blockList.filter(block => block.position.slice(0, -2) === position);
+  const initBlock: any = useMemo(()=>
+    state.blockList.reduce(reducer, { root: [], children: {} }), [state.blockList]);
 
   return { 
-    state
+    state,
+    initBlock
   };
 }
 

@@ -1,19 +1,20 @@
 import React from "react";
+import { UseBlockTypes } from "./hooks/useBlock";
 import { BlockData } from "./types";
 
 interface BlockEleProps {
   idx: number;
-  position: number[];
-  blockData: BlockData
+  blockData: BlockData,
+  actions: UseBlockTypes
 }
 
 const BlockElement: React.FC<BlockEleProps> = ({
   idx,
-  position,
-  blockData
+  blockData,
+  actions
 }) => {
   return (
-    <div>
+    <div className="block-zone">
 
     </div>
   )
