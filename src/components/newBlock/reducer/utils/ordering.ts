@@ -1,96 +1,257 @@
 import { BlockData, RawBlockData } from "../../types";
 
-const parseString = (text: string): string[] => {
-  return text.split(/-/);
-}
+// const parseString = (text: string): string[] => {
+//   return text.split(/-/);
+// }
 
-const covertArg = (arg: any[]): string => {
-  return arg.reduce((acc, cur) =>  !acc? `${cur}` : `${acc}-${cur}`);
-}
+// const convertArg = (arg: any[]): string => {
+//   if(arg.length === 1) return `${arg[0]}`;
+//   return arg.reduce((acc, cur) =>  !acc? `${cur}` : `${acc}-${cur}`);
+// }
 
-const isPosition = (position: string) => 
-  (block: RawBlockData | BlockData) =>  
-  block.position === position;
+// const isPosition = (position: string) => 
+//   (block: RawBlockData | BlockData) =>  
+//   block.position === position;
 
-function resetBlockPosition(
-  preBlockDataList: BlockData[] | RawBlockData[], 
-  sortedBlockDataList: BlockData[]
-): BlockData[] {
+// function resetBlockPosition(
+//   preBlockDataList: BlockData[] | RawBlockData[], 
+//   sortedBlockDataList: BlockData[]
+// ): BlockData[] {
 
-  const blockList = preBlockDataList.concat();
+//   const blockList = preBlockDataList.concat();
 
-  const rootBlockList = sortedBlockDataList.filter((block) => parseString(block.position).length === 1);
-  const length = rootBlockList.length - 1
-  let nextPosition: number = Number(rootBlockList[length].position);
-  let index = rootBlockList[length].index;
+//   const rootBlockList = sortedBlockDataList.filter((block) => parseString(block.position).length === 1);
+//   const length = rootBlockList.length - 1
+//   let nextPosition: number = Number(rootBlockList[length].position);
+//   let index = rootBlockList[length].index;
 
-  return sortedBlockDataList.concat(blockList.map((block: BlockData | RawBlockData ) => Object.assign({}, block, {
-    position: `${++nextPosition}`,
-    index: ++index
-  })));
-}
+//   return sortedBlockDataList.concat(blockList.map((block: BlockData | RawBlockData ) => Object.assign({}, block, {
+//     position: `${++nextPosition}`,
+//     index: ++index
+//   })));
+// }
 
-export function sortBlock(blockDataList: BlockData[] | RawBlockData[]): BlockData[] {
-  let length = blockDataList.length - 1;
+// export function sortBlock2(blockDataList: BlockData[] | RawBlockData[]): BlockData[] {
+//   let length = blockDataList.length - 1;
 
-  if(length === -1) return [];
+//   if(length === -1) return [];
 
-  let index = 1;
-  let currentPosition: string[] = ["1"];
+//   let index = 1;
+//   let currentPosition: string[] = ["1"];
+//   let parentId: string | null = null;
 
-  const preBlockDataList = blockDataList.concat();
-  const sortedBlockDataList: BlockData[] = []; 
+//   const preBlockDataList = blockDataList.concat();
+//   const sortedBlockDataList: BlockData[] = []; 
 
-  let preBlockListIdx: number = preBlockDataList.findIndex(isPosition(covertArg(currentPosition)));
+//   let preBlockListIdx: number = preBlockDataList.findIndex(isPosition(covertArg(currentPosition)));
 
-  if(preBlockListIdx === -1) {
-    return preBlockDataList
-    .filter(block => block.type !== "container")
-    .map((block, idx) => Object.assign({}, block, {
-      index: idx,
-      position: `${idx}`
-    }));
-  }
+//   while(length) {
+//     sortedBlockDataList.push(Object.assign({}, preBlockDataList[preBlockListIdx], {
+//       index
+//     }));
+//     preBlockDataList[preBlockListIdx] = preBlockDataList[length];
+//     preBlockDataList.pop();
+//     length--;
+//     index++;
 
-  while(length) {
-    sortedBlockDataList.push(Object.assign({}, preBlockDataList[preBlockListIdx], {
-      index
-    }));
-    preBlockDataList[preBlockListIdx] = preBlockDataList[length];
-    preBlockDataList.pop();
-    length--;
-    index++;
+//     let stringLength = currentPosition.length;
+//     let nextPosition: string[] = currentPosition.concat();
+//     nextPosition.push("1");
 
-    let stringLength = currentPosition.length;
-    let nextPosition: string[] = currentPosition.concat();
-    nextPosition.push("1");
+//     preBlockListIdx = preBlockDataList.findIndex(isPosition(covertArg(nextPosition)));
 
-    preBlockListIdx = preBlockDataList.findIndex(isPosition(covertArg(nextPosition)));
+//     while(preBlockListIdx === -1) {
+//       stringLength--;
+//       nextPosition.pop();
+//       nextPosition[stringLength] = `${Number(nextPosition[stringLength]) + 1}`;
 
-    while(preBlockListIdx === -1) {
-      stringLength--;
-      nextPosition.pop();
-      nextPosition[stringLength] = `${Number(nextPosition[stringLength]) + 1}`;
+//       if(stringLength === -1) {
+//         return resetBlockPosition(preBlockDataList, sortedBlockDataList);
+//       }
 
-      if(stringLength === -1) {
-        return resetBlockPosition(preBlockDataList, sortedBlockDataList);
+//       preBlockListIdx = preBlockDataList.findIndex(isPosition(covertArg(nextPosition)));
+//     }
+
+//     currentPosition = nextPosition;
+//   }
+
+//   sortedBlockDataList.push(Object.assign({}, preBlockDataList[0], {
+//     index
+//   }));
+
+//   return sortedBlockDataList;
+// }
+
+
+export function sortBlock(blockDataList: BlockData[] | RawBlockData[]) {
+  return blockDataList.concat().sort((a, b) => {
+    if(a.position === b.position) {
+      return 0
+    }
+    const ary1 = a.position.split(/-/);
+    const ary2 = b.position.split(/-/);
+
+    let length = 0;
+    while(ary1[length] && ary2[length]) {
+      const aNum = Number(ary1[length]);
+      const bNum = Number(ary2[length]);
+      if(aNum > bNum) {
+        return 1;
+      } else if(aNum < bNum) {
+        return -1;
       }
-
-      preBlockListIdx = preBlockDataList.findIndex(isPosition(covertArg(nextPosition)));
+      length++;
     }
 
-    currentPosition = nextPosition;
-  }
-
-  sortedBlockDataList.push(Object.assign({}, preBlockDataList[0], {
+    if(!ary1[length] && !ary2[length]) {
+      return 0;
+    } else {
+      return ary1[length]? 1 : -1;
+    }
+  }).map((block, index) => Object.assign(block, {
     index
   }));
-
-  return sortedBlockDataList;
 }
 
+export function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
+  const preBlockDataList = sortBlock(blockDataList);
+  const newBlockDataList: BlockData[] = [];
+
+  let positions: [number, string][] = []; //[position, id]
+  let positionsLength = 0;
+  let index = 1;
+  let preBlockListlength = preBlockDataList.length - 1;
 
 
+  positions.push([preBlockDataList[0].position.split(/-/).length, preBlockDataList[0].id]);
+  newBlockDataList.push(Object.assign({}, preBlockDataList[0], {
+    index: 0,
+    parentId: "root"
+  }));
+
+  preBlockDataList.shift();
+
+  while(preBlockListlength) {
+    let length = preBlockDataList[0].position.split(/-/).length;
+
+    if(positions[positionsLength][0] === length) {
+      positions[positionsLength] = [length, preBlockDataList[0].id];
+    } else if(positions[positionsLength][0] < length){
+      positions.push([length, preBlockDataList[0].id]);
+      positionsLength++;
+    } else {
+      for(let i = 0; i <= positions[positionsLength][0] - length; i++) {
+        positions.pop();
+        positionsLength--;
+      } 
+      positions[positionsLength] = [length, preBlockDataList[0].id];
+    }
+    
+    newBlockDataList.push(Object.assign({}, preBlockDataList[0], {
+      index,
+      parentId: !positionsLength? "root" : positions[positionsLength - 1][1]
+    }));
+
+    preBlockListlength--;
+    index++;
+    preBlockDataList.shift();
+  }
+
+  return newBlockDataList;
+}
+
+export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
+  const preBlockDataList = blockDataList.concat();
+  const newBlockDataList: BlockData[] = [];
+  const modifyData: any[] = [];
+
+  let preBlockListlength = preBlockDataList.length - 1;
+
+  if(preBlockListlength === -1) {
+    return {
+      blockDataList: [],
+      modifyData
+    }
+  }
+
+  const stackId: string[] = [];
+  let stackIdLength = 0;
+  let index = 1;
+  let currentPosition = [1];
+  let currentPositionLength = 0;
+
+  stackId.push(preBlockDataList[0].id);
+  newBlockDataList.push(Object.assign({}, preBlockDataList[0], {
+    index: 0,
+    parentId: "root",
+    position: "1"
+  }));
+
+  preBlockDataList.shift();
+
+  while(preBlockListlength) {
+    let block = preBlockDataList.shift();
+    
+    if(!block) {
+      console.log("not block");
+      return {
+        blockDataList: [],
+        modifyData
+      };
+    }
+
+    let length = block.position.split(/-/).length - 1;
+
+    if(currentPositionLength === length) {
+      stackId[stackIdLength] = block.id;
+      currentPosition[currentPositionLength]++;
+    } else if(currentPositionLength < length){
+      stackId.push(block.id);
+      stackIdLength++;
+      currentPosition.push(1);
+      currentPositionLength++;
+    } else {
+      for(let i = 0; i <= currentPositionLength - length; i++) {
+        currentPosition.pop();
+        currentPositionLength--;
+        stackId.pop();
+        stackIdLength--;
+      } 
+      currentPosition[currentPositionLength]++;
+      stackId[stackIdLength] = block.id;
+    }
+
+    let position = currentPosition.join("-");
+
+    if(position !== block.position) {
+      modifyData.push({
+        command: "update",
+        blockId: block.id,
+        payload: {
+          position
+        }
+      });
+    }
+    
+    newBlockDataList.push(Object.assign({}, block, {
+      index,
+      parentId: !stackIdLength? "root" : stackId[stackIdLength - 1],
+      position
+    }));
+
+    preBlockListlength--;
+    index++;
+  }
+
+  return {
+    blockDataList: newBlockDataList,
+    modifyData
+  };
+}
+
+export function initBlock(blockDataList: RawBlockData[] | BlockData[]): BlockData[] {
+  return orderingBlock(sortBlock(blockDataList)).blockDataList;
+}
 
 /**
 type = {
@@ -127,30 +288,15 @@ type = [
   ["a8", "3-1"]
 ]
 
-(a, b) => {
-      if(a === b) {
-        return 0
-      }
-      const ary1 = a.split(/-/);
-      const ary2 = b.split(/-/);
+type {
+  root: [],
+  "parentId1": [],
+  "parentId2": [],
+  "parentId3": []
+}
 
-      let length = 0;
-      while(ary1[length] && ary2[length]) {
-        const aNum = Number(ary1[length]);
-        const bNum = Number(ary2[length]);
-        if(aNum > bNum) {
-          return 1;
-        } else if(aNum < bNum) {
-          return -1;
-        }
-        length++;
-      }
+위치를 옮길 때는 parentId를 null하고 position 변경
+부모의 position이 변경됐을 때는 parentId를 기반으로 children 찾기
+*/
 
-      if(!ary1[length] && !ary2[length]) {
-        return 0;
-      } else {
-        return ary1[length]? 1 : -1;
-      }
-    }
- */
 

@@ -40,4 +40,5 @@ export interface RawBlockData<T = any, P = any> {
 
 export interface BlockData<T = any, P = any> extends RawBlockData<T, P> {
   index: number;
+  parentId: string;
 }

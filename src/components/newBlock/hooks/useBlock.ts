@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useReducer } from 'react';
 import { testDB } from '../db';
 import blockReducer, {BlockState} from '../reducer';
-import { sortBlock } from '../reducer/utils/ordering';
+import { initBlock, orderingBlock, sortBlock } from '../reducer/utils/ordering';
 import { BlockData, RawBlockData } from '../types';
 
 interface TypesAcc {
@@ -9,7 +9,7 @@ interface TypesAcc {
   children: any
 }
 
-const covertArg = (arg: any[]) => {
+const convertArg = (arg: any[]) => {
   return arg.reduce((acc, cur) =>  !acc? `${cur}` : `${acc}-${cur}`);
 }
 
@@ -29,7 +29,7 @@ const covertArg = (arg: any[]) => {
   }
 
 */
-const reducer = (acc: TypesAcc, cur: RawBlockData) => {
+const reducer2 = (acc: TypesAcc, cur: RawBlockData) => {
   const position = cur.position.split(/-/);
   let length = position.length;
 
@@ -37,7 +37,7 @@ const reducer = (acc: TypesAcc, cur: RawBlockData) => {
     acc.root.push(cur);
   } else {
     position.pop();
-    const parentPosition = covertArg(position);
+    const parentPosition = convertArg(position);
 
     if(!acc.children.hasOwnProperty([parentPosition])) {
       acc.children[parentPosition] = [];
@@ -49,8 +49,18 @@ const reducer = (acc: TypesAcc, cur: RawBlockData) => {
   return acc;
 }
 
+const reducer = (acc: any, cur: BlockData) => {
+  if(!acc.hasOwnProperty([cur.parentId])) {
+    acc[cur.parentId] = []
+  } 
+
+  acc[cur.parentId].push(cur);
+
+  return acc;
+}
+
 const initialState: BlockState = {
-  blockList: sortBlock(testDB)
+  blockList: initBlock(testDB)
 }
 
 function useBlock() {
@@ -58,7 +68,7 @@ function useBlock() {
   const [ state, dispatch ] = useReducer(blockReducer, initialState);
 
   const initBlock: any = useMemo(()=>
-    state.blockList.reduce(reducer, { root: [], children: {} }), [state.blockList]);
+    state.blockList.reduce(reducer, {}), [state.blockList]);
 
   return { 
     state,
