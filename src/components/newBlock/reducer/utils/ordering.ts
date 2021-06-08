@@ -83,7 +83,7 @@ import { BlockData, RawBlockData } from "../../types";
 // }
 
 
-export function sortBlock(blockDataList: BlockData[] | RawBlockData[]) {
+export function sortBlock<T extends RawBlockData = any>(blockDataList: T[]): T[] {
   return blockDataList.concat().sort((a, b) => {
     if(a.position === b.position) {
       return 0
@@ -108,12 +108,10 @@ export function sortBlock(blockDataList: BlockData[] | RawBlockData[]) {
     } else {
       return ary1[length]? 1 : -1;
     }
-  }).map((block, index) => Object.assign(block, {
-    index
-  }));
+  });
 }
 
-export function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
+function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
   const preBlockDataList = sortBlock(blockDataList);
   const newBlockDataList: BlockData[] = [];
 
@@ -186,6 +184,16 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
     parentId: "root",
     position: "1"
   }));
+
+  if(preBlockDataList[0].position !== "1") {
+    modifyData.push({
+      command: "update",
+      blockId: preBlockDataList[0].id,
+      payload: {
+        position: "1"
+      }
+    });
+  }
 
   preBlockDataList.shift();
 
@@ -299,4 +307,11 @@ type {
 부모의 position이 변경됐을 때는 parentId를 기반으로 children 찾기
 */
 
+const orderingBlockUtils = {
+  sortBlock,
+  orderingBlock,
+  initBlock
+}
+
+export default orderingBlockUtils;
 

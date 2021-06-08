@@ -1,8 +1,4 @@
-import { BlockData } from "../types";
-
-export interface BlockState {
-  blockList: BlockData[]
-}
+import { BlockState } from "./utils";
 
 const initialBlockState: BlockState = {
   blockList: []
