@@ -1,3 +1,4 @@
+import { createTempData, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
 import { BlockData, RawBlockData } from "../../types";
 
 // const parseString = (text: string): string[] => {
@@ -161,14 +162,18 @@ function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
 export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
   const preBlockDataList = blockDataList.concat();
   const newBlockDataList: BlockData[] = [];
+  const tempData: TempDataType = {
+    update: []
+  };
   const modifyData: any[] = [];
 
   let preBlockListlength = preBlockDataList.length - 1;
 
   if(preBlockListlength === -1) {
     return {
-      blockDataList: [],
-      modifyData
+      blockList: [],
+      modifyData,
+      tempData
     }
   }
 
@@ -179,6 +184,7 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
   let currentPositionLength = 0;
 
   stackId.push(preBlockDataList[0].id);
+
   newBlockDataList.push(Object.assign({}, preBlockDataList[0], {
     index: 0,
     parentId: "root",
@@ -186,13 +192,17 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
   }));
 
   if(preBlockDataList[0].position !== "1") {
-    modifyData.push({
-      command: "update",
-      blockId: preBlockDataList[0].id,
-      payload: {
+
+    tempData.update?.push(createTempData("block", preBlockDataList[0].id, {
+      position: preBlockDataList[0].position
+    }));
+
+    modifyData.push(
+      setUpdateModifyDataOfBlock(preBlockDataList[0].id, {
         position: "1"
-      }
-    });
+      })
+    );
+
   }
 
   preBlockDataList.shift();
@@ -203,28 +213,35 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
     if(!block) {
       console.log("not block");
       return {
-        blockDataList: [],
-        modifyData
+        blockList: [],
+        modifyData,
+        tempData
       };
     }
 
     let length = block.position.split(/-/).length - 1;
 
     if(currentPositionLength === length) {
+      
       stackId[stackIdLength] = block.id;
       currentPosition[currentPositionLength]++;
+
     } else if(currentPositionLength < length){
+
       stackId.push(block.id);
       stackIdLength++;
       currentPosition.push(1);
       currentPositionLength++;
+
     } else {
+
       for(let i = 0; i <= currentPositionLength - length; i++) {
         currentPosition.pop();
         currentPositionLength--;
         stackId.pop();
         stackIdLength--;
       } 
+
       currentPosition[currentPositionLength]++;
       stackId[stackIdLength] = block.id;
     }
@@ -232,13 +249,12 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
     let position = currentPosition.join("-");
 
     if(position !== block.position) {
-      modifyData.push({
-        command: "update",
-        blockId: block.id,
-        payload: {
-          position
-        }
-      });
+      tempData.update?.push(createTempData("block", block.id, {
+        position: block.position
+      }));
+      modifyData.push(setUpdateModifyDataOfBlock(block.id, {
+        position
+      }));
     }
     
     newBlockDataList.push(Object.assign({}, block, {
@@ -252,13 +268,28 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
   }
 
   return {
-    blockDataList: newBlockDataList,
+    blockList: newBlockDataList,
+    tempData,
     modifyData
   };
 }
 
-export function initBlock(blockDataList: RawBlockData[] | BlockData[]): BlockData[] {
-  return orderingBlock(sortBlock(blockDataList)).blockDataList;
+function initBlock(blockDataList: RawBlockData[] | BlockData[]) {
+  return orderingBlock(sortBlock(blockDataList));
+}
+
+const reducer = (acc: any, cur: BlockData) => {
+  if(!acc.hasOwnProperty([cur.parentId])) {
+    acc[cur.parentId] = []
+  } 
+
+  acc[cur.parentId].push(cur);
+
+  return acc;
+}
+
+function setBlockList(blockDataList: BlockData[]): SetBlockDataList {
+  return blockDataList.reduce(reducer, {});
 }
 
 /**
@@ -310,7 +341,8 @@ type {
 const orderingBlockUtils = {
   sortBlock,
   orderingBlock,
-  initBlock
+  initBlock,
+  setBlockList
 }
 
 export default orderingBlockUtils;

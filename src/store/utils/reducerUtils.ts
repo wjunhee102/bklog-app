@@ -1,4 +1,4 @@
-import { ActionDefaultType, InitialHandler, RootAction } from '.';
+import { ActionHandlers, ActionsCreators, ActionsUnion } from '.';
 
 const settingsReducer = {
   initial: (initialData = null) => ({
@@ -48,34 +48,21 @@ function handleAsyncActions (type: any, key: any, keepData: boolean = false) {
   };
 }
 
-// type InitialHandler<TState, TRootAction> = {
-//   [P in ActionDefaultType["type"]]: (state: TState, action: TRootAction & ActionDefaultType) => TState;
-// };
-
-// export type InitialHandler<TState, TRootAction> = {
-//   [key: string]: (state: TState, action: TRootAction & ActionDefaultType) => TState;
-// };
-
-// type InitialHandler<TState, TRootAction = ActionDefaultType> = {
-//   [P in keyof TRootAction & ActionDefaultType["type"]]?: (state: TState, action: P) => TState | any;
-// };
-
-// type InitialHandler<TState, TRootAction extends ActionDefaultType> = {
-//   [type: string]: (state: TState, action: TRootAction) => TState;
-// };
-
-
-function updateObject<T = any>(oldObject: T, newValues: any): T {
+function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
   return Object.assign({}, oldObject, newValues);
 };
 
-function createReducer<T, P extends ActionDefaultType = RootAction>(initialState: T, handlers: any ) {
-  return function reducer(state: T = initialState, action: P) {
-    if (action.type) {
-      return handlers[action.type](state, action) as T;
-    } else {
+function createReducer<P extends string, State, T extends ActionsCreators<P>>(
+  handlers: ActionHandlers<P, T, State>,
+  initialState: State
+) {
+  return (state: State = initialState, action: ActionsUnion<P, T>): State => {
+
+      if (handlers.hasOwnProperty(action.type)) {
+        return handlers[action.type](state, action);
+      }
+
       return state;
-    }
   }
 }
 

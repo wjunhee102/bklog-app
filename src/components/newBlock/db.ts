@@ -4,7 +4,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1",
     id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -21,7 +21,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "2",
     id: "d5cc2725-97ec-494b-bc80-c163f96379e62",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -38,7 +38,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "2-1",
     id: "d5cc2725-97ec-494b-bc80-c16f496379e63",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -55,7 +55,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "2-2",
     id: "d5cc2725-97ec-494b-bc80-c162f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -72,7 +72,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "3",
     id: "dscc2725-97ec-494b-bc80-c161f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -89,7 +89,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-1",
     id: "dscc2725-97ec-494b-bc80-c316f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -106,7 +106,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-1-1",
     id: "dscc2725-97ec-494b-bgc80-c16f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -123,7 +123,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-1-2",
     id: "dscc2725-97sec-494b-bc80-c16f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -140,7 +140,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-1-3",
     id: "dscc2725-927ec-494b-bc80-c16f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -157,7 +157,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "4",
     id: "vscc2735-97ec-494b-bc580-c16a96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -174,7 +174,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "5",
     id: "vscc2725-97ec-494b-bac80-c16f96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -191,7 +191,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "6",
     id: "vscc2725-97ec-494b-bcf80-c16f96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -208,7 +208,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "7",
     id: "vscac2735-97ec-494b-bc80-c16f96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -225,7 +225,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "8",
     id: "vscc2735-97ec-494b-bc80-c16f96d3791w4",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -242,7 +242,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "9",
     id: "vscc2735-97ec-494b-bc80-c16f9637s9164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -259,7 +259,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "10",
     id: "vscc273d5-97ec-494b-bc80-c16f96s379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -275,7 +275,7 @@ export const testDB: RawBlockData[] = [
   },{
     position: "1-1-4",
     id: "dscc2725-97ec-494b-bc80-c16f96379e614",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -292,7 +292,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-2",
     id: "dscc23725-97ec-494b-bc80-c16f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -309,7 +309,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-3",
     id: "dscc2725-97ec-494b-bc80-c16f963795e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -326,7 +326,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-4",
     id: "vscc2735-97ec-494b-bc80-c16a963769164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -343,7 +343,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-5",
     id: "vscc2725-97ec-494b-bc80-c16f962379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -360,7 +360,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-6",
     id: "vscc2725-97gec-494b-bc80-c16f96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -377,7 +377,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-7",
     id: "vscc2735-97ec-49a4b-bc80-c16f96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -394,7 +394,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-8",
     id: "vscc2735-97ec-494b-bcd80-c16f963791w4",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -411,7 +411,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-9",
     id: "vscc2735-97ec-494b-bc80-c16f96g37s9164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -428,7 +428,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-10",
     id: "vscc273d5-97ec-494b-bc80-c16f9s6379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -445,7 +445,7 @@ export const testDB: RawBlockData[] = [
   {
     position: "1-10-1",
     id: "vscc273d5-9g7ec-494b-bc80-c16f96379164",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",

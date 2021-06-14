@@ -1,31 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { testDB } from './db';
 import useBlock from './hooks/useBlock';
-import { orderingBlock, sortBlock } from './reducer/utils/ordering';
 import { BlockData } from './types';
 import BlockElement from './BlockEle';
 import './block.scss';
-import { resetToTargetPosition } from './reducer/utils';
-import blockTest from './block.test';
 
 const Block: React.FC = () => {
 
   const hooks = useBlock();
 
   const {
+    state,
     initBlock
   } = hooks;
 
   useEffect(() => {
-    const data = orderingBlock(sortBlock(testDB));
-    const data2 = sortBlock(testDB);
-    const data3 = data.blockDataList.slice(10, 26);
-    console.log(data, data2);
-    console.log("initBlock", initBlock);
-    console.log(data3);
-    console.log(resetToTargetPosition(data3, "4"));
-    console.log(orderingBlock(resetToTargetPosition(data.blockDataList, "4")));
-    blockTest();
+    console.log("4-1-5".indexOf("5"))
+    console.log(state.blockList.filter((block: BlockData) => block.position.indexOf("1-1") === 0));
   }, []);
 
   return (

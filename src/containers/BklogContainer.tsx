@@ -4,7 +4,6 @@ import Block from '../components/newBlock';
 
 import { BlockData } from '../types/bklog';
 
-import { TEST_CASE_01 } from '../index.test';
 import Sibebar from '../components/sidebar';
 import usePage from '../hooks/usePage';
 

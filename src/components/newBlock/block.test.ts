@@ -158,21 +158,44 @@ const TEST_CASE_2: BlockData[] = [
   }
 ]
 
-function testOrderingBlock() {
+// function testOrderingBlock() {
 
-}
+// }
 
-function testResetToTargetPosition() {
-  const test1 = resetToTargetPosition(TEST_CASE_1, "4").map(block => block.position);
-  const test1Result = ["4", "4-1", "4-1", "4-1-1"];
-  const test2 = resetToTargetPosition(TEST_CASE_2, "4").map(block => block.position);
-  const test2Result = ["4", "4-1", "4-1", "4"];
-  console.log("TEST_1", test1, test1Result, test1.join("") === test1Result.join("")? "success" : "fail");
-  console.log("TEST_2", test2, test2Result, test1.join("") === test1Result.join("")? "success" : "fail");
-}
+// type TestResetToTargetPosition = [BlockData[], string, string[]];
 
+// function testResetToTargetPosition(...testCases: TestResetToTargetPosition[]) {
+//   console.group("%cTEST: resetToTargetPosition", "color: rgba(106, 227, 116, 1);");
+//   for(let i = 0; i < testCases.length; i++) {
+//     console.group(`TEST_${i + 1}`)
+//     console.time('TIME');
+//     const test = resetToTargetPosition(testCases[i][0], testCases[i][1]).map(block => block.position)
+//     console.log("기대값: ", testCases[i][2]);
+//     console.log("결과값: ", test);
+    
+//     const res = test.join("") === testCases[i][2].join("")? "success" : "fail";
+//     if(res === "success") {
+//       console.log(`%c${res}`, "color: rgba(106, 227, 116, 1);");
+//     } else {
+//       console.log(`%c${res}`, "color: red;");
+//     }
+//     console.timeEnd('TIME');
+//     console.groupEnd();
+//   }
+//   console.groupEnd();
+// }
 
+// export default function blockTest() {
+//   testResetToTargetPosition(
+//     [TEST_CASE_1, "4-1", ["4-1", "4-1-1", "4-1-1", "4-1-1-1"]],
+//     [TEST_CASE_2, "4-1", ["4-1", "4-1-1", "4-1-1", "4-1"]]
+//   );
+// }
 
-export default function blockTest() {
-  testResetToTargetPosition();
-}
+test('resetToTargetPosition', () => {
+  const test = resetToTargetPosition(TEST_CASE_2, "4-1").map(block => block.position).join("");
+  const test1 = ["4-1", "4-1-1", "4-1-1", "4-1"].join("");
+  const test2 = ["4-1", "4-1-1", "4-1-1", "4-1-1-1"].join("");
+  expect(test).toEqual(test1);
+  expect(test).toEqual(test2);
+})

@@ -1,21 +1,25 @@
 import acyncUtils from './acyncUtils';
 import reducerUtils from './reducerUtils';
 
-export type ActionDefaultType<TType extends string = string > = { 
-  type: TType;
-};
-
-interface Types {
+// create reducer type
+export interface Action<T extends string> {
+  type: T;
 }
 
-declare type GetAction<TAction extends ActionDefaultType, TType extends TAction['type']> = TAction extends ActionDefaultType<TType>? TAction : never;
-export type RootAction = Types extends {
-  RootAction: infer T;
-} ? T : any;
+export type ActionCreator<T extends string> = (...args: any) => Action<T>;
 
-export type InitialHandler<TState, TRootAction extends ActionDefaultType> = {
-  [P in TRootAction['type']]: (state: TState, action: GetAction<TRootAction, P>) => TState;
-};
+export type ActionsCreators<T extends string> = {
+  [creator: string]: ActionCreator<T>;
+}
+
+export type ActionsUnion<P extends string, T extends ActionsCreators<P>> = ReturnType<T[keyof T]>;
+
+export type ActionHandlers<P extends string, T extends ActionsCreators<P>, State> = {
+  [K in ReturnType<T[keyof T]>["type"]]: (
+      state: State,
+      action: ReturnType<T[K]>
+  ) => State
+}
 
 export const ALL_RESET = "common/ALL_RESET" as const; 
 

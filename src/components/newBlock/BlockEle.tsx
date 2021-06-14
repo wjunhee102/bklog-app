@@ -41,11 +41,11 @@ const BlockElement: React.FC<BlockEleProps> = ({
   //   }
   // }, [blockData.contents]);
 
-  const childrenBlock = initBlock.hasOwnProperty([blockData.id])? 
+  const childrenBlock = initBlock.hasOwnProperty(blockData.id)? 
     initBlock[blockData.id] : null;
 
   useEffect(()=> {
-    console.log(initBlock.hasOwnProperty([blockData.id]),initBlock.hasOwnProperty([blockData.id])? 
+    console.log(initBlock.hasOwnProperty(blockData.id),initBlock.hasOwnProperty(blockData.id)? 
     initBlock[blockData.id] : null);
   },[]);
 

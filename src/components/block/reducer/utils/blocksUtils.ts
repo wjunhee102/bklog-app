@@ -356,7 +356,7 @@ function updateContents(
   return { 
     blocks: newBlocks,
     modifyData
-  };
+  }
 }
 
 const isNotBlockId = (id: UUID) => 
@@ -484,7 +484,7 @@ function excludeBlock(blocks: BlockData<any>[], id: UUID): ResBlocks {
   return {
     blocks: deletedBlocks,
     modifyData
-  };
+  }
 }
 
 /**
