@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { testDB } from '../db';
 import blockReducer from '../reducer';
-import { BlockState, addToStage, StagedBlock, initBlock, SetBlockDataList, setBlockList, addBlock, commitBlock } from '../reducer/utils';
-import { BlockData, RawBlockData } from '../types';
+import { BlockState, addToStage, StagedBlock, initBlock, SetBlockDataList, setBlockList, addBlock, commitBlock, deleteBlock, changeTextStyle, OrderType, switchBlock, revertBlock } from '../reducer/utils';
+import { BlockData, ContentType, RawBlockData } from '../types';
 
 const initialState: BlockState = {
   blockList: initBlock(testDB).blockList,
@@ -40,13 +40,44 @@ function useBlock() {
     }
   }
 
-  const onAddBlock = useCallback((blockList: BlockData[], targetPosition: string, index: number) => {
-    dispatch(addBlock(blockList, targetPosition, index));
-  },[dispatch]);
 
   const onCommitBlock = useCallback(() => {
     dispatch(commitBlock(stage));
-  },[dispatch]);
+  }, [dispatch]);
+
+  const onAddBlock = useCallback((
+    blockList: BlockData[], 
+    targetPosition: string, 
+    index: number
+  ) => {
+    dispatch(addBlock(blockList, targetPosition, index));
+  }, [dispatch]);
+
+  const onDeleteBlock = useCallback((removedBlockList: BlockData[]) => {
+    dispatch(deleteBlock(removedBlockList));
+  }, [dispatch]);
+
+  const onChangeTextStyle = useCallback((
+    index: number, 
+    styleType: ContentType, 
+    startPoint: number,
+    endPoint: number,
+    order: OrderType
+  ) => {
+    dispatch(changeTextStyle(index, styleType, startPoint, endPoint, order));
+  }, [dispatch]);
+
+  const onSwitchBlock = useCallback((
+    changedBlockIdList: string[],
+    targetPosition: string,
+    container?: boolean
+  ) => {
+    dispatch(switchBlock(changedBlockIdList, targetPosition, container))
+  }, [dispatch]);
+
+  const onRevertBlock = useCallback((back: boolean) => {
+    dispatch(revertBlock(back));
+  }, [dispatch]);
 
   return { 
     state,
@@ -54,8 +85,12 @@ function useBlock() {
     blockLength,
     updateContentsOfStage,
     changeEditedBlockId,
+    onCommitBlock,
     onAddBlock,
-    onCommitBlock
+    onDeleteBlock,
+    onChangeTextStyle,
+    onSwitchBlock,
+    onRevertBlock
   };
 }
 

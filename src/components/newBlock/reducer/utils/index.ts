@@ -22,12 +22,12 @@ export interface StagedBlock{
 // }
 
 export interface BlockStateProps {
-  blockList?: BlockData[],
-  modifyData?: ModifyData[]
+  blockList?: BlockData[];
+  modifyData?: ModifyData[];
 }
 
 export type SetBlockDataList = {
-  [type: string]: BlockData[]
+  [type: string]: BlockData[];
 }
 
 /** 
@@ -36,14 +36,14 @@ export type SetBlockDataList = {
 export type TempSet = "block" | "comment"; 
 
 export interface TempData<T = any> {
-  blockId: string,
-  payload: T
+  blockId: string;
+  payload: T;
 }
 
 export interface TempDataType {
-  create?: TempData<BlockData>[],
-  update?: TempData[],
-  delete?: TempData[]
+  create?: TempData<BlockData>[];
+  update?: TempData[];
+  delete?: TempData[];
 }
 
 /**
@@ -89,7 +89,7 @@ export interface ModifyBlockData<T = any, P = any> {
   type?: string;
   styleType?: string;
   styles?: T;
-  contents?: P
+  contents?: P;
 }
 
 export interface ModifyData<T = any> {
@@ -100,9 +100,9 @@ export interface ModifyData<T = any> {
 }
 
 export interface ResBlockUtils {
-  blockList: BlockData[],
-  modifyData: ModifyData[],
-  tempData: TempDataType
+  blockList: BlockData[];
+  modifyData: ModifyData[];
+  tempData: TempDataType;
 }
 
 export interface BlockState {
@@ -114,14 +114,20 @@ export interface BlockState {
   clipBoard: BlockData[];
 }
 
+export interface BlockStateProps {
+  blockList?: BlockData[];
+  modifyData?: ModifyData[];
+  tempFront?: TempDataType[];
+  tempBack?: TempDataType[];
+  tempClipData?: number[];
+  clipBoard?: BlockData[];
+}
+
 /**
  * action type
  */
 export const RESET_BLOCK       = 'RESET_BLOCK' as const;
 export const ADD_BLOCK         = 'ADD_BLOCK' as const;
-export const ADD_BLOCKLIST     = 'ADD_BLOCKLIST' as const;
-export const EDITABLE          = 'EDITABLE' as const; 
-export const EDIT_BLOCK        = 'EDIT_BLOCK' as const; // 임시 데이터로 이동
 export const COMMIT_BLOCK      = 'COMMIT_BLOCK' as const;
 export const DELETE_BLOCK      = 'DELETE_BLOCK' as const;
 export const UPDATE_BLOCK      = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
@@ -138,9 +144,6 @@ export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 export type BLOCK_ACTION_TYPES = 
   typeof RESET_BLOCK 
   | typeof ADD_BLOCK
-  | typeof ADD_BLOCKLIST
-  | typeof EDITABLE
-  | typeof EDIT_BLOCK
   | typeof COMMIT_BLOCK
   | typeof DELETE_BLOCK
   | typeof UPDATE_BLOCK
@@ -159,9 +162,6 @@ export type BLOCK_ACTION_TYPES =
  */
 export const resetBlock      = actionBlock.resetBlock;
 export const addBlock        = actionBlock.addBlock;
-export const addBlockList    = actionBlock.addBlockList;
-export const editAble        = actionBlock.editAble;
-export const editBlock       = actionBlock.editBlock;
 export const commitBlock     = actionBlock.commitBlock;
 export const deleteBlock     = actionBlock.deleteBlock;
 export const updateBlock     = actionBlock.updateBlock;
@@ -177,9 +177,6 @@ export const testClipAdd     = actionBlock.testClipAdd;
 
 export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
-  | ReturnType<typeof addBlockList>
-  | ReturnType<typeof editAble>
-  | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof updateBlock>
@@ -207,12 +204,16 @@ export const setBlockList  = orderingBlockUtils.setBlockList;
 
 
 // block utils
+export const createBlockData       = blockUtils.createBlockData;
 export const resetToTargetPosition = blockUtils.resetToTargetPosition;
+export const reissueBlockId        = blockUtils.reissueBlockId;
 export const updateBlockContents   = blockUtils.updateBlockContents;
 export const changeBlockTextStyle  = blockUtils.changeBlockTextStyle;
 export const addToStage            = blockUtils.addToStage;
 export const addBlockInList        = blockUtils.addBlockInList;
 export const removeBlockInList     = blockUtils.removeBlockInList;
+export const changeBlockPosition   = blockUtils.changeBlockPosition;
+export const switchBlockList       = blockUtils.switchBlockList;
 export const restoreBlock          = blockUtils.restoreBlock;
 
 // side utils 

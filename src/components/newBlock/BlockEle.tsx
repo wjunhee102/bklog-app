@@ -47,7 +47,7 @@ const BlockElement: React.FC<BlockEleProps> = ({
   useEffect(()=> {
     console.log(initBlock.hasOwnProperty(blockData.id),initBlock.hasOwnProperty(blockData.id)? 
     initBlock[blockData.id] : null);
-  },[]);
+  },[initBlock]);
 
   return (
     <div className="block-zone">

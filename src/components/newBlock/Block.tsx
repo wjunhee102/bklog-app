@@ -3,20 +3,37 @@ import useBlock from './hooks/useBlock';
 import { BlockData } from './types';
 import BlockElement from './BlockEle';
 import './block.scss';
+import { createBlockData } from './reducer/utils';
 
 const Block: React.FC = () => {
 
   const hooks = useBlock();
+  const [ test, setTest ] = useState<boolean>(false); 
 
   const {
     state,
-    initBlock
+    initBlock,
+    onAddBlock
   } = hooks;
 
+  const data = [
+    createBlockData("4-1"),
+    createBlockData("5"),
+    createBlockData("7-1")
+  ];
+
+  data[0].contents = ["잘 됨"];
+  data[1].contents = ["잘 됨1"];
+  data[2].contents = ["잘 됨2"];
+
   useEffect(() => {
-    console.log("4-1-5".indexOf("5"))
-    console.log(state.blockList.filter((block: BlockData) => block.position.indexOf("1-1") === 0));
-  }, []);
+    if(!test) {
+      setTest(true);
+      const index = state.blockList.findIndex((block: BlockData) => block.position === "1-10-1");
+      onAddBlock(data, "1-10-1", index);
+    }
+    console.log(state);
+  }, [state]);
 
   return (
     <div className="block-editor blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">

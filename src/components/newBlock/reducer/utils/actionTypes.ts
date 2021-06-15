@@ -1,8 +1,6 @@
 import { 
   RESET_BLOCK, 
   ADD_BLOCK, 
-  EDITABLE,
-  EDIT_BLOCK, 
   COMMIT_BLOCK, 
   DELETE_BLOCK, 
   UPDATE_BLOCK, 
@@ -14,7 +12,6 @@ import {
   CLEAR_CLIPBOARD,
   CLEAR_TEMPCLIP,
   SET_TEMPCLIP,
-  ADD_BLOCKLIST,
   TEST_CLIPBOARD,
   StagedBlock
 } from ".";
@@ -33,41 +30,6 @@ function addBlock(addBlockList: BlockData[], targetPosition: string, index: numb
       addBlockList,
       targetPosition,
       index
-    }
-  }
-}
-
-function addBlockList(preBlockId: string, blockList: BlockData[]) {
-  return {
-    type: ADD_BLOCKLIST,
-    payload: {
-      preBlockId,
-      blockList
-    }
-  }
-}
-
-function editAble (id: UUID | null, index?: number) {
-  return {
-    type: EDITABLE,
-    payload: {
-      editingId: id,
-      editingIndex: index
-    }
-  }
-}
-
-function editBlock({ 
-  blockId,
-  blockIndex,
-  text,
-}: any) {
-  return {
-    type: EDIT_BLOCK,
-    payload: {
-      blockId,
-      blockIndex,
-      text
     }
   }
 }
@@ -116,19 +78,20 @@ function changeTextStyle(
   }
 }
 
-function revertBlock() {
+function revertBlock(back: boolean) {
   return {
-    type: REVERT_BLOCK
+    type: REVERT_BLOCK,
+    back
   }
 }
 
-function switchBlock(blockId: UUID, targetBlockId: UUID, targetType: boolean) {
+function switchBlock(changedBlockIdList: string[], targetPosition: string, container?: boolean) {
   return {
     type: SWITCH_BLOCK,
     payload: {
-      switchedId: blockId,
-      targetBlockId,
-      targetType
+      changedBlockIdList,
+      targetPosition,
+      container: container? true : false
     }
   }
 }
@@ -168,9 +131,6 @@ function testClipAdd(payload: any) {
 const actionBlock = {
   resetBlock,
   addBlock,
-  addBlockList,
-  editAble,
-  editBlock,
   commitBlock,
   deleteBlock,
   updateBlock,
