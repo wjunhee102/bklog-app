@@ -39,13 +39,11 @@ function getContentsToBeChanged(
 }
 
 function createTempData<T = any>(
-  set: TempSet, 
   blockId: string, 
   payload?: T
 ): TempData {
   return {
     blockId,
-    set,
     payload
   }
 }

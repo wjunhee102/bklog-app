@@ -37,12 +37,11 @@ export type TempSet = "block" | "comment";
 
 export interface TempData<T = any> {
   blockId: string,
-  set: TempSet,
   payload: T
 }
 
 export interface TempDataType {
-  create?: TempData[],
+  create?: TempData<BlockData>[],
   update?: TempData[],
   delete?: TempData[]
 }
@@ -98,6 +97,12 @@ export interface ModifyData<T = any> {
   blockId: string;
   set: ModifySet;
   payload: T;
+}
+
+export interface ResBlockUtils {
+  blockList: BlockData[],
+  modifyData: ModifyData[],
+  tempData: TempDataType
 }
 
 export interface BlockState {
@@ -208,6 +213,7 @@ export const changeBlockTextStyle  = blockUtils.changeBlockTextStyle;
 export const addToStage            = blockUtils.addToStage;
 export const addBlockInList        = blockUtils.addBlockInList;
 export const removeBlockInList     = blockUtils.removeBlockInList;
+export const restoreBlock          = blockUtils.restoreBlock;
 
 // side utils 
 export const tempDataPush           = sideStoreUtils.tempDataPush;

@@ -1,4 +1,4 @@
-import { createTempData, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
+import { createTempData, ResBlockUtils, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
 import { BlockData, RawBlockData } from "../../types";
 
 // const parseString = (text: string): string[] => {
@@ -159,7 +159,7 @@ function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
   return newBlockDataList;
 }
 
-export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
+export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]): ResBlockUtils {
   const preBlockDataList = blockDataList.concat();
   const newBlockDataList: BlockData[] = [];
   const tempData: TempDataType = {
@@ -193,7 +193,7 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
 
   if(preBlockDataList[0].position !== "1") {
 
-    tempData.update?.push(createTempData("block", preBlockDataList[0].id, {
+    tempData.update?.push(createTempData(preBlockDataList[0].id, {
       position: preBlockDataList[0].position
     }));
 
@@ -249,7 +249,7 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
     let position = currentPosition.join("-");
 
     if(position !== block.position) {
-      tempData.update?.push(createTempData("block", block.id, {
+      tempData.update?.push(createTempData(block.id, {
         position: block.position
       }));
       modifyData.push(setUpdateModifyDataOfBlock(block.id, {
@@ -274,7 +274,7 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]) {
   };
 }
 
-function initBlock(blockDataList: RawBlockData[] | BlockData[]) {
+function initBlock(blockDataList: RawBlockData[] | BlockData[]): ResBlockUtils {
   return orderingBlock(sortBlock(blockDataList));
 }
 
