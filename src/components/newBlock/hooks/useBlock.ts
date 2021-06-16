@@ -47,10 +47,9 @@ function useBlock() {
 
   const onAddBlock = useCallback((
     blockList: BlockData[], 
-    targetPosition: string, 
-    index: number
+    targetPosition: string
   ) => {
-    dispatch(addBlock(blockList, targetPosition, index));
+    dispatch(addBlock(blockList, targetPosition));
   }, [dispatch]);
 
   const onDeleteBlock = useCallback((removedBlockList: BlockData[]) => {

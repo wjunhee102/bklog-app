@@ -9,28 +9,35 @@ const Block: React.FC = () => {
 
   const hooks = useBlock();
   const [ test, setTest ] = useState<boolean>(false); 
+  const [ test2, setTest2 ] = useState<boolean>(false); 
 
   const {
     state,
     initBlock,
-    onAddBlock
+    onAddBlock,
+    onDeleteBlock,
+    onRevertBlock,
+    onSwitchBlock
   } = hooks;
 
-  const data = [
-    createBlockData("4-1"),
-    createBlockData("5"),
-    createBlockData("7-1")
-  ];
-
-  data[0].contents = ["잘 됨"];
-  data[1].contents = ["잘 됨1"];
-  data[2].contents = ["잘 됨2"];
-
   useEffect(() => {
-    if(!test) {
+    console.log(state.blockList.map((block: any) => Object.assign({}, block)));
+    if(!test && !test2) {
+      const data = [createBlockData("2"), createBlockData("2-1"), createBlockData("3-1")];
+      data[0].contents = [["반가워요 2-1-1"]];
+      data[1].contents = [["반가워요 2-1-2"]];
+      data[2].contents = [["반가워요 2-1-3"]];
+      // onDeleteBlock([state.blockList[1], state.blockList[5], state.blockList[6], state.blockList[16]]);
+      onAddBlock(data, "2-1");
       setTest(true);
-      const index = state.blockList.findIndex((block: BlockData) => block.position === "1-10-1");
-      onAddBlock(data, "1-10-1", index);
+    } else if(test && !test2) {
+      onRevertBlock(true);
+      setTest2(true);
+    } else if(test && test2) {
+      // const dataList = [state.blockList[4], state.blockList[10]];
+      // console.log(dataList);
+      // onSwitchBlock(dataList.map(data => data.id), "10", true);
+      // setTest(false);
     }
     console.log(state);
   }, [state]);

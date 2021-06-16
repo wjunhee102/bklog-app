@@ -9,19 +9,19 @@ import {
   addBlockInList, 
   deleteBlock, 
   removeBlockInList, 
-  COMMIT_BLOCK, 
-  ADD_BLOCK, 
-  DELETE_BLOCK,
-  SWITCH_BLOCK,
-  CHANGE_TEXT_STYLE,
   changeBlockTextStyle,
   changeTextStyle,
   switchBlock,
   switchBlockList,
   BlockStateProps,
   restoreBlock,
-  REVERT_BLOCK,
-  revertBlock
+  revertBlock,
+  COMMIT_BLOCK, 
+  ADD_BLOCK, 
+  DELETE_BLOCK,
+  SWITCH_BLOCK,
+  CHANGE_TEXT_STYLE,
+  REVERT_BLOCK
 } from "./utils";
 
 function commitBlockHandler(
@@ -41,10 +41,10 @@ function commitBlockHandler(
 
 function addBlockHandler(
   state: BlockState, 
-  { payload: { addBlockList, targetPosition, index } 
+  { payload: { addBlockList, targetPosition } 
 }: ReturnType<typeof addBlock>
 ): BlockState {
-  const { blockList, modifyData, tempData } = addBlockInList(state.blockList, addBlockList, targetPosition, index);
+  const { blockList, modifyData, tempData } = addBlockInList(state.blockList, addBlockList, targetPosition);
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
@@ -52,7 +52,8 @@ function addBlockHandler(
       state.modifyData, 
       modifyData
     ),
-    tempBack: tempDataPush(state.tempBack, tempData)
+    tempBack: tempDataPush(state.tempBack, tempData),
+    tempFront: []
   });
 }
 
@@ -62,9 +63,12 @@ function deleteBlockHandler(
 ): BlockState {
   const { blockList, modifyData, tempData } = removeBlockInList(state.blockList, removedBlockList);
 
+  console.log(tempData);
+
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     tempBack: tempDataPush(state.tempBack, tempData),
+    tempFront: [],
     modifyData: updateModifyData(state.modifyData, modifyData)
   });
 }
@@ -90,6 +94,7 @@ function changeTextStyleHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList: result.blockList,
     modifyData: updateModifyData(state.modifyData, result.modifyData),
+    tempFront: [],
     tempBack: tempDataPush(state.tempBack, result.tempData)
   });
 }
@@ -105,6 +110,7 @@ function switchBlockHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     modifyData: updateModifyData(state.modifyData, modifyData),
+    tempFront: [],
     tempBack: tempDataPush(state.tempBack, tempData)
   });
 }

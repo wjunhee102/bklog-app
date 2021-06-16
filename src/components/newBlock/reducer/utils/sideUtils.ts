@@ -5,10 +5,11 @@ import { BlockData, RawBlockData } from "../../types";
 function tempDataPush(
   tempStore: TempDataType[], 
   tempData: TempDataType, 
-  limitCount: number = 5
+  limitCount: number = 6
   ): TempDataType[] {
 
   const newTempStore = [...tempStore, tempData];
+
   if(limitCount < newTempStore.length) {
     newTempStore.shift();
   }

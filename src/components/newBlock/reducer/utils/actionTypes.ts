@@ -23,13 +23,12 @@ function resetBlock() {
   }
 }
 
-function addBlock(addBlockList: BlockData[], targetPosition: string, index: number) {
+function addBlock(addBlockList: BlockData[], targetPosition: string) {
   return {
     type: ADD_BLOCK,
     payload: {
       addBlockList,
-      targetPosition,
-      index
+      targetPosition
     }
   }
 }

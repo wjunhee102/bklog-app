@@ -1,4 +1,4 @@
-import { createTempData, ResBlockUtils, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
+import { copyToNewObjectArray, createTempData, ResBlockUtils, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
 import { BlockData, RawBlockData } from "../../types";
 
 // const parseString = (text: string): string[] => {
@@ -160,7 +160,7 @@ function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
 }
 
 export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]): ResBlockUtils {
-  const preBlockDataList = blockDataList.concat();
+  const preBlockDataList = copyToNewObjectArray(blockDataList);
   const newBlockDataList: BlockData[] = [];
   const tempData: TempDataType = {
     update: []
@@ -211,14 +211,14 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]): ResB
     let block = preBlockDataList.shift();
     
     if(!block) {
-      console.log("not block");
+      console.log("not block", preBlockDataList, blockDataList);
       return {
         blockList: [],
         modifyData,
         tempData
       };
     }
-
+    
     let length = block.position.split(/-/).length - 1;
 
     if(currentPositionLength === length) {

@@ -224,25 +224,24 @@ function changeBlockTextStyle(
 function addBlockInList(
   blockList: BlockData[], 
   addBlockList: BlockData[],
-  targetPosition: string,
-  index: number
+  targetPosition: string
 ): ResBlockUtils {
   const modifyData: ModifyData[] = [];
   const tempData: TempDataType = {
     delete: [],
-    create: []
+    update: []
   };
 
   const newBlockList = blockList.concat();
   
+  const index = newBlockList.findIndex(block => block.position === targetPosition);
+
   newBlockList.splice(
     index, 
     1, 
     blockList[index], 
     ...resetToTargetPosition(addBlockList, targetPosition)
   );
-
-  console.log(newBlockList);
 
   const result = orderingBlock(newBlockList);
 
@@ -257,9 +256,10 @@ function addBlockInList(
   ));
 
   if(result.tempData.update) {
-    tempData.update?.push(...result.tempData.update?.filter(data => 
-      idList.includes(data.blockId) === false
-    ));
+    const updateTempData = result.tempData.update.filter(data => 
+      !idList.includes(data.blockId)
+    );
+    tempData.update?.push(...updateTempData);
   }
 
   return {
@@ -276,7 +276,7 @@ function addBlockInList(
  */
 function removeBlockInList(
   blockList: BlockData[], 
-  removedBlockList: BlockData[]
+  targetBlockList: BlockData[]
 ): ResBlockUtils {
   const modifyData: ModifyData[] = [];
   const tempData: TempDataType = {
@@ -285,39 +285,42 @@ function removeBlockInList(
   };
   const blocks = blockList.concat();
   const blockLength = blocks.length - 1;
+  const removedBlockList = copyToNewObjectArray(targetBlockList);
+
+  tempData.create?.push(...removedBlockList.map(block => createTempData(block.id, Object.assign({}, block))));
+
+  let removedIdList = removedBlockList.map(block => block.id); 
 
   for(const block of removedBlockList) {
     const position = block.position;
 
     for(let i = block.index; i < blockLength; i++) {
 
-      if(blocks[i].position.indexOf(position) === 0) {
+      if(i === block.index) {
 
-        const newPosition = blocks[i].position.split(/-/);
-        newPosition.pop();
+        modifyData.push(setDeleteModifyDataOfBlock(blocks[i].id));
+        blocks[i].position = "null";
 
-        if(i === block.index) {
+      } else if(blocks[i].position.indexOf(position) === 0) {
+        if(!removedIdList.includes(blocks[i].id)) {
 
-          tempData.create?.push(createTempData<BlockData>(blocks[i].id, blocks[i]));
-          modifyData.push(setDeleteModifyDataOfBlock(blocks[i].id));
-          blocks[i].position = "null";
+          const newPosition = blocks[i].position.split(/-/);
+          newPosition.pop();
 
-        } else {
           const findIndex = tempData.update?.findIndex(data => data.blockId === blocks[i].id);
           const tempDataBlock = createTempData<ModifyBlockData>(blocks[i].id, {
             position: blocks[i].position
           });
 
-          if(findIndex && findIndex !== -1 && tempData.update) {
+          if(findIndex !== undefined && findIndex !== -1 && tempData.update) {
             tempData.update[findIndex] = tempDataBlock;
           } else {
             tempData.update?.push(tempDataBlock);
           }
 
-          blocks[i].position = newPosition.join("-");
-
+          blocks[i].position = newPosition.join("-");  
         }
-        
+
       } else {
         break;
       }
@@ -326,9 +329,24 @@ function removeBlockInList(
 
   }
 
-  const result = orderingBlock(blocks.filter(block => block.position === "null"));
+  const result = orderingBlock(blocks.filter(block => block.position !== "null"));
+
+  if(result.tempData.update) {
+    if(tempData.update) {
+      const idList = tempData.update.map(data => data.blockId);
+
+      for(const data of result.tempData.update) {
+        if(!idList.includes(data.blockId)) {
+          tempData.update.push(data);
+        } 
+      }
+
+    }
+  }
   
-  modifyData.concat(result.modifyData);
+  if(result.modifyData[0]) {
+    modifyData.push(...result.modifyData);
+  }
 
   return {
     blockList: result.blockList,
@@ -348,9 +366,9 @@ function divideBlock(blocks: BlockData[], idList: string[]) {
 
   for(const block of blocks) {
     if(idList.includes(block.id)) {
-      targetBlockList.push(block);
+      targetBlockList.push(Object.assign({}, block));
     } else {
-      removedBlockList.push(block);
+      removedBlockList.push(Object.assign({}, block));
     }
   }
 
@@ -373,15 +391,18 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
   };
   const modifyData: ModifyData[] = [];
 
+  const newBlockList = copyToNewObjectArray(removedBlockList);
+  newBlockList.splice(index, 1, removedBlockList[index], ...resetToTargetPosition(targetBlockList, targetPosition));
+
   if(containerBlockList[0]) {
     for(const block of containerBlockList) {
-      const idx = removedBlockList.findIndex(({ id }) => id === block.id ) + 1;
+      const idx = newBlockList.findIndex(({ id }) => id === block.id ) + 1;
 
-      if(!removedBlockList[idx] && removedBlockList[idx].position.indexOf(block.position) !== 0) {
-        removedBlockList.splice(idx, 1);
+      if(!newBlockList[idx] || newBlockList[idx].position.indexOf(block.position) !== 0) {
+        newBlockList.splice(idx, 1);
 
         //temp
-        tempData.create?.push(createTempData(block.id, block));
+        tempData.create?.push(createTempData(block.id, Object.assign({}, block)));
         //modify
         modifyData.push(setDeleteModifyDataOfBlock(block.id));
       }
@@ -389,14 +410,7 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
     }
   }
 
-  const result = orderingBlock(
-    removedBlockList.splice(
-      index, 
-      1, 
-      removedBlockList[index], 
-      ...resetToTargetPosition(targetBlockList, targetPosition)
-    )
-  );
+  const result = orderingBlock(newBlockList);
 
   if(result.tempData.update) {
     tempData.update?.push(...result.tempData.update);
@@ -419,7 +433,7 @@ function switchBlockList(
 ): ResBlockUtils {
   const tempData: TempDataType = {};
   const modifyData: ModifyData[] = [];
-  const blockList = blocks.concat();
+  const blockList = copyToNewObjectArray(blocks);
   const blockIdList = idList.concat();
 
   let position = targetPosition;
@@ -433,9 +447,11 @@ function switchBlockList(
 
     const targetIndex = blockList.findIndex(block => block.position === targetPosition);
 
-    blockIdList.push(blockList[targetIndex].id);
     blockList.splice(targetIndex, 0, block);
+
     position = targetPosition.split(/-/).concat("1").join("-");
+    blockList[targetIndex + 1].position = position;
+
     tempData.delete = [ createTempData(block.id) ];
     modifyData.push(setCreateModifyDataOfBlock(block));
   }
@@ -465,21 +481,12 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
 
   let preBlockList = blocks.concat();
 
-  if(restoreData.create) {
-    const toBeCreatedBlock = restoreData.create.map(data => data.payload);
-
-    tempData.delete = restoreData.create.map(data => createTempData(data.blockId));
-    modifyData.push(...toBeCreatedBlock.map(block => setCreateModifyDataOfBlock(block)));
-
-    preBlockList.push(...toBeCreatedBlock);
-  }
-
   if(restoreData.update) {
     tempData.update = [];
 
     for(const data of restoreData.update) {
       const index = preBlockList.findIndex(block => block.id === data.blockId);
-      
+
       const payload: any = {};
 
       for(const [key, value] of Object.entries(preBlockList[index])) {
@@ -491,6 +498,7 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
       tempData.update.push(createTempData(preBlockList[index].id, payload));
       modifyData.push(setUpdateModifyDataOfBlock(preBlockList[index].id, data.payload));
       preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
+
     }
   }
 
@@ -504,10 +512,20 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
     modifyData.push(...idList.map(id => setDeleteModifyDataOfBlock(id)));
   }
 
+  if(restoreData.create) {
+    const toBeCreatedBlock = restoreData.create.map(data => data.payload);
+
+    tempData.delete = restoreData.create.map(data => createTempData(data.blockId));
+    modifyData.push(...toBeCreatedBlock.map(block => setCreateModifyDataOfBlock(block)));
+
+    preBlockList.push(...toBeCreatedBlock);
+  }
+
   const result = orderingBlock(sortBlock(preBlockList));
 
-  if(result.modifyData[0] || result.tempData) {
+  if(result.modifyData[0] || (result.tempData.update && result.tempData.update[0])) {
     console.log("확인 필요");
+    console.log(result);
   }
 
   return {
@@ -518,6 +536,7 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
 }
 
 const blockUtils = {
+  copyToNewObjectArray,
   createBlockData,
   resetToTargetPosition,
   reissueBlockId,

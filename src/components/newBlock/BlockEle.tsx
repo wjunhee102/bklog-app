@@ -29,25 +29,25 @@ const BlockElement: React.FC<BlockEleProps> = ({
     initBlock
   } = hooks
 
-  // const createMarkup = useMemo(()=> {
-  //   const htmlElement = blockData.contents[0]?
-  //   (!blockData.contents[1]? 
-  //     contentsElement(blockData.contents[0])
-  //     : blockData.contents.reduce(createContentsElement)
-  //   ) : "";
+  const createMarkup = useMemo(()=> {
+    const htmlElement = blockData.contents[0]?
+    (!blockData.contents[1]? 
+      contentsElement(blockData.contents[0])
+      : blockData.contents.reduce(createContentsElement)
+    ) : "";
 
-  //   return {
-  //     __html: htmlElement
-  //   }
-  // }, [blockData.contents]);
+    return {
+      __html: htmlElement
+    }
+  }, [blockData.contents]);
 
   const childrenBlock = initBlock.hasOwnProperty(blockData.id)? 
     initBlock[blockData.id] : null;
 
-  useEffect(()=> {
-    console.log(initBlock.hasOwnProperty(blockData.id),initBlock.hasOwnProperty(blockData.id)? 
-    initBlock[blockData.id] : null);
-  },[initBlock]);
+  // useEffect(()=> {
+  //   console.log(initBlock.hasOwnProperty(blockData.id),initBlock.hasOwnProperty(blockData.id)? 
+  //   initBlock[blockData.id] : null);
+  // },[initBlock]);
 
   return (
     <div className="block-zone">
@@ -56,8 +56,8 @@ const BlockElement: React.FC<BlockEleProps> = ({
       > 
         <div
           className={blockData.styleType}
+          dangerouslySetInnerHTML={createMarkup}
         >
-          {blockData.contents.join("")}
         </div>
 
       </div>
