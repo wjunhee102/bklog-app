@@ -21,19 +21,42 @@ import {
   DELETE_BLOCK,
   SWITCH_BLOCK,
   CHANGE_TEXT_STYLE,
-  REVERT_BLOCK
+  REVERT_BLOCK,
+  addToStage,
+  editBlock,
+  EDIT_BLOCK,
+  changeEditingId,
+  CHANGE_EDITING_ID
 } from "./utils";
 
-function commitBlockHandler(
-  state: BlockState, 
-  { stage }: ReturnType<typeof commitBlock>
-): BlockState {
-  if(stage[0]) return state;
+function changeEditingIdHandler(state: BlockState, { payload: { index, blockId } }: ReturnType<typeof changeEditingId>) {
+  if(blockId) {
+    return updateObject<BlockState, BlockStateProps>(state, {
+      editingBlockId: blockId
+    });
+  } else {
+    return updateObject<BlockState, BlockStateProps>(state, {
+      editingBlockId: index < state.blockList.length? state.blockList[index].id : null
+    });
+  }
+}
 
-  const { blockList, modifyData, tempData } = updateBlockContents(state.blockList, stage);
+function editBlockHandler(state: BlockState, { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editBlock>) {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    stage: addToStage(state.stage, blockId, blockIndex, contents)
+  });
+}
+
+function commitBlockHandler(
+  state: BlockState
+): BlockState {
+  if(!state.stage[0]) return state;
+
+  const { blockList, modifyData, tempData } = updateBlockContents(state.blockList, state.stage);
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
+    stage: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
     tempBack: tempDataPush(state.tempBack, tempData)
   });
@@ -48,6 +71,7 @@ function addBlockHandler(
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
+    editingBlockId: addBlockList[0].id,
     modifyData: updateModifyData(
       state.modifyData, 
       modifyData
@@ -152,6 +176,8 @@ function revertBlockHandler(
 }
 
 const blockHandlers = {
+  [CHANGE_EDITING_ID] : changeEditingIdHandler,
+  [EDIT_BLOCK]        : editBlockHandler,
   [COMMIT_BLOCK]      : commitBlockHandler,
   [ADD_BLOCK]         : addBlockHandler,
   [DELETE_BLOCK]      : deleteBlockHandler,

@@ -13,7 +13,9 @@ import {
   CLEAR_TEMPCLIP,
   SET_TEMPCLIP,
   TEST_CLIPBOARD,
-  StagedBlock
+  StagedBlock,
+  EDIT_BLOCK,
+  CHANGE_EDITING_ID
 } from ".";
 import { UUID, BlockData, ContentType } from "../../types";
 
@@ -33,10 +35,30 @@ function addBlock(addBlockList: BlockData[], targetPosition: string) {
   }
 }
 
-function commitBlock(stage: StagedBlock[]) {
+function changeEditingId(index: number, blockId?: string) {
   return {
-    type: COMMIT_BLOCK,
-    stage
+    type: CHANGE_EDITING_ID,
+    payload: {
+      index,
+      blockId
+    }
+  }
+}
+
+function editBlock(blockId: string, blockIndex: number, contents: string) {
+  return {
+    type: EDIT_BLOCK,
+    payload: {
+      blockId,
+      blockIndex,
+      contents
+    }
+  }
+}
+
+function commitBlock() {
+  return {
+    type: COMMIT_BLOCK
   }
 }
 
@@ -130,6 +152,8 @@ function testClipAdd(payload: any) {
 const actionBlock = {
   resetBlock,
   addBlock,
+  changeEditingId,
+  editBlock,
   commitBlock,
   deleteBlock,
   updateBlock,

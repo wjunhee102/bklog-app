@@ -121,8 +121,7 @@ function addToStage(
     blockIndex,
     contents
   }
-
-  return [...preStagedBlockList, newStagedBlock];
+  return preStagedBlockList[0]? [...preStagedBlockList, newStagedBlock] : [newStagedBlock];
 }
 
 /**

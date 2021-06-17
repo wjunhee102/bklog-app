@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { testDB } from '../db';
 import blockReducer from '../reducer';
-import { BlockState, addToStage, StagedBlock, initBlock, SetBlockDataList, setBlockList, addBlock, commitBlock, deleteBlock, changeTextStyle, OrderType, switchBlock, revertBlock } from '../reducer/utils';
+import { BlockState, addToStage, StagedBlock, initBlock, SetBlockDataList, setBlockList, addBlock, commitBlock, deleteBlock, changeTextStyle, OrderType, switchBlock, revertBlock, editBlock, changeEditingId } from '../reducer/utils';
 import { BlockData, ContentType, RawBlockData } from '../types';
 
 const initialState: BlockState = {
   blockList: initBlock(testDB).blockList,
+  editingBlockId: null,
+  stage: [],
   modifyData: [],
   tempBack: [],
   tempFront: [],
@@ -14,35 +16,31 @@ const initialState: BlockState = {
 }
 
 function useBlock() {
-  const [ editedBlockId, setEditedId ] = useState<string | null>(null);
   const [ stage, setStage ]            = useState<StagedBlock[]>([]);
+  const [ mouseDown, setMouseDown ]    = useState<boolean>(false);
+  const [ clipDataMode, setClipData ]  = useState<boolean>(false);
 
   const [ state, dispatch ] = useReducer(blockReducer, initialState);
 
+  // state
   const initBlock: SetBlockDataList = useMemo(()=>
     setBlockList(state.blockList), [state.blockList]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 
-  const updateContentsOfStage = useCallback((blockId: string, blockIndex: number, contents: string) => {
-    setStage(addToStage(stage, blockId, blockIndex, contents));
-  }, [stage]);
+  const editingBlockId: string | null = useMemo(() => state.editingBlockId, [state.editingBlockId]);
 
-  const changeEditedBlockId = (index: number, blockId?: string) => {
-    if(blockId) {
-      setEditedId(blockId);
-    } else {
-      if(index >= blockLength - 1) {
-        setEditedId(null);
-      } else {
-        setEditedId(state.blockList[index].id);
-      }
-    }
-  }
+  // dispatch
+  const onChangeEditingId = useCallback((index: number, blockId?: string) => {
+    dispatch(changeEditingId(index, blockId));
+  }, [dispatch]);
 
+  const onEditBlock = useCallback((blockId: string, blockIndex: number, contents: string) => {
+    dispatch(editBlock(blockId, blockIndex, contents));
+  }, [dispatch]);
 
   const onCommitBlock = useCallback(() => {
-    dispatch(commitBlock(stage));
+    dispatch(commitBlock());
   }, [dispatch]);
 
   const onAddBlock = useCallback((
@@ -79,11 +77,15 @@ function useBlock() {
   }, [dispatch]);
 
   return { 
-    state,
+    state, 
+    stage, 
+    editingBlockId,
+    clipDataMode,
+    mouseDown,
+    onEditBlock,
     initBlock,
     blockLength,
-    updateContentsOfStage,
-    changeEditedBlockId,
+    onChangeEditingId,
     onCommitBlock,
     onAddBlock,
     onDeleteBlock,

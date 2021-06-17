@@ -1,17 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { UseBlockTypes } from "./hooks/useBlock";
 import { BlockData } from "./types";
-import { 
-  contentsElement,
-  copyInClipboard,
-  createClipboardContentsText,
-  createContentsElement
-} from './utils';
-import { 
-  getSelectionStart,
-  getSelectionEnd,
-  setSelectionRange
-} from './utils/selectionText';
+import ContentEditableEle from './ContentEditableEle';
+import TextStyleToggle from './TextStyleToggle';
+import './block.scss';
+import classNames from 'classnames';
+import useBlockEle from "./hooks/useBlockEle";
 
 interface BlockEleProps {
   idx: number;
@@ -26,54 +20,100 @@ const BlockElement: React.FC<BlockEleProps> = ({
 }) => {
 
   const {
-    initBlock
-  } = hooks
-
-  const createMarkup = useMemo(()=> {
-    const htmlElement = blockData.contents[0]?
-    (!blockData.contents[1]? 
-      contentsElement(blockData.contents[0])
-      : blockData.contents.reduce(createContentsElement)
-    ) : "";
-
-    return {
-      __html: htmlElement
-    }
-  }, [blockData.contents]);
-
-  const childrenBlock = initBlock.hasOwnProperty(blockData.id)? 
-    initBlock[blockData.id] : null;
-
-  // useEffect(()=> {
-  //   console.log(initBlock.hasOwnProperty(blockData.id),initBlock.hasOwnProperty(blockData.id)? 
-  //   initBlock[blockData.id] : null);
-  // },[initBlock]);
+    cursorStart,
+    cursorEnd,
+    styleToggle,
+    select,
+    blockRef,
+    createMarkup,
+    childrenBlock,
+    handleKeyUp,
+    handleKeyDown,
+    handleCopy,
+    handlePaste,
+    handleKeyPress,
+    moveEndPoint,
+    refreshPoint,
+    clearTempClip,
+    handleClick,
+    handleMouseUp,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleMouseMove,
+    handleBlur,
+    handleFocus,
+    isFocus,
+    reBlockFocus
+  } = useBlockEle(blockData, hooks);
 
   return (
-    <div className="block-zone">
-      <div
+    <div 
+      data-index={blockData.index} 
+      className="block-zone"
+    >
+       <div 
         className="bk-block relative pr-8"
-      > 
-        <div
-          className={blockData.styleType}
-          dangerouslySetInnerHTML={createMarkup}
-        >
-        </div>
-
-      </div>
-
-      {
-        childrenBlock?
-        childrenBlock.map((block: any, idx: number) => 
-          <BlockElement
-            idx={idx}
-            key={idx}
-            blockData={block}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+       > 
+        { 
+          blockData && blockData.type !== "container" ? 
+            <ContentEditableEle 
+              className={blockData.styleType}
+              editable={true}
+              dangerouslySetInnerHTML={createMarkup}
+              ref={blockRef}
+              onKeyPress={handleKeyPress}
+              onKeyUp={handleKeyUp}
+              onKeyDown={handleKeyDown}
+              onCopy={handleCopy}
+              onPaste={handlePaste}
+              onClick={handleClick}
+              onMouseDown={isFocus}
+              onMouseUp={handleMouseUp}
+              onFocus={isFocus}
+              placeholder="입력해주세요..."
+            />
+          : null
+        }
+        {/* <button 
+          className="bk-del absolute right-0" 
+          onClick={()=>{onDeleteBlock(blockData.id)}}> 
+          삭제 
+        </button> */}
+        {
+          styleToggle? 
+          <TextStyleToggle
+            blockIndex={blockData.index}
+            startPosition={cursorStart}
+            endPosition={cursorEnd}
+            contents={blockData.contents}
+            reBlockFocus={reBlockFocus}
             hooks={hooks}
-          />
-        ) : null
-      }
-
+          /> : null
+        }
+        <div 
+          className={classNames(
+            "cover",
+            {"selectable": select}
+          )}
+          onClick={clearTempClip}
+        ></div>
+      </div>
+          {
+            childrenBlock ? 
+            childrenBlock.map((child: any)=> 
+              <BlockElement
+                idx={blockData.index}
+                key={child.id}
+                blockData={child}
+                hooks={hooks}
+              />
+            ) : null
+          }
     </div>
   )
 }

@@ -3,6 +3,8 @@ import { BlockActions, BlockState, BLOCK_ACTION_TYPES } from "./utils";
 
 const initialBlockState: BlockState = {
   blockList: [],
+  editingBlockId: null,
+  stage: [],
   modifyData: [],
   tempBack: [],
   tempFront: [],

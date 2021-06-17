@@ -107,6 +107,8 @@ export interface ResBlockUtils {
 
 export interface BlockState {
   blockList: BlockData[];
+  editingBlockId: string | null;
+  stage: StagedBlock[];
   modifyData: ModifyData[];
   tempFront: TempDataType[];
   tempBack: TempDataType[];
@@ -116,6 +118,8 @@ export interface BlockState {
 
 export interface BlockStateProps {
   blockList?: BlockData[];
+  editingBlockId?: string | null;
+  stage?: StagedBlock[];
   modifyData?: ModifyData[];
   tempFront?: TempDataType[];
   tempBack?: TempDataType[];
@@ -127,7 +131,9 @@ export interface BlockStateProps {
  * action type
  */
 export const RESET_BLOCK       = 'RESET_BLOCK' as const;
+export const CHANGE_EDITING_ID  = 'CHANGE_EDITING_ID' as const;
 export const ADD_BLOCK         = 'ADD_BLOCK' as const;
+export const EDIT_BLOCK        = 'EDIT_BLOCK' as const;
 export const COMMIT_BLOCK      = 'COMMIT_BLOCK' as const;
 export const DELETE_BLOCK      = 'DELETE_BLOCK' as const;
 export const UPDATE_BLOCK      = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
@@ -144,6 +150,7 @@ export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 export type BLOCK_ACTION_TYPES = 
   typeof RESET_BLOCK 
   | typeof ADD_BLOCK
+  | typeof EDIT_BLOCK
   | typeof COMMIT_BLOCK
   | typeof DELETE_BLOCK
   | typeof UPDATE_BLOCK
@@ -162,6 +169,8 @@ export type BLOCK_ACTION_TYPES =
  */
 export const resetBlock      = actionBlock.resetBlock;
 export const addBlock        = actionBlock.addBlock;
+export const changeEditingId = actionBlock.changeEditingId;
+export const editBlock       = actionBlock.editBlock;
 export const commitBlock     = actionBlock.commitBlock;
 export const deleteBlock     = actionBlock.deleteBlock;
 export const updateBlock     = actionBlock.updateBlock;
@@ -177,6 +186,8 @@ export const testClipAdd     = actionBlock.testClipAdd;
 
 export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
+  | ReturnType<typeof changeEditingId>
+  | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof updateBlock>

@@ -232,11 +232,7 @@ export const testDB: RawBlockData[] = [
       backgroudColor: "white"
     },
     contents: [
-      ["블록 8입니다."],
-      ["저", [["b"], ["fc", "#c0f"], ["bc", "#000"], ["i"],["a", "https://www.naver.com"]]],
-      ["는 ", [["i"]]],
-      ["황준희    ", [["b"], ["_"]]],
-      [" 입니다.", [["fc", "#f00"]]]
+      ["블록 8입니다."]
     ]
   },
   {

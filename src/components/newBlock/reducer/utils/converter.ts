@@ -401,8 +401,6 @@ function parseHtmlContents(text:string):TextContents[] {
   const newContents: any[] = [];
   const textLength: number = text.length;
 
-  console.log(text);
-
   let saveToggle:boolean = true;
 
   let content: any = [];

@@ -114,6 +114,7 @@ export function findTextStyle(
 }
 
 export function arrayFindIndex(array: any[], props: any): number {
+  // JSON stringfy는 연산 속도가 느리니 수정 할 것.
   const JSONProps = JSON.stringify(props);
 
   for(let i = 0; i < array.length; i++) {
