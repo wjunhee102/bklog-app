@@ -1,4 +1,4 @@
-import { ActionHandlers, ActionsCreators, ActionsUnion } from '.';
+import { Action, ActionHandlers} from '.';
 
 const settingsReducer = {
   initial: (initialData = null) => ({
@@ -52,14 +52,29 @@ function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
   return Object.assign({}, oldObject, newValues);
 };
 
-function createReducer<P extends string, State, T extends ActionsCreators<P>>(
-  handlers: ActionHandlers<P, T, State>,
-  initialState: State
-) {
-  return (state: State = initialState, action: ActionsUnion<P, T>): State => {
+// function createReducer<P extends string, State, T extends ActionsCreators<P>>(
+//   handlers: ActionHandlers<P, T, State>,
+//   initialState: State
+// ) {
+//   return (state: State = initialState, action: ActionsUnion<P, T>): State => {
 
-      if (handlers.hasOwnProperty(action.type)) {
-        return handlers[action.type](state, action);
+//       if (handlers.hasOwnProperty(action.type)) {
+//         return handlers[action.type](state, action);
+//       }
+
+//       return state;
+//   }
+// }
+
+
+function createReducer<State, T extends Action>(
+  initialState: State,
+  handlers: ActionHandlers<State>,
+) {
+  return (state: State = initialState, action: T): State => {
+
+      if (handlers.hasOwnProperty(action.type as string)) {
+        return handlers[action.type as string](state, action);
       }
 
       return state;

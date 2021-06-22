@@ -486,15 +486,15 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
     for(const data of restoreData.update) {
       const index = preBlockList.findIndex(block => block.id === data.blockId);
 
-      const payload: any = {};
+      const payload: ModifyBlockData = {};
 
       for(const [key, value] of Object.entries(preBlockList[index])) {
         if(data.payload[key]) {
-          payload[key] = value;
+          payload[key as keyof ModifyBlockData] = value;
         }
       }
 
-      tempData.update.push(createTempData(preBlockList[index].id, payload));
+      tempData.update.push(createTempData<ModifyBlockData>(preBlockList[index].id, payload));
       modifyData.push(setUpdateModifyDataOfBlock(preBlockList[index].id, data.payload));
       preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
 

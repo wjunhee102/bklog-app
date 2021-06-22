@@ -1,4 +1,4 @@
-import { updateObject } from "../../../store/utils";
+import { ActionHandlers, updateObject } from "../../../store/utils";
 import { 
   BlockState, 
   commitBlock, 
@@ -175,7 +175,7 @@ function revertBlockHandler(
 
 }
 
-const blockHandlers = {
+const blockHandlers: ActionHandlers<BlockState> = {
   [CHANGE_EDITING_ID] : changeEditingIdHandler,
   [EDIT_BLOCK]        : editBlockHandler,
   [COMMIT_BLOCK]      : commitBlockHandler,
