@@ -96,11 +96,13 @@ export function sortBlock<T extends RawBlockData = any>(blockDataList: T[]): T[]
     while(ary1[length] && ary2[length]) {
       const aNum = Number(ary1[length]);
       const bNum = Number(ary2[length]);
+
       if(aNum > bNum) {
         return 1;
       } else if(aNum < bNum) {
         return -1;
       }
+
       length++;
     }
 
@@ -134,15 +136,21 @@ function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
     let length = preBlockDataList[0].position.split(/-/).length;
 
     if(positions[positionsLength][0] === length) {
+
       positions[positionsLength] = [length, preBlockDataList[0].id];
+
     } else if(positions[positionsLength][0] < length){
+
       positions.push([length, preBlockDataList[0].id]);
       positionsLength++;
+
     } else {
+
       for(let i = 0; i <= positions[positionsLength][0] - length; i++) {
         positions.pop();
         positionsLength--;
       } 
+
       positions[positionsLength] = [length, preBlockDataList[0].id];
     }
     
@@ -162,9 +170,7 @@ function initBlock2(blockDataList: BlockData[] | RawBlockData[]) {
 export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]): ResBlockUtils {
   const preBlockDataList = copyToNewObjectArray(blockDataList);
   const newBlockDataList: BlockData[] = [];
-  const tempData: TempDataType = {
-    update: []
-  };
+  const tempData: TempDataType = { update: [] };
   const modifyData: any[] = [];
 
   let preBlockListlength = preBlockDataList.length - 1;
@@ -249,12 +255,15 @@ export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]): ResB
     let position = currentPosition.join("-");
 
     if(position !== block.position) {
+
       tempData.update?.push(createTempData(block.id, {
         position: block.position
       }));
+
       modifyData.push(setUpdateModifyDataOfBlock(block.id, {
         position
       }));
+      
     }
     
     newBlockDataList.push(Object.assign({}, block, {

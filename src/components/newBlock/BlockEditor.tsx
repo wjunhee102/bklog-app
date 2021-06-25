@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import useBlock from './hooks/useBlock';
 import { BlockData } from './types';
-import BlockElement from './BlockEle';
-import './block.scss';
+import Block from './components/Block';
+import './assets/block.scss';
 import { useIdleTimer } from 'react-idle-timer';
 
-const Block: React.FC = () => {
+const BlockEditor: React.FC = () => {
   const hooks = useBlock();
   
   const {
     state,
-    stage,
     blockLength,
     initBlock,
     onAddBlock,
     onDeleteBlock,
     onRevertBlock,
     onSwitchBlock,
-    onCommitBlock
+    onCommitBlock,
+    handleKeyUp
   } = hooks;
 
   const handleOnIdle = () => {
@@ -33,13 +33,15 @@ const Block: React.FC = () => {
   return (
     <div className="block-editor blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
       <div className="cover mb-8"></div>
-      <div className="m-auto h-full block-container">
+      <div 
+        className="m-auto h-full block-container"
+        onKeyUp={handleKeyUp}
+      >
         {
           initBlock?
           initBlock.root.map((block: BlockData, idx: number) =>
-            <BlockElement 
-              key={idx}
-              idx={idx}
+            <Block
+              key={block.id}
               blockData={block}
               hooks={hooks}
             />
@@ -50,4 +52,4 @@ const Block: React.FC = () => {
   )
 }
 
-export default Block;
+export default BlockEditor;

@@ -1,3 +1,3 @@
-import Block from './Block';
+import BlockEditor from './BlockEditor';
 
-export default Block;
+export default BlockEditor;

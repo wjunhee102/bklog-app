@@ -2,14 +2,14 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { 
   BlockData, 
   ContentType
-} from './types';
+} from '../../../../types';
 import { 
   findTextStyle,
   arrayFindIndex
-} from './utils';
+} from '../../../../utils';
 
 import ColorStyleToggle  from './ColorStyleToggle';
-import { UseBlockTypes } from './hooks/useBlock';
+import { UseBlockType } from '../../../../hooks/useBlock';
 
 const textBlockType = [
   "h1",
@@ -61,7 +61,7 @@ interface TextStyleTogglesProps {
   endPosition: number;
   contents: any;
   reBlockFocus: any;
-  hooks: UseBlockTypes;
+  hooks: UseBlockType;
 }
 
 function TextStyleToggles({

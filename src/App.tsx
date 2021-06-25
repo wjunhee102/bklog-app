@@ -4,7 +4,6 @@ import AuthPage from './pages/AuthPage';
 import useBase from './hooks/useBase';
 import Home from './pages/HomePage';
 import BkPage from './pages/BkPage';
-import Editor from './components/editor/index';
 import GlobalNav from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';
@@ -27,7 +26,6 @@ function App() {
             <Redirect to="/bklog" />
           </Route>
           <Route path="/home" component={Home} />
-          <Route path="/edit" component={Editor} />
           <Route path="/bklog" component={BkPage} />
           <Route path="/auth" component={AuthPage} />
         </Switch>

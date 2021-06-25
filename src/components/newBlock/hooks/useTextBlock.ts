@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BlockData } from "../types";
 import { UseBlockType } from "./useBlock";
 import { 
@@ -14,15 +14,11 @@ import {
 } from '../utils/selectionText';
 import { createBlockData } from "../reducer/utils";
 
-
-function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
-  //text
+function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
+  const [ editable, setEditable]        = useState<boolean>(true);
   const [ cursorStart, setCursorStart ] = useState<number>(0);
   const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
-  //text
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
-  //base
-  const [ select, setSelect ]           = useState<boolean>(false);
 
   const blockRef = useRef<HTMLDivElement>(null);
 
@@ -39,10 +35,11 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
     onCommitBlock,
     onDeleteBlock,
     onRevertBlock,
-    onSwitchBlock
+    onSwitchBlock,
+    deleting,
+    setDeleting
   } = hooks;
 
-  //text
   const createMarkup = useMemo(()=> {
     const htmlElement = blockData.contents[0]?
     (!blockData.contents[1]? 
@@ -54,10 +51,6 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
       __html: htmlElement
     }
   }, [blockData.contents]);
-
-  // 공통? base? 일반 block에서는 필요없나?
-  const childrenBlock = useMemo(() => initBlock.hasOwnProperty(blockData.id)? 
-    initBlock[blockData.id] : null, [initBlock]); 
 
   // keyboard methods text
   const handleKeyUp = (e:any) => {  
@@ -108,7 +101,7 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
           onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
           break;
         }
-      
+
       case " ":
         setCursorEnd(0);
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
@@ -117,34 +110,7 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
       
       default:
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-
     }
-    
-
-  }
-
-  const handleKeyDown = (e: any) => {
-  }
-
-  const copyBlocks = () => {
-    // const value = createClipboardContentsText(getBlocksContents());
-    // copyInClipboard(value);
-  }
-
-  const handleCopy = (e: any) => {
-    // onClearClipboard();
-    // if(select) {
-    //   e.preventDefault();
-    //   onSetClipboard();
-    //   copyBlocks();
-    // }
-  }
-
-  const handlePaste = (e: any) => {
-    // if(getClipboard[0]) {
-    //   e.preventDefault();
-    //   onAddBlockList(blockData.id, getClipboard);
-    // }
   }
 
   const handleKeyPress = (e:any) => {
@@ -158,6 +124,21 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
 
       onCommitBlock();
       onAddBlock([ newBlock ], blockData.position);
+    }
+  }
+
+  const handleKeyDown = (e: any) => {
+    console.log(e.key);
+    if (e.key === "Backspace") {
+      // 자고 일어나서 다시
+      setCursorStart(getSelectionStart(e.target));
+      setCursorEnd(getSelectionEnd(e.target));
+      // 자고 일어나서 다시
+      console.log("1231", cursorStart, cursorEnd);
+      if(cursorStart === 0 && cursorEnd === 0) {
+        setDeleting(true);
+      }
+
     }
   }
 
@@ -176,12 +157,6 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
     setSelectionRange(ele, cursorStart, cursorEnd? cursorEnd : cursorStart);
   }
 
-  const clearTempClip = () => {
-    // if(clipOn) handleClipOn(false)
-    // if(getTempClip[0]) onClearTempClip();
-  }
-
-  // base?
   const handleClick = (e: any) => {
     const parentNode = e.target.parentNode;
 
@@ -189,49 +164,15 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
       window.open(parentNode.href);
     }
 
-    clearTempClip();
   }
 
-  // mouse methods
   const handleMouseUp = (e: any) => {
     const getStartPosition = getSelectionStart(blockRef.current);
     const getEndPosition = getSelectionEnd(blockRef.current);
     setCursorStart(getStartPosition);
     setCursorEnd(getEndPosition);
-    // if(clipDataMode) handleClipOn(false);
   }
 
-  const handleMouseEnter = (e: any) => {
-    if(clipDataOn && mouseDownOn) { 
-      // onSetTempClip(blockData.index);
-    } 
-  }
-
-  const handleMouseLeave = (e: any) => {
-    if(clipDataOn && mouseDownOn) {
-      const getStartPosition = getSelectionStart(blockRef.current);
-      const getEndPosition = getSelectionEnd(blockRef.current);
-      // if((getStartPosition - getEndPosition) || !getTempClip[0]) {
-      //   onSetTempClip(blockData.index);
-      //   handleBlur(e);
-
-      //   //test 
-      //   const text = document.createElement("textarea");
-      //   document.body.appendChild(text);
-      //   text.select();
-      //   document.body.removeChild(text);
-      // } 
-    }
-  }
-
-  const handleMouseMove = (e: any) => {
-    if(mouseDownOn) {
-      // handleClipOn(true);
-    }
-  }
-
-  // text
-  // Focus methods text
   const handleBlur = (e:any) => {
     if (!e.currentTarget.contains(e.target)) {
       setCursorStart(0);
@@ -267,7 +208,6 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
 
   }, [blockData.contents]);
 
-  //base?
   useEffect(() => {
     if(editingBlockId === blockData.id) {
       if(blockRef.current) {
@@ -278,13 +218,6 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
     }
   }, [editingBlockId]);
 
-  // container
-  useEffect(() => {
-    if(blockData.type === "container") {
-      if(!childrenBlock) onDeleteBlock([blockData]);
-    }
-  }, [childrenBlock]);
-
   useEffect(() => {
     if(cursorEnd - cursorStart >= 1) {
       setStyleToggle(true);
@@ -293,41 +226,28 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
     }
   }, [cursorStart, cursorEnd]);
 
-  // useEffect(() => {
-  //   console.log(getTempClip);
-  //   if(getTempClip.includes(blockData.index)) {
-  //     setSelect(true);
-  //   } else {
-  //     setSelect(false);
-  //   }
-  // }, [getTempClip]);
-  
+  useEffect(() => {
+    setEditable(!deleting);
+  }, [deleting]);
+
   return {
     cursorStart,
     cursorEnd,
     styleToggle,
-    select,
     blockRef,
     createMarkup,
-    childrenBlock,
     handleKeyUp,
-    handleKeyDown,
-    handleCopy,
-    handlePaste,
     handleKeyPress,
-    moveEndPoint,
-    refreshPoint,
-    clearTempClip,
+    handleKeyDown,
     handleClick,
     handleMouseUp,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleMouseMove,
     handleBlur,
-    handleFocus,
     isFocus,
-    reBlockFocus
-  }
+    reBlockFocus,
+    editable
+  };
 }
 
-export default useBlockEle;
+export type UseTextBlockType = ReturnType<typeof useTextBlock>;
+
+export default useTextBlock;

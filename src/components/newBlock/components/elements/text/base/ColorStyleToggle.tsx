@@ -6,13 +6,11 @@ interface ColorStyleToggleButtonProps {
   addDelToggle: any;
 }
 
-
-function ColorStyleToggleButton({
+const ColorStyleToggleButton: React.FC<ColorStyleToggleButtonProps> = ({
   colorCode,
   onStyleChange,
   addDelToggle
-}: ColorStyleToggleButtonProps) {
-  // 붙혀야 commit 해당 색을 찾을 수 있음.
+}) => {
   const RGBA = `rgba(${colorCode[0]},${colorCode[1]},${colorCode[2]},${colorCode[3]})`
 
   const btnStyle = {
@@ -22,18 +20,18 @@ function ColorStyleToggleButton({
   const addDel = addDelToggle(["fc", RGBA])? "del" : "color";
 
   const handleClick = ()=> {
-    onStyleChange(["fc",RGBA], addDel);
+    onStyleChange(["fc", RGBA], addDel);
   }
 
   return (
     <button style={btnStyle} onClick={handleClick}>
       Text
-      { addDel === "del"? "v" : null}
+      { addDel === "del"? "v" : null }
     </button>
-  )
+  );
 }
 
-const colorCodes:number[][] = [
+const colorCodes: number[][] = [
   [191, 63, 63, 1],
   [191, 127, 63, 1],
   [191, 191, 63, 1],
@@ -52,9 +50,10 @@ interface ColorStyleToggleProps {
   onStyleChange: any;
 }
 
-function ColorStyleToggle(
-  { addDelToggle, onStyleChange }: ColorStyleToggleProps
-  ) {
+const ColorStyleToggle: React.FC<ColorStyleToggleProps> = ({
+  addDelToggle, 
+  onStyleChange 
+}) => {
 
   return (
     <div className="bk-color-menu">
@@ -69,7 +68,7 @@ function ColorStyleToggle(
         )
       }
     </div>
-  )
+  );
 }
 
 export default ColorStyleToggle;

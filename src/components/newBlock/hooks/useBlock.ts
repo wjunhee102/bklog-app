@@ -16,9 +16,10 @@ const initialState: BlockState = {
 }
 
 function useBlock() {
-  const [ stage, setStage ]            = useState<StagedBlock[]>([]);
-  const [ mouseDown, setMouseDown ]    = useState<boolean>(false);
-  const [ clipDataMode, setClipData ]  = useState<boolean>(false);
+  const [ mouseDownOn, setMouseDown ]    = useState<boolean>(false);
+  const [ clipDataOn, setClipData ]      = useState<boolean>(false);
+  const [ gripOn, setGrip ]              = useState<boolean>(false);
+  const [ deleting, setDeleting ]        = useState<boolean>(false);
 
   const [ state, dispatch ] = useReducer(blockReducer, initialState);
 
@@ -76,12 +77,18 @@ function useBlock() {
     dispatch(revertBlock(back));
   }, [dispatch]);
 
+  const handleKeyUp = () => {
+    setDeleting(false);
+  }
+
   return { 
     state, 
-    stage, 
     editingBlockId,
-    clipDataMode,
-    mouseDown,
+    clipDataOn,
+    mouseDownOn,
+    gripOn,
+    deleting,
+    setDeleting,
     onEditBlock,
     initBlock,
     blockLength,
@@ -91,10 +98,11 @@ function useBlock() {
     onDeleteBlock,
     onChangeTextStyle,
     onSwitchBlock,
-    onRevertBlock
+    onRevertBlock,
+    handleKeyUp
   };
 }
 
-export type UseBlockTypes = ReturnType<typeof useBlock>;
+export type UseBlockType = ReturnType<typeof useBlock>;
 
 export default useBlock;
