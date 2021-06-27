@@ -21,6 +21,12 @@ export interface StagedBlock{
 //   data: any;
 // }
 
+export interface ChangeEditorStateProps {
+  graping?: boolean;
+  pressing?: boolean;
+  cliping?: boolean;
+}
+
 export interface BlockStateProps {
   blockList?: BlockData[];
   modifyData?: ModifyData[];
@@ -106,6 +112,9 @@ export interface ResBlockUtils {
 }
 
 export interface BlockState {
+  graping: boolean;
+  pressing: boolean;
+  cliping: boolean;
   blockList: BlockData[];
   editingBlockId: string | null;
   stage: StagedBlock[];
@@ -117,6 +126,9 @@ export interface BlockState {
 }
 
 export interface BlockStateProps {
+  graping?: boolean;
+  pressing?: boolean;
+  cliping?: boolean;
   blockList?: BlockData[];
   editingBlockId?: string | null;
   stage?: StagedBlock[];
@@ -130,20 +142,21 @@ export interface BlockStateProps {
 /**
  * action type
  */
-export const RESET_BLOCK       = 'RESET_BLOCK' as const;
-export const CHANGE_EDITING_ID  = 'CHANGE_EDITING_ID' as const;
-export const ADD_BLOCK         = 'ADD_BLOCK' as const;
-export const EDIT_BLOCK        = 'EDIT_BLOCK' as const;
-export const COMMIT_BLOCK      = 'COMMIT_BLOCK' as const;
-export const DELETE_BLOCK      = 'DELETE_BLOCK' as const;
-export const UPDATE_BLOCK      = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
-export const SWITCH_BLOCK      = 'SWITCH_BLOCK' as const;
-export const REVERT_BLOCK      = 'REVERT_BLOKC' as const;
-export const CHANGE_TEXT_STYLE = 'CHANGE_TEXT_STYLE' as const;
-export const SET_CLIPBOARD     = 'SET_CLIPBOARD' as const;
-export const CLEAR_CLIPBOARD   = 'CLEAR_CLIPBOARD' as const;
-export const SET_TEMPCLIP      = 'SET_TEMPCLIP' as const;
-export const CLEAR_TEMPCLIP    = 'CLEAR_TEMPCLIP' as const;
+export const RESET_BLOCK         = 'RESET_BLOCK' as const;
+export const CHANGE_EDITING_ID   = 'CHANGE_EDITING_ID' as const;
+export const ADD_BLOCK           = 'ADD_BLOCK' as const;
+export const EDIT_BLOCK          = 'EDIT_BLOCK' as const;
+export const COMMIT_BLOCK        = 'COMMIT_BLOCK' as const;
+export const DELETE_BLOCK        = 'DELETE_BLOCK' as const;
+export const UPDATE_BLOCK        = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
+export const SWITCH_BLOCK        = 'SWITCH_BLOCK' as const;
+export const REVERT_BLOCK        = 'REVERT_BLOKC' as const;
+export const CHANGE_TEXT_STYLE   = 'CHANGE_TEXT_STYLE' as const;
+export const SET_CLIPBOARD       = 'SET_CLIPBOARD' as const;
+export const CLEAR_CLIPBOARD     = 'CLEAR_CLIPBOARD' as const;
+export const SET_TEMPCLIP        = 'SET_TEMPCLIP' as const;
+export const CLEAR_TEMPCLIP      = 'CLEAR_TEMPCLIP' as const;
+export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
@@ -169,18 +182,19 @@ export type BLOCK_ACTION_TYPES =
  */
 export const resetBlock      = actionBlock.resetBlock;
 export const addBlock        = actionBlock.addBlock;
-export const changeEditingId = actionBlock.changeEditingId;
-export const editBlock       = actionBlock.editBlock;
-export const commitBlock     = actionBlock.commitBlock;
-export const deleteBlock     = actionBlock.deleteBlock;
-export const updateBlock     = actionBlock.updateBlock;
-export const changeTextStyle = actionBlock.changeTextStyle;
-export const revertBlock     = actionBlock.revertBlock;
-export const switchBlock     = actionBlock.switchBlock;
-export const setClipboard    = actionBlock.setClipboard;
-export const clearClipboard  = actionBlock.clearClipboard;
-export const setTempClip     = actionBlock.setTempClip;
-export const clearTempClip   = actionBlock.clearTempClip;
+export const changeEditingId   = actionBlock.changeEditingId;
+export const editBlock         = actionBlock.editBlock;
+export const commitBlock       = actionBlock.commitBlock;
+export const deleteBlock       = actionBlock.deleteBlock;
+export const updateBlock       = actionBlock.updateBlock;
+export const changeTextStyle   = actionBlock.changeTextStyle;
+export const revertBlock       = actionBlock.revertBlock;
+export const switchBlock       = actionBlock.switchBlock;
+export const setClipboard      = actionBlock.setClipboard;
+export const clearClipboard    = actionBlock.clearClipboard;
+export const setTempClip       = actionBlock.setTempClip;
+export const clearTempClip     = actionBlock.clearTempClip;
+export const changeEditorState = actionBlock.chageEditorState;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
@@ -198,6 +212,7 @@ export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof clearClipboard>
   | ReturnType<typeof setTempClip>
   | ReturnType<typeof clearTempClip>
+  | ReturnType<typeof changeEditorState>
   | ReturnType<typeof testClipAdd>
 ;
 

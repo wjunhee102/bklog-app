@@ -3,6 +3,9 @@ import blockHandlers from "./handler";
 import { BlockActions, BlockState } from "./utils";
 
 const initialBlockState: BlockState = {
+  graping: false,
+  pressing: false,
+  cliping: false,
   blockList: [],
   editingBlockId: null,
   stage: [],

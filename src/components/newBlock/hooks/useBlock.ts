@@ -1,10 +1,29 @@
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { testDB } from '../db';
 import blockReducer from '../reducer';
-import { BlockState, addToStage, StagedBlock, initBlock, SetBlockDataList, setBlockList, addBlock, commitBlock, deleteBlock, changeTextStyle, OrderType, switchBlock, revertBlock, editBlock, changeEditingId } from '../reducer/utils';
-import { BlockData, ContentType, RawBlockData } from '../types';
+import { 
+  BlockState, 
+  initBlock, 
+  SetBlockDataList, 
+  setBlockList, 
+  addBlock, 
+  commitBlock, 
+  deleteBlock, 
+  changeTextStyle, 
+  OrderType, 
+  switchBlock, 
+  revertBlock, 
+  editBlock, 
+  changeEditingId,
+  ChangeEditorStateProps,
+  changeEditorState
+} from '../reducer/utils';
+import { BlockData, ContentType } from '../types';
 
 const initialState: BlockState = {
+  graping: false,
+  pressing: false,
+  cliping: false,
   blockList: initBlock(testDB).blockList,
   editingBlockId: null,
   stage: [],
@@ -15,12 +34,9 @@ const initialState: BlockState = {
   clipBoard: []
 }
 
-function useBlock() {
-  const [ mouseDownOn, setMouseDown ]    = useState<boolean>(false);
-  const [ clipDataOn, setClipData ]      = useState<boolean>(false);
-  const [ gripOn, setGrip ]              = useState<boolean>(false);
-  const [ deleting, setDeleting ]        = useState<boolean>(false);
 
+// state 값을 전부 useReducer로 통합할 것.
+function useBlock() {
   const [ state, dispatch ] = useReducer(blockReducer, initialState);
 
   // state
@@ -31,9 +47,19 @@ function useBlock() {
 
   const editingBlockId: string | null = useMemo(() => state.editingBlockId, [state.editingBlockId]);
 
+  const graping: boolean = useMemo(() => state.graping, [state.graping]);
+
+  const cliping: boolean = useMemo(() => state.cliping, [state.cliping]);
+  
+  const pressing: boolean = useMemo(() => state.pressing, [state.pressing]);
+
   // dispatch
-  const onChangeEditingId = useCallback((index: number, blockId?: string) => {
-    dispatch(changeEditingId(index, blockId));
+  const onChangeEditorState = useCallback((payload: ChangeEditorStateProps) => {
+    dispatch(changeEditorState(payload));
+  }, [dispatch]);
+
+  const onChangeEditingId = useCallback((nextEditInfo) => {
+    dispatch(changeEditingId(nextEditInfo));
   }, [dispatch]);
 
   const onEditBlock = useCallback((blockId: string, blockIndex: number, contents: string) => {
@@ -46,13 +72,17 @@ function useBlock() {
 
   const onAddBlock = useCallback((
     blockList: BlockData[], 
-    targetPosition: string
+    targetPosition: string,
+    nextEditInfo?: string | number
   ) => {
-    dispatch(addBlock(blockList, targetPosition));
+    dispatch(addBlock(blockList, targetPosition, nextEditInfo));
   }, [dispatch]);
 
-  const onDeleteBlock = useCallback((removedBlockList: BlockData[]) => {
-    dispatch(deleteBlock(removedBlockList));
+  const onDeleteBlock = useCallback((
+    removedBlockList: BlockData[],
+    nextEditInfo?: string | number
+  ) => {
+    dispatch(deleteBlock(removedBlockList, nextEditInfo));
   }, [dispatch]);
 
   const onChangeTextStyle = useCallback((
@@ -77,29 +107,23 @@ function useBlock() {
     dispatch(revertBlock(back));
   }, [dispatch]);
 
-  const handleKeyUp = () => {
-    setDeleting(false);
-  }
-
   return { 
     state, 
     editingBlockId,
-    clipDataOn,
-    mouseDownOn,
-    gripOn,
-    deleting,
-    setDeleting,
+    graping,
+    pressing,
+    cliping,
     onEditBlock,
     initBlock,
     blockLength,
+    onChangeEditorState,
     onChangeEditingId,
     onCommitBlock,
     onAddBlock,
     onDeleteBlock,
     onChangeTextStyle,
     onSwitchBlock,
-    onRevertBlock,
-    handleKeyUp
+    onRevertBlock
   };
 }
 

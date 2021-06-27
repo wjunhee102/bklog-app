@@ -3,23 +3,26 @@ import useBlockBase from "../../hooks/useBlockBase";
 import { BlockProps } from "../Block";
 import ChildrenBlock from "../ChildrenBlock";
 
-const BaseBlockZone: React.FC<BlockProps> = ({ blockData, hooks, children }) => {
+interface BaseBlockZoneProps extends BlockProps {
+  children: (
+    selected: boolean, 
+    setSelect: React.Dispatch<React.SetStateAction<boolean>>
+  ) => React.ReactNode;
+}
+
+const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, children }) => {
   const {
     selected,
     setSelect,
-    childrenBlockData,
-    handleKeyDown,
-    blockRef
+    childrenBlockData
   } = useBlockBase(blockData, hooks);
 
   return (
     <div 
       data-index={blockData.index} 
       className="block-zone"
-      onKeyDown={handleKeyDown}
-      ref={blockRef}
     >
-      { children }
+      { children(selected, setSelect) }
       <ChildrenBlock childrenBlockData={childrenBlockData} hooks={hooks} />
     </div>
   )

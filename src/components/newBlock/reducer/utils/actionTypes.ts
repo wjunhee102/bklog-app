@@ -1,10 +1,11 @@
 import { 
+  OrderType, 
+  ChangeEditorStateProps,
   RESET_BLOCK, 
   ADD_BLOCK, 
   COMMIT_BLOCK, 
   DELETE_BLOCK, 
   UPDATE_BLOCK, 
-  OrderType, 
   CHANGE_TEXT_STYLE, 
   REVERT_BLOCK, 
   SWITCH_BLOCK, 
@@ -13,9 +14,9 @@ import {
   CLEAR_TEMPCLIP,
   SET_TEMPCLIP,
   TEST_CLIPBOARD,
-  StagedBlock,
   EDIT_BLOCK,
-  CHANGE_EDITING_ID
+  CHANGE_EDITING_ID,
+  CHANGE_EDITOR_STATE
 } from ".";
 import { UUID, BlockData, ContentType } from "../../types";
 
@@ -25,22 +26,22 @@ function resetBlock() {
   }
 }
 
-function addBlock(addBlockList: BlockData[], targetPosition: string) {
+function addBlock(addBlockList: BlockData[], targetPosition: string, nextEditInfo?: string | number) {
   return {
     type: ADD_BLOCK,
     payload: {
       addBlockList,
-      targetPosition
+      targetPosition,
+      nextEditInfo
     }
   }
 }
 
-function changeEditingId(index: number, blockId?: string) {
+function changeEditingId(nextEditInfo: string | number) {
   return {
     type: CHANGE_EDITING_ID,
     payload: {
-      index,
-      blockId
+      nextEditInfo
     }
   }
 }
@@ -62,11 +63,12 @@ function commitBlock() {
   }
 }
 
-function deleteBlock(removedBlockList: BlockData[]) {
+function deleteBlock(removedBlockList: BlockData[], nextEditInfo?: string | number) {
   return {
     type: DELETE_BLOCK,
     payload: {
-      removedBlockList
+      removedBlockList,
+      nextEditInfo
     }
   }
 }
@@ -142,6 +144,13 @@ function clearTempClip() {
   }
 }
 
+function chageEditorState(payload: ChangeEditorStateProps) {
+  return {
+    type: CHANGE_EDITOR_STATE,
+    payload
+  }
+}
+
 function testClipAdd(payload: any) {
   return {
     type: TEST_CLIPBOARD,
@@ -164,6 +173,7 @@ const actionBlock = {
   clearClipboard,
   setTempClip,
   clearTempClip,
+  chageEditorState,
   testClipAdd
 }
 

@@ -10,14 +10,8 @@ const BlockEditor: React.FC = () => {
   
   const {
     state,
-    blockLength,
     initBlock,
-    onAddBlock,
-    onDeleteBlock,
-    onRevertBlock,
-    onSwitchBlock,
-    onCommitBlock,
-    handleKeyUp
+    onCommitBlock
   } = hooks;
 
   const handleOnIdle = () => {
@@ -25,7 +19,7 @@ const BlockEditor: React.FC = () => {
   }
 
   const { getLastActiveTime } = useIdleTimer({
-    timeout: 10 * 60 * 5,
+    timeout: 10 * 60 * 2,
     onIdle: handleOnIdle,
     debounce: 500
   });
@@ -33,10 +27,7 @@ const BlockEditor: React.FC = () => {
   return (
     <div className="block-editor blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
       <div className="cover mb-8"></div>
-      <div 
-        className="m-auto h-full block-container"
-        onKeyUp={handleKeyUp}
-      >
+      <div className="m-auto h-full block-container">
         {
           initBlock?
           initBlock.root.map((block: BlockData, idx: number) =>

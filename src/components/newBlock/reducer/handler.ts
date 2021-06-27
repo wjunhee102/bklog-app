@@ -1,7 +1,6 @@
 import { ActionHandlers, updateObject } from "../../../store/utils";
 import { 
   BlockState, 
-  commitBlock, 
   updateBlockContents, 
   updateModifyData, 
   tempDataPush, 
@@ -26,17 +25,19 @@ import {
   editBlock,
   EDIT_BLOCK,
   changeEditingId,
-  CHANGE_EDITING_ID
+  CHANGE_EDITING_ID,
+  changeEditorState,
+  CHANGE_EDITOR_STATE
 } from "./utils";
 
-function changeEditingIdHandler(state: BlockState, { payload: { index, blockId } }: ReturnType<typeof changeEditingId>) {
-  if(blockId) {
+function changeEditingIdHandler(state: BlockState, { payload: { nextEditInfo }}: ReturnType<typeof changeEditingId>) {
+  if(typeof nextEditInfo === "string") {
     return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: blockId
+      editingBlockId: nextEditInfo
     });
   } else {
     return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: index < state.blockList.length? state.blockList[index].id : null
+      editingBlockId: state.blockList[nextEditInfo]? state.blockList[nextEditInfo].id : null
     });
   }
 }
@@ -64,14 +65,21 @@ function commitBlockHandler(
 
 function addBlockHandler(
   state: BlockState, 
-  { payload: { addBlockList, targetPosition } 
-}: ReturnType<typeof addBlock>
+  { 
+    payload: { addBlockList, targetPosition, nextEditInfo } 
+  }: ReturnType<typeof addBlock>
 ): BlockState {
   const { blockList, modifyData, tempData } = addBlockInList(state.blockList, addBlockList, targetPosition);
 
+  const editingBlockId: string | null = nextEditInfo !== undefined? 
+    typeof nextEditInfo === "string"? 
+    nextEditInfo 
+    : blockList[nextEditInfo].id
+    : null;
+
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    editingBlockId: addBlockList[0].id,
+    editingBlockId,
     modifyData: updateModifyData(
       state.modifyData, 
       modifyData
@@ -83,14 +91,19 @@ function addBlockHandler(
 
 function deleteBlockHandler(
   state: BlockState,
-  { payload: { removedBlockList } }: ReturnType<typeof deleteBlock>
+  { payload: { removedBlockList, nextEditInfo } }: ReturnType<typeof deleteBlock>
 ): BlockState {
   const { blockList, modifyData, tempData } = removeBlockInList(state.blockList, removedBlockList);
 
-  console.log(tempData);
+  const editingBlockId: string | null = nextEditInfo !== undefined? 
+    typeof nextEditInfo === "string"? 
+    nextEditInfo 
+    : blockList[nextEditInfo].id
+    : null;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
+    editingBlockId,
     tempBack: tempDataPush(state.tempBack, tempData),
     tempFront: [],
     modifyData: updateModifyData(state.modifyData, modifyData)
@@ -175,15 +188,29 @@ function revertBlockHandler(
 
 }
 
+function changeEditorStateHandler(
+  state: BlockState, { 
+    payload: { graping, pressing, cliping } 
+  }: ReturnType<typeof changeEditorState>
+) {
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    graping: graping? graping : state.graping,
+    pressing: pressing? pressing : state.pressing,
+    cliping: cliping? cliping : state.cliping
+  });
+}
+
 const blockHandlers: ActionHandlers<BlockState> = {
-  [CHANGE_EDITING_ID] : changeEditingIdHandler,
-  [EDIT_BLOCK]        : editBlockHandler,
-  [COMMIT_BLOCK]      : commitBlockHandler,
-  [ADD_BLOCK]         : addBlockHandler,
-  [DELETE_BLOCK]      : deleteBlockHandler,
-  [CHANGE_TEXT_STYLE] : changeTextStyleHandler,
-  [SWITCH_BLOCK]      : switchBlockHandler,
-  [REVERT_BLOCK]      : revertBlockHandler
+  [CHANGE_EDITING_ID]   : changeEditingIdHandler,
+  [EDIT_BLOCK]          : editBlockHandler,
+  [COMMIT_BLOCK]        : commitBlockHandler,
+  [ADD_BLOCK]           : addBlockHandler,
+  [DELETE_BLOCK]        : deleteBlockHandler,
+  [CHANGE_TEXT_STYLE]   : changeTextStyleHandler,
+  [SWITCH_BLOCK]        : switchBlockHandler,
+  [REVERT_BLOCK]        : revertBlockHandler,
+  [CHANGE_EDITOR_STATE] : changeEditorStateHandler
 };
 
 export default blockHandlers;

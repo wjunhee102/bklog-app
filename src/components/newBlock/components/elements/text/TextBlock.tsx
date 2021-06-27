@@ -9,7 +9,20 @@ const TextBlock: React.FC<BlockProps> = ({ blockData, hooks }) => {
       blockData={blockData}
       hooks={hooks}
     >
-      <TextBlockEle blockData={blockData} hooks={hooks} />
+      {
+        (selected, setSelect) => {
+          return (
+            <TextBlockEle 
+              blockData={blockData} 
+              hooks={hooks} 
+              selected={selected}
+              setSelect={setSelect}
+            />
+          );
+        }
+          
+      }
+      
     </BaseBlockZone>
   )
 }

@@ -28,9 +28,9 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
 
   const {
     initBlock,
-    mouseDownOn,
-    clipDataOn,
-    gripOn,
+    graping,
+    pressing,
+    cliping,
     editingBlockId,
     onChangeEditingId,
     onEditBlock,
@@ -202,13 +202,13 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
   }
 
   const handleMouseEnter = (e: any) => {
-    if(clipDataOn && mouseDownOn) { 
+    if(cliping && pressing) { 
       // onSetTempClip(blockData.index);
     } 
   }
 
   const handleMouseLeave = (e: any) => {
-    if(clipDataOn && mouseDownOn) {
+    if(cliping && pressing) {
       const getStartPosition = getSelectionStart(blockRef.current);
       const getEndPosition = getSelectionEnd(blockRef.current);
       // if((getStartPosition - getEndPosition) || !getTempClip[0]) {
@@ -225,7 +225,7 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
   }
 
   const handleMouseMove = (e: any) => {
-    if(mouseDownOn) {
+    if(pressing) {
       // handleClipOn(true);
     }
   }
@@ -251,7 +251,7 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
       refreshPoint(blockRef.current, cursorStart, cursorEnd);
     } 
 
-    if(blockData.id !== editingBlockId) onChangeEditingId(0, blockData.id);
+    if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
   }
 
   const reBlockFocus = () => {

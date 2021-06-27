@@ -6,7 +6,17 @@ import { BlockProps } from '../../Block';
 import ContentEditableEle from './base/ContentEditableEle';
 import TextStyleToggle from './base/TextStyleToggle';
 
-const TextBlockEle: React.FC<BlockProps> = ({ blockData, hooks }) => {
+interface TextBlockEleProps extends BlockProps {
+  selected: boolean;
+  setSelect: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const TextBlockEle: React.FC<TextBlockEleProps> = ({ 
+  blockData, 
+  hooks, 
+  selected,
+  setSelect
+}) => {
 
   const {
     cursorStart,
