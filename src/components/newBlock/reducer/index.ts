@@ -4,8 +4,9 @@ import { BlockActions, BlockState } from "./utils";
 
 const initialBlockState: BlockState = {
   graping: false,
-  pressing: false,
+  holdingDown: false,
   cliping: false,
+  targetPosition: null,
   blockList: [],
   editingBlockId: null,
   stage: [],

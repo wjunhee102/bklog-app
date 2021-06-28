@@ -304,7 +304,6 @@ function BlockElement({
   }, [cursorStart, cursorEnd]);
 
   useEffect(() => {
-    console.log(getTempClip);
     if(getTempClip.includes(blockData.index)) {
       setSelect(true);
     } else {

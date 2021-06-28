@@ -4,18 +4,25 @@ import { BlockData } from "../types";
 import '../assets/block.scss';
 import TextBlock from "./elements/text";
 
+export type ParentInfoType = {
+  type: string;
+  selected: boolean;
+};
+
 export interface BlockProps {
-  blockData: BlockData,
-  hooks: UseBlockType
+  blockData: BlockData;
+  hooks: UseBlockType;
+  parentInfo?: ParentInfoType | undefined;
 }
 
 const Block: React.FC<BlockProps> = ({
   blockData,
-  hooks
+  hooks,
+  parentInfo
 }) => {
   switch(blockData.type) {
     case "text":
-      return <TextBlock blockData={blockData} hooks={hooks} />
+      return <TextBlock blockData={blockData} hooks={hooks} parentInfo={parentInfo} />
     default:
       return null;
   };

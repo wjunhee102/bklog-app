@@ -24,6 +24,10 @@ const BlockEditor: React.FC = () => {
     debounce: 500
   });
 
+  useEffect(() => {
+    console.log(state.blockList);
+  }, [state.blockList]);
+
   return (
     <div className="block-editor blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md">
       <div className="cover mb-8"></div>

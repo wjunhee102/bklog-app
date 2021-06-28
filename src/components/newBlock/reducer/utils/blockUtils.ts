@@ -380,9 +380,12 @@ function divideBlock(blocks: BlockData[], idList: string[]) {
  * @param idList 
  * @param targetPosition 
  */
-function changeBlockPosition(blocks: BlockData[], idList: string[], targetPosition: string): ResBlockUtils {
+function changeBlockPosition(blocks: BlockData[], idList: string[], targetPosition: string): ResBlockUtils | null {
   const [ removedBlockList, targetBlockList ] = divideBlock(blocks, idList);
-  const index = removedBlockList.findIndex(block => block.position === targetPosition);
+  const index = removedBlockList.findIndex(block => block.position === targetPosition) + 1;
+
+  if(index === 0) return null;
+
   const containerBlockList = removedBlockList.filter((block => block.type === "container"));
   const tempData: TempDataType = {
     create: [],
@@ -391,7 +394,9 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
   const modifyData: ModifyData[] = [];
 
   const newBlockList = copyToNewObjectArray(removedBlockList);
-  newBlockList.splice(index, 1, removedBlockList[index], ...resetToTargetPosition(targetBlockList, targetPosition));
+  newBlockList.splice(index, 0, ...resetToTargetPosition(targetBlockList, targetPosition));
+
+  console.log(removedBlockList, targetBlockList, newBlockList, targetPosition, index);
 
   if(containerBlockList[0]) {
     for(const block of containerBlockList) {
@@ -429,7 +434,7 @@ function switchBlockList(
   idList: string[], 
   targetPosition: string, 
   container: boolean
-): ResBlockUtils {
+): ResBlockUtils | null {
   const tempData: TempDataType = {};
   const modifyData: ModifyData[] = [];
   const blockList = copyToNewObjectArray(blocks);
@@ -456,6 +461,8 @@ function switchBlockList(
   }
 
   const result = changeBlockPosition(blockList, blockIdList, position);
+  
+  if(!result) return null;
 
   if(result.tempData.update) {
     tempData.update = result.tempData.update;

@@ -16,14 +16,18 @@ import {
   editBlock, 
   changeEditingId,
   ChangeEditorStateProps,
-  changeEditorState
+  changeEditorState,
+  changeTargetPosition,
+  setTempClip,
+  clearClipboard
 } from '../reducer/utils';
 import { BlockData, ContentType } from '../types';
 
 const initialState: BlockState = {
   graping: false,
-  pressing: false,
+  holdingDown: false,
   cliping: false,
+  targetPosition: null,
   blockList: initBlock(testDB).blockList,
   editingBlockId: null,
   stage: [],
@@ -51,7 +55,11 @@ function useBlock() {
 
   const cliping: boolean = useMemo(() => state.cliping, [state.cliping]);
   
-  const pressing: boolean = useMemo(() => state.pressing, [state.pressing]);
+  const holdingDown: boolean = useMemo(() => state.holdingDown, [state.holdingDown]);
+
+  const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
+
+  const targetPosition: string | null = useMemo(() => state.targetPosition, [state.targetPosition]);
 
   // dispatch
   const onChangeEditorState = useCallback((payload: ChangeEditorStateProps) => {
@@ -97,22 +105,35 @@ function useBlock() {
 
   const onSwitchBlock = useCallback((
     changedBlockIdList: string[],
-    targetPosition: string,
     container?: boolean
   ) => {
-    dispatch(switchBlock(changedBlockIdList, targetPosition, container))
+    dispatch(switchBlock(changedBlockIdList, container))
   }, [dispatch]);
 
   const onRevertBlock = useCallback((back: boolean) => {
     dispatch(revertBlock(back));
   }, [dispatch]);
 
+  const onChangeTargetPosition = useCallback((targetPosition?: string) => {
+    dispatch(changeTargetPosition(targetPosition));
+  }, [dispatch]);
+
+  const onSetTempClip = useCallback((index: number[]) => {
+    dispatch(setTempClip(index));
+  }, [dispatch]);
+
+  const onClearTempClip = useCallback(() => {
+    dispatch(clearClipboard());
+  }, [dispatch])
+
   return { 
     state, 
     editingBlockId,
     graping,
-    pressing,
+    holdingDown,
     cliping,
+    tempClipData,
+    targetPosition,
     onEditBlock,
     initBlock,
     blockLength,
@@ -123,7 +144,10 @@ function useBlock() {
     onDeleteBlock,
     onChangeTextStyle,
     onSwitchBlock,
-    onRevertBlock
+    onRevertBlock,
+    onChangeTargetPosition,
+    onSetTempClip,
+    onClearTempClip
   };
 }
 

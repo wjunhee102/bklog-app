@@ -25,7 +25,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
   const {
     initBlock,
     graping,
-    pressing,
+    holdingDown,
     cliping,
     editingBlockId,
     onChangeEditingId,

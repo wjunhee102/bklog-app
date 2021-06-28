@@ -21,13 +21,19 @@ import {
   SWITCH_BLOCK,
   CHANGE_TEXT_STYLE,
   REVERT_BLOCK,
+  CHANGE_EDITOR_STATE,
+  EDIT_BLOCK,
+  CHANGE_TARGET_POSITION,
   addToStage,
   editBlock,
-  EDIT_BLOCK,
+  changeTargetPosition,
   changeEditingId,
   CHANGE_EDITING_ID,
   changeEditorState,
-  CHANGE_EDITOR_STATE
+  setTempClip,
+  SET_TEMPCLIP,
+  CLEAR_CLIPBOARD,
+  
 } from "./utils";
 
 function changeEditingIdHandler(state: BlockState, { payload: { nextEditInfo }}: ReturnType<typeof changeEditingId>) {
@@ -139,16 +145,23 @@ function changeTextStyleHandler(
 function switchBlockHandler(
   state: BlockState, 
   { payload: { 
-    changedBlockIdList, targetPosition, container 
+    changedBlockIdList, container 
   } }: ReturnType<typeof switchBlock>
 ) {
-  const { blockList, tempData, modifyData } = switchBlockList(state.blockList, changedBlockIdList, targetPosition, container);
+  if(!state.targetPosition) return state;
+
+  const result = switchBlockList(state.blockList, changedBlockIdList, state.targetPosition, container);
+  
+  if(!result) return state;
+
+  const { blockList, tempData, modifyData } = result;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     modifyData: updateModifyData(state.modifyData, modifyData),
     tempFront: [],
-    tempBack: tempDataPush(state.tempBack, tempData)
+    tempBack: tempDataPush(state.tempBack, tempData),
+    tempClipData: []
   });
 }
 
@@ -190,27 +203,77 @@ function revertBlockHandler(
 
 function changeEditorStateHandler(
   state: BlockState, { 
-    payload: { graping, pressing, cliping } 
+    payload: { graping, holdingDown, cliping } 
   }: ReturnType<typeof changeEditorState>
 ) {
 
   return updateObject<BlockState, BlockStateProps>(state, {
     graping: graping? graping : state.graping,
-    pressing: pressing? pressing : state.pressing,
+    holdingDown: holdingDown? holdingDown : state.holdingDown,
     cliping: cliping? cliping : state.cliping
   });
 }
 
+function changeTargetPositionHandler(
+  state: BlockState,
+  { payload: { targetPosition } }: ReturnType<typeof changeTargetPosition>
+) {
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    targetPosition: targetPosition? targetPosition : null
+  });
+}
+
+function setTempClipHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof setTempClip>
+) {
+
+  // if(state.tempClipData[0]) {
+  //   const length = state.tempClipData.length;
+  //   let tempClipData = state.tempClipData.concat();
+
+  //   if(length > 1 && tempClipData[length - 2] === payload) {
+  //     tempClipData.pop();
+  //   } else {
+  //     if(tempClipData[length - 1] !== payload) tempClipData.push(payload);
+  //   }
+
+  //   return updateObject<BlockState, BlockStateProps>(state, {
+  //     tempClipData
+  //   });
+  // } else {
+  //   return updateObject<BlockState, BlockStateProps>(state, {
+  //     tempClipData: [payload]
+  //   });
+
+  // }
+
+  console.log(state.tempClipData, payload);
+  return updateObject<BlockState, BlockStateProps>(state, {
+    tempClipData: state.tempClipData.concat(payload)
+  })
+}
+
+function clearTempClipDataHandler(state: BlockState) {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    tempClipData: []
+  });
+}
+
 const blockHandlers: ActionHandlers<BlockState> = {
-  [CHANGE_EDITING_ID]   : changeEditingIdHandler,
-  [EDIT_BLOCK]          : editBlockHandler,
-  [COMMIT_BLOCK]        : commitBlockHandler,
-  [ADD_BLOCK]           : addBlockHandler,
-  [DELETE_BLOCK]        : deleteBlockHandler,
-  [CHANGE_TEXT_STYLE]   : changeTextStyleHandler,
-  [SWITCH_BLOCK]        : switchBlockHandler,
-  [REVERT_BLOCK]        : revertBlockHandler,
-  [CHANGE_EDITOR_STATE] : changeEditorStateHandler
+  [CHANGE_EDITING_ID]      : changeEditingIdHandler,
+  [EDIT_BLOCK]             : editBlockHandler,
+  [COMMIT_BLOCK]           : commitBlockHandler,
+  [ADD_BLOCK]              : addBlockHandler,
+  [DELETE_BLOCK]           : deleteBlockHandler,
+  [CHANGE_TEXT_STYLE]      : changeTextStyleHandler,
+  [SWITCH_BLOCK]           : switchBlockHandler,
+  [REVERT_BLOCK]           : revertBlockHandler,
+  [CHANGE_EDITOR_STATE]    : changeEditorStateHandler,
+  [CHANGE_TARGET_POSITION] : changeTargetPositionHandler,
+  [SET_TEMPCLIP]           : setTempClipHandler,
+  [CLEAR_CLIPBOARD]        : clearTempClipDataHandler
 };
 
 export default blockHandlers;

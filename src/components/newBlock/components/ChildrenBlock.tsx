@@ -1,14 +1,15 @@
 import React from "react";
 import { UseBlockType } from "../hooks/useBlock";
 import { BlockData } from "../types";
-import Block from "./Block";
+import Block, { ParentInfoType } from "./Block";
 
 interface ChildrenBlockProps {
   childrenBlockData: BlockData[] | null;
   hooks: UseBlockType;
+  parentInfo: ParentInfoType;
 }
 
-const ChildrenBlock: React.FC<ChildrenBlockProps> = ({ childrenBlockData, hooks }) => {
+const ChildrenBlock: React.FC<ChildrenBlockProps> = ({ childrenBlockData, hooks, parentInfo }) => {
   return (
     <>
       { 
@@ -18,6 +19,7 @@ const ChildrenBlock: React.FC<ChildrenBlockProps> = ({ childrenBlockData, hooks 
             key={child.id}
             blockData={child}
             hooks={hooks}
+            parentInfo={parentInfo}
           />
         ) : null
       }

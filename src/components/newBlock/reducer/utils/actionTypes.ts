@@ -16,7 +16,8 @@ import {
   TEST_CLIPBOARD,
   EDIT_BLOCK,
   CHANGE_EDITING_ID,
-  CHANGE_EDITOR_STATE
+  CHANGE_EDITOR_STATE,
+  CHANGE_TARGET_POSITION
 } from ".";
 import { UUID, BlockData, ContentType } from "../../types";
 
@@ -108,12 +109,11 @@ function revertBlock(back: boolean) {
   }
 }
 
-function switchBlock(changedBlockIdList: string[], targetPosition: string, container?: boolean) {
+function switchBlock(changedBlockIdList: string[], container?: boolean) {
   return {
     type: SWITCH_BLOCK,
     payload: {
       changedBlockIdList,
-      targetPosition,
       container: container? true : false
     }
   }
@@ -131,7 +131,7 @@ function clearClipboard() {
   }
 }
 
-function setTempClip(index: number) {
+function setTempClip(index: number[]) {
   return  {
     type: SET_TEMPCLIP,
     payload: index
@@ -148,6 +148,15 @@ function chageEditorState(payload: ChangeEditorStateProps) {
   return {
     type: CHANGE_EDITOR_STATE,
     payload
+  }
+}
+
+function changeTargetPosition(targetPosition?: string) {
+  return {
+    type: CHANGE_TARGET_POSITION,
+    payload: {
+      targetPosition
+    }
   }
 }
 
@@ -174,6 +183,7 @@ const actionBlock = {
   setTempClip,
   clearTempClip,
   chageEditorState,
+  changeTargetPosition,
   testClipAdd
 }
 
