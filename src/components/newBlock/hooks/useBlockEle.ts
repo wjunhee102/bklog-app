@@ -28,9 +28,9 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
 
   const {
     initBlock,
-    graping,
-    holdingDown,
-    cliping,
+    isGrab,
+    isHoldingDown,
+    isCliping,
     editingBlockId,
     onChangeEditingId,
     onEditBlock,
@@ -202,13 +202,13 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
   }
 
   const handleMouseEnter = (e: any) => {
-    if(cliping && holdingDown) { 
+    if(isCliping && isHoldingDown) { 
       // onSetTempClip(blockData.index);
     } 
   }
 
   const handleMouseLeave = (e: any) => {
-    if(cliping && holdingDown) {
+    if(isCliping && isHoldingDown) {
       const getStartPosition = getSelectionStart(blockRef.current);
       const getEndPosition = getSelectionEnd(blockRef.current);
       // if((getStartPosition - getEndPosition) || !getTempClip[0]) {
@@ -225,7 +225,7 @@ function useBlockEle(blockData: BlockData, hooks: UseBlockType) {
   }
 
   const handleMouseMove = (e: any) => {
-    if(holdingDown) {
+    if(isHoldingDown) {
       // handleClipOn(true);
     }
   }

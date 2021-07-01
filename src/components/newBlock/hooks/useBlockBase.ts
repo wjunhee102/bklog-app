@@ -24,34 +24,28 @@ function calculatrionPosition(
   }
 }
 
-function findChildrenIndexList(childrenIdList: string[], blockDataList: BlockData[]): [string, number][] | undefined {
-  const childrenList: [string, number][] = blockDataList.filter(block => childrenIdList.includes(block.parentId)).map(block => [block.id, block.index]);
-
-  if(childrenIdList[0]) {
-    findChildrenIndexList(childrenList.map(child => child[0]), blockDataList)
-  }
-
-  return childrenList;
-}
-
 function useBlockBase(blockData: BlockData, hooks: UseBlockType, parentInfo?: ParentInfoType) {
   const {
     state,
     initBlock,
     onSwitchBlock,
-    cliping,
-    holdingDown,
-    graping,
+    isCliping,
+    isHoldingDown,
+    isGrab,
     tempClipData,
+    onChangeEditingId,
     onChangeEditorState,
     onChangeTargetPosition,
     onSetTempClip,
     onClearTempClip
   } = hooks;
 
+  const [ isHover, setHover ]   = useState<boolean>(false);
   const [ selected, setSelect ] = useState<boolean>(false);
-  const [ down, setDown ] = useState<boolean>(false);
-  const [ right, setRight ] = useState<boolean>(false);
+  const [ down, setDown ]       = useState<boolean>(false);
+  const [ right, setRight ]     = useState<boolean>(false);
+
+  const parentSelected = parentInfo? parentInfo.selected : false;
 
   const childrenBlockData = useMemo(() => initBlock.hasOwnProperty(blockData.id)? 
     initBlock[blockData.id] : null, [initBlock]); 
@@ -64,58 +58,75 @@ function useBlockBase(blockData: BlockData, hooks: UseBlockType, parentInfo?: Pa
     calculatrionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "next" : "child"), 
   [blockData.position]);
 
-  const handleMouseEnter = useCallback((
+  const handleSelectMouseEnter = useCallback((
     position: string, 
     set: React.Dispatch<React.SetStateAction<boolean>>
   ) => () => {
-    if(graping) {
+    if(isGrab && !selected && !parentSelected) {
       set(true);
       onChangeTargetPosition(position);
     }
-  }, [tempClipData, cliping, graping]);
+  }, [tempClipData, isCliping, isGrab]);
 
-  const handleMouseLeave = useCallback((set: React.Dispatch<React.SetStateAction<boolean>>) => () => {
-    console.log("mouseLeave");
+  const handleSelectMouseLeave = useCallback((set: React.Dispatch<React.SetStateAction<boolean>>) => () => {
     set(false);
   }, []);
 
-  const handleMouseUp = useCallback((container?: boolean) => () => {
-    onSwitchBlock(tempClipData.map(index => state.blockList[index].id, container))
-    onChangeEditorState({ graping: false });
-    if(!cliping) {
-      onClearTempClip();
-    } 
-  }, [onSwitchBlock, tempClipData]);
+  const handleSelectMouseUp = useCallback((container?: boolean) => () => {
+    if(tempClipData[0] !== undefined) onSwitchBlock(tempClipData.map(index => state.blockList[index].id), container);
+  }, [tempClipData, isGrab]);
 
-  const handleMouseDown = () => {
-    onChangeEditorState({ graping: true });
-    setSelect(true);
-    if(!tempClipData[0]) {
+  const handleGrabMouseDown = useCallback(() => {
+    onChangeEditorState({ isGrab: true });
+    onChangeEditingId(null);
+    if(!isCliping) {
       if(childrenBlockData) {
         onSetTempClip([blockData.index, ...childrenBlockData.map(child => child.index)]);
       } else {
         onSetTempClip([blockData.index]);
-      }
-    } ;
-  }
+      } 
+    }
+  }, [isCliping, childrenBlockData, blockData.index]);
+
+  const handleContentsHover = useCallback(() => {
+    if(!isGrab) setHover(true);
+  }, [isGrab]);
+
+  const handleContentsBlur = useCallback(() => {
+    setHover(false);
+  }, []);
+
+  const handleContentsMouseLeave = useCallback(() => {
+    setHover(false);
+  }, []);
 
   useEffect(() => {
-    if(!graping && (down || right)) {
+    if(!isGrab && (down || right)) {
       setDown(false);
       setRight(false);
       setSelect(false);
+      if(!isCliping) onClearTempClip();
     }
-  }, [graping]);
+  }, [isGrab]);
 
   useEffect(() => {
-    console.log(parentInfo);
-    if(parentInfo && parentInfo.selected && childrenBlockData) {
-      console.log("aaaa");
+    if(tempClipData.includes(blockData.index)) {
+      setSelect(true);
+    } else {
+      setSelect(false);
+    }
+  }, [tempClipData]);
+
+  useEffect(() => {
+    if(parentSelected && childrenBlockData) {
       onSetTempClip(childrenBlockData.map(child => child.index));
     }
-  }, [cliping, graping, holdingDown]);
+  }, [parentSelected]);
 
   return {
+    parentSelected,
+    isHover,
+    setHover,
     selected,
     setSelect,
     down,
@@ -124,10 +135,13 @@ function useBlockBase(blockData: BlockData, hooks: UseBlockType, parentInfo?: Pa
     childrenBlockData,
     downPosition,
     rightPosition,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleMouseUp,
-    handleMouseDown
+    handleSelectMouseEnter,
+    handleSelectMouseLeave,
+    handleSelectMouseUp,
+    handleGrabMouseDown,
+    handleContentsHover,
+    handleContentsMouseLeave,
+    handleContentsBlur
   }
 }
 

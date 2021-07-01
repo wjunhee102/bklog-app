@@ -17,7 +17,10 @@ import {
   EDIT_BLOCK,
   CHANGE_EDITING_ID,
   CHANGE_EDITOR_STATE,
-  CHANGE_TARGET_POSITION
+  CHANGE_TARGET_POSITION,
+  EDITOR_STATE_RESET,
+  CHANGE_FETCH_STATE,
+  CHANGE_STYLE_TYPE
 } from ".";
 import { UUID, BlockData, ContentType } from "../../types";
 
@@ -167,6 +170,30 @@ function testClipAdd(payload: any) {
   }
 }
 
+function resetEditorState(cliping: boolean) {
+  return {
+    type: EDITOR_STATE_RESET,
+    payload: cliping
+  }
+}
+
+function changeFetchState(fetch?: boolean) {
+  return {
+    type: CHANGE_FETCH_STATE,
+    payload: fetch
+  }
+}
+
+function changeStyleType(blockInfo: string | number, styleType: string) {
+  return {
+    type: CHANGE_STYLE_TYPE,
+    payload: {
+      blockInfo,
+      styleType
+    }
+  }
+}
+
 const actionBlock = {
   resetBlock,
   addBlock,
@@ -184,7 +211,10 @@ const actionBlock = {
   clearTempClip,
   chageEditorState,
   changeTargetPosition,
-  testClipAdd
+  testClipAdd,
+  resetEditorState,
+  changeFetchState,
+  changeStyleType
 }
 
 export default actionBlock;

@@ -14,7 +14,7 @@ import {
 } from '../utils/selectionText';
 import { createBlockData } from "../reducer/utils";
 
-function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
+function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boolean) {
   const [ editable, setEditable]        = useState<boolean>(true);
   const [ cursorStart, setCursorStart ] = useState<number>(0);
   const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
@@ -24,9 +24,9 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
 
   const {
     initBlock,
-    graping,
-    holdingDown,
-    cliping,
+    isGrab,
+    isHoldingDown,
+    isCliping,
     editingBlockId,
     onChangeEditingId,
     onEditBlock,
@@ -65,7 +65,6 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
 
       case "ArrowUp": 
       // cursor가 앞으로 튐
-        
         if(cursorStart === 0) {
           e.preventDefault();
           setCursorStart(0);
@@ -76,8 +75,9 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
         break;
 
       case "ArrowDown":
-
+        console.log(cursorEnd, e.target.innerText.length);
         if(cursorEnd === e.target.innerText.length) {
+          console.log(cursorEnd, e.target.innerText.length, "???");
           setCursorStart(0);
           setCursorEnd(0);
           e.preventDefault();
@@ -95,7 +95,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
       default:
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
     }
-  }, [blockData]);
+  }, [blockData, cursorEnd, cursorStart]);
 
   const handleKeyPress = (e:any) => {
     if(e.key === "Enter") {
@@ -145,6 +145,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
   }, []);
 
   const handleClick = useCallback((e: any) => {
+    console.log("click");
     const parentNode = e.target.parentNode;
 
     if(parentNode.tagName === "A") {
@@ -198,6 +199,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
   useEffect(() => {
     if(editingBlockId === blockData.id) {
       if(blockRef.current) {
+        console.log("포커스")
         handleFocus(blockRef.current);
       }
     } else {
@@ -213,6 +215,15 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
     }
   }, [cursorStart, cursorEnd]);
 
+  useEffect(() => {
+    
+    if(isGrab) {
+      setEditable(!isGrab);
+    } else {
+      setEditable(!selected);
+    }
+  }, [selected]);
+
   return {
     cursorStart,
     cursorEnd,
@@ -227,7 +238,8 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType) {
     handleBlur,
     isFocus,
     reBlockFocus,
-    editable
+    editable,
+    setEditable
   };
 }
 

@@ -33,6 +33,15 @@ import {
   setTempClip,
   SET_TEMPCLIP,
   CLEAR_CLIPBOARD,
+  EDITOR_STATE_RESET,
+  resetEditorState,
+  clearTempClip,
+  commitBlock,
+  changeFetchState,
+  CHANGE_FETCH_STATE,
+  changeStyleType,
+  changeBlockStyleType,
+  CHANGE_STYLE_TYPE,
   
 } from "./utils";
 
@@ -55,7 +64,8 @@ function editBlockHandler(state: BlockState, { payload: { blockId, blockIndex, c
 }
 
 function commitBlockHandler(
-  state: BlockState
+  state: BlockState,
+  action: ReturnType<typeof commitBlock>
 ): BlockState {
   if(!state.stage[0]) return state;
 
@@ -65,7 +75,8 @@ function commitBlockHandler(
     blockList,
     stage: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
-    tempBack: tempDataPush(state.tempBack, tempData)
+    tempBack: tempDataPush(state.tempBack, tempData),
+    isFetch: true
   });
 }
 
@@ -91,7 +102,8 @@ function addBlockHandler(
       modifyData
     ),
     tempBack: tempDataPush(state.tempBack, tempData),
-    tempFront: []
+    tempFront: [],
+    isFetch: true
   });
 }
 
@@ -112,7 +124,8 @@ function deleteBlockHandler(
     editingBlockId,
     tempBack: tempDataPush(state.tempBack, tempData),
     tempFront: [],
-    modifyData: updateModifyData(state.modifyData, modifyData)
+    modifyData: updateModifyData(state.modifyData, modifyData),
+    isFetch: true
   });
 }
 
@@ -138,7 +151,8 @@ function changeTextStyleHandler(
     blockList: result.blockList,
     modifyData: updateModifyData(state.modifyData, result.modifyData),
     tempFront: [],
-    tempBack: tempDataPush(state.tempBack, result.tempData)
+    tempBack: tempDataPush(state.tempBack, result.tempData),
+    isFetch: true
   });
 }
 
@@ -152,16 +166,24 @@ function switchBlockHandler(
 
   const result = switchBlockList(state.blockList, changedBlockIdList, state.targetPosition, container);
   
-  if(!result) return state;
+  if(!result) return updateObject<BlockState, BlockStateProps>(state, {
+    tempClipData: [],
+    isGrab: false,
+    isHoldingDown: false,
+  });
 
   const { blockList, tempData, modifyData } = result;
 
   return updateObject<BlockState, BlockStateProps>(state, {
+    isGrab: false,
+    isHoldingDown: false,
+    editingBlockId: state.blockList[state.tempClipData[0]].id,
     blockList,
     modifyData: updateModifyData(state.modifyData, modifyData),
     tempFront: [],
     tempBack: tempDataPush(state.tempBack, tempData),
-    tempClipData: []
+    tempClipData: [],
+    isFetch: true
   });
 }
 
@@ -179,7 +201,8 @@ function revertBlockHandler(
       blockList,
       tempBack,
       tempFront: tempDataPush(state.tempFront, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData)
+      modifyData: updateModifyData(state.modifyData, modifyData),
+      isFetch: true
     });
 
   } else if(state.tempFront[0]) {
@@ -192,7 +215,8 @@ function revertBlockHandler(
       blockList,
       tempFront,
       tempBack: tempDataPush(state.tempBack, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData)
+      modifyData: updateModifyData(state.modifyData, modifyData),
+      isFetch: true
     });
 
   } else {
@@ -203,14 +227,14 @@ function revertBlockHandler(
 
 function changeEditorStateHandler(
   state: BlockState, { 
-    payload: { graping, holdingDown, cliping } 
+    payload: { isGrab, isHoldingDown, isCliping } 
   }: ReturnType<typeof changeEditorState>
 ) {
 
   return updateObject<BlockState, BlockStateProps>(state, {
-    graping: graping? graping : state.graping,
-    holdingDown: holdingDown? holdingDown : state.holdingDown,
-    cliping: cliping? cliping : state.cliping
+    isGrab: isGrab !== undefined? isGrab : state.isGrab,
+    isCliping: isCliping !== undefined? isCliping : state.isCliping,
+    isHoldingDown: isHoldingDown !== undefined? isHoldingDown : state.isHoldingDown
   });
 }
 
@@ -249,16 +273,58 @@ function setTempClipHandler(
 
   // }
 
-  console.log(state.tempClipData, payload);
   return updateObject<BlockState, BlockStateProps>(state, {
     tempClipData: state.tempClipData.concat(payload)
   })
 }
 
-function clearTempClipDataHandler(state: BlockState) {
+function clearTempClipDataHandler(state: BlockState, action: ReturnType<typeof clearTempClip>) {
   return updateObject<BlockState, BlockStateProps>(state, {
     tempClipData: []
   });
+}
+
+function editorStateResetHandler(
+  state: BlockState, 
+  { payload }: ReturnType<typeof resetEditorState>
+) {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    isCliping: payload? false : state.isCliping,
+    isHoldingDown: false,
+    isGrab: false,
+    tempClipData: [],
+    targetPosition: null
+  });
+}
+
+function changeFetchStateHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof changeFetchState>
+) {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    isFetch: payload? true : false
+  });
+}
+
+function changeStyleTypeHandler(
+  state: BlockState, 
+  { payload: {
+    blockInfo, styleType
+  }}: ReturnType<typeof changeStyleType>
+) {
+  const result = changeBlockStyleType(state.blockList, blockInfo, styleType);
+
+  if(!result) {
+    return state;
+  } else {
+    const { blockList, modifyData, tempData } = result;
+
+    return updateObject<BlockState, BlockStateProps>(state, {
+      blockList,
+      tempBack: tempDataPush(state.tempBack, tempData),
+      modifyData: updateModifyData(state.modifyData, modifyData)
+    })
+  }
 }
 
 const blockHandlers: ActionHandlers<BlockState> = {
@@ -273,7 +339,10 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CHANGE_EDITOR_STATE]    : changeEditorStateHandler,
   [CHANGE_TARGET_POSITION] : changeTargetPositionHandler,
   [SET_TEMPCLIP]           : setTempClipHandler,
-  [CLEAR_CLIPBOARD]        : clearTempClipDataHandler
+  [CLEAR_CLIPBOARD]        : clearTempClipDataHandler,
+  [EDITOR_STATE_RESET]     : editorStateResetHandler,
+  [CHANGE_FETCH_STATE]     : changeFetchStateHandler,
+  [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler
 };
 
 export default blockHandlers;

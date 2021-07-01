@@ -19,14 +19,16 @@ import {
   changeEditorState,
   changeTargetPosition,
   setTempClip,
-  clearClipboard
+  clearClipboard,
+  resetEditorState
 } from '../reducer/utils';
 import { BlockData, ContentType } from '../types';
 
 const initialState: BlockState = {
-  graping: false,
-  holdingDown: false,
-  cliping: false,
+  isFetch: false,
+  isGrab: false,
+  isHoldingDown: false,
+  isCliping: false,
   targetPosition: null,
   blockList: initBlock(testDB).blockList,
   editingBlockId: null,
@@ -37,7 +39,6 @@ const initialState: BlockState = {
   tempClipData: [],
   clipBoard: []
 }
-
 
 // state 값을 전부 useReducer로 통합할 것.
 function useBlock() {
@@ -51,11 +52,11 @@ function useBlock() {
 
   const editingBlockId: string | null = useMemo(() => state.editingBlockId, [state.editingBlockId]);
 
-  const graping: boolean = useMemo(() => state.graping, [state.graping]);
+  const isGrab: boolean = useMemo(() => state.isGrab, [state.isGrab]);
 
-  const cliping: boolean = useMemo(() => state.cliping, [state.cliping]);
+  const isCliping: boolean = useMemo(() => state.isCliping, [state.isCliping]);
   
-  const holdingDown: boolean = useMemo(() => state.holdingDown, [state.holdingDown]);
+  const isHoldingDown: boolean = useMemo(() => state.isHoldingDown, [state.isHoldingDown]);
 
   const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
 
@@ -124,14 +125,18 @@ function useBlock() {
 
   const onClearTempClip = useCallback(() => {
     dispatch(clearClipboard());
-  }, [dispatch])
+  }, [dispatch]);
+
+  const onResetEditorState = useCallback((isCliping: boolean) => {
+    dispatch(resetEditorState(isCliping));
+  }, [dispatch]);
 
   return { 
     state, 
     editingBlockId,
-    graping,
-    holdingDown,
-    cliping,
+    isGrab,
+    isHoldingDown,
+    isCliping,
     tempClipData,
     targetPosition,
     onEditBlock,
@@ -147,7 +152,8 @@ function useBlock() {
     onRevertBlock,
     onChangeTargetPosition,
     onSetTempClip,
-    onClearTempClip
+    onClearTempClip,
+    onResetEditorState
   };
 }
 

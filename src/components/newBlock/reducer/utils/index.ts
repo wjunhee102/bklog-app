@@ -22,9 +22,9 @@ export interface StagedBlock{
 // }
 
 export interface ChangeEditorStateProps {
-  graping?: boolean;
-  holdingDown?: boolean;
-  cliping?: boolean;
+  isGrab?: boolean;
+  isHoldingDown?: boolean;
+  isCliping?: boolean;
 }
 
 export interface BlockStateProps {
@@ -112,9 +112,10 @@ export interface ResBlockUtils {
 }
 
 export interface BlockState {
-  graping: boolean;
-  holdingDown: boolean;
-  cliping: boolean;
+  isFetch: boolean;
+  isGrab: boolean;
+  isHoldingDown: boolean;
+  isCliping: boolean;
   targetPosition: string | null;
   blockList: BlockData[];
   editingBlockId: string | null;
@@ -127,9 +128,10 @@ export interface BlockState {
 }
 
 export interface BlockStateProps {
-  graping?: boolean;
-  holdingDown?: boolean;
-  cliping?: boolean;
+  isFetch?: boolean;
+  isGrab?: boolean;
+  isHoldingDown?: boolean;
+  isCliping?: boolean;
   targetPosition?: string | null;
   blockList?: BlockData[];
   editingBlockId?: string | null;
@@ -160,6 +162,9 @@ export const SET_TEMPCLIP           = 'SET_TEMPCLIP' as const;
 export const CLEAR_TEMPCLIP         = 'CLEAR_TEMPCLIP' as const;
 export const CHANGE_EDITOR_STATE    = 'CHANGE_EDITOR_STATE' as const;
 export const CHANGE_TARGET_POSITION = 'CHANGE_TARGET_POSITION' as const;
+export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
+export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
+export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
@@ -180,6 +185,8 @@ export type BLOCK_ACTION_TYPES =
   | typeof CHANGE_EDITOR_STATE
   | typeof CHANGE_TARGET_POSITION
   | typeof TEST_CLIPBOARD
+  | typeof CHANGE_STYLE_TYPE
+  | typeof CHANGE_FETCH_STATE
 ;
 
 /**
@@ -201,6 +208,9 @@ export const setTempClip          = actionBlock.setTempClip;
 export const clearTempClip        = actionBlock.clearTempClip;
 export const changeEditorState    = actionBlock.chageEditorState;
 export const changeTargetPosition = actionBlock.changeTargetPosition;
+export const resetEditorState     = actionBlock.resetEditorState;
+export const changeFetchState     = actionBlock.changeFetchState;
+export const changeStyleType      = actionBlock.changeStyleType;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
@@ -221,6 +231,9 @@ export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof changeEditorState>
   | ReturnType<typeof changeTargetPosition>
   | ReturnType<typeof testClipAdd>
+  | ReturnType<typeof resetEditorState>
+  | ReturnType<typeof changeFetchState>
+  | ReturnType<typeof changeStyleType>
 ;
 
 //converter
@@ -235,7 +248,6 @@ export const orderingBlock = orderingBlockUtils.orderingBlock;
 export const initBlock     = orderingBlockUtils.initBlock;
 export const setBlockList  = orderingBlockUtils.setBlockList;
 
-
 // block utils
 export const copyToNewObjectArray  = blockUtils.copyToNewObjectArray;
 export const createBlockData       = blockUtils.createBlockData;
@@ -249,6 +261,7 @@ export const removeBlockInList     = blockUtils.removeBlockInList;
 export const changeBlockPosition   = blockUtils.changeBlockPosition;
 export const switchBlockList       = blockUtils.switchBlockList;
 export const restoreBlock          = blockUtils.restoreBlock;
+export const changeBlockStyleType  = blockUtils.changeBlockStyleType;
 
 // side utils 
 export const tempDataPush           = sideStoreUtils.tempDataPush;

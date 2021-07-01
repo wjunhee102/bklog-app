@@ -1,6 +1,7 @@
-import { BlockData, ContentType } from '../../types';
+import { BlockData, BlockDataProps, ContentType } from '../../types';
 import { StagedBlock, ModifyBlockData, ModifyBlockType, ModifyCommand, ModifyData, ModifySet, sortBlock, createModifyData, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
 import { Token } from '../../utils/token';
+import { updateBlock, updateObject } from '../../../block/reducer/utils';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
@@ -22,6 +23,10 @@ function createBlockData(
     contents: [],
     styles: {}
   }
+}
+
+function blockFindInfex(id: string) {
+  return (block: BlockData) => block.id === id; 
 }
 
 /**
@@ -51,7 +56,7 @@ function resetToTargetPosition(blockDataList: BlockData[], targetPosition: strin
   let block = preBlockDataList.shift();
 
   if(!block) {
-    console.error("not block");
+    console.error("resetToTargetPosition: not block");
     return [];
   }
 
@@ -66,7 +71,7 @@ function resetToTargetPosition(blockDataList: BlockData[], targetPosition: strin
     block = preBlockDataList.shift();
 
     if(!block) {
-      console.error("not block");
+      console.error("resetToTargetPosition: not block");
       return [];
     }
 
@@ -138,8 +143,11 @@ function updateBlockContents(blockDataList: BlockData[], stage: StagedBlock[]) {
     if(blocks[blockIndex] && id === blocks[blockIndex].id) {
 
       if(blocks[blockIndex].type === "text" || blocks[blockIndex].type === "title") {
+        const preContents = typeof blocks[blockIndex].contents === "string"?
+        blocks[blockIndex].contents : blocks[blockIndex].contents.concat();
+
         tempData.update?.push(createTempData(blocks[blockIndex].id, {
-          contents: blocks[blockIndex].contents
+          contents: preContents
         }));
 
         blocks[blockIndex].contents = typeof contents === "string"?
@@ -159,6 +167,41 @@ function updateBlockContents(blockDataList: BlockData[], stage: StagedBlock[]) {
     blockList: blocks,
     modifyData,
     tempData
+  }
+}
+
+function changeBlockStyleType(
+  blockDataList: BlockData[], 
+  blockInfo: string | number, 
+  styleType: string
+): ResBlockUtils | null {
+  const blockIndex = typeof blockInfo === "number"? 
+    blockInfo 
+    : blockDataList.findIndex(blockFindInfex(blockInfo)); 
+
+  if(!blockDataList[blockIndex]) return null;
+  
+  const blocks = blockDataList.concat();
+  const tempData: TempDataType = { update: [] };
+  const modifyData: ModifyData[] = [];
+
+  tempData.update?.push({
+    blockId: blocks[blockIndex].id,
+    payload: {
+      styleType: blocks[blockIndex].styleType
+    }
+  });
+
+  blocks[blockIndex].styleType = styleType;
+
+  modifyData.push(setUpdateModifyDataOfBlock(blocks[blockIndex].id, {
+    styleType
+  }));
+
+  return {
+    blockList: blocks,
+    tempData,
+    modifyData
   }
 }
 
@@ -187,9 +230,12 @@ function changeBlockTextStyle(
     console.log("text block이 아닙니다.");
     return null;
   }
+  const contents = typeof blockList[index].contents === "string"?
+    blockList[index].contents
+    : blockList[index].contents.concat();
 
   tempData.update?.push(createTempData<ModifyBlockData>(blockList[index].id, {
-    contents: blockList[index].contents.concat()
+    contents
   }));
 
   const changedBlock = changeStyleTextContents(
@@ -553,7 +599,8 @@ const blockUtils = {
   removeBlockInList,
   changeBlockPosition,
   switchBlockList,
-  restoreBlock
+  restoreBlock,
+  changeBlockStyleType
 }
 
 export default blockUtils;
