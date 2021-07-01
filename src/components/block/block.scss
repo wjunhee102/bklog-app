@@ -137,3 +137,28 @@
     cursor: pointer;
   }
 }
+
+.block-zone {
+  position: relative;
+
+  .contents-area {
+
+    .block-utils {
+
+    }
+
+    .block-element {
+
+    }
+  }
+}
+
+/* text-block */
+
+.block-zone {
+  .contents-area {
+    .text-block {
+      
+    }
+  }
+}

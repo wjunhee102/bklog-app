@@ -16,6 +16,8 @@ interface BaseBlockZoneProps extends BlockProps {
 
 const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentInfo, children }) => {
   const {
+    parentSelected,
+    isHover,
     selected,
     setSelect,
     down, 
@@ -23,35 +25,49 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentI
     childrenBlockData,
     downPosition,
     rightPosition,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleMouseUp,
-    handleMouseDown
+    handleSelectMouseEnter,
+    handleSelectMouseLeave,
+    handleSelectMouseUp,
+    handleGrabMouseDown,
+    handleContentsBlur,
+    handleContentsHover,
+    handleContentsMouseLeave
   } = useBlockBase(blockData, hooks, parentInfo);
 
   return (
     <div 
       data-index={blockData.index} 
-      className="block-zone"
+      className={classNames(
+        "block-zone",
+        { selected: parentSelected? false : selected }
+      )}
+      draggable={!hooks.isGrab}
     >
-      {
-        /**
-         * block-utils
-         */
-      }
-      <div className="block-utils">
-        <div className="block-add-button">
-          <FontAwesomeIcon icon={faPlus} />
-        </div>
-        <div 
-          className="block-type-change-button"
-          onMouseDown={handleMouseDown}
-        >
-          <FontAwesomeIcon icon={faGripVertical} />
-        </div>
-      </div>
+      {/*block-utils */}
+      <div 
+        className="contents-area"
+        onMouseOver={handleContentsHover}
+        onMouseLeave={handleContentsMouseLeave}
+      >
 
-      { children(selected, setSelect) }
+        <div className={classNames(
+          "block-utils",
+          { on: isHover }
+        )}>
+          <div className="block-add-button">
+            <FontAwesomeIcon icon={faPlus} />
+          </div>
+          <div 
+            className="block-type-change-button"
+            onMouseDown={handleGrabMouseDown}
+          >
+            <FontAwesomeIcon icon={faGripVertical} />
+          </div>
+        </div>
+
+        { children(selected, setSelect) }
+
+      </div>
       
       <ChildrenBlock 
         childrenBlockData={childrenBlockData} 
@@ -67,17 +83,28 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentI
          * block-cover
          */
       }
-      <div className="block-cover">
+      <div className={classNames(
+        "block-select-area",
+        { selected:  hooks.isGrab }
+      )}>
 
-        <div className="left">
+        <div className={classNames(
+          "area",
+          "rigth-drop-area",
+          { on: false }
+        )}>
           <div className="box"></div>
         </div>
 
         <div 
-          className={classNames("down", {"on": down})}
-          onMouseEnter={handleMouseEnter(downPosition, setDown)}
-          onMouseLeave={handleMouseLeave(setDown)}
-          onMouseUp={handleMouseUp()}
+          className={classNames(
+            "area", 
+            "down-drop-area",
+            { on: down }
+          )}
+          onMouseEnter={handleSelectMouseEnter(downPosition, setDown)}
+          onMouseLeave={handleSelectMouseLeave(setDown)}
+          onMouseUp={handleSelectMouseUp()}
         >
           <div className="box"></div>
         </div>

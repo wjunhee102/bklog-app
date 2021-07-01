@@ -20,7 +20,10 @@ import {
   changeTargetPosition,
   setTempClip,
   clearClipboard,
-  resetEditorState
+  resetEditorState,
+  changeBlockStyleType,
+  changeStyleType,
+  changeFetchState
 } from '../reducer/utils';
 import { BlockData, ContentType } from '../types';
 
@@ -131,6 +134,14 @@ function useBlock() {
     dispatch(resetEditorState(isCliping));
   }, [dispatch]);
 
+  const onChangeStyleType = useCallback((blockInfo: string | number, styleType: string) => {
+    dispatch(changeStyleType(blockInfo, styleType));
+  }, [dispatch]);
+
+  const onChangeFetchState = useCallback((fetchState?: boolean) => {
+    dispatch(changeFetchState(fetchState));
+  }, [dispatch]);
+
   return { 
     state, 
     editingBlockId,
@@ -153,7 +164,9 @@ function useBlock() {
     onChangeTargetPosition,
     onSetTempClip,
     onClearTempClip,
-    onResetEditorState
+    onResetEditorState,
+    onChangeStyleType,
+    onChangeFetchState
   };
 }
 

@@ -5,7 +5,7 @@ export const testDB: RawBlockData[] = [
     position: "1",
     id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     type: "text",
-    styleType: "bk-h1",
+    styleType: "bk-p",
     styles: {
       color: "black",
       backgroudColor: "white"
@@ -22,7 +22,7 @@ export const testDB: RawBlockData[] = [
     position: "2",
     id: "d5cc2725-97ec-494b-bc80-c163f96379e62",
     type: "text",
-    styleType: "bk-h1",
+    styleType: "bk-p",
     styles: {
       color: "black",
       backgroudColor: "white"
@@ -56,7 +56,7 @@ export const testDB: RawBlockData[] = [
     position: "2-2",
     id: "d5cc2725-97ec-494b-bc80-c162f96379e64",
     type: "text",
-    styleType: "bk-h1",
+    styleType: "bk-p",
     styles: {
       color: "black",
       backgroudColor: "white"
@@ -90,7 +90,7 @@ export const testDB: RawBlockData[] = [
     position: "1-1",
     id: "dscc2725-97ec-494b-bc80-c316f96379e64",
     type: "text",
-    styleType: "bk-h1",
+    styleType: "bk-p",
     styles: {
       color: "black",
       backgroudColor: "white"

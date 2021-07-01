@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UseBlockType } from "../../../hooks/useBlock";
 import useTextBlock from '../../../hooks/useTextBlock';
 import { BlockData } from "../../../types";
@@ -32,12 +32,17 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     handleBlur,
     isFocus,
     reBlockFocus,
-    editable
-  } = useTextBlock(blockData, hooks);
+    editable,
+    setEditable
+  } = useTextBlock(blockData, hooks, selected);
+
+  useEffect(() => {
+    setEditable(!selected);
+  }, [selected]);
 
   return (
     <div 
-      className="bk-block relative pr-8"
+      className="text-block"
       onBlur={handleBlur}
       > 
       { 
