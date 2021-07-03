@@ -1,21 +1,21 @@
 import { BaseRestFetch } from "../../../../utils/api-utils";
 
-function authFetchGet(url: string, query?: any) {
+function bklogFetchGet(url: string, query?: any) {
   return BaseRestFetch.restApi({
-    method: "get",
-    url: `auth/${url}`,
+    method: "post",
+    url: `bklog/${url}`,
     withCredentials: true,
     qs: query
   });
 }
 
-function authFetchPost(url: string, data: object) {
+function bklogFetchPost(url: string, data: object) {
   return BaseRestFetch.restApi({
     method: "post",
-    url: `auth/${url}`,
+    url: `bklog/${url}`,
     withCredentials: true,
     data
   });
 }
 
-export default { authFetchPost, authFetchGet };
+export default { bklogFetchGet, bklogFetchPost };

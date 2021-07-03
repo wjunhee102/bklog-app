@@ -1,5 +1,5 @@
-import { BlockData, BlockDataProps, ContentType } from '../../types';
-import { StagedBlock, ModifyBlockData, ModifyBlockType, ModifyCommand, ModifyData, ModifySet, sortBlock, createModifyData, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
+import { BlockData, BlockDataProps, ContentType, ModifyBlockData, ModifyCommand, ModifyData, ModifySet } from '../../types';
+import { StagedBlock, sortBlock, createModifyData, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
 import { Token } from '../../utils/token';
 import { updateBlock, updateObject } from '../../../block/reducer/utils';
 
@@ -44,8 +44,8 @@ function reissueBlockId(blockDataList: BlockData[]) {
  * @param targetPosition 
  */
 function resetToTargetPosition(blockDataList: BlockData[], targetPosition: string) {
-  const preBlockDataList = blockDataList.concat();
-  const newBlockDataList = [];
+  const preBlockDataList: BlockData[] = blockDataList.concat();
+  const newBlockDataList: BlockData[] = [];
   const targetPositionArg = targetPosition.split(/-/);
 
   let preBlockListLength = preBlockDataList.length - 1;
@@ -82,18 +82,23 @@ function resetToTargetPosition(blockDataList: BlockData[], targetPosition: strin
       currentPosition.push("1");
       stack.push(blockStact);
       stackLength++;
+
     } else if(stack[stackLength][0] === positionLength && stack[stackLength - 1] && stack[stackLength - 1][1] === block.parentId) {
       stack[stackLength] = blockStact;
+
     } else {
+
       if(stack[stackLength - 2] && stack[stackLength - 2][1] === block.parentId) {
         currentPosition.pop();
         stack.pop();
         stackLength--;
+
       } else {
         currentPosition = targetPositionArg.concat();
         stack = [blockStact];
         stackLength = 0;
       }
+
     }
 
     newBlockDataList.push(Object.assign({}, block, {

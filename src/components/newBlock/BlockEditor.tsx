@@ -37,12 +37,12 @@ const BlockEditor: React.FC = () => {
   });
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    dragRef.current?.setAttribute("style", `transform: translate(${e.clientX + 10}px, ${e.clientY - 50}px)`);
+    dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 70}px)`);
   }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if(isGrab) {
-      dragRef.current?.setAttribute("style", `transform: translate(${e.clientX + 10}px, ${e.clientY - 50}px)`);
+      dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 70}px)`);
     }
   }, [isGrab]);
 
@@ -52,13 +52,6 @@ const BlockEditor: React.FC = () => {
   }, [isGrab, isCliping])
 
   const handleMouseUp = useCallback(() => {
-    // if(!dragRef) {
-    //   const textarea = document.createElement("textarea");
-    //   document.body.appendChild(textarea);
-    //   textarea.select();
-    //   document.body.removeChild(textarea);
-    //   console.log("실행")
-    // }
     onResetEditorState(false);
   }, [editorRef]);
 

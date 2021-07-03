@@ -53,7 +53,6 @@ export interface UserInfo extends UserProfile {
   firstName: string;
   lastName: string;
   email: string;
-  userId: string;
 }
 
 export interface User {

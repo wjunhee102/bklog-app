@@ -1,5 +1,5 @@
-import { BlockData, RawBlockData } from "../../types";
-import actionBlock from "./actionTypes";
+import { BlockData, ModifyData } from "../../types";
+import actionBlock from "./actions";
 import blockUtils from "./blockUtils";
 import converter from "./converter";
 import orderingBlockUtils from "./ordering";
@@ -50,59 +50,6 @@ export interface TempDataType {
   create?: TempData<BlockData>[];
   update?: TempData[];
   delete?: TempData[];
-}
-
-/**
- * Modify Data
- */
-export type ModifyCommand = "update" | "create" | "delete";
-export type ModifySet = "block" | "comment"; 
-
-export interface ParamModifyBlock {
-  blockId: string;
-  set: ModifySet;
-  payload: any;
-}
-
-export interface ParamCreateBlock {
-  blockId: string;
-  set: "block";
-  payload: RawBlockData;
-}
-
-export interface ParamCreateComment {
-  blockId: string;
-  set: "comment";
-  payload: any;
-}
-
-export type ParamCreateModifyBlock = ParamCreateBlock | ParamCreateComment;
-
-export class ParamDeleteModity {
-  blockIdList?: string[];
-  commentIdList?: string[];
-}
-
-export interface ModifyBlockType {
-  create?: ParamCreateModifyBlock[];
-  update?: ParamModifyBlock[];
-  delete?: ParamDeleteModity;
-}
-
-export interface ModifyBlockData<T = any, P = any> {
-  position?: string;
-  id?: string;
-  type?: string;
-  styleType?: string;
-  styles?: T;
-  contents?: P;
-}
-
-export interface ModifyData<T = any> {
-  command: ModifyCommand;
-  blockId: string;
-  set: ModifySet;
-  payload: T;
 }
 
 export interface ResBlockUtils {
@@ -264,11 +211,12 @@ export const restoreBlock          = blockUtils.restoreBlock;
 export const changeBlockStyleType  = blockUtils.changeBlockStyleType;
 
 // side utils 
-export const tempDataPush           = sideStoreUtils.tempDataPush;
-export const getContentsToBeChanged = sideStoreUtils.getContentsToBeChanged;
-export const createTempData         = sideStoreUtils.createTempData;
-export const createModifyData       = sideStoreUtils.createModifyData;
-export const updateModifyData       = sideStoreUtils.updateModifyData;
+export const tempDataPush               = sideStoreUtils.tempDataPush;
+export const getContentsToBeChanged     = sideStoreUtils.getContentsToBeChanged;
+export const createTempData             = sideStoreUtils.createTempData;
+export const createModifyData           = sideStoreUtils.createModifyData;
+export const updateModifyData           = sideStoreUtils.updateModifyData;
 export const setCreateModifyDataOfBlock = sideStoreUtils.setCreateModifyDataOfBlock;
 export const setUpdateModifyDataOfBlock = sideStoreUtils.setUpdateModifyDataOfBlock;
 export const setDeleteModifyDataOfBlock = sideStoreUtils.setDeleteModifyDataOfBlock;
+export const converModifyData           = sideStoreUtils.convertModifyData;

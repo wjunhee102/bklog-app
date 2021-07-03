@@ -1,6 +1,6 @@
-import { TempData, StagedBlock, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, TempDataType, TempSet } from ".";
+import { TempData, StagedBlock, TempDataType, TempSet } from ".";
 import { updateObject } from "../../../../store/utils";
-import { BlockData, RawBlockData } from "../../types";
+import { BlockData, RawBlockData, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, ModifyDataType } from "../../types";
 
 function tempDataPush(
   tempStore: TempDataType[], 
@@ -124,6 +124,49 @@ function updateModifyData(preModifyData: ModifyData[], newModifyData: ModifyData
   return newModifyDataList;
 }
 
+const modifyDataReducer = (acc: ModifyDataType, cur: ModifyData) => {
+  switch (cur.command) {
+    case "create":
+      acc.create.push(cur);
+      
+      break;
+
+    case "update":
+      acc.update.push(cur);
+      
+      break;
+
+    case "delete":
+      if(cur.set === "block") {
+        acc.delete.blockIdList.push(cur.blockId);
+      } else if(cur.set === "comment") {
+        acc.delete.commentIdList.push(cur.payload);
+      }
+
+      break;
+  }
+
+  return acc;
+}
+
+function convertModifyData(modifyDataList: ModifyData[]) {
+  const acc: ModifyDataType = {
+    create: [],
+    update: [],
+    delete: {
+      blockIdList: [],
+      commentIdList: []
+    }
+  }
+  const modifyData: ModifyDataType = modifyDataList.reduce(modifyDataReducer, acc);
+  
+  if(!acc.create[0]) acc.create = undefined;
+  if(!acc.update[0]) acc.update = undefined;
+  if(!acc.delete.blockIdList[0] && !acc.delete.commentIdList[0]) acc.delete = undefined;
+
+  return modifyData;
+}
+
 const sideStoreUtils = {
   tempDataPush,
   getContentsToBeChanged,
@@ -132,7 +175,8 @@ const sideStoreUtils = {
   setCreateModifyDataOfBlock,
   setDeleteModifyDataOfBlock,
   setUpdateModifyDataOfBlock,
-  updateModifyData
+  updateModifyData,
+  convertModifyData
 }
 
 export default sideStoreUtils;

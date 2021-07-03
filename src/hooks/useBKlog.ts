@@ -1,12 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { ModifyDataType } from '../components/newBlock/types';
 import { RootState } from '../store/modules';
-import { BklogState } from '../store/modules/bklog/utils';
-import {
-  UUID,
-  ContentType,
-  BlockData
-} from '../types/bklog';
+import { addPushModifyData, BklogState, resetBklog } from '../store/modules/bklog/utils';
 
 function useBklog() {
   
@@ -14,8 +10,21 @@ function useBklog() {
   
   const dispatch = useDispatch();
 
+  const pageInfo = useMemo(() => state.pageInfo, [state.pageInfo]);
+
+  const onResetBklog = useCallback(() => {
+    dispatch(resetBklog());
+  }, [dispatch]);
+
+  const onAddPushModifyData = useCallback((modifyData: ModifyDataType) => {
+    dispatch(addPushModifyData(modifyData));
+  }, [dispatch]);
+
   return { 
-    state
+    state,
+    pageInfo,
+    onResetBklog,
+    onAddPushModifyData
   };
 }
 

@@ -1,171 +1,143 @@
-// import axios, { AxiosInstance } from "axios";
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import { stringify } from 'qs';
+import { ApiErrorType, IRestObject, IGqlObject } from '.';
 
+export class ApiError implements ApiErrorType {
+  type: string = "unknown";
+  code: string | number = "000";
+  message: string = "알 수 없는 오류입니다.";
+  detail: string = "unknown";
 
-export default function Testa() {
-  return "test"
+  constructor(error?: any) {
+    if(error) this.build(error);
+  }
+
+  build(error: any) {
+    if(error.type) this.type = error.type;
+    if(error.code) this.code = error.code;
+    if(error.message) this.message = error.message;
+    if(error.detail) this.detail = error.detail;
+
+    return this;
+  }
+
+  setType(type: string): ApiError {
+    this.type = type;
+    return this;
+  }
+
+  setCode(code: string | number): ApiError {
+    this.code = code;
+    return this;
+  }
+
+  setMessage(message: string): ApiError {
+    this.message = message;
+    return this;
+  }
+
+  setDetail(detail: string): ApiError {
+    this.detail = detail;
+    return this;
+  } 
+
+  get get(): ApiErrorType {
+    return {
+      type: this.type,
+      code: this.code,
+      message: this.message,
+      detail: this.detail
+    }
+  }
 }
 
-// export default class Api {
-//   private ajax: AxiosInstance = new axios.create();
+export class Api {
+  _ajax  : AxiosInstance;
+  baseUrl: string;
 
-// }
+  constructor (baseUrl: string) {
+    this.baseUrl = baseUrl;
+    this._ajax = axios.create({
+      baseURL: baseUrl
+    })
 
-// import axios, { 
-//   AxiosInstance, 
-//   AxiosRequestConfig, 
-//   AxiosResponse,
-//   AxiosError
-// } from 'axios';
+    this._initializeAjax();
+  }
 
-// import { stringify } from 'qs';
+  _initializeAjax () {
+    this._ajax.interceptors.response.use((response: AxiosResponse) => {
+      return response.data;
+    }, (error: AxiosError) => {
+      if(error.response) {
 
-// // gql error 체크를 위해 사용
+        if(error.response.data.error) {
+          return Promise.reject(new ApiError().build(error.response.data.error));
+        } else {
+          return Promise.reject(new ApiError().build(error.response.data));
+        }
 
-// export interface IError {
-//   status?: number;
-//   message: string;
-// }
+      } else if (error.request){
+        // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+        // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
+        // Node.js의 http.ClientRequest 인스턴스입니다.
+        console.log(error.request);
+        return Promise.reject({ 
+          message: error.message,
+          detail: "response not"
+         });
+      } else {
+        console.log(error);
+        return Promise.reject({ message: error.message });
+      }
+    });
+  }
 
-// export default class CustomError  implements IError {
-//   status?: number;
-//   message: string;
+  call (ajaxInfo: AxiosRequestConfig): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this._ajax(ajaxInfo)
+      .then((result: any) => {
+        resolve(result);
+      })
+      .catch((error: ApiError) => {
+        reject(error);
+      });
+    });
+  };
+}
 
-//   constructor (error: IError) {
-//     this.status  = error.status;
-//     this.message = error.message;
-//   }
+export class Rest extends Api {
 
-//   toString (): string {
-//     if(this.message) {
-//       return this.message;
-//     }
-//     return "Unknown Error";
-//   }
-// }
+  constructor (baseUrl: string) {
+    super(baseUrl)
+  }
 
-// export interface IRestObject {
-//   url    : string,
-//   method : string,
-//   header?: string,
-//   qs    ?: any,
-//   data  ?: any
-// }
+  _restConvert (restObject: IRestObject) {
+    return Object.assign({}, restObject, {
+      url: (() => {
+        if (restObject.qs) {
+          return `${restObject.url}${stringify(restObject.qs, { addQueryPrefix: true })}`
+        } else {
+          return restObject.url
+        }
+      })()
+    }) as AxiosRequestConfig;
+  }
 
-// export interface IGqlObject {
-//   variables?: object,
-//   query     : string
-// }
+  restApi (restObject: IRestObject): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.call(this._restConvert(restObject))
+      .then((result: AxiosResponse) => {
+        resolve(result);
+      })
+      .catch((error: any) => {
+        reject(error);
+      })
+    })
+  }
+}
 
-// export class Api {
-//   _ajax  : AxiosInstance;
-//   baseUrl: string;
-
-//   constructor (baseUrl: string) {
-//     this.baseUrl = baseUrl;
-
-//     this._initializeAjax();
-//   }
-
-//   _initializeAjax () {
-//     const ajax = axios.create({
-//       baseURL: this.baseUrl,
-//       // CORS 사용 시 정책적으로 wildcard만 있는 경우 인증 데이터를 사용하지 못하도록 제재
-//       // withCredentials: true,
-//     });
-
-//     ajax.interceptors.response.use((response: AxiosResponse) => {
-//       return response.data;
-//     }, (error: AxiosError) => {
-//       return Promise.reject([error]);
-//     });
-
-//     this._ajax = ajax;
-//   }
-
-//   call (ajaxInfo: AxiosRequestConfig): Promise<any> {
-//     return new Promise((resolve, reject) => {
-//       this._ajax(ajaxInfo)
-//       .then((result: any) => {
-//         resolve(result);
-//       })
-//       .catch((error: Array<any>) => {
-//         reject(error);
-//       });
-//     });
-//   };
-// }
-
-// export class Rest extends Api {
-
-//   constructor (baseUrl: string) {
-//     super(baseUrl)
-//   }
-
-//   _restConvert (restObject: IRestObject) {
-//     return Object.assign({}, restObject, {
-//       url: (() => {
-//         if (restObject.qs) {
-//           return `${restObject.url}${stringify(restObject.qs, { addQueryPrefix: true })}`
-//         } else {
-//           return restObject.url
-//         }
-//       })()
-//     }) as AxiosRequestConfig;
-//   }
-
-//   restApi (restObject: IRestObject): Promise<any> {
-//     return new Promise((resolve, reject) => {
-//       this.call(this._restConvert(restObject))
-//       .then((result: AxiosResponse) => {
-//         resolve(result);
-//       })
-//       .catch((error: AxiosError) => {
-//         reject(error);
-//       })
-//     })
-//   }
-// }
-
-// export class Gql extends Api {
-
-//   constructor (baseUrl: string) {
-//     super(baseUrl)
-//   }
-
-//   gqlApi (gqlObject: IGqlObject): Promise<any> {
-//     return new Promise((resolve, reject) => {
-//       this.call({
-//         url   : 'graphql',
-//         method: 'POST',
-//         headers: { 
-//           'Content-Type': 'application/json',
-//         },
-//         data: Object.assign({}, {
-//           variables: {}
-//         }, gqlObject)
-//       })
-//       .then((result) => { // TODO: GQL 200 ok error response type check
-//         // error 케이스
-//         if(result.errors && result.errors.length > 0) {
-//           reject(result.errors.map((error: any) => {
-//             if(error.extensions) {
-//               return new CustomError({
-//                 status : error.extensions.status,
-//                 message: error.extensions.message,
-//               });
-//             } else {
-//               return new CustomError({
-//                 message: "System Error"
-//               })
-//             }
-//           }));
-//         } else {
-//           resolve(result.data);
-//         }
-//       })
-//       .catch((error: AxiosError) => {
-//         reject(error);
-//       })
-//     })
-//   }
-// }
+export default {
+  Api,
+  Rest,
+  ApiError
+}

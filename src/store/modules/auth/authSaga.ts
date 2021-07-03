@@ -60,7 +60,7 @@ function* reissueTokenSaga({ payload }: any) {
     }});
 
     if(payload) {
-      yield put({ type: `${payload.type}_ERROR`, error: new ApiError().build(error).get });
+      yield put({ type: `${payload.type}_ERROR`, error: new ApiError(error).get });
     }  
 
   }

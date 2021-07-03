@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route, HashRouter, Redirect} from 'rea
 import AuthPage from './pages/AuthPage';
 import useBase from './hooks/useBase';
 import Home from './pages/HomePage';
-import BkPage from './pages/BkPage';
+import BkPage from './pages/BKPage'
 import GlobalNav from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';

@@ -18,16 +18,6 @@ export type ContentType = ["b"]
 
 export type TextContents = [string] | [string, ContentType[]];
 
-/**
- * Block에서 외부로 보여지는 속성
- * type: string;
- * style?: {
- *  color?: string;
- *  backgroundColor: string;
- * }
- * contents: any;
- */
-
 
 export interface RawBlockData<T = any, P = any> {
   position: string; // 1,  1-1,  1-2-1
@@ -55,4 +45,56 @@ export interface RawBlockDataProps<T = any, P = any> {
 export interface BlockDataProps<T = any, P = any> extends RawBlockDataProps<T, P> {
   index?: number;
   parentId?: string;
+}
+
+export type OrderType = "add" | "del" | "color" | "link";
+
+export type ModifyCommand = "update" | "create" | "delete";
+export type ModifySet = "block" | "comment"; 
+
+export interface ParamModifyBlock {
+  blockId: string;
+  set: ModifySet;
+  payload: any;
+}
+
+export interface ParamCreateBlock {
+  blockId: string;
+  set: "block";
+  payload: RawBlockData;
+}
+
+export interface ParamCreateComment {
+  blockId: string;
+  set: "comment";
+  payload: any;
+}
+
+export type ParamCreateModifyBlock = ParamCreateBlock | ParamCreateComment;
+
+export class ParamDeleteModity {
+  blockIdList?: string[];
+  commentIdList?: string[];
+}
+
+export interface ModifyDataType {
+  create?: ParamCreateModifyBlock[];
+  update?: ParamModifyBlock[];
+  delete?: ParamDeleteModity;
+}
+
+export interface ModifyBlockData<T = any, P = any> {
+  position?: string;
+  id?: string;
+  type?: string;
+  styleType?: string;
+  styles?: T;
+  contents?: P;
+}
+
+export interface ModifyData<T = any> {
+  command: ModifyCommand;
+  blockId: string;
+  set: ModifySet;
+  payload: T;
 }

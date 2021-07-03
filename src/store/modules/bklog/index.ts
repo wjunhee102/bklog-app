@@ -1,29 +1,19 @@
-import { BklogState, RESET_BLOCK } from "./utils";
+import { createReducer, updateObject } from "../../utils";
+import handler from "./handler";
+import { BklogState } from "./utils";
 
-const initialState: BklogState = (() => {
-  return {
-    pageId: null,
-    userId: null,
-    blocks: [],
-    editingId: null,
-    stage: [],
-    rightToEdit: false,
-    tempBack: [],
-    tempFront: []
-  };
-})();
+export const initialState: BklogState = {
+  isLoading: false,
+  pageInfo: null,
+  pageStar: null,
+  pageComments: null,
+  blockList: null,
+  blockComments: null,
+  pullModifyData: null,
+  pushModifyData: null,
+  error: null
+};
 
-function bklog(state: BklogState = initialState, action: any):BklogState {
-
-  switch(action.type) {
-    case RESET_BLOCK: 
-      return initialState;
-      
-    default: 
-
-      return state;
-  }
-
-}
+const bklog = createReducer(initialState, handler);
 
 export default bklog;
