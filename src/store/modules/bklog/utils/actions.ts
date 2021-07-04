@@ -1,5 +1,6 @@
-import { ADD_PUSH_MODIFY_DATA, RESET_BKLOG } from ".";
+import { ADD_PUSH_MODIFY_DATA, ReqUpdateBklog, RESET_BKLOG, UPDATE_BKLOG } from ".";
 import { ModifyDataType } from "../../../../components/newBlock/types";
+import { asyncActions } from "../../../utils";
 
 function resetBklog() {
   return {
@@ -14,7 +15,23 @@ function addPushModifyData(modifyData: ModifyDataType) {
   };
 }
 
+// function updateBklog(reqData: ReqUpdateBklog) {
+//   return {
+//     type: UPDATE_BKLOG,
+//     payload: reqData
+//   }
+// }
+
+const [
+  updateBklog,
+  updateBklogSuccess,
+  updateBklogError
+] = asyncActions<ReqUpdateBklog, { pageVersion: string }>(UPDATE_BKLOG);
+
 export default {
   resetBklog,
-  addPushModifyData
+  addPushModifyData,
+  updateBklog,
+  updateBklogSuccess,
+  updateBklogError
 };

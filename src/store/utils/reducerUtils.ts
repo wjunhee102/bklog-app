@@ -66,6 +66,15 @@ function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
 //   }
 // }
 
+function createAction<T = any>(type: string) {
+  return function(payload: T) {
+    return {
+      type,
+      payload
+    };
+  }
+}
+
 
 function createReducer<State, T extends Action>(
   initialState: State,
@@ -83,7 +92,8 @@ function createReducer<State, T extends Action>(
 
 const reducerUtils = {
   updateObject,
-  createReducer
+  createReducer,
+  createAction
 }
 
 export default reducerUtils;

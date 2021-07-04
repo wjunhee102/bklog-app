@@ -8,6 +8,7 @@ import page  from './page';
 
 import authSaga from './auth/authSaga';
 import { allResetSaga, ALL_RESET } from '../utils';
+import bklogSaga from './bklog/saga';
 
 const rootReducer = combineReducers({
   base,
@@ -23,7 +24,8 @@ function* commonSaga() {
 export function* rootSage() {
   yield all([
     commonSaga(), 
-    authSaga()
+    authSaga(),
+    bklogSaga()
   ]); 
 }
 

@@ -2,7 +2,8 @@ import { call, put } from 'redux-saga/effects';
 import { REISSUETOKEN, reissueToken, SIGNINUSER_ERROR, RESET_AUTH } from '../modules/auth/utils';
 import { ResType } from '../../utils/api-utils';
 import { ApiError } from '../../utils/api-utils';
-import { RESET_BLOCK } from '../modules/bklog/utils';
+import { RESET_BKLOG } from '../modules/bklog/utils';
+import { createAction } from '.';
 
 // function createPromiseSaga2(type: string, promiseCreator: any) {
 //   const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
@@ -75,14 +76,26 @@ function createPromiseSaga(
   } 
 }  
 
+function asyncActions<ReqData = any, ResData = any, Error = any>(actionType: string) {
+  const SUCCESS = `${actionType}_SUCCESS`;
+  const ERROR   = `${actionType}_ERROR`;
+
+  return [
+    createAction<ReqData>(actionType),
+    createAction<ResData>(SUCCESS),
+    createAction<Error>(ERROR)
+  ];
+}
+
 function* allResetSaga(action: any) {
   yield put({ type: RESET_AUTH });
-  yield put({ type: RESET_BLOCK });
+  yield put({ type: RESET_BKLOG });
 }
 
 const acyncUtils = {
   createPromiseSaga,
-  allResetSaga
+  allResetSaga,
+  asyncActions
 }
 
 export default acyncUtils;
