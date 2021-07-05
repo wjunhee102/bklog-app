@@ -1,3 +1,4 @@
+import { initialBlockState } from ".";
 import { ActionHandlers, updateObject } from "../../../store/utils";
 import { 
   BlockState, 
@@ -42,10 +43,42 @@ import {
   changeStyleType,
   changeBlockStyleType,
   CHANGE_STYLE_TYPE,
+  clearModifyData,
+  CLEAR_MODIFYDATA,
+  initBlockState,
+  initBlock,
+  resetBlock,
+  RESET_BLOCK,
+  INIT_BLOCK_STATE,
   
 } from "./utils";
 
-function changeEditingIdHandler(state: BlockState, { payload: { nextEditInfo }}: ReturnType<typeof changeEditingId>) {
+function initBlockStateHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof initBlockState>
+): BlockState {
+  const { blockList, modifyData } = initBlock(payload);
+
+  return updateObject<BlockState, BlockStateProps>(state, 
+    updateObject<BlockState, BlockStateProps>(initialBlockState, {
+      blockList: blockList,
+      modifyData,
+      isFetch: modifyData[0]? true : false
+    })
+  );
+}
+
+function resetBlockHandler(
+  state: BlockState,
+  action: ReturnType<typeof resetBlock>
+): BlockState {
+  return initialBlockState;
+}
+
+function changeEditingIdHandler(
+  state: BlockState, 
+  { payload: { nextEditInfo }}: ReturnType<typeof changeEditingId>
+): BlockState {
   if(typeof nextEditInfo === "string") {
     return updateObject<BlockState, BlockStateProps>(state, {
       editingBlockId: nextEditInfo
@@ -57,7 +90,10 @@ function changeEditingIdHandler(state: BlockState, { payload: { nextEditInfo }}:
   }
 }
 
-function editBlockHandler(state: BlockState, { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editBlock>) {
+function editBlockHandler(
+  state: BlockState, 
+  { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editBlock>
+): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
     stage: addToStage(state.stage, blockId, blockIndex, contents)
   });
@@ -119,6 +155,8 @@ function deleteBlockHandler(
     : blockList[nextEditInfo].id
     : null;
 
+  console.log("delete", modifyData, blockList);
+
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     editingBlockId,
@@ -161,7 +199,7 @@ function switchBlockHandler(
   { payload: { 
     changedBlockIdList, container 
   } }: ReturnType<typeof switchBlock>
-) {
+): BlockState {
   if(!state.targetPosition) return state;
 
   const result = switchBlockList(state.blockList, changedBlockIdList, state.targetPosition, container);
@@ -190,7 +228,7 @@ function switchBlockHandler(
 function revertBlockHandler(
   state: BlockState,
   { back }: ReturnType<typeof revertBlock>
-) {
+): BlockState {
   if(back && state.tempBack[0]) {
     const length = state.tempBack.length - 1;
     const { blockList, tempData, modifyData } = restoreBlock(state.blockList, state.tempBack[length]);
@@ -229,7 +267,7 @@ function changeEditorStateHandler(
   state: BlockState, { 
     payload: { isGrab, isHoldingDown, isCliping } 
   }: ReturnType<typeof changeEditorState>
-) {
+): BlockState {
 
   return updateObject<BlockState, BlockStateProps>(state, {
     isGrab: isGrab !== undefined? isGrab : state.isGrab,
@@ -241,7 +279,7 @@ function changeEditorStateHandler(
 function changeTargetPositionHandler(
   state: BlockState,
   { payload: { targetPosition } }: ReturnType<typeof changeTargetPosition>
-) {
+): BlockState {
 
   return updateObject<BlockState, BlockStateProps>(state, {
     targetPosition: targetPosition? targetPosition : null
@@ -251,7 +289,7 @@ function changeTargetPositionHandler(
 function setTempClipHandler(
   state: BlockState,
   { payload }: ReturnType<typeof setTempClip>
-) {
+): BlockState {
 
   // if(state.tempClipData[0]) {
   //   const length = state.tempClipData.length;
@@ -278,7 +316,10 @@ function setTempClipHandler(
   })
 }
 
-function clearTempClipDataHandler(state: BlockState, action: ReturnType<typeof clearTempClip>) {
+function clearTempClipDataHandler(
+  state: BlockState, 
+  action: ReturnType<typeof clearTempClip>
+): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
     tempClipData: []
   });
@@ -287,7 +328,7 @@ function clearTempClipDataHandler(state: BlockState, action: ReturnType<typeof c
 function editorStateResetHandler(
   state: BlockState, 
   { payload }: ReturnType<typeof resetEditorState>
-) {
+): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
     isCliping: payload? false : state.isCliping,
     isHoldingDown: false,
@@ -300,7 +341,7 @@ function editorStateResetHandler(
 function changeFetchStateHandler(
   state: BlockState,
   { payload }: ReturnType<typeof changeFetchState>
-) {
+): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
     isFetch: payload? true : false
   });
@@ -311,7 +352,7 @@ function changeStyleTypeHandler(
   { payload: {
     blockInfo, styleType
   }}: ReturnType<typeof changeStyleType>
-) {
+): BlockState {
   const result = changeBlockStyleType(state.blockList, blockInfo, styleType);
 
   if(!result) {
@@ -327,7 +368,18 @@ function changeStyleTypeHandler(
   }
 }
 
+function clearModifyDataHandler(
+  state: BlockState,
+  action: ReturnType<typeof clearModifyData>
+): BlockState {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    modifyData: []
+  });
+}
+
 const blockHandlers: ActionHandlers<BlockState> = {
+  [INIT_BLOCK_STATE]       : initBlockStateHandler,
+  [RESET_BLOCK]            : resetBlockHandler,
   [CHANGE_EDITING_ID]      : changeEditingIdHandler,
   [EDIT_BLOCK]             : editBlockHandler,
   [COMMIT_BLOCK]           : commitBlockHandler,
@@ -342,7 +394,8 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CLEAR_CLIPBOARD]        : clearTempClipDataHandler,
   [EDITOR_STATE_RESET]     : editorStateResetHandler,
   [CHANGE_FETCH_STATE]     : changeFetchStateHandler,
-  [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler
+  [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler,
+  [CLEAR_MODIFYDATA]       : clearModifyDataHandler
 };
 
 export default blockHandlers;

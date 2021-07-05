@@ -3,7 +3,10 @@ import { ApiErrorType } from "../../../../utils/api-utils";
 import actions from "./actions";
 import apiUtils from "./apiUtils";
 
-interface PageInfoType {
+export interface PageInfoType {
+  createdDate: Date;
+  updatedDate: Date;
+  id: string;
   title: string;
   coverImage: string;
   coverColor: string;
@@ -15,7 +18,10 @@ interface PageInfoType {
   editable: boolean;
 }
 
-interface PageInfoProps {
+export interface PageInfoProps {
+  createdDate?: Date;
+  updatedDate?: Date;
+  id?: string;
   title?: string;
   coverImage?: string;
   coverColor?: string;
@@ -35,19 +41,20 @@ interface Comments {
   photo: string;
 }
 
-interface PageCommentsType extends Comments {}
+export interface PageCommentsType extends Comments {}
 
-interface BlockCommentsType extends Comments {
+export interface BlockCommentsType extends Comments {
   blockId: string;
 }
 
-interface PageStarType {
+export interface PageStarType {
   selected: boolean;
   count: number;
 }
 
 export interface BklogState {
   isLoading: boolean;
+  isFetching: boolean; 
   pageInfo: PageInfoType | null;
   pageStar: PageStarType | null;
   pageComments: PageCommentsType[] | null;
@@ -60,6 +67,7 @@ export interface BklogState {
 
 export interface BklogStateProps {
   isLoading?: boolean;
+  isFetching?: boolean;
   pageInfo?: PageInfoType | null;
   pageStar?: PageStarType | null;
   pageComments?: PageCommentsType[] | null;
@@ -80,6 +88,12 @@ export interface ReqUpdateBklog {
   data: ModifyDataType;
 }
 
+// response type
+export interface ResGetPage {
+  pageInfo: PageInfoType;
+  blockList: RawBlockData[];
+}
+
 // actions
 export const RESET_BKLOG      = 'bklog/RESET_BKLOG' as const;
 export const BKLOG_ERROR      = 'bklog/BKLOG_ERROR' as const;
@@ -95,9 +109,12 @@ export const UPDATE_BKLOG_SUCCESS = 'bklog/UPDATE_BKLOG_SUCCESS' as const;
 export const UPDATE_BKLOG_ERROR   = 'bklog/UPDATE_BKLOG_ERROR' as const;
 
 export const resetBklog         = actions.resetBklog;
+export const getPage            = actions.getPage;
+export const getPageSuccess     = actions.getPageSuccess;
+export const getPageError       = actions.getPageError;
 export const addPushModifyData  = actions.addPushModifyData;
 export const updateBklog        = actions.updateBklog;
-export const updataBklogSuccess = actions.updateBklogSuccess;
+export const updateBklogSuccess = actions.updateBklogSuccess;
 export const updateBklogError   = actions.updateBklogError;
 
 // api

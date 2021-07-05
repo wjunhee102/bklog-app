@@ -66,7 +66,13 @@ function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
 //   }
 // }
 
-function createAction<T = any>(type: string) {
+type TypeConstant = string;
+
+type AAction<TType extends TypeConstant = TypeConstant> = {
+  type: TType;
+};
+
+function createAction<T = any, TType extends TypeConstant = TypeConstant>(type: TType) {
   return function(payload: T) {
     return {
       type,

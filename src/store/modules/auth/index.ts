@@ -68,7 +68,6 @@ export default function auth(state: AuthState = initialState, action: AuthAction
 
     case SIGNINUSER:
     case RESIGNINUSER:
-      console.log("SIGN-IN")
       return Object.assign({}, initialState, { loading: true,
         user: null, 
         error: initialError()
@@ -78,7 +77,6 @@ export default function auth(state: AuthState = initialState, action: AuthAction
     case SIGNINUSER_ERROR:
     case RESIGNINUSER_SUCCESS:
     case RESIGNINUSER_ERROR:
-      console.log("aaa", action);
       const { userInfo, error } = action.payload;
       return Object.assign({}, state, {loading: false, 
         user: action.payload, 
@@ -104,7 +102,6 @@ export default function auth(state: AuthState = initialState, action: AuthAction
       return initialState;
   
     default:
-      console.log(state);
       return state;
   }
 }

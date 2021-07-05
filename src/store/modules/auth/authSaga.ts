@@ -15,7 +15,7 @@ import {
   RESET_AUTH
 } from './utils/index';
 import { ResType } from '../../../utils/api-utils';
-import { createPromiseSaga } from '../../utils';
+import { ALL_RESET, createPromiseSaga } from '../../utils';
 import { ApiError } from '../../../utils/api-utils';
 
 
@@ -53,15 +53,19 @@ function* reissueTokenSaga({ payload }: any) {
     }
 
   } catch(error) {
-
-    yield put({ type: SIGNINUSER_ERROR, payload: {
-      userInfo: null,
-      error: null
-    }});
-
-    if(payload) {
-      yield put({ type: `${payload.type}_ERROR`, error: new ApiError(error).get });
-    }  
+    
+    if(error.type !== "System") {
+      yield put({ type: ALL_RESET });
+    } else {
+      yield put({ type: SIGNINUSER_ERROR, payload: {
+        userInfo: null,
+        error: error
+      }});
+  
+      if(payload) {
+        yield put({ type: `${payload.type}_ERROR`, error: new ApiError(error).get });
+      }  
+    }
 
   }
 }

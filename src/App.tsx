@@ -23,10 +23,10 @@ function App() {
         <GlobalNav />
         <Switch>
           <Route path="/" exact>
-            <Redirect to="/bklog" />
+            <Redirect to="/home" />
           </Route>
           <Route path="/home" component={Home} />
-          <Route path="/bklog" component={BkPage} />
+          <Route path="/bklog/:penName/:id" component={BkPage} />
           <Route path="/auth" component={AuthPage} />
         </Switch>
       </Router>

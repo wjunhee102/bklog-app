@@ -4,6 +4,7 @@ import { ResType } from '../../utils/api-utils';
 import { ApiError } from '../../utils/api-utils';
 import { RESET_BKLOG } from '../modules/bklog/utils';
 import { createAction } from '.';
+import { createReducer } from 'typesafe-actions';
 
 // function createPromiseSaga2(type: string, promiseCreator: any) {
 //   const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
@@ -70,22 +71,22 @@ function createPromiseSaga(
       if(error.type === "AUTH" && error.code === "001") {
         yield put({ type: REISSUETOKEN, payload: action });
       } else {
-        yield put({ type: ERROR, error: new ApiError().build(error).get });
+        yield put({ type: ERROR, error: new ApiError(error).get });
       }
     }
   } 
 }  
 
-function asyncActions<ReqData = any, ResData = any, Error = any>(actionType: string) {
-  const SUCCESS = `${actionType}_SUCCESS`;
-  const ERROR   = `${actionType}_ERROR`;
+// function asyncActions<ReqData = any, ResData = any, Error = any>(actionType: string) {
+//   const SUCCESS = `${actionType}_SUCCESS`;
+//   const ERROR   = `${actionType}_ERROR`;
 
-  return [
-    createAction<ReqData>(actionType),
-    createAction<ResData>(SUCCESS),
-    createAction<Error>(ERROR)
-  ];
-}
+//   return [
+//     createAction<ReqData, typeof actionType>(actionType),
+//     createAction<ResData, typeof SUCCESS>(SUCCESS),
+//     createAction<Error, typeof ERROR>(ERROR)
+//   ];
+// }
 
 function* allResetSaga(action: any) {
   yield put({ type: RESET_AUTH });
@@ -94,8 +95,7 @@ function* allResetSaga(action: any) {
 
 const acyncUtils = {
   createPromiseSaga,
-  allResetSaga,
-  asyncActions
+  allResetSaga
 }
 
 export default acyncUtils;

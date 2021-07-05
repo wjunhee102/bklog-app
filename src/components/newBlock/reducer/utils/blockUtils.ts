@@ -334,7 +334,7 @@ function removeBlockInList(
     update: []
   };
   const blocks = blockList.concat();
-  const blockLength = blocks.length - 1;
+  const blockLength = blocks.length;
   const removedBlockList = copyToNewObjectArray(targetBlockList);
 
   tempData.create?.push(...removedBlockList.map(block => createTempData(block.id, Object.assign({}, block))));

@@ -2,7 +2,7 @@ import { createReducer } from "../../../store/utils";
 import blockHandlers from "./handler";
 import { BlockActions, BlockState } from "./utils";
 
-const initialBlockState: BlockState = {
+export const initialBlockState: BlockState = {
   isFetch: false,
   isGrab: false,
   isHoldingDown: false,

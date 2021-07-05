@@ -20,9 +20,18 @@ import {
   CHANGE_TARGET_POSITION,
   EDITOR_STATE_RESET,
   CHANGE_FETCH_STATE,
-  CHANGE_STYLE_TYPE
+  CHANGE_STYLE_TYPE,
+  CLEAR_MODIFYDATA,
+  INIT_BLOCK_STATE
 } from ".";
-import { UUID, BlockData, ContentType } from "../../types";
+import { UUID, BlockData, ContentType, RawBlockData } from "../../types";
+
+function initBlockState(rawBlockData: RawBlockData[]) {
+  return {
+    type: INIT_BLOCK_STATE,
+    payload: rawBlockData
+  };
+}
 
 function resetBlock() {
   return {
@@ -194,7 +203,14 @@ function changeStyleType(blockInfo: string | number, styleType: string) {
   }
 }
 
+function clearModifyData() {
+  return {
+    type: CLEAR_MODIFYDATA
+  };
+}
+
 const actionBlock = {
+  initBlockState,
   resetBlock,
   addBlock,
   changeEditingId,
@@ -214,7 +230,8 @@ const actionBlock = {
   testClipAdd,
   resetEditorState,
   changeFetchState,
-  changeStyleType
+  changeStyleType,
+  clearModifyData
 }
 
 export default actionBlock;

@@ -2,15 +2,18 @@ import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ModifyDataType } from '../components/newBlock/types';
 import { RootState } from '../store/modules';
-import { addPushModifyData, BklogState, resetBklog } from '../store/modules/bklog/utils';
+import { addPushModifyData, BklogState, resetBklog, ReqUpdateBklog, updateBklog, getPage } from '../store/modules/bklog/utils';
+import { Token } from '../utils/token';
 
 function useBklog() {
   
-  const state:BklogState = useSelector((state: RootState) => state.bklog);
+  const bklogState: BklogState = useSelector((state: RootState) => state.bklog);
   
   const dispatch = useDispatch();
 
-  const pageInfo = useMemo(() => state.pageInfo, [state.pageInfo]);
+  const onGetPage = useCallback((id: string) => {
+    dispatch(getPage(id));
+  }, [dispatch]);
 
   const onResetBklog = useCallback(() => {
     dispatch(resetBklog());
@@ -20,11 +23,28 @@ function useBklog() {
     dispatch(addPushModifyData(modifyData));
   }, [dispatch]);
 
+  const onUpdateBklog = useCallback(() => {
+    if(bklogState.pageInfo && bklogState.pushModifyData) {
+      const { id, version } = bklogState.pageInfo;
+      const modifyData = bklogState.pushModifyData;
+
+      dispatch(updateBklog({
+        pageId: id,
+        pageVersions: {
+          current: version,
+          next: Token.getUUID()
+        },
+        data: modifyData
+      }));
+   }
+  }, [dispatch, bklogState.pageInfo, bklogState.pushModifyData]);
+
   return { 
-    state,
-    pageInfo,
+    bklogState,
     onResetBklog,
-    onAddPushModifyData
+    onGetPage,
+    onAddPushModifyData,
+    onUpdateBklog
   };
 }
 

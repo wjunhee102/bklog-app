@@ -93,6 +93,7 @@ export interface BlockStateProps {
 /**
  * action type
  */
+export const INIT_BLOCK_STATE       = 'INIT_BLOCK_STATE' as const;
 export const RESET_BLOCK            = 'RESET_BLOCK' as const;
 export const CHANGE_EDITING_ID      = 'CHANGE_EDITING_ID' as const;
 export const ADD_BLOCK              = 'ADD_BLOCK' as const;
@@ -112,11 +113,13 @@ export const CHANGE_TARGET_POSITION = 'CHANGE_TARGET_POSITION' as const;
 export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
 export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
 export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
+export const CLEAR_MODIFYDATA       = 'CLEAR_MODIFYDATA' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
 export type BLOCK_ACTION_TYPES = 
-  typeof RESET_BLOCK 
+  typeof INIT_BLOCK_STATE
+  | typeof RESET_BLOCK 
   | typeof ADD_BLOCK
   | typeof EDIT_BLOCK
   | typeof COMMIT_BLOCK
@@ -134,11 +137,13 @@ export type BLOCK_ACTION_TYPES =
   | typeof TEST_CLIPBOARD
   | typeof CHANGE_STYLE_TYPE
   | typeof CHANGE_FETCH_STATE
+  | typeof CLEAR_MODIFYDATA
 ;
 
 /**
  * Actions
  */
+export const initBlockState       = actionBlock.initBlockState;
 export const resetBlock           = actionBlock.resetBlock;
 export const addBlock             = actionBlock.addBlock;
 export const changeEditingId      = actionBlock.changeEditingId;
@@ -158,10 +163,12 @@ export const changeTargetPosition = actionBlock.changeTargetPosition;
 export const resetEditorState     = actionBlock.resetEditorState;
 export const changeFetchState     = actionBlock.changeFetchState;
 export const changeStyleType      = actionBlock.changeStyleType;
+export const clearModifyData      = actionBlock.clearModifyData;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
-export type BlockActions = ReturnType<typeof resetBlock>
+export type BlockActions = ReturnType<typeof initBlockState>
+  | ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
   | ReturnType<typeof changeEditingId>
   | ReturnType<typeof editBlock>
@@ -181,6 +188,7 @@ export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof resetEditorState>
   | ReturnType<typeof changeFetchState>
   | ReturnType<typeof changeStyleType>
+  | ReturnType<typeof clearModifyData>
 ;
 
 //converter
@@ -219,4 +227,4 @@ export const updateModifyData           = sideStoreUtils.updateModifyData;
 export const setCreateModifyDataOfBlock = sideStoreUtils.setCreateModifyDataOfBlock;
 export const setUpdateModifyDataOfBlock = sideStoreUtils.setUpdateModifyDataOfBlock;
 export const setDeleteModifyDataOfBlock = sideStoreUtils.setDeleteModifyDataOfBlock;
-export const converModifyData           = sideStoreUtils.convertModifyData;
+export const convertModifyData           = sideStoreUtils.convertModifyData;

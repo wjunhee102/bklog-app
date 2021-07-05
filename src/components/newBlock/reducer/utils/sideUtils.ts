@@ -160,9 +160,13 @@ function convertModifyData(modifyDataList: ModifyData[]) {
   }
   const modifyData: ModifyDataType = modifyDataList.reduce(modifyDataReducer, acc);
   
-  if(!acc.create[0]) acc.create = undefined;
-  if(!acc.update[0]) acc.update = undefined;
-  if(!acc.delete.blockIdList[0] && !acc.delete.commentIdList[0]) acc.delete = undefined;
+  if(!modifyData.create[0]) modifyData.create = undefined;
+  if(!modifyData.update[0]) modifyData.update = undefined;
+  if(!modifyData.delete.blockIdList[0]) modifyData.delete.blockIdList = undefined;
+  if(!modifyData.delete.commentIdList[0]) modifyData.delete.commentIdList = undefined;
+  if(!modifyData.delete.blockIdList && !modifyData.delete.commentIdList) modifyData.delete = undefined;
+
+  console.log("covert", modifyData);
 
   return modifyData;
 }

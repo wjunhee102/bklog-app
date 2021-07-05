@@ -1,30 +1,69 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useBlock from './hooks/useBlock';
 import { BlockData } from './types';
 import Block from './components/Block';
 import './assets/block.scss';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
+import useBklog from '../../hooks/useBKlog';
+import { convertModifyData } from './reducer/utils';
+import { ReqUpdateBklog } from '../../store/modules/bklog/utils';
 
-// let clientX = 0;
-// let clientY = 0;
+const PAGE_INFO: ReqUpdateBklog = {
+	"pageId": "4d771ba2ad9806fcad4158dc67506e3f",
+	"pageVersions": {
+		"current": "4d06bfb7f376c98e8b1fb613e3981bw35",
+		"next": "1d06bfb7f376c98e8b1fb6123e3981bw35"
+	},
+	"data": {
+		"update": [
+			{
+				"blockId": "d5cc2725-97ec-494b-bc80-c16f96379e40",
+				"set": "block",
+				"payload": {
+					"id": "d5cc2725-97ec-494b-bc80-c16f96379e40",
+					"position": "2",
+					"type": "block",
+					"styleType": "bk-p",
+					"styles": {
+						"color": "white",
+						"backgroudColor": "black"
+					},
+					"contents": [
+						["블록 2입니다."]
+					]
+				}
+			}
+		]
+	}
+}
 
 const BlockEditor: React.FC = () => {
+  const { bklogState, onUpdateBklog, onAddPushModifyData } = useBklog();
+
   const hooks = useBlock();
   
   const {
     state,
     isGrab,
     isCliping,
+    isFetch,
     tempClipData,
+    modifyData,
     initBlock,
+    onInitBlockState,
     onCommitBlock,
-    onResetEditorState
+    onResetEditorState,
+    onClearModifyData
   } = hooks;
 
   const editorRef = useRef<HTMLDivElement>(null);
 
   const dragRef = useRef<HTMLDivElement>(null);
+
+  const isFetching = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
+
+  const pushModifyData = useMemo(() => bklogState.pushModifyData, [bklogState.pushModifyData]);
 
   const handleOnIdle = useCallback(() => {
     if(state.stage[0]) onCommitBlock();
@@ -60,8 +99,22 @@ const BlockEditor: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log(state, !hooks.isGrab);
-  }, [state]);
+    if(bklogState.blockList) {
+      onInitBlockState(bklogState.blockList);
+    }
+  }, [bklogState.blockList]);
+
+  useEffect(() => {
+    if(isFetch && !isFetching && modifyData[0]) {
+      console.log("convert", convertModifyData(state.modifyData));
+      onAddPushModifyData(convertModifyData(state.modifyData));
+      onClearModifyData();
+    }
+  }, [modifyData]);
+
+  useEffect(() => {
+    onUpdateBklog();
+  }, [pushModifyData]);
 
   return (
     <div 
@@ -88,7 +141,7 @@ const BlockEditor: React.FC = () => {
               blockData={block}
               hooks={hooks}
             />
-          ) : <div></div>
+          ) : <div> Loading... </div>
         }
       </div>
 

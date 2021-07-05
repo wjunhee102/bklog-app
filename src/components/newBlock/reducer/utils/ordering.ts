@@ -297,8 +297,8 @@ const reducer = (acc: any, cur: BlockData) => {
   return acc;
 }
 
-function setBlockList(blockDataList: BlockData[]): SetBlockDataList {
-  return blockDataList.reduce(reducer, {});
+function setBlockList(blockDataList: BlockData[]): SetBlockDataList | null {
+  return blockDataList[0]? blockDataList.reduce(reducer, {}) : null;
 }
 
 /**

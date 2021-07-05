@@ -40,4 +40,3 @@ export const ALL_RESET = "common/ALL_RESET" as const;
 // asyncUtils
 export const createPromiseSaga = acyncUtils.createPromiseSaga;
 export const allResetSaga      = acyncUtils.allResetSaga;
-export const asyncActions       = acyncUtils.asyncActions;

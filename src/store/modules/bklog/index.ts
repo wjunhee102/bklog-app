@@ -4,6 +4,7 @@ import { BklogState } from "./utils";
 
 export const initialState: BklogState = {
   isLoading: false,
+  isFetching: false,
   pageInfo: null,
   pageStar: null,
   pageComments: null,

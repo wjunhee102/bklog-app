@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { testDB } from '../db';
-import blockReducer from '../reducer';
+import blockReducer, { initialBlockState } from '../reducer';
 import { 
   BlockState, 
   initBlock, 
@@ -23,32 +23,18 @@ import {
   resetEditorState,
   changeBlockStyleType,
   changeStyleType,
-  changeFetchState
+  changeFetchState,
+  clearModifyData,
+  initBlockState
 } from '../reducer/utils';
-import { BlockData, ContentType } from '../types';
-
-const initialState: BlockState = {
-  isFetch: false,
-  isGrab: false,
-  isHoldingDown: false,
-  isCliping: false,
-  targetPosition: null,
-  blockList: initBlock(testDB).blockList,
-  editingBlockId: null,
-  stage: [],
-  modifyData: [],
-  tempBack: [],
-  tempFront: [],
-  tempClipData: [],
-  clipBoard: []
-}
+import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
 // state 값을 전부 useReducer로 통합할 것.
 function useBlock() {
-  const [ state, dispatch ] = useReducer(blockReducer, initialState);
+  const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
 
   // state
-  const initBlock: SetBlockDataList = useMemo(()=>
+  const initBlock: SetBlockDataList | null = useMemo(()=>
     setBlockList(state.blockList), [state.blockList]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
@@ -61,11 +47,19 @@ function useBlock() {
   
   const isHoldingDown: boolean = useMemo(() => state.isHoldingDown, [state.isHoldingDown]);
 
+  const isFetch: boolean = useMemo(() => state.isFetch, [state.isFetch]);
+
   const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
 
   const targetPosition: string | null = useMemo(() => state.targetPosition, [state.targetPosition]);
 
+  const modifyData: ModifyData[] = useMemo(() => state.modifyData, [state.modifyData]);
+
   // dispatch
+  const onInitBlockState = useCallback((rawBlockData: RawBlockData[]) => {
+    dispatch(initBlockState(rawBlockData));
+  }, [dispatch]);
+
   const onChangeEditorState = useCallback((payload: ChangeEditorStateProps) => {
     dispatch(changeEditorState(payload));
   }, [dispatch]);
@@ -142,17 +136,24 @@ function useBlock() {
     dispatch(changeFetchState(fetchState));
   }, [dispatch]);
 
+  const onClearModifyData = useCallback(() => {
+    dispatch(clearModifyData());
+  }, [dispatch]);
+
   return { 
     state, 
     editingBlockId,
     isGrab,
     isHoldingDown,
     isCliping,
+    isFetch,
     tempClipData,
     targetPosition,
+    modifyData,
     onEditBlock,
     initBlock,
     blockLength,
+    onInitBlockState,
     onChangeEditorState,
     onChangeEditingId,
     onCommitBlock,
@@ -166,7 +167,8 @@ function useBlock() {
     onClearTempClip,
     onResetEditorState,
     onChangeStyleType,
-    onChangeFetchState
+    onChangeFetchState,
+    onClearModifyData
   };
 }
 

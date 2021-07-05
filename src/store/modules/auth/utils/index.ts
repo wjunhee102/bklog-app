@@ -1,6 +1,7 @@
 import authApiUtils from './apiUtils';
 import actions from './actions';
 import { ApiErrorType } from '../../../../utils/api-utils';
+import { createAction } from 'typesafe-actions';
 
 export const SIGNUPUSER = "auth/SIGN_UP_USER" as const;
 export const SIGNUPUSER_SUCCESS = "auth/SIGN_UP_USER_SUCCESS" as const;
@@ -99,7 +100,6 @@ export interface ResSignUpUser {
     penNameUsed: boolean;
   }
 }
-
 
 /**
  * actions
