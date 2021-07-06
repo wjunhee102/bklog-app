@@ -1,7 +1,7 @@
 import { BlockData, BlockDataProps, ContentType, ModifyBlockData, ModifyCommand, ModifyData, ModifySet } from '../../types';
 import { StagedBlock, sortBlock, createModifyData, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
 import { Token } from '../../utils/token';
-import { updateBlock, updateObject } from '../../../block/reducer/utils';
+import { ModifyBlockType, updateBlock, updateObject } from '../../../block/reducer/utils';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
@@ -542,7 +542,7 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
     tempData.update = [];
 
     for(const data of restoreData.update) {
-      const index = preBlockList.findIndex(block => block.id === data.blockId);
+      const index = preBlockList.findIndex(blockFindInfex(data.blockId));
 
       const payload: ModifyBlockData = {};
 
@@ -588,6 +588,95 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
   return {
     blockList: result.blockList,
     modifyData,
+    tempData
+  }
+}
+
+/**
+ * block-comments 관련 로직도 넣어야 함.
+ * @param blocks 
+ * @param updatedData 
+ */
+function updateBlockData(blocks: BlockData[], updatedData: ModifyBlockType) {
+  const tempData: TempDataType = {};
+  const modifyData: ModifyData[] = [];
+
+  let preBlockList = blocks.concat();
+
+  if(updatedData.update) {
+    tempData.update = [];
+
+    for(const data of updatedData.update) {
+      if(data.set === "block") {
+        const index = preBlockList.findIndex(blockFindInfex(data.blockId));
+
+        const payload: ModifyBlockData = {};
+
+        for(const [key, value] of Object.entries(preBlockList[index])) {
+          if(data.payload[key]) {
+            payload[key as keyof ModifyBlockData] = value;
+          }
+        }
+
+        tempData.update.push(createTempData<ModifyBlockData>(preBlockList[index].id, payload));
+        preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
+      } else if(data.set === "comment") {
+
+      }
+    }
+
+  }
+
+  if(updatedData.delete) {
+    const blockIdList: string[] | null = updatedData.delete.blockIdList? 
+      updatedData.delete.blockIdList : null;
+    const commentIdList: string[] | null = updatedData.delete.commentIdList?
+    updatedData.delete.commentIdList : null;
+
+    if(blockIdList) {
+      const [ removedBlockList, targetBlockList ] = divideBlock(preBlockList, blockIdList);
+
+      preBlockList = removedBlockList;
+
+      tempData.create?.push(...targetBlockList.map(block => createTempData(block.id, block)))
+    }
+    
+  }
+
+  if(updatedData.create) {
+    const toBeCreatedBlock = updatedData.create.filter(data => data.set === "block");
+
+    if(toBeCreatedBlock) {
+      tempData.delete = toBeCreatedBlock.map(data => createTempData(data.blockId));
+      preBlockList.push(...toBeCreatedBlock.map(data => data.payload));
+    }
+
+  }
+
+  const result = orderingBlock(sortBlock(preBlockList));
+
+  if(result.modifyData[0] || (result.tempData.update && result.tempData.update[0])) {
+    console.log("확인 필요");
+    console.log(result);
+
+    if(result.tempData.update && result.tempData.update[0]) {
+      if(!tempData.update) tempData.update = [];
+
+      for(const data of result.tempData.update) {
+        const index = tempData.update.findIndex(data => data.blockId === data.blockId);
+        if(index !== -1) {
+          tempData.update[index].payload = updateObject(tempData.update[index].payload, data.payload);
+        } else {
+          tempData.update.push(data);
+        }
+      }
+      
+    }
+  }
+
+  return {
+    blockList: result.blockList,
+    modifyData: result.modifyData,
     tempData
   }
 }

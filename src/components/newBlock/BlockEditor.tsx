@@ -8,6 +8,9 @@ import classNames from 'classnames';
 import useBklog from '../../hooks/useBKlog';
 import { convertModifyData } from './reducer/utils';
 import { ReqUpdateBklog } from '../../store/modules/bklog/utils';
+// import useSocket from '../../hooks/useSocket';
+import io from 'socket.io-client';
+import useSocket from '../../hooks/useSocket';
 
 const PAGE_INFO: ReqUpdateBklog = {
 	"pageId": "4d771ba2ad9806fcad4158dc67506e3f",
@@ -39,10 +42,14 @@ const PAGE_INFO: ReqUpdateBklog = {
 }
 
 const BlockEditor: React.FC = () => {
-  const { bklogState, onUpdateBklog, onAddPushModifyData } = useBklog();
-
-  const hooks = useBlock();
-  
+  const { 
+    bklogState, 
+    onUpdateBklog, 
+    onAddPushModifyData, 
+    onGetPage 
+  } = useBklog();
+  const socket = useSocket("http://localhost:4600/bklog");
+  const hooks  = useBlock();
   const {
     state,
     isGrab,
@@ -56,6 +63,8 @@ const BlockEditor: React.FC = () => {
     onResetEditorState,
     onClearModifyData
   } = hooks;
+  
+  const [ update, setUpdate ] = useState<boolean>(false);
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +73,10 @@ const BlockEditor: React.FC = () => {
   const isFetching = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
 
   const pushModifyData = useMemo(() => bklogState.pushModifyData, [bklogState.pushModifyData]);
+
+  //test
+
+  const [ test, setTest ] = useState<boolean>(false);
 
   const handleOnIdle = useCallback(() => {
     if(state.stage[0]) onCommitBlock();
@@ -88,7 +101,7 @@ const BlockEditor: React.FC = () => {
   const handleDrag = useCallback((e: React.DragEvent) => {
     if(isGrab || isCliping) {
     }
-  }, [isGrab, isCliping])
+  }, [isGrab, isCliping]);
 
   const handleMouseUp = useCallback(() => {
     onResetEditorState(false);
@@ -97,6 +110,17 @@ const BlockEditor: React.FC = () => {
   const handleMouseLeave = useCallback(() => {
     onResetEditorState(false);
   }, []);
+
+  const eventSocket = useCallback(() => {
+    if(socket) {
+      socket.on("message", (data: any) => console.log(data));
+      socket.on("updated", (data: any) => {
+        console.log("updated", data, bklogState.pageInfo.id);
+        // update 기능 만들 것.
+        setUpdate(true);
+      });
+    }
+  }, [socket]);
 
   useEffect(() => {
     if(bklogState.blockList) {
@@ -109,12 +133,50 @@ const BlockEditor: React.FC = () => {
       console.log("convert", convertModifyData(state.modifyData));
       onAddPushModifyData(convertModifyData(state.modifyData));
       onClearModifyData();
+      if(socket) socket.emit("update", [bklogState.pageInfo.id, bklogState.pageInfo.version]);
     }
   }, [modifyData]);
 
   useEffect(() => {
     onUpdateBklog();
   }, [pushModifyData]);
+
+  useEffect(() => {
+
+    if(bklogState.pageInfo && socket) {
+      socket.on("connect", () => {
+        console.log("connected");
+        socket.emit("roomjoin", bklogState.pageInfo.id);
+      })
+    }
+    
+  }, [bklogState.pageInfo, socket]);
+
+  useEffect(() => {
+    if(test) {
+      const pushGetPage = setInterval(() => {
+        onGetPage("4d771ba2ad9806fcad4158dc67506e3f")
+      }, 400);
+
+      return () => clearInterval(pushGetPage);
+    }
+  }, [test]);
+
+  useEffect(() => {
+    if(update) {
+      const updateTimeOut = setTimeout(() => {
+        //update 함수 만들 것.
+        onGetPage("4d771ba2ad9806fcad4158dc67506e3f");
+        setUpdate(false);
+      }, 500);
+      
+      return () => clearTimeout(updateTimeOut);
+    }
+  }, [update]);
+
+  useEffect(() => {
+    eventSocket();
+  }, [socket]);
 
   return (
     <div 
@@ -126,7 +188,9 @@ const BlockEditor: React.FC = () => {
       onMouseDown={handleMouseDown}
       onDrag={handleDrag}
     >
-      <div className="cover mb-8"></div>
+      <div className="cover mb-8" onClick={() => {setTest(!test)}}>
+        { test? "안받기" : "받기"}
+      </div>
       <div className={classNames(
         "m-auto", 
         "h-full", 

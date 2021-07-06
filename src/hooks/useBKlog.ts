@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ModifyDataType } from '../components/newBlock/types';
 import { RootState } from '../store/modules';
-import { addPushModifyData, BklogState, resetBklog, ReqUpdateBklog, updateBklog, getPage } from '../store/modules/bklog/utils';
+import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
 function useBklog() {
@@ -12,6 +12,7 @@ function useBklog() {
   const dispatch = useDispatch();
 
   const onGetPage = useCallback((id: string) => {
+    console.log("페이지 불러오기");
     dispatch(getPage(id));
   }, [dispatch]);
 
@@ -39,12 +40,17 @@ function useBklog() {
    }
   }, [dispatch, bklogState.pageInfo, bklogState.pushModifyData]);
 
+  const onUpdateVersion = useCallback((id, preId) => {
+    dispatch(updateVersion(id, preId));
+  }, [dispatch]);
+
   return { 
     bklogState,
     onResetBklog,
     onGetPage,
     onAddPushModifyData,
-    onUpdateBklog
+    onUpdateBklog,
+    onUpdateVersion
   };
 }
 

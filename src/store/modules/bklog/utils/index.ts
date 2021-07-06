@@ -55,6 +55,7 @@ export interface PageStarType {
 export interface BklogState {
   isLoading: boolean;
   isFetching: boolean; 
+  isRefresh: boolean;
   pageInfo: PageInfoType | null;
   pageStar: PageStarType | null;
   pageComments: PageCommentsType[] | null;
@@ -68,6 +69,7 @@ export interface BklogState {
 export interface BklogStateProps {
   isLoading?: boolean;
   isFetching?: boolean;
+  isRefresh?: boolean;
   pageInfo?: PageInfoType | null;
   pageStar?: PageStarType | null;
   pageComments?: PageCommentsType[] | null;
@@ -95,27 +97,30 @@ export interface ResGetPage {
 }
 
 // actions
-export const RESET_BKLOG      = 'bklog/RESET_BKLOG' as const;
-export const BKLOG_ERROR      = 'bklog/BKLOG_ERROR' as const;
+export const RESET_BKLOG            = 'bklog/RESET_BKLOG' as const;
+export const BKLOG_ERROR            = 'bklog/BKLOG_ERROR' as const;
+export const GET_PAGE               = 'bklog/GET_PAGE' as const;
+export const GET_PAGE_SUCCESS       = 'bklog/GET_PAGE_SUCCESS' as const;
+export const GET_PAGE_ERROR         = 'bklog/GET_PAGE_ERROR' as const;
+export const ADD_PUSH_MODIFY_DATA   = 'bklog/ADD_PUSH_MODIFY_DATA' as const;
+export const UPDATE_BKLOG           = 'bklog/UPDATE_BKLOG' as const;
+export const UPDATE_BKLOG_SUCCESS   = 'bklog/UPDATE_BKLOG_SUCCESS' as const;
+export const UPDATE_BKLOG_ERROR     = 'bklog/UPDATE_BKLOG_ERROR' as const;
+export const UPDATE_VERSION         = 'bklog/UPDATE_VERSION' as const;
+export const UPDATE_VERSION_SUCCESS = 'bklog/UPDATE_VERSION_SUCCESS' as const;
+export const UPDATE_VERSION_ERROR   = 'bklog/UPDATE_VERSION_ERROR' as const;
 
-export const GET_PAGE         = 'bklog/GET_PAGE' as const;
-export const GET_PAGE_SUCCESS = 'bklog/GET_PAGE_SUCCESS' as const;
-export const GET_PAGE_ERROR   = 'bklog/GET_PAGE_ERROR' as const;
-
-export const ADD_PUSH_MODIFY_DATA  = 'bklog/ADD_PUSH_MODIFY_DATA' as const;
-
-export const UPDATE_BKLOG         = 'bklog/UPDATE_BKLOG' as const;
-export const UPDATE_BKLOG_SUCCESS = 'bklog/UPDATE_BKLOG_SUCCESS' as const;
-export const UPDATE_BKLOG_ERROR   = 'bklog/UPDATE_BKLOG_ERROR' as const;
-
-export const resetBklog         = actions.resetBklog;
-export const getPage            = actions.getPage;
-export const getPageSuccess     = actions.getPageSuccess;
-export const getPageError       = actions.getPageError;
-export const addPushModifyData  = actions.addPushModifyData;
-export const updateBklog        = actions.updateBklog;
-export const updateBklogSuccess = actions.updateBklogSuccess;
-export const updateBklogError   = actions.updateBklogError;
+export const resetBklog           = actions.resetBklog;
+export const getPage              = actions.getPage;
+export const getPageSuccess       = actions.getPageSuccess;
+export const getPageError         = actions.getPageError;
+export const addPushModifyData    = actions.addPushModifyData;
+export const updateBklog          = actions.updateBklog;
+export const updateBklogSuccess   = actions.updateBklogSuccess;
+export const updateBklogError     = actions.updateBklogError;
+export const updateVersion        = actions.updateVersion;
+export const updateVersionSuccess = actions.updateVersionSuccess;
+export const updateVersionError   = actions.updateVersionError;
 
 // api
 export const bklogFetchGet  = apiUtils.bklogFetchGet;

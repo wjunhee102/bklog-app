@@ -50,6 +50,7 @@ import {
   resetBlock,
   RESET_BLOCK,
   INIT_BLOCK_STATE,
+  updateBlock,
   
 } from "./utils";
 
@@ -375,6 +376,14 @@ function clearModifyDataHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     modifyData: []
   });
+}
+
+function updateBlockHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof updateBlock>
+) {
+
+  
 }
 
 const blockHandlers: ActionHandlers<BlockState> = {

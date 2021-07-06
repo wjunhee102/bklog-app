@@ -1,4 +1,4 @@
-import { ADD_PUSH_MODIFY_DATA, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, ReqUpdateBklog, RESET_BKLOG, ResGetPage, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS } from ".";
+import { ADD_PUSH_MODIFY_DATA, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, ReqUpdateBklog, RESET_BKLOG, ResGetPage, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from ".";
 import { ModifyDataType } from "../../../../components/newBlock/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 
@@ -57,6 +57,29 @@ function updateBklogError(error: ApiErrorType) {
   }
 }
 
+function updateVersion(id: string, preId: string) {
+  return {
+    type: UPDATE_VERSION,
+    payload: {
+      id,
+      preId
+    }
+  };
+}
+
+function updateVersionSuccess(data: {id: string, data: ModifyDataType}) {
+  return {
+    type: UPDATE_VERSION_SUCCESS,
+    payload: data
+  };
+}
+
+function updateVersionError(error: ApiErrorType) {
+  return {
+    type: UPDATE_VERSION_ERROR,
+    payload: error
+  };
+}
 
 export default {
   resetBklog,
@@ -66,5 +89,8 @@ export default {
   addPushModifyData,
   updateBklog,
   updateBklogSuccess,
-  updateBklogError
+  updateBklogError,
+  updateVersion,
+  updateVersionSuccess,
+  updateVersionError
 };

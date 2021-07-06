@@ -7,6 +7,7 @@ import BkPage from './pages/BKPage'
 import GlobalNav from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';
+import useSocket from './hooks/useSocket';
 
 function App() {
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import BlockEditor from '../components/newBlock';
 import { BlockData } from '../types/bklog';
@@ -8,7 +8,6 @@ import useBklog from '../hooks/useBKlog';
 import { PageInfoType } from '../store/modules/bklog/utils';
 
 function BklogContainer() { 
-
   const { bklogState } = useBklog();
 
   const pageInfo: PageInfoType = useMemo(() => bklogState.pageInfo, [bklogState.pageInfo]);
