@@ -46,7 +46,8 @@ const BlockEditor: React.FC = () => {
     bklogState, 
     onUpdateBklog, 
     onAddPushModifyData, 
-    onGetPage 
+    onGetPage,
+    onUpdateVersion
   } = useBklog();
   const socket = useSocket("http://localhost:4600/bklog");
   const hooks  = useBlock();
@@ -61,10 +62,13 @@ const BlockEditor: React.FC = () => {
     onInitBlockState,
     onCommitBlock,
     onResetEditorState,
-    onClearModifyData
+    onClearModifyData,
+    onUpdateBlock
   } = hooks;
   
   const [ update, setUpdate ] = useState<boolean>(false);
+
+  const [ newVersion, setVersion ] = useState<string | null>(null);
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -163,20 +167,25 @@ const BlockEditor: React.FC = () => {
   }, [test]);
 
   useEffect(() => {
-    if(update) {
+    if(newVersion) {
       const updateTimeOut = setTimeout(() => {
         //update 함수 만들 것.
-        onGetPage("4d771ba2ad9806fcad4158dc67506e3f");
-        setUpdate(false);
-      }, 500);
+        onUpdateVersion(newVersion, bklogState.pageInfo.version);
+      }, 1000);
       
       return () => clearTimeout(updateTimeOut);
     }
-  }, [update]);
+  }, [newVersion]);
 
   useEffect(() => {
     eventSocket();
   }, [socket]);
+
+  useEffect(() => {
+    if(bklogState.pullModifyData) { 
+      onUpdateBlock(bklogState.pullModifyData);
+    }
+  }, [bklogState.pullModifyData]);
 
   return (
     <div 

@@ -217,6 +217,7 @@ export const changeBlockPosition   = blockUtils.changeBlockPosition;
 export const switchBlockList       = blockUtils.switchBlockList;
 export const restoreBlock          = blockUtils.restoreBlock;
 export const changeBlockStyleType  = blockUtils.changeBlockStyleType;
+export const updateBlockData       = blockUtils.updateBlockData;
 
 // side utils 
 export const tempDataPush               = sideStoreUtils.tempDataPush;

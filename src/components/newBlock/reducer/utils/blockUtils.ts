@@ -1,7 +1,7 @@
-import { BlockData, BlockDataProps, ContentType, ModifyBlockData, ModifyCommand, ModifyData, ModifySet } from '../../types';
-import { StagedBlock, sortBlock, createModifyData, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
+import { BlockData, ContentType, ModifyBlockData, ModifyDataType, ModifyCommand, ModifyData, ModifySet } from '../../types';
+import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
 import { Token } from '../../utils/token';
-import { ModifyBlockType, updateBlock, updateObject } from '../../../block/reducer/utils';
+import { updateObject } from '../../../../store/utils';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
@@ -597,7 +597,7 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
  * @param blocks 
  * @param updatedData 
  */
-function updateBlockData(blocks: BlockData[], updatedData: ModifyBlockType) {
+function updateBlockData(blocks: BlockData[], updatedData: ModifyDataType) {
   const tempData: TempDataType = {};
   const modifyData: ModifyData[] = [];
 
@@ -670,7 +670,7 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyBlockType) {
           tempData.update.push(data);
         }
       }
-      
+
     }
   }
 
@@ -694,7 +694,8 @@ const blockUtils = {
   changeBlockPosition,
   switchBlockList,
   restoreBlock,
-  changeBlockStyleType
+  changeBlockStyleType,
+  updateBlockData
 }
 
 export default blockUtils;

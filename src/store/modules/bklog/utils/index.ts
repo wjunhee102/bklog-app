@@ -109,6 +109,7 @@ export const UPDATE_BKLOG_ERROR     = 'bklog/UPDATE_BKLOG_ERROR' as const;
 export const UPDATE_VERSION         = 'bklog/UPDATE_VERSION' as const;
 export const UPDATE_VERSION_SUCCESS = 'bklog/UPDATE_VERSION_SUCCESS' as const;
 export const UPDATE_VERSION_ERROR   = 'bklog/UPDATE_VERSION_ERROR' as const;
+export const CLEAR_MODIFY_DATA      = 'bklog/CLEAR_MODIFY_DATA' as const;
 
 export const resetBklog           = actions.resetBklog;
 export const getPage              = actions.getPage;

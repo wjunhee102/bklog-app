@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useReducer, useState } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
+import { ModifyBlockData, ModifyDataType } from '../types';
 import { testDB } from '../db';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
@@ -25,7 +26,8 @@ import {
   changeStyleType,
   changeFetchState,
   clearModifyData,
-  initBlockState
+  initBlockState,
+  updateBlock
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -140,6 +142,10 @@ function useBlock() {
     dispatch(clearModifyData());
   }, [dispatch]);
 
+  const onUpdateBlock = useCallback((modifyData: ModifyDataType) => {
+    dispatch(updateBlock(modifyData));
+  }, [dispatch]);
+
   return { 
     state, 
     editingBlockId,
@@ -168,7 +174,8 @@ function useBlock() {
     onResetEditorState,
     onChangeStyleType,
     onChangeFetchState,
-    onClearModifyData
+    onClearModifyData,
+    onUpdateBlock
   };
 }
 

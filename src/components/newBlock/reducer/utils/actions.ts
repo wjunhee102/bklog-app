@@ -24,8 +24,7 @@ import {
   CLEAR_MODIFYDATA,
   INIT_BLOCK_STATE
 } from ".";
-import { ModifyBlockType } from "../../../block/reducer/utils";
-import { UUID, BlockData, ContentType, RawBlockData } from "../../types";
+import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyDataType } from "../../types";
 
 function initBlockState(rawBlockData: RawBlockData[]) {
   return {
@@ -87,7 +86,7 @@ function deleteBlock(removedBlockList: BlockData[], nextEditInfo?: string | numb
   }
 }
 
-function updateBlock(modifyData: ModifyBlockType) {
+function updateBlock(modifyData: ModifyDataType) {
   return {
     type: UPDATE_BLOCK,
     payload: modifyData

@@ -51,6 +51,8 @@ import {
   RESET_BLOCK,
   INIT_BLOCK_STATE,
   updateBlock,
+  updateBlockData,
+  UPDATE_BLOCK,
   
 } from "./utils";
 
@@ -382,8 +384,13 @@ function updateBlockHandler(
   state: BlockState,
   { payload }: ReturnType<typeof updateBlock>
 ) {
-
+  const { blockList, tempData, modifyData } = updateBlockData(state.blockList, payload);
   
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    tempBack: tempDataPush(state.tempBack, tempData),
+    modifyData: modifyData[0]? updateModifyData(state.modifyData, modifyData) : state.modifyData
+  });
 }
 
 const blockHandlers: ActionHandlers<BlockState> = {
@@ -404,7 +411,8 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [EDITOR_STATE_RESET]     : editorStateResetHandler,
   [CHANGE_FETCH_STATE]     : changeFetchStateHandler,
   [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler,
-  [CLEAR_MODIFYDATA]       : clearModifyDataHandler
+  [CLEAR_MODIFYDATA]       : clearModifyDataHandler,
+  [UPDATE_BLOCK]           : updateBlockHandler
 };
 
 export default blockHandlers;
