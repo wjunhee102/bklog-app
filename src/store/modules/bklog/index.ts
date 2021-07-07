@@ -6,6 +6,7 @@ export const initialState: BklogState = {
   isLoading: false,
   isFetching: false,
   isRefresh: false,
+  isUpdated: false,
   pageInfo: null,
   pageStar: null,
   pageComments: null,

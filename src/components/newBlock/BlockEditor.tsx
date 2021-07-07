@@ -8,38 +8,7 @@ import classNames from 'classnames';
 import useBklog from '../../hooks/useBKlog';
 import { convertModifyData } from './reducer/utils';
 import { ReqUpdateBklog } from '../../store/modules/bklog/utils';
-// import useSocket from '../../hooks/useSocket';
-import io from 'socket.io-client';
 import useSocket from '../../hooks/useSocket';
-
-const PAGE_INFO: ReqUpdateBklog = {
-	"pageId": "4d771ba2ad9806fcad4158dc67506e3f",
-	"pageVersions": {
-		"current": "4d06bfb7f376c98e8b1fb613e3981bw35",
-		"next": "1d06bfb7f376c98e8b1fb6123e3981bw35"
-	},
-	"data": {
-		"update": [
-			{
-				"blockId": "d5cc2725-97ec-494b-bc80-c16f96379e40",
-				"set": "block",
-				"payload": {
-					"id": "d5cc2725-97ec-494b-bc80-c16f96379e40",
-					"position": "2",
-					"type": "block",
-					"styleType": "bk-p",
-					"styles": {
-						"color": "white",
-						"backgroudColor": "black"
-					},
-					"contents": [
-						["블록 2입니다."]
-					]
-				}
-			}
-		]
-	}
-}
 
 const BlockEditor: React.FC = () => {
   const { 
@@ -47,7 +16,8 @@ const BlockEditor: React.FC = () => {
     onUpdateBklog, 
     onAddPushModifyData, 
     onGetPage,
-    onUpdateVersion
+    onUpdateVersion,
+    onChangeUpdateState
   } = useBklog();
   const socket = useSocket("http://localhost:4600/bklog");
   const hooks  = useBlock();
@@ -76,11 +46,11 @@ const BlockEditor: React.FC = () => {
 
   const isFetching = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
 
+  const isUpdated = useMemo(() => bklogState.isUpdated, [bklogState.isUpdated]);
+
+  const isRefresh = useMemo(() => bklogState.isRefresh, [bklogState.isRefresh]);
+
   const pushModifyData = useMemo(() => bklogState.pushModifyData, [bklogState.pushModifyData]);
-
-  //test
-
-  const [ test, setTest ] = useState<boolean>(false);
 
   const handleOnIdle = useCallback(() => {
     if(state.stage[0]) onCommitBlock();
@@ -118,10 +88,9 @@ const BlockEditor: React.FC = () => {
   const eventSocket = useCallback(() => {
     if(socket) {
       socket.on("message", (data: any) => console.log(data));
-      socket.on("updated", (data: any) => {
+      socket.on("updated", (data: string) => {
         console.log("updated", data, bklogState.pageInfo.id);
-        // update 기능 만들 것.
-        setUpdate(true);
+        setVersion(data);
       });
     }
   }, [socket]);
@@ -137,9 +106,15 @@ const BlockEditor: React.FC = () => {
       console.log("convert", convertModifyData(state.modifyData));
       onAddPushModifyData(convertModifyData(state.modifyData));
       onClearModifyData();
-      if(socket) socket.emit("update", [bklogState.pageInfo.id, bklogState.pageInfo.version]);
     }
   }, [modifyData]);
+
+  useEffect(() => {
+    if(isUpdated && socket) {
+      socket.emit("update", [bklogState.pageInfo.id, bklogState.pageInfo.version]);
+      onChangeUpdateState();
+    } 
+  }, [isUpdated]);
 
   useEffect(() => {
     onUpdateBklog();
@@ -157,23 +132,9 @@ const BlockEditor: React.FC = () => {
   }, [bklogState.pageInfo, socket]);
 
   useEffect(() => {
-    if(test) {
-      const pushGetPage = setInterval(() => {
-        onGetPage("4d771ba2ad9806fcad4158dc67506e3f")
-      }, 400);
-
-      return () => clearInterval(pushGetPage);
-    }
-  }, [test]);
-
-  useEffect(() => {
-    if(newVersion) {
-      const updateTimeOut = setTimeout(() => {
-        //update 함수 만들 것.
-        onUpdateVersion(newVersion, bklogState.pageInfo.version);
-      }, 1000);
-      
-      return () => clearTimeout(updateTimeOut);
+    if(newVersion && bklogState.pageInfo) {
+      onUpdateVersion(newVersion, bklogState.pageInfo.version);
+      setVersion(null);
     }
   }, [newVersion]);
 
@@ -187,6 +148,10 @@ const BlockEditor: React.FC = () => {
     }
   }, [bklogState.pullModifyData]);
 
+  useEffect(() => {
+    if(isRefresh) onGetPage(bklogState.pageInfo.id);
+  }, [isRefresh]);
+
   return (
     <div 
       className="block-editor blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md"
@@ -197,9 +162,6 @@ const BlockEditor: React.FC = () => {
       onMouseDown={handleMouseDown}
       onDrag={handleDrag}
     >
-      <div className="cover mb-8" onClick={() => {setTest(!test)}}>
-        { test? "안받기" : "받기"}
-      </div>
       <div className={classNames(
         "m-auto", 
         "h-full", 

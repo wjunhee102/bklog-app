@@ -1,4 +1,4 @@
-import { ADD_PUSH_MODIFY_DATA, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, ReqUpdateBklog, RESET_BKLOG, ResGetPage, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from ".";
+import { ADD_PUSH_MODIFY_DATA, CHANGE_UPDATE_STATE, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, ReqUpdateBklog, RESET_BKLOG, ResGetPage, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from ".";
 import { ModifyDataType } from "../../../../components/newBlock/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 
@@ -81,6 +81,13 @@ function updateVersionError(error: ApiErrorType) {
   };
 }
 
+function changeUpdateState(isUpdate?: boolean) {
+  return  {
+    type: CHANGE_UPDATE_STATE,
+    payload: isUpdate
+  };
+}
+
 export default {
   resetBklog,
   getPage,
@@ -92,5 +99,6 @@ export default {
   updateBklogError,
   updateVersion,
   updateVersionSuccess,
-  updateVersionError
+  updateVersionError,
+  changeUpdateState
 };

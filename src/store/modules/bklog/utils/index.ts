@@ -56,6 +56,7 @@ export interface BklogState {
   isLoading: boolean;
   isFetching: boolean; 
   isRefresh: boolean;
+  isUpdated: boolean;
   pageInfo: PageInfoType | null;
   pageStar: PageStarType | null;
   pageComments: PageCommentsType[] | null;
@@ -70,6 +71,7 @@ export interface BklogStateProps {
   isLoading?: boolean;
   isFetching?: boolean;
   isRefresh?: boolean;
+  isUpdated?: boolean;
   pageInfo?: PageInfoType | null;
   pageStar?: PageStarType | null;
   pageComments?: PageCommentsType[] | null;
@@ -110,6 +112,7 @@ export const UPDATE_VERSION         = 'bklog/UPDATE_VERSION' as const;
 export const UPDATE_VERSION_SUCCESS = 'bklog/UPDATE_VERSION_SUCCESS' as const;
 export const UPDATE_VERSION_ERROR   = 'bklog/UPDATE_VERSION_ERROR' as const;
 export const CLEAR_MODIFY_DATA      = 'bklog/CLEAR_MODIFY_DATA' as const;
+export const CHANGE_UPDATE_STATE    = 'bklog/CHANGE_UPDATE_STATE' as const;
 
 export const resetBklog           = actions.resetBklog;
 export const getPage              = actions.getPage;
@@ -122,6 +125,7 @@ export const updateBklogError     = actions.updateBklogError;
 export const updateVersion        = actions.updateVersion;
 export const updateVersionSuccess = actions.updateVersionSuccess;
 export const updateVersionError   = actions.updateVersionError;
+export const changeUpdateState    = actions.changeUpdateState;
 
 // api
 export const bklogFetchGet  = apiUtils.bklogFetchGet;

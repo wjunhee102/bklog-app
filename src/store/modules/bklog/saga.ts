@@ -12,11 +12,8 @@ function getPage(pageId: string) {
   });
 }
 
-function updateVersion(id: string, preId: string) {
-  return bklogFetchGet("t-getmodifydata", {
-    id,
-    preId
-  });
+function updateVersion(versions: { id: string, preId: string } ) {
+  return bklogFetchGet("t-getmodifydata", versions);
 }
 
 const getPageSaga       = createPromiseSaga(GET_PAGE, getPage);

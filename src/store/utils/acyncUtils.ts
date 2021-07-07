@@ -71,7 +71,8 @@ function createPromiseSaga(
       if(error.type === "AUTH" && error.code === "001") {
         yield put({ type: REISSUETOKEN, payload: action });
       } else {
-        yield put({ type: ERROR, error: new ApiError(error).get });
+        console.log("error", ERROR, error, new ApiError(error).get);
+        yield put({ type: ERROR, payload: new ApiError(error).get });
       }
     }
   } 

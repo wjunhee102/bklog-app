@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ModifyDataType } from '../components/newBlock/types';
 import { RootState } from '../store/modules';
-import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion } from '../store/modules/bklog/utils';
+import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdateState } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
 function useBklog() {
@@ -44,13 +44,18 @@ function useBklog() {
     dispatch(updateVersion(id, preId));
   }, [dispatch]);
 
+  const onChangeUpdateState = useCallback((isUpdated?: boolean) => {
+    dispatch(changeUpdateState(isUpdated));
+  }, [dispatch]);
+
   return { 
     bklogState,
     onResetBklog,
     onGetPage,
     onAddPushModifyData,
     onUpdateBklog,
-    onUpdateVersion
+    onUpdateVersion,
+    onChangeUpdateState
   };
 }
 
