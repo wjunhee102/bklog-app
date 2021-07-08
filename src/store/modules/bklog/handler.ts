@@ -1,12 +1,20 @@
 import { initialState } from ".";
+import { ModifyDataType } from "../../../components/newBlock/types";
 import { updateObject } from "../../utils";
-import { addPushModifyData, ADD_PUSH_MODIFY_DATA, BklogState, BklogStateProps, changeUpdateState, CHANGE_UPDATE_STATE, getPage, getPageError, getPageSuccess, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from "./utils";
+import { addPushModifyData, ADD_PUSH_MODIFY_DATA, BklogState, BklogStateProps, changeUpdateState, CHANGE_UPDATE_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from "./utils";
 
-function resetBlockHandler(
+function resetBklogHandler(
   state: BklogState, 
   action: ReturnType<typeof resetBklog>
 ): BklogState {
   return updateObject<BklogState, BklogStateProps>(state, initialState);
+}
+
+function clearBklogStateHandler(
+  state: BklogState,
+  { payload }: ReturnType<typeof clearBklogState>
+): BklogState {
+  return updateObject<BklogState, BklogStateProps>(state, { [payload]: null });
 }
 
 function getPageHandler(
@@ -21,11 +29,12 @@ function getPageHandler(
 
 function getPageSuccessHandler(
   state: BklogState, 
-  { payload: { pageInfo, blockList } }: ReturnType<typeof getPageSuccess> 
+  { payload: { pageInfo, blockList, version } }: ReturnType<typeof getPageSuccess> 
 ): BklogState {
   return updateObject<BklogState, BklogStateProps>(state, {
     pageInfo,
     blockList,
+    version,
     isLoading: false,
     isRefresh: false,
     isFetching: false,
@@ -69,9 +78,7 @@ function updateBklogSuccessHandler(
     isFetching: false,
     isUpdated: true,
     pushModifyData: null,
-    pageInfo: updateObject<PageInfoType, PageInfoProps>(state.pageInfo, {
-      version: pageVersion
-    })
+    version: pageVersion
   });
 }
 
@@ -79,11 +86,17 @@ function updateBklogErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof updateBklogError>
 ) {
-  return updateObject<BklogState, BklogStateProps>(state, {
-    isFetching: false,
-    isLoading: true,
-    error: payload
-  });
+  if(payload.type === "Bklog" && payload.code === "002") {
+    return updateObject<BklogState, BklogStateProps>(state, {
+      isLoading: true,
+      isRefresh: true
+    });
+  } else {
+    return updateObject<BklogState, BklogStateProps>(state, {
+      isLoading: true,
+      error: payload
+    });
+  }
 }
 
 function updateVersionHandler(
@@ -91,23 +104,21 @@ function updateVersionHandler(
   action: ReturnType<typeof updateVersion>
 ) {
   return updateObject<BklogState, BklogStateProps>(state, {
-    pageInfo: updateObject<PageInfoType, PageInfoProps>(state.pageInfo, {
-      version: action.payload.id
-    }),
     isFetching: true
   });
 }
 
 function updateVersionSuccessHandler(
   state: BklogState,
-  { payload: { id, data } }: ReturnType<typeof updateVersionSuccess>
+  { payload: { id, data: { pageInfo, modifyData } } }: ReturnType<typeof updateVersionSuccess>
 ) {
+
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,
-    pageInfo: updateObject<PageInfoType, PageInfoProps>(state.pageInfo, {
-      id
-    }),
-    pullModifyData: data
+    pageInfo: pageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, pageInfo) 
+    : state.pageInfo,
+    version: id,
+    pullModifyData: modifyData? modifyData : state.pullModifyData
   });
 }
 
@@ -139,7 +150,8 @@ function changeUpdateStateHandler(
 }
 
 export default {
-  [RESET_BKLOG]            : resetBlockHandler,
+  [RESET_BKLOG]            : resetBklogHandler,
+  [CLEAR_BKLOG_STATE]      : clearBklogStateHandler,
   [GET_PAGE_SUCCESS]       : getPageSuccessHandler,
   [GET_PAGE_ERROR]         : getPageErrorHandler,
   [ADD_PUSH_MODIFY_DATA]   : addPushModifyDataHandler,

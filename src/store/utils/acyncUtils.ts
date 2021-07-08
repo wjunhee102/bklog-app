@@ -54,7 +54,7 @@ import { createReducer } from 'typesafe-actions';
 //   }
 // }
 
-function createPromiseSaga(
+function createPromiseSaga<T = any>(
   type: string, 
   promiseCreator: any, 
   errorType?: string, 
@@ -64,7 +64,7 @@ function createPromiseSaga(
 
   return function* (action: any) {
     try {
-      const data = yield call<any>(promiseCreator, action.payload);
+      const data: T = yield call<any>(promiseCreator, action.payload);
 
       yield put({ type: SUCCESS, payload: data });
     } catch(error) {

@@ -1,10 +1,17 @@
-import { ADD_PUSH_MODIFY_DATA, CHANGE_UPDATE_STATE, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, ReqUpdateBklog, RESET_BKLOG, ResGetPage, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from ".";
+import { ADD_PUSH_MODIFY_DATA, CHANGE_UPDATE_STATE, ClearBklogStateType, CLEAR_BKLOG_STATE, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageModifyDateType, ReqUpdateBklog, RESET_BKLOG, ResGetPage, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from ".";
 import { ModifyDataType } from "../../../../components/newBlock/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 
 function resetBklog() {
   return {
     type: RESET_BKLOG
+  };
+}
+
+function clearBklogState(key: ClearBklogStateType) {
+  return {
+    type: CLEAR_BKLOG_STATE,
+    payload: key
   };
 }
 
@@ -67,7 +74,7 @@ function updateVersion(id: string, preId: string) {
   };
 }
 
-function updateVersionSuccess(data: {id: string, data: ModifyDataType}) {
+function updateVersionSuccess(data: {id: string, data: PageModifyDateType}) {
   return {
     type: UPDATE_VERSION_SUCCESS,
     payload: data
@@ -90,6 +97,7 @@ function changeUpdateState(isUpdate?: boolean) {
 
 export default {
   resetBklog,
+  clearBklogState,
   getPage,
   getPageSuccess,
   getPageError,

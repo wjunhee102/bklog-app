@@ -75,9 +75,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
         break;
 
       case "ArrowDown":
-        console.log(cursorEnd, e.target.innerText.length);
         if(cursorEnd === e.target.innerText.length) {
-          console.log(cursorEnd, e.target.innerText.length, "???");
           setCursorStart(0);
           setCursorEnd(0);
           e.preventDefault();
@@ -97,7 +95,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     }
   }, [blockData, cursorEnd, cursorStart]);
 
-  const handleKeyPress = (e:any) => {
+  const handleKeyPress = (e: any) => {
     if(e.key === "Enter") {
       e.preventDefault();
       const newBlock = createBlockData(
@@ -145,7 +143,6 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   }, []);
 
   const handleClick = useCallback((e: any) => {
-    console.log("click");
     const parentNode = e.target.parentNode;
 
     if(parentNode.tagName === "A") {
@@ -199,7 +196,6 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   useEffect(() => {
     if(editingBlockId === blockData.id) {
       if(blockRef.current) {
-        console.log("포커스")
         handleFocus(blockRef.current);
       }
     } else {

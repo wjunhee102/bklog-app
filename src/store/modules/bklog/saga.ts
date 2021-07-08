@@ -13,7 +13,7 @@ function getPage(pageId: string) {
 }
 
 function updateVersion(versions: { id: string, preId: string } ) {
-  return bklogFetchGet("t-getmodifydata", versions);
+  return bklogFetchGet("getmodifydata", versions);
 }
 
 const getPageSaga       = createPromiseSaga(GET_PAGE, getPage);

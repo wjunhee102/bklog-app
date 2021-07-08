@@ -25,7 +25,7 @@ function BkPage({ match }: RouteComponentProps<MatchParams>) {
   } = useBklog();
 
   useEffect(() => {
-    onCheckToken();
+    // onCheckToken();
   });
 
   useEffect(() => {

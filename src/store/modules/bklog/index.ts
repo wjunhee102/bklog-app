@@ -8,6 +8,7 @@ export const initialState: BklogState = {
   isRefresh: false,
   isUpdated: false,
   pageInfo: null,
+  version: null,
   pageStar: null,
   pageComments: null,
   blockList: null,

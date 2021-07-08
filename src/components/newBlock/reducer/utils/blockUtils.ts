@@ -29,6 +29,19 @@ function blockFindInfex(id: string) {
   return (block: BlockData) => block.id === id; 
 }
 
+function setPosition(prePosition: string, targetPosition: string = "0"): string {
+  const positionLength = prePosition.split(/-/).length - 1;
+  if(!positionLength) {
+    return targetPosition;
+  } else {
+    let newPosition = targetPosition;
+    for(let i = 0; i < positionLength - 1; i++) {
+      newPosition = `${targetPosition}-${newPosition}`;
+    }
+    return newPosition;
+  }
+}
+
 /**
  * 
  * @param blockDataList 
@@ -444,10 +457,10 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
   };
   const modifyData: ModifyData[] = [];
 
-  const newBlockList = copyToNewObjectArray(removedBlockList);
-  newBlockList.splice(index, 0, ...resetToTargetPosition(targetBlockList, targetPosition));
+  const setedPosition = setPosition(targetPosition, "0");
 
-  console.log(removedBlockList, targetBlockList, newBlockList, targetPosition, index);
+  const newBlockList = copyToNewObjectArray(removedBlockList);
+  newBlockList.splice(index, 0, ...resetToTargetPosition(targetBlockList, setedPosition));
 
   if(containerBlockList[0]) {
     for(const block of containerBlockList) {
@@ -487,7 +500,7 @@ function switchBlockList(
   container: boolean
 ): ResBlockUtils | null {
   const tempData: TempDataType = {};
-  const modifyData: ModifyData[] = [];
+  let modifyData: ModifyData[] = [];
   const blockList = copyToNewObjectArray(blocks);
   const blockIdList = idList.concat();
 
@@ -518,7 +531,8 @@ function switchBlockList(
   if(result.tempData.update) {
     tempData.update = result.tempData.update;
   }
-  modifyData.push(...result.modifyData);
+
+  modifyData = modifyData.concat(result.modifyData);
   
   return {
     blockList: result.blockList,
@@ -612,14 +626,18 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyDataType) {
 
         const payload: ModifyBlockData = {};
 
-        for(const [key, value] of Object.entries(preBlockList[index])) {
-          if(data.payload[key]) {
-            payload[key as keyof ModifyBlockData] = value;
+        if(index !== -1) {
+          for(const [ key, value ] of Object.entries(preBlockList[index])) {
+            if(data.payload[key]) {
+              payload[key as keyof ModifyBlockData] = value;
+            }
           }
+  
+          tempData.update.push(createTempData<ModifyBlockData>(preBlockList[index].id, payload));
+          preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
         }
 
-        tempData.update.push(createTempData<ModifyBlockData>(preBlockList[index].id, payload));
-        preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
+        
       } else if(data.set === "comment") {
 
       }
@@ -646,9 +664,25 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyDataType) {
   if(updatedData.create) {
     const toBeCreatedBlock = updatedData.create.filter(data => data.set === "block");
 
-    if(toBeCreatedBlock) {
-      tempData.delete = toBeCreatedBlock.map(data => createTempData(data.blockId));
-      preBlockList.push(...toBeCreatedBlock.map(data => data.payload));
+    // if(toBeCreatedBlock) {
+    //   tempData.delete = toBeCreatedBlock.map(data => createTempData(data.blockId));
+    //   preBlockList.push(...toBeCreatedBlock.map(data => data.payload));
+    // }
+    tempData.delete = [];
+
+    for(const block of toBeCreatedBlock) {
+      tempData.delete.push(createTempData(block.blockId));
+
+      const index: number = preBlockList.findIndex(preBlock => preBlock.id === block.blockId);
+
+      if(index !== -1) {
+        preBlockList[index] = updateObject(block.payload, {
+          position: preBlockList[index].position
+        });
+      } else {
+        preBlockList.push(block.payload);
+      }
+      
     }
 
   }

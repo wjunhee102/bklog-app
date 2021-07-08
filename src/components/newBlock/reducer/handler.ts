@@ -53,6 +53,7 @@ import {
   updateBlock,
   updateBlockData,
   UPDATE_BLOCK,
+  replaceModifyData,
   
 } from "./utils";
 
@@ -157,8 +158,6 @@ function deleteBlockHandler(
     nextEditInfo 
     : blockList[nextEditInfo].id
     : null;
-
-  console.log("delete", modifyData, blockList);
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
@@ -389,7 +388,9 @@ function updateBlockHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     tempBack: tempDataPush(state.tempBack, tempData),
-    modifyData: modifyData[0]? updateModifyData(state.modifyData, modifyData) : state.modifyData
+    modifyData: modifyData[0]? 
+      updateModifyData(replaceModifyData(state.modifyData, payload), modifyData) 
+      : replaceModifyData(state.modifyData, payload)
   });
 }
 

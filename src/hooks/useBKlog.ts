@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ModifyDataType } from '../components/newBlock/types';
 import { RootState } from '../store/modules';
-import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdateState } from '../store/modules/bklog/utils';
+import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdateState, ClearBklogStateType, clearBklogState } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
 function useBklog() {
@@ -10,6 +10,10 @@ function useBklog() {
   const bklogState: BklogState = useSelector((state: RootState) => state.bklog);
   
   const dispatch = useDispatch();
+
+  const onClearBklogState = useCallback((key: ClearBklogStateType) => {
+    dispatch(clearBklogState(key));
+  }, [dispatch]);
 
   const onGetPage = useCallback((id: string) => {
     console.log("페이지 불러오기");
@@ -26,19 +30,19 @@ function useBklog() {
 
   const onUpdateBklog = useCallback(() => {
     if(bklogState.pageInfo && bklogState.pushModifyData) {
-      const { id, version } = bklogState.pageInfo;
+      const { id } = bklogState.pageInfo;
       const modifyData = bklogState.pushModifyData;
 
       dispatch(updateBklog({
         pageId: id,
         pageVersions: {
-          current: version,
+          current: bklogState.version,
           next: Token.getUUID()
         },
         data: modifyData
       }));
    }
-  }, [dispatch, bklogState.pageInfo, bklogState.pushModifyData]);
+  }, [dispatch, bklogState.pageInfo, bklogState.pushModifyData, bklogState.version]);
 
   const onUpdateVersion = useCallback((id, preId) => {
     dispatch(updateVersion(id, preId));
@@ -50,6 +54,7 @@ function useBklog() {
 
   return { 
     bklogState,
+    onClearBklogState,
     onResetBklog,
     onGetPage,
     onAddPushModifyData,

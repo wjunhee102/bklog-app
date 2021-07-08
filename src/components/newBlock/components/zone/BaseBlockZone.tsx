@@ -36,12 +36,10 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentI
 
   return (
     <div 
-      data-index={blockData.index} 
       className={classNames(
         "block-zone",
         { selected: parentSelected? false : selected }
       )}
-      draggable={!hooks.isGrab}
     >
       {/*block-utils */}
       <div 

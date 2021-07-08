@@ -166,9 +166,69 @@ function convertModifyData(modifyDataList: ModifyData[]) {
   if(!modifyData.delete.commentIdList[0]) modifyData.delete.commentIdList = undefined;
   if(!modifyData.delete.blockIdList && !modifyData.delete.commentIdList) modifyData.delete = undefined;
 
-  console.log("covert", modifyData);
-
   return modifyData;
+}
+
+function replaceModifyData(currentData: ModifyData[], replaceData: ModifyDataType): ModifyData[] {
+  if(!currentData[0]) return [];
+
+  const updateData = replaceData.update? replaceData.update : null;
+  const createData = replaceData.create? replaceData.create : null;
+  const deleteData = replaceData.delete? replaceData.delete : null;
+
+  let newModifyData: ModifyData[] = currentData.concat();
+
+  if(deleteData) {
+    const blockIdList = deleteData.blockIdList? deleteData.blockIdList : null;
+    const commentIdList = deleteData.commentIdList? deleteData.commentIdList : null;
+
+    if(blockIdList) {
+      newModifyData = newModifyData.filter(data => !blockIdList.includes(data.blockId) || data.set !== "block");
+    }
+  }
+
+  if(updateData && newModifyData[0]) {
+    for(const data of updateData) {
+      if(!newModifyData[0]) break;
+
+      const index = newModifyData.findIndex(modifyData => 
+        modifyData.blockId === data.blockId && modifyData.set === data.set);
+      
+      console.log(data, index);
+
+      if(index !== -1) {
+        if(newModifyData[index].command !== "delete") {
+          let deleteCheck = true;
+
+          for(const [ key, value ] of Object.entries(newModifyData[index].payload)) {
+            if(!data.payload[key]) {
+              deleteCheck = false;
+            } else {
+              newModifyData[index].payload[key] = undefined;
+              delete newModifyData[index].payload[key];
+            }
+          }
+
+          if(deleteCheck) newModifyData.splice(index, 1);
+        }
+      } 
+
+    }
+  }
+
+  if(createData && newModifyData[0]) {
+    for(const data of createData) {
+      const index = newModifyData.findIndex(modifyData => 
+        modifyData.blockId === data.blockId && modifyData.set === data.set);
+
+      if(index !== -1) {
+        newModifyData.splice(index, 1);
+      } 
+
+    }
+  }
+
+  return newModifyData;
 }
 
 const sideStoreUtils = {
@@ -180,7 +240,8 @@ const sideStoreUtils = {
   setDeleteModifyDataOfBlock,
   setUpdateModifyDataOfBlock,
   updateModifyData,
-  convertModifyData
+  convertModifyData,
+  replaceModifyData
 }
 
 export default sideStoreUtils;

@@ -228,4 +228,5 @@ export const updateModifyData           = sideStoreUtils.updateModifyData;
 export const setCreateModifyDataOfBlock = sideStoreUtils.setCreateModifyDataOfBlock;
 export const setUpdateModifyDataOfBlock = sideStoreUtils.setUpdateModifyDataOfBlock;
 export const setDeleteModifyDataOfBlock = sideStoreUtils.setDeleteModifyDataOfBlock;
-export const convertModifyData           = sideStoreUtils.convertModifyData;
+export const convertModifyData          = sideStoreUtils.convertModifyData;
+export const replaceModifyData          = sideStoreUtils.replaceModifyData;

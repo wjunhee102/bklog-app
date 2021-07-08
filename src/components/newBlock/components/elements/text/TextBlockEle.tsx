@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { UseBlockType } from "../../../hooks/useBlock";
 import useTextBlock from '../../../hooks/useTextBlock';
-import { BlockData } from "../../../types";
 import { BlockProps } from '../../Block';
 import ContentEditableEle from './base/ContentEditableEle';
 import TextStyleToggle from './base/TextStyleToggle';

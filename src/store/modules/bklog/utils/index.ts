@@ -13,7 +13,6 @@ export interface PageInfoType {
   lastAccessDate: Date;
   views: number;
   disclosureScope: number;
-  version: string;
   profileId: string;
   editable: boolean;
 }
@@ -28,7 +27,6 @@ export interface PageInfoProps {
   lastAccessDate?: Date;
   views?: number;
   disclosureScope?: number;
-  version?: string;
   profileId?: string;
   editable?: boolean;
 }
@@ -52,12 +50,31 @@ export interface PageStarType {
   count: number;
 }
 
+export interface PageModifyDateType {
+  pageInfo?: {
+    createdDate?: Date;
+    updatedDate?: Date;
+    id?: string;
+    title?: string;
+    coverImage?: string;
+    coverColor?: string;
+    lastAccessDate?: Date;
+    views?: number;
+    disclosureScope?: number;
+    version?: string;
+    profileId?: string;
+    editable?: boolean;
+  };
+  modifyData?: ModifyDataType;
+}
+
 export interface BklogState {
   isLoading: boolean;
   isFetching: boolean; 
   isRefresh: boolean;
   isUpdated: boolean;
   pageInfo: PageInfoType | null;
+  version: string | null;
   pageStar: PageStarType | null;
   pageComments: PageCommentsType[] | null;
   blockList: RawBlockData[] | null;
@@ -73,6 +90,7 @@ export interface BklogStateProps {
   isRefresh?: boolean;
   isUpdated?: boolean;
   pageInfo?: PageInfoType | null;
+  version?: string | null;
   pageStar?: PageStarType | null;
   pageComments?: PageCommentsType[] | null;
   blockList?: RawBlockData[] | null;
@@ -96,11 +114,23 @@ export interface ReqUpdateBklog {
 export interface ResGetPage {
   pageInfo: PageInfoType;
   blockList: RawBlockData[];
+  version: string;
 }
+
+export type ClearBklogStateType = "pageInfo" 
+  | "blockList"
+  | "version"
+  | "pageStar"
+  | "pageComments"
+  | "blockComments"
+  | "pushModifyData"
+  | "pullModifyData"
+  | "error"
 
 // actions
 export const RESET_BKLOG            = 'bklog/RESET_BKLOG' as const;
 export const BKLOG_ERROR            = 'bklog/BKLOG_ERROR' as const;
+export const CLEAR_BKLOG_STATE      = 'bklog/CLEAR_BKLOG_STATE' as const;
 export const GET_PAGE               = 'bklog/GET_PAGE' as const;
 export const GET_PAGE_SUCCESS       = 'bklog/GET_PAGE_SUCCESS' as const;
 export const GET_PAGE_ERROR         = 'bklog/GET_PAGE_ERROR' as const;
@@ -115,6 +145,7 @@ export const CLEAR_MODIFY_DATA      = 'bklog/CLEAR_MODIFY_DATA' as const;
 export const CHANGE_UPDATE_STATE    = 'bklog/CHANGE_UPDATE_STATE' as const;
 
 export const resetBklog           = actions.resetBklog;
+export const clearBklogState      = actions.clearBklogState;
 export const getPage              = actions.getPage;
 export const getPageSuccess       = actions.getPageSuccess;
 export const getPageError         = actions.getPageError;

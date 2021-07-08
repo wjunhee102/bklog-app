@@ -1,18 +1,92 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useBlock from './hooks/useBlock';
-import { BlockData } from './types';
+import { BlockData, ModifyData, ModifyDataType } from './types';
 import Block from './components/Block';
 import './assets/block.scss';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
 import useBklog from '../../hooks/useBKlog';
-import { convertModifyData } from './reducer/utils';
-import { ReqUpdateBklog } from '../../store/modules/bklog/utils';
+import { convertModifyData, replaceModifyData } from './reducer/utils';
 import useSocket from '../../hooks/useSocket';
+
+const TEST_DATA: ModifyDataType = {
+  update: [
+    {
+      blockId: "1",
+      set: "block",
+      payload: {
+        contents: ["123"]
+      }
+    }
+  ],
+  delete: {
+    blockIdList: ["1"]
+  },
+  create: [
+    {
+      blockId: "2",
+      set: "block",
+      payload: {
+        id: "2",
+        position: "2",
+        styleType: "bk-p",
+        type: "text",
+        contents: ["2"],
+        styles: "s"
+      }
+    },
+    {
+      blockId: "3",
+      set: "block",
+      payload: {
+        id: "3",
+        position: "3",
+        styleType: "bk-p",
+        type: "text",
+        contents: ["2"],
+        styles: "s"
+      }
+    }
+  ]
+}
+
+const TEST_DATA2: ModifyData[] = [
+  {
+    blockId: "1",
+    set: "block",
+    command: "update",
+    payload: {
+      position: "2",
+      contents: ["1223"]
+    }
+  },
+  {
+    blockId: "2",
+    set: "block",
+    command: "create",
+    payload: {
+      id: "2",
+      position: "2",
+      styleType: "bk-p",
+      type: "text",
+      contents: ["2"],
+      styles: "s"
+    }
+  },
+  {
+    blockId: "3",
+    set: "block",
+    command: "delete",
+    payload: "1"
+  }
+];
+
+console.log(replaceModifyData(TEST_DATA2, TEST_DATA));
 
 const BlockEditor: React.FC = () => {
   const { 
     bklogState, 
+    onClearBklogState,
     onUpdateBklog, 
     onAddPushModifyData, 
     onGetPage,
@@ -35,32 +109,33 @@ const BlockEditor: React.FC = () => {
     onClearModifyData,
     onUpdateBlock
   } = hooks;
-  
-  const [ update, setUpdate ] = useState<boolean>(false);
 
+  // state
   const [ newVersion, setVersion ] = useState<string | null>(null);
+  const [ updated, setUpdated ]    = useState<boolean>(false);
 
+  // elements
   const editorRef = useRef<HTMLDivElement>(null);
 
   const dragRef = useRef<HTMLDivElement>(null);
 
-  const isFetching = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
+  // memories
+  const isFetching: boolean = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
 
-  const isUpdated = useMemo(() => bklogState.isUpdated, [bklogState.isUpdated]);
+  const isUpdated: boolean = useMemo(() => bklogState.isUpdated, [bklogState.isUpdated]);
 
-  const isRefresh = useMemo(() => bklogState.isRefresh, [bklogState.isRefresh]);
+  const isRefresh: boolean = useMemo(() => bklogState.isRefresh, [bklogState.isRefresh]);
 
-  const pushModifyData = useMemo(() => bklogState.pushModifyData, [bklogState.pushModifyData]);
+  const pageId: string | null = useMemo(() => bklogState.pageInfo? bklogState.pageInfo.id : null, [bklogState.pageInfo]);
 
+  const pushModifyData: ModifyDataType | null = useMemo(() => bklogState.pushModifyData, [bklogState.pushModifyData]);
+
+  const currentVersion: string | null = useMemo(() => bklogState.version, [bklogState.version]);
+
+  // callBack
   const handleOnIdle = useCallback(() => {
     if(state.stage[0]) onCommitBlock();
   }, [state.stage]);
-
-  const { getLastActiveTime } = useIdleTimer({
-    timeout: 10 * 60 * 2,
-    onIdle: handleOnIdle,
-    debounce: 500
-  });
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 70}px)`);
@@ -87,32 +162,46 @@ const BlockEditor: React.FC = () => {
 
   const eventSocket = useCallback(() => {
     if(socket) {
-      socket.on("message", (data: any) => console.log(data));
+      socket.on("connect", () => {
+        console.log("connected");
+      });
       socket.on("updated", (data: string) => {
-        console.log("updated", data, bklogState.pageInfo.id);
+        console.log(`updated: ${data}`);
         setVersion(data);
+      });
+      socket.on("disconnect", () => {
+        console.log("disconnected");
       });
     }
   }, [socket]);
 
+  // idle
+  const { getLastActiveTime } = useIdleTimer({
+    timeout: 10 * 60 * 2,
+    onIdle: handleOnIdle,
+    debounce: 500
+  });
+
+  // effect
   useEffect(() => {
     if(bklogState.blockList) {
       onInitBlockState(bklogState.blockList);
+      onClearBklogState("blockList");
+      onClearModifyData();
     }
   }, [bklogState.blockList]);
 
   useEffect(() => {
     if(isFetch && !isFetching && modifyData[0]) {
-      console.log("convert", convertModifyData(state.modifyData));
       onAddPushModifyData(convertModifyData(state.modifyData));
-      onClearModifyData();
     }
   }, [modifyData]);
 
   useEffect(() => {
     if(isUpdated && socket) {
-      socket.emit("update", [bklogState.pageInfo.id, bklogState.pageInfo.version]);
+      socket.emit("update", [bklogState.pageInfo.id, currentVersion]);
       onChangeUpdateState();
+      onClearModifyData();
     } 
   }, [isUpdated]);
 
@@ -121,36 +210,43 @@ const BlockEditor: React.FC = () => {
   }, [pushModifyData]);
 
   useEffect(() => {
-
-    if(bklogState.pageInfo && socket) {
-      socket.on("connect", () => {
-        console.log("connected");
-        socket.emit("roomjoin", bklogState.pageInfo.id);
-      })
-    }
-    
-  }, [bklogState.pageInfo, socket]);
+    eventSocket();
+  }, [socket]);
 
   useEffect(() => {
-    if(newVersion && bklogState.pageInfo) {
-      onUpdateVersion(newVersion, bklogState.pageInfo.version);
+    if(socket && pageId) {
+      console.log(socket, pageId);
+      socket.emit("roomjoin", pageId);
+    }
+  }, [socket, pageId]);
+
+  useEffect(() => {
+    if(newVersion && currentVersion) {
+      onUpdateVersion(newVersion, currentVersion);
       setVersion(null);
     }
   }, [newVersion]);
 
   useEffect(() => {
-    eventSocket();
-  }, [socket]);
-
-  useEffect(() => {
     if(bklogState.pullModifyData) { 
       onUpdateBlock(bklogState.pullModifyData);
+      setUpdated(true);
     }
   }, [bklogState.pullModifyData]);
 
   useEffect(() => {
     if(isRefresh) onGetPage(bklogState.pageInfo.id);
   }, [isRefresh]);
+
+  useEffect(() => {
+    if(updated) {
+      const timer = setTimeout(() => {
+        setUpdated(false);
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [updated]);
 
   return (
     <div 
@@ -162,11 +258,14 @@ const BlockEditor: React.FC = () => {
       onMouseDown={handleMouseDown}
       onDrag={handleDrag}
     >
+      <div className="cover"></div>
       <div className={classNames(
+        "pt-8",
         "m-auto", 
         "h-full", 
         "block-container",
-        {"not-drag": (isGrab || isCliping)? true : false}
+        {"not-drag": (isGrab || isCliping)? true : false},
+        {"updated": updated}
       )}>
         {
           initBlock?
