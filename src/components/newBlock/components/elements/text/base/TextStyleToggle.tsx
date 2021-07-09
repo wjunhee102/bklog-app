@@ -42,6 +42,7 @@ function TextStyleToggleButton({
   const addDelClassName = addDelToggle? "del" : "add";
 
   const handleClick = () => {
+    console.log("123");
     onStyleChange([styleType], addDelClassName)
   }
 
@@ -86,17 +87,7 @@ function TextStyleToggles({
       endPosition,
       toggle
     )
-    reBlockFocus();
-  }
-
-  const testUnder = () => {
-    onChangeTextStyle(
-      blockIndex, 
-      ["fc", "rgba(0, 244, 255, 1)"],
-      startPosition, 
-      endPosition,
-      "del"
-    );
+    console.log("click", startPosition, endPosition);
     reBlockFocus();
   }
 

@@ -54,6 +54,10 @@ import {
   updateBlockData,
   UPDATE_BLOCK,
   replaceModifyData,
+  changeBlockContents,
+  CHANGE_BLOCK_CONTENTS,
+  createModifyData,
+  createTempData,
   
 } from "./utils";
 
@@ -81,15 +85,19 @@ function resetBlockHandler(
 
 function changeEditingIdHandler(
   state: BlockState, 
-  { payload: { nextEditInfo }}: ReturnType<typeof changeEditingId>
+  { payload }: ReturnType<typeof changeEditingId>
 ): BlockState {
-  if(typeof nextEditInfo === "string") {
+  if(typeof payload === "string") {
     return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: nextEditInfo
+      editingBlockId: payload
+    });
+  } else if(payload === undefined) {
+    return updateObject<BlockState, BlockStateProps>(state, {
+      editingBlockId: null
     });
   } else {
     return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: state.blockList[nextEditInfo]? state.blockList[nextEditInfo].id : null
+      editingBlockId: state.blockList[payload]? state.blockList[payload].id : null
     });
   }
 }
@@ -118,6 +126,31 @@ function commitBlockHandler(
     tempBack: tempDataPush(state.tempBack, tempData),
     isFetch: true
   });
+}
+
+function changeBlockContentsHandler(
+  state: BlockState,
+  { payload: { index, contents } }: ReturnType<typeof changeBlockContents>
+) {
+  const blockList = state.blockList.concat();
+  const tempBack = {
+    update: [
+      createTempData(blockList[index].id, {
+        contents: blockList[index].contents.concat()
+      })
+    ]
+  };
+  const modifyData = [createModifyData("update", "block", blockList[index].id, {
+    contents: contents
+  })];
+
+  blockList[index].contents = contents;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    tempBack: tempDataPush(state.tempBack, tempBack),
+    modifyData: updateModifyData(state.modifyData, modifyData)
+  })
 }
 
 function addBlockHandler(
@@ -400,6 +433,7 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CHANGE_EDITING_ID]      : changeEditingIdHandler,
   [EDIT_BLOCK]             : editBlockHandler,
   [COMMIT_BLOCK]           : commitBlockHandler,
+  [CHANGE_BLOCK_CONTENTS]  : changeBlockContentsHandler,
   [ADD_BLOCK]              : addBlockHandler,
   [DELETE_BLOCK]           : deleteBlockHandler,
   [CHANGE_TEXT_STYLE]      : changeTextStyleHandler,

@@ -1,28 +1,40 @@
-import { BlockData, ContentType, ModifyBlockData, ModifyDataType, ModifyCommand, ModifyData, ModifySet } from '../../types';
+import { BlockData, ContentType, ModifyBlockData, ModifyDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
 import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
 import { Token } from '../../utils/token';
 import { updateObject } from '../../../../store/utils';
+import { BlockProps } from '../../components/Block';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
 }
 
-function createBlockData(
-  position: string,
-  type: string = "text",
-  styleType: string = "bk-p",
-  parentId?: string,
-): BlockData {
+interface BlockDataProps {
+  position: string;
+  type?: string;
+  styleType?: string;
+  parentId?: string;
+  styles?: any;
+  contents?: TextContents[]
+}
+
+function createBlockData({ 
+  position,
+  type,
+  styleType,
+  styles,
+  parentId,
+  contents
+}: BlockDataProps): BlockData {
   return  {
     index: 0,
     position,
     id: Token.getUUID(),
-    type,
-    styleType,
+    type: type? type : "text",
+    styleType: styleType? styleType : "bk-p",
     parentId: parentId? parentId : "null",
-    contents: [],
-    styles: {}
-  }
+    contents: contents? contents : [],
+    styles: styles? styles : {}
+  };
 }
 
 function blockFindInfex(id: string) {
@@ -507,11 +519,11 @@ function switchBlockList(
   let position = targetPosition;
 
   if(container) {
-    const block = createBlockData(
-      targetPosition, 
-      "container", 
-      "bk-container"
-    );
+    const block = createBlockData({
+      position: targetPosition,
+      type: "container",
+      styleType: "bk-container"
+    });
 
     const targetIndex = blockList.findIndex(block => block.position === targetPosition);
 

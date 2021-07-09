@@ -1,4 +1,4 @@
-import { createReducer, updateObject } from "../../utils";
+import { createReducer } from "../../utils";
 import handler from "./handler";
 import { BklogState } from "./utils";
 
@@ -15,6 +15,7 @@ export const initialState: BklogState = {
   blockComments: null,
   pullModifyData: null,
   pushModifyData: null,
+  editingUserList: [],
   error: null
 };
 

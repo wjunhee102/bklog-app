@@ -12,7 +12,7 @@ import {
   getSelectionEnd,
   setSelectionRange
 } from '../utils/selectionText';
-import { createBlockData } from "../reducer/utils";
+import { createBlockData, sliceTextContents } from "../reducer/utils";
 
 function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boolean) {
   const [ editable, setEditable]        = useState<boolean>(true);
@@ -20,7 +20,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
 
-  const blockRef = useRef<HTMLDivElement>(null);
+  const blockContentsRef = useRef<HTMLDivElement>(null);
 
   const {
     initBlock,
@@ -33,6 +33,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     onAddBlock,
     onChangeTextStyle,
     onCommitBlock,
+    onChangeBlockContents,
     onDeleteBlock,
     onRevertBlock,
     onSwitchBlock
@@ -58,8 +59,8 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     switch(e.key) {
 
       case "Enter":
-        setCursorStart(0);
-        setCursorEnd(0);
+        // setCursorStart(0);
+        // setCursorEnd(0);
         e.preventDefault();
         break;
 
@@ -98,13 +99,16 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   const handleKeyPress = (e: any) => {
     if(e.key === "Enter") {
       e.preventDefault();
-      const newBlock = createBlockData(
-        blockData.position, 
-        blockData.type, 
-        blockData.styleType
-      );
 
       onCommitBlock();
+      const [front, back] = sliceTextContents(blockData.contents, cursorStart, cursorEnd);
+      onChangeBlockContents(blockData.index, front); 
+      const newBlock = createBlockData({
+        position: blockData.position,
+        type: blockData.type,
+        styleType: blockData.styleType,
+        contents: back
+      });
       onAddBlock([ newBlock ], blockData.position, newBlock.id);
     }
   }
@@ -152,17 +156,18 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   }, []);
 
   const handleMouseUp = () => {
-    const getStartPosition = getSelectionStart(blockRef.current);
-    const getEndPosition = getSelectionEnd(blockRef.current);
+    const getStartPosition = getSelectionStart(blockContentsRef.current);
+    const getEndPosition = getSelectionEnd(blockContentsRef.current);
     setCursorStart(getStartPosition);
     setCursorEnd(getEndPosition);
   };
 
-  const handleBlur = useCallback((e:any) => {
-    if (!e.currentTarget.contains(e.target)) {
+  const handleBlur = useCallback((e: any) => {
+    if(e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
       setCursorStart(0);
       setCursorEnd(0);
       onCommitBlock();
+      onChangeEditingId();
     }
   }, []);
 
@@ -172,31 +177,31 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
 
   const isFocus = () => {
     if(!styleToggle) {
-      moveEndPoint(blockRef.current);
+      moveEndPoint(blockContentsRef.current);
     } else if((cursorStart | cursorEnd)) {
-      refreshPoint(blockRef.current, cursorStart, cursorEnd);
+      refreshPoint(blockContentsRef.current, cursorStart, cursorEnd);
     } 
 
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
   }
 
   const reBlockFocus = () => {
-    handleFocus(blockRef.current);
+    handleFocus(blockContentsRef.current);
   }
 
   useEffect(() => {
     const focused = document.activeElement;
     
-    if((cursorStart | cursorEnd) && focused === blockRef.current) {
-      refreshPoint(blockRef.current, cursorStart, cursorEnd);
+    if((cursorStart | cursorEnd) && focused === blockContentsRef.current) {
+      refreshPoint(blockContentsRef.current, cursorStart, cursorEnd);
     }
 
   }, [blockData.contents]);
 
   useEffect(() => {
     if(editingBlockId === blockData.id) {
-      if(blockRef.current) {
-        handleFocus(blockRef.current);
+      if(blockContentsRef.current) {
+        handleFocus(blockContentsRef.current);
       }
     } else {
       setStyleToggle(false);
@@ -220,11 +225,20 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     }
   }, [selected]);
 
+  useEffect(() => {
+    if(editingBlockId === blockData.id) {
+      if(blockContentsRef) {
+        handleFocus(blockContentsRef.current);
+        setSelectionRange(blockContentsRef.current, 0, 0);
+      }
+    }
+  }, [blockContentsRef]);
+
   return {
     cursorStart,
     cursorEnd,
     styleToggle,
-    blockRef,
+    blockContentsRef,
     createMarkup,
     handleKeyUp,
     handleKeyPress,

@@ -107,7 +107,7 @@
       font-size: 14px;
       color: rgba(55, 53, 47, 0.3);
       font-weight: 300;
-      z-index: 10;
+      z-index: 20;
       display: none;
 
       &.on {
@@ -264,8 +264,16 @@
         }
       } 
 
-      .bk-style-toggle {
+      .bk-style-toggles {
         display: block;
+
+        .bk-textStyleToggle {
+          width: 20px;
+        }
+
+        .bk-colorStyleToggle {
+          width: 50px;
+        }
       }
 
       .bk-textStyleToggle.del{

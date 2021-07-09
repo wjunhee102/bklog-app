@@ -99,6 +99,7 @@ export const CHANGE_EDITING_ID      = 'CHANGE_EDITING_ID' as const;
 export const ADD_BLOCK              = 'ADD_BLOCK' as const;
 export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
 export const COMMIT_BLOCK           = 'COMMIT_BLOCK' as const;
+export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
 export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
 export const UPDATE_BLOCK           = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
 export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
@@ -149,6 +150,7 @@ export const addBlock             = actionBlock.addBlock;
 export const changeEditingId      = actionBlock.changeEditingId;
 export const editBlock            = actionBlock.editBlock;
 export const commitBlock          = actionBlock.commitBlock;
+export const changeBlockContents  = actionBlock.changeBlockContents;
 export const deleteBlock          = actionBlock.deleteBlock;
 export const updateBlock          = actionBlock.updateBlock;
 export const changeTextStyle      = actionBlock.changeTextStyle;
@@ -173,6 +175,7 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof changeEditingId>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
+  | ReturnType<typeof changeBlockContents>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof updateBlock>
   | ReturnType<typeof changeTextStyle>
@@ -196,6 +199,7 @@ export const addContentsStyle        = converter.addContentsStyle;
 export const changeStyleTextContents = converter.changeStyleTextContents;
 export const deleteContentsStyle     = converter.deleteContentsStyle;
 export const parseHtmlContents       = converter.parseHtmlContents;
+export const sliceTextContents       = converter.sliceTextContents;
 
 // block order utils;
 export const sortBlock     = orderingBlockUtils.sortBlock;

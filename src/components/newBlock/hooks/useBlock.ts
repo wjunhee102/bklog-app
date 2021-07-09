@@ -27,7 +27,8 @@ import {
   changeFetchState,
   clearModifyData,
   initBlockState,
-  updateBlock
+  updateBlock,
+  changeBlockContents
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -66,7 +67,7 @@ function useBlock() {
     dispatch(changeEditorState(payload));
   }, [dispatch]);
 
-  const onChangeEditingId = useCallback((nextEditInfo) => {
+  const onChangeEditingId = useCallback((nextEditInfo?: string | number) => {
     dispatch(changeEditingId(nextEditInfo));
   }, [dispatch]);
 
@@ -76,6 +77,10 @@ function useBlock() {
 
   const onCommitBlock = useCallback(() => {
     dispatch(commitBlock());
+  }, [dispatch]);
+
+  const onChangeBlockContents = useCallback((index: number, contents: any) => {
+    dispatch(changeBlockContents(index, contents));
   }, [dispatch]);
 
   const onAddBlock = useCallback((
@@ -163,6 +168,7 @@ function useBlock() {
     onChangeEditorState,
     onChangeEditingId,
     onCommitBlock,
+    onChangeBlockContents,
     onAddBlock,
     onDeleteBlock,
     onChangeTextStyle,

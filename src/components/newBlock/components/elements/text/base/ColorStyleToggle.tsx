@@ -24,7 +24,7 @@ const ColorStyleToggleButton: React.FC<ColorStyleToggleButtonProps> = ({
   }
 
   return (
-    <button style={btnStyle} onClick={handleClick}>
+    <button className="bk-colorStyleToggle" style={btnStyle} onClick={handleClick}>
       Text
       { addDel === "del"? "v" : null }
     </button>

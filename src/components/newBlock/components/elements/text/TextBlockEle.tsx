@@ -20,7 +20,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     cursorStart,
     cursorEnd,
     styleToggle,
-    blockRef,
+    blockContentsRef,
     createMarkup,
     handleKeyUp,
     handleKeyPress,
@@ -42,13 +42,13 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     <div 
       className="text-block"
       onBlur={handleBlur}
-      > 
+    > 
       { 
         <ContentEditableEle
           className={blockData.styleType}
           editable={editable}
           dangerouslySetInnerHTML={createMarkup}
-          ref={blockRef}
+          ref={blockContentsRef}
           onKeyUp={handleKeyUp}
           onKeyPress={handleKeyPress}
           onKeyDown={handleKeyDown}

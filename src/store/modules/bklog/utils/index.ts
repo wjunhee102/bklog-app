@@ -68,6 +68,11 @@ export interface PageModifyDateType {
   modifyData?: ModifyDataType;
 }
 
+export interface EditingUserInfo {
+  penName: string;
+  editingId: string | null;
+}
+
 export interface BklogState {
   isLoading: boolean;
   isFetching: boolean; 
@@ -81,6 +86,7 @@ export interface BklogState {
   blockComments: BlockCommentsType[] | null; 
   pushModifyData: ModifyDataType | null;
   pullModifyData: ModifyDataType | null;
+  editingUserList: EditingUserInfo[] | null;
   error: ApiErrorType | null;
 }
 
@@ -97,6 +103,7 @@ export interface BklogStateProps {
   blockComments?: BlockCommentsType[] | null; 
   pushModifyData?: ModifyDataType | null;
   pullModifyData?: ModifyDataType | null;
+  editingUserList?: EditingUserInfo[] | null;
   error?: ApiErrorType | null;
 }
 

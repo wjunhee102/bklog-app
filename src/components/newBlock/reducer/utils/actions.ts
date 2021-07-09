@@ -22,7 +22,8 @@ import {
   CHANGE_FETCH_STATE,
   CHANGE_STYLE_TYPE,
   CLEAR_MODIFYDATA,
-  INIT_BLOCK_STATE
+  INIT_BLOCK_STATE,
+  CHANGE_BLOCK_CONTENTS
 } from ".";
 import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyDataType } from "../../types";
 
@@ -50,12 +51,10 @@ function addBlock(addBlockList: BlockData[], targetPosition: string, nextEditInf
   }
 }
 
-function changeEditingId(nextEditInfo: string | number) {
+function changeEditingId(nextEditInfo?: string | number) {
   return {
     type: CHANGE_EDITING_ID,
-    payload: {
-      nextEditInfo
-    }
+    payload: nextEditInfo
   }
 }
 
@@ -74,6 +73,16 @@ function commitBlock() {
   return {
     type: COMMIT_BLOCK
   }
+}
+
+function changeBlockContents(index: number, contents: any) {
+  return {
+    type: CHANGE_BLOCK_CONTENTS,
+    payload: {
+      index,
+      contents
+    }
+  };
 }
 
 function deleteBlock(removedBlockList: BlockData[], nextEditInfo?: string | number) {
@@ -214,6 +223,7 @@ const actionBlock = {
   changeEditingId,
   editBlock,
   commitBlock,
+  changeBlockContents,
   deleteBlock,
   updateBlock,
   changeTextStyle,

@@ -8,6 +8,8 @@ import classNames from 'classnames';
 import useBklog from '../../hooks/useBKlog';
 import { convertModifyData, replaceModifyData } from './reducer/utils';
 import useSocket from '../../hooks/useSocket';
+import { EditingUserInfo } from '../../store/modules/bklog/utils';
+import testNewBlock from './test';
 
 const TEST_DATA: ModifyDataType = {
   update: [
@@ -97,6 +99,7 @@ const BlockEditor: React.FC = () => {
   const hooks  = useBlock();
   const {
     state,
+    editingBlockId,
     isGrab,
     isCliping,
     isFetch,
@@ -162,16 +165,28 @@ const BlockEditor: React.FC = () => {
 
   const eventSocket = useCallback(() => {
     if(socket) {
+
       socket.on("connect", () => {
         console.log("connected");
       });
+
       socket.on("updated", (data: string) => {
         console.log(`updated: ${data}`);
         setVersion(data);
       });
+
       socket.on("disconnect", () => {
         console.log("disconnected");
       });
+
+      socket.on("editing", (userInfo: EditingUserInfo) => {
+        console.log(userInfo);
+      });
+
+      socket.on("edited", (penName: string) => {
+        console.log(penName);
+      });
+
     }
   }, [socket]);
 
@@ -239,6 +254,20 @@ const BlockEditor: React.FC = () => {
   }, [isRefresh]);
 
   useEffect(() => {
+    if(socket && pageId) {
+      console.log(editingBlockId);
+      if(editingBlockId) {
+        socket.emit("edit", [ pageId, {
+          penName: "junhee",
+          editingId: editingBlockId
+        }]);
+      } else {
+        socket.emit("edited", [ pageId, "junhee"]);
+      }
+    }
+  }, [editingBlockId]);
+
+  useEffect(() => {
     if(updated) {
       const timer = setTimeout(() => {
         setUpdated(false);
@@ -247,6 +276,10 @@ const BlockEditor: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [updated]);
+
+  useEffect(() => {
+    testNewBlock();
+  }, []);
 
   return (
     <div 
