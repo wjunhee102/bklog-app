@@ -23,7 +23,12 @@ import {
   CHANGE_STYLE_TYPE,
   CLEAR_MODIFYDATA,
   INIT_BLOCK_STATE,
-  CHANGE_BLOCK_CONTENTS
+  CHANGE_BLOCK_CONTENTS,
+  DELETE_TEXT_BLOCK,
+  CLEAR_NEXTBLOCKINFO,
+  NextBlockInfo,
+  SET_NEXTBLOCKINFO,
+  ADD_TEXT_BLOCK
 } from ".";
 import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyDataType } from "../../types";
 
@@ -47,6 +52,23 @@ function addBlock(addBlockList: BlockData[], targetPosition: string, nextEditInf
       addBlockList,
       targetPosition,
       nextEditInfo
+    }
+  }
+}
+
+function addTextBlock(
+  index: number, 
+  innerHTML: string,
+  cursorStart: number,
+  cursorEnd: number
+) {
+  return {
+    type: ADD_TEXT_BLOCK,
+    payload: {
+      index,
+      innerHTML,
+      cursorStart,
+      cursorEnd
     }
   }
 }
@@ -95,6 +117,17 @@ function deleteBlock(removedBlockList: BlockData[], nextEditInfo?: string | numb
   }
 }
 
+function deleteTextBlock(index: number, innerHTML: string, textLength: number) {
+  return {
+    type: DELETE_TEXT_BLOCK,
+    payload: {
+      index,
+      innerHTML,
+      textLength
+    }
+  };
+}
+
 function updateBlock(modifyData: ModifyDataType) {
   return {
     type: UPDATE_BLOCK,
@@ -121,10 +154,10 @@ function changeTextStyle(
   }
 }
 
-function revertBlock(back: boolean) {
+function revertBlock(front?: boolean) {
   return {
     type: REVERT_BLOCK,
-    back
+    front
   }
 }
 
@@ -216,15 +249,30 @@ function clearModifyData() {
   };
 }
 
+function clearNextBlockInfo() {
+  return {
+    type: CLEAR_NEXTBLOCKINFO
+  };
+}
+
+function setNextBlockInfo(nextBlockInfo: NextBlockInfo) {
+  return {
+    type: SET_NEXTBLOCKINFO,
+    payload: nextBlockInfo
+  };
+}
+
 const actionBlock = {
   initBlockState,
   resetBlock,
   addBlock,
+  addTextBlock,
   changeEditingId,
   editBlock,
   commitBlock,
   changeBlockContents,
   deleteBlock,
+  deleteTextBlock,
   updateBlock,
   changeTextStyle,
   revertBlock,
@@ -239,7 +287,9 @@ const actionBlock = {
   resetEditorState,
   changeFetchState,
   changeStyleType,
-  clearModifyData
+  clearModifyData,
+  clearNextBlockInfo,
+  setNextBlockInfo
 }
 
 export default actionBlock;

@@ -10,6 +10,7 @@ export const initialBlockState: BlockState = {
   targetPosition: null,
   blockList: [],
   editingBlockId: null,
+  nextBlockInfo: null,
   stage: [],
   modifyData: [],
   tempBack: [],

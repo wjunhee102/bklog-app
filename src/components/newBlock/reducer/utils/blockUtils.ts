@@ -1,5 +1,5 @@
 import { BlockData, ContentType, ModifyBlockData, ModifyDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
-import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils } from '.';
+import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData } from '.';
 import { Token } from '../../utils/token';
 import { updateObject } from '../../../../store/utils';
 import { BlockProps } from '../../components/Block';
@@ -432,6 +432,56 @@ function removeBlockInList(
 
 /**
  * 
+ * @param preBlocks 
+ * @param index 
+ * @param preIndex 
+ * @param innerHTML 
+ */
+function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex, innerHTML: string): ResBlockUtils | null {
+  if(preBlocks[preIndex].type !== "text") return null;
+
+  const preBlockList = preBlocks.concat();
+  const contents: TextContents[] = parseHtmlContents(innerHTML);
+  const blockId = preBlockList[preIndex].id;
+  const preContents = preBlockList[preIndex].contents.concat();
+  const newContents = mergeTextContents(preBlockList[preIndex].contents, contents);
+
+  preBlockList[preIndex].contents = newContents;
+
+  const { blockList, tempData, modifyData } = removeBlockInList(preBlockList, [preBlockList[index]]);
+
+  const tempIndex = tempData.update.findIndex(data => data.blockId === blockId);
+  const modifyIndex = modifyData.findIndex(data => data.blockId === blockId);
+
+  if(tempIndex !== -1) {
+    tempData.update[tempIndex] = updateObject(tempData.update[tempIndex], {
+      contents: preContents
+    });
+  } else {
+    tempData.update.push(createTempData(blockId, {
+      contents: preContents
+    }));
+  }
+
+  if(modifyIndex !== -1) {
+    modifyData[modifyIndex] = updateObject(modifyData[modifyIndex], {
+      contents: newContents
+    });
+  } else {
+    modifyData.push(createModifyData("update", "block", blockId, {
+      contents: newContents
+    }));
+  }
+  
+  return {
+    blockList,
+    tempData,
+    modifyData
+  }    
+}   
+
+/**
+ * 
  * @param blocks 
  * @param idList 
  */
@@ -737,6 +787,7 @@ const blockUtils = {
   changeBlockTextStyle,
   addBlockInList,
   removeBlockInList,
+  removeTextBlockInList,
   changeBlockPosition,
   switchBlockList,
   restoreBlock,

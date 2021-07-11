@@ -28,7 +28,13 @@ import {
   clearModifyData,
   initBlockState,
   updateBlock,
-  changeBlockContents
+  changeBlockContents,
+  deleteTextBlock,
+  clearNextBlockInfo,
+  setNextBlockInfo,
+  NextBlockInfo,
+  addTextBlock,
+  StagedBlock
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -52,11 +58,15 @@ function useBlock() {
 
   const isFetch: boolean = useMemo(() => state.isFetch, [state.isFetch]);
 
+  const stage: StagedBlock[] = useMemo(() => state.stage, [state.stage]);
+
   const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
 
   const targetPosition: string | null = useMemo(() => state.targetPosition, [state.targetPosition]);
 
   const modifyData: ModifyData[] = useMemo(() => state.modifyData, [state.modifyData]);
+
+  const nextBlockInfo: NextBlockInfo = useMemo(() => state.nextBlockInfo, [state.nextBlockInfo]);
 
   // dispatch
   const onInitBlockState = useCallback((rawBlockData: RawBlockData[]) => {
@@ -91,11 +101,24 @@ function useBlock() {
     dispatch(addBlock(blockList, targetPosition, nextEditInfo));
   }, [dispatch]);
 
+  const onAddTextBlock = useCallback((
+    index: number,
+    innerHTML: string,
+    cursorStart: number,
+    cursorEnd: number
+  ) => {
+    dispatch(addTextBlock(index, innerHTML, cursorStart, cursorEnd));
+  }, [dispatch])
+
   const onDeleteBlock = useCallback((
     removedBlockList: BlockData[],
     nextEditInfo?: string | number
   ) => {
     dispatch(deleteBlock(removedBlockList, nextEditInfo));
+  }, [dispatch]);
+
+  const onDeleteTextBlock = useCallback((index: number, innerHTML: string, textLength: number) => {
+    dispatch(deleteTextBlock(index, innerHTML, textLength));
   }, [dispatch]);
 
   const onChangeTextStyle = useCallback((
@@ -115,8 +138,8 @@ function useBlock() {
     dispatch(switchBlock(changedBlockIdList, container))
   }, [dispatch]);
 
-  const onRevertBlock = useCallback((back: boolean) => {
-    dispatch(revertBlock(back));
+  const onRevertBlock = useCallback((front?: boolean) => {
+    dispatch(revertBlock(front));
   }, [dispatch]);
 
   const onChangeTargetPosition = useCallback((targetPosition?: string) => {
@@ -151,6 +174,14 @@ function useBlock() {
     dispatch(updateBlock(modifyData));
   }, [dispatch]);
 
+  const onClearNextBlockInfo = useCallback(() => {
+    dispatch(clearNextBlockInfo());
+  }, [dispatch]);
+
+  const onSetNextBlockInfo = useCallback((nextBlockInfo: NextBlockInfo) => {
+    dispatch(setNextBlockInfo(nextBlockInfo));
+  }, [dispatch]);
+
   return { 
     state, 
     editingBlockId,
@@ -158,9 +189,11 @@ function useBlock() {
     isHoldingDown,
     isCliping,
     isFetch,
+    stage,
     tempClipData,
     targetPosition,
     modifyData,
+    nextBlockInfo,
     onEditBlock,
     initBlock,
     blockLength,
@@ -170,7 +203,9 @@ function useBlock() {
     onCommitBlock,
     onChangeBlockContents,
     onAddBlock,
+    onAddTextBlock,
     onDeleteBlock,
+    onDeleteTextBlock,
     onChangeTextStyle,
     onSwitchBlock,
     onRevertBlock,
@@ -181,7 +216,9 @@ function useBlock() {
     onChangeStyleType,
     onChangeFetchState,
     onClearModifyData,
-    onUpdateBlock
+    onUpdateBlock,
+    onClearNextBlockInfo,
+    onSetNextBlockInfo,
   };
 }
 

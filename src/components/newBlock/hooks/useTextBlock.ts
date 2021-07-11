@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BlockData } from "../types";
 import { UseBlockType } from "./useBlock";
 import { 
@@ -27,16 +27,19 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     isGrab,
     isHoldingDown,
     isCliping,
+    nextBlockInfo,
     editingBlockId,
     onChangeEditingId,
     onEditBlock,
-    onAddBlock,
+    onAddTextBlock,
     onChangeTextStyle,
     onCommitBlock,
     onChangeBlockContents,
     onDeleteBlock,
+    onDeleteTextBlock,
     onRevertBlock,
-    onSwitchBlock
+    onSwitchBlock,
+    onClearNextBlockInfo
   } = hooks;
 
   const createMarkup = useMemo(()=> {
@@ -52,34 +55,41 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   }, [blockData.contents]);
 
   // keyboard methods text
-  const handleKeyUp = useCallback((e:any) => {  
+  const handleKeyUp = useCallback((e:any) => {
+    if(e.ctrlKey) return;
+    
     setCursorStart(getSelectionStart(e.target));
     setCursorEnd(getSelectionEnd(e.target));
-
+    
     switch(e.key) {
 
       case "Enter":
-        // setCursorStart(0);
-        // setCursorEnd(0);
         e.preventDefault();
         break;
 
       case "ArrowUp": 
       // cursor가 앞으로 튐
-        if(cursorStart === 0) {
-          e.preventDefault();
-          setCursorStart(0);
-          setCursorEnd(0);
+        e.preventDefault();
+        setCursorStart(0);
+        setCursorEnd(0);
+        setSelectionRange(e.target, 0, 0);
+
+        if(cursorStart === 0 && cursorEnd === 0) {
           onChangeEditingId(blockData.index - 1);
-        }
+        } 
         
         break;
 
       case "ArrowDown":
-        if(cursorEnd === e.target.innerText.length) {
+        e.preventDefault();
+        const contentsLength = e.target.innerText.length;
+        setCursorStart(contentsLength);
+        setCursorEnd(contentsLength);
+        setSelectionRange(e.target, contentsLength, contentsLength);
+
+        if((cursorEnd && cursorStart) === e.target.innerText.length) {
           setCursorStart(0);
           setCursorEnd(0);
-          e.preventDefault();
           onChangeEditingId(blockData.index + 1);
         }
         
@@ -94,38 +104,38 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
       default:
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
     }
+
   }, [blockData, cursorEnd, cursorStart]);
 
   const handleKeyPress = (e: any) => {
     if(e.key === "Enter") {
       e.preventDefault();
-
-      onCommitBlock();
-      const [front, back] = sliceTextContents(blockData.contents, cursorStart, cursorEnd);
-      onChangeBlockContents(blockData.index, front); 
-      const newBlock = createBlockData({
-        position: blockData.position,
-        type: blockData.type,
-        styleType: blockData.styleType,
-        contents: back
-      });
-      onAddBlock([ newBlock ], blockData.position, newBlock.id);
+      onAddTextBlock(
+        blockData.index, 
+        e.target.innerHTML, 
+        getSelectionStart(e.target), 
+        getSelectionEnd(e.target)
+      );
     }
   }
 
   const handleKeyDown = (e: any) => {
     
     if (e.key === "Backspace") {
-      setCursorStart(getSelectionStart(e.target));
-      setCursorEnd(getSelectionEnd(e.target));
+      const cursorStartPoint = getSelectionStart(e.target);
+      const cursorEndPoint   = getSelectionEnd(e.target);
+      
+      setCursorStart(cursorStartPoint);
+      setCursorEnd(cursorEndPoint);
 
-      if(cursorStart === 0 && cursorEnd === 0) {
+      if(cursorStartPoint === 0 && cursorEndPoint === 0) {
         if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
           const nextEditIndex = blockData.index > 0? blockData.index - 1 : undefined;
-          onCommitBlock();
           onDeleteBlock([blockData], nextEditIndex);
+        } else if(blockData.index !== 0) {
+          onDeleteTextBlock(blockData.index, e.target.innerHTML, e.target.innerText.length);
         }
-
+        
       }
 
     }
@@ -192,7 +202,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   useEffect(() => {
     const focused = document.activeElement;
     
-    if((cursorStart | cursorEnd) && focused === blockContentsRef.current) {
+    if((cursorStart | cursorEnd) && blockContentsRef && focused === blockContentsRef.current) {
       refreshPoint(blockContentsRef.current, cursorStart, cursorEnd);
     }
 
@@ -202,6 +212,17 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     if(editingBlockId === blockData.id) {
       if(blockContentsRef.current) {
         handleFocus(blockContentsRef.current);
+
+        if(nextBlockInfo) {
+          if(nextBlockInfo.type === "text") {
+            if(nextBlockInfo.payload[0] === "delete") {
+              const length = blockContentsRef.current.innerText.length - nextBlockInfo.payload[1];
+              setSelectionRange(blockContentsRef.current, length, length);
+            }
+            onClearNextBlockInfo();
+          }
+        }
+
       }
     } else {
       setStyleToggle(false);

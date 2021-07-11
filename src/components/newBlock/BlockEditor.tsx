@@ -99,6 +99,7 @@ const BlockEditor: React.FC = () => {
   const hooks  = useBlock();
   const {
     state,
+    stage,
     editingBlockId,
     isGrab,
     isCliping,
@@ -110,7 +111,8 @@ const BlockEditor: React.FC = () => {
     onCommitBlock,
     onResetEditorState,
     onClearModifyData,
-    onUpdateBlock
+    onUpdateBlock,
+    onRevertBlock
   } = hooks;
 
   // state
@@ -162,6 +164,23 @@ const BlockEditor: React.FC = () => {
   const handleMouseLeave = useCallback(() => {
     onResetEditorState(false);
   }, []);
+
+  const handleKeyUp = useCallback((e: React.KeyboardEvent) => {
+    if(e.ctrlKey && !stage[0]) {
+      e.preventDefault();
+
+      switch(e.key) {
+        case "z": 
+          onRevertBlock();
+        break;
+
+        case "y":
+          onRevertBlock(true);
+        break;
+        default:
+      }
+    }
+  }, [stage]);
 
   const eventSocket = useCallback(() => {
     if(socket) {
@@ -290,6 +309,7 @@ const BlockEditor: React.FC = () => {
       onMouseMove={handleMouseMove}
       onMouseDown={handleMouseDown}
       onDrag={handleDrag}
+      onKeyUp={handleKeyUp}
     >
       <div className="cover"></div>
       <div className={classNames(

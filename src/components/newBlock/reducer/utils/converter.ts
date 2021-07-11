@@ -996,12 +996,35 @@ function sliceTextContents(
   return [frontTexts, backTexts];
 }
 
+function mergeTextContents(
+  toBeMergedContents: TextContents[],
+  targetContents: TextContents[]
+): TextContents[] {
+  const copyToBeMergedContents = toBeMergedContents.concat();
+  const copyTargetContents = targetContents.concat();
+  const frontContent: TextContents = copyToBeMergedContents.pop();
+  const backContent: TextContents  = copyTargetContents.shift();
+  
+  if(equalsArray(frontContent[1]? frontContent[1] : [], backContent[1]? backContent[1] : [])){
+    frontContent[0] += backContent[0];
+    copyToBeMergedContents.push(frontContent, ...copyTargetContents);
+  } else {
+    copyToBeMergedContents.push(frontContent, backContent, ...copyTargetContents);
+    console.log("1", frontContent, backContent, copyTargetContents);
+  }
+
+  console.log(copyToBeMergedContents);
+
+  return copyToBeMergedContents;
+}
+
 const converter = {
   parseHtmlContents,
   addContentsStyle,
   deleteContentsStyle,
   changeStyleTextContents,
-  sliceTextContents
+  sliceTextContents,
+  mergeTextContents
 }
 
 export default converter;

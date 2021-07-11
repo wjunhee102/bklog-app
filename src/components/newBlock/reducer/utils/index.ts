@@ -47,6 +47,8 @@ export interface TempData<T = any> {
 }
 
 export interface TempDataType {
+  editingBlockId?: string;
+  nextBlockInfo?: NextBlockInfo;
   create?: TempData<BlockData>[];
   update?: TempData[];
   delete?: TempData[];
@@ -58,6 +60,13 @@ export interface ResBlockUtils {
   tempData: TempDataType;
 }
 
+export interface NextTextBlockInfo {
+  type: "text",
+  payload: [string, any];
+}
+
+export type NextBlockInfo = NextTextBlockInfo | { type: string, payload: any } | null;
+
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
@@ -66,6 +75,7 @@ export interface BlockState {
   targetPosition: string | null;
   blockList: BlockData[];
   editingBlockId: string | null;
+  nextBlockInfo: NextBlockInfo;
   stage: StagedBlock[];
   modifyData: ModifyData[];
   tempFront: TempDataType[];
@@ -82,6 +92,7 @@ export interface BlockStateProps {
   targetPosition?: string | null;
   blockList?: BlockData[];
   editingBlockId?: string | null;
+  nextBlockInfo?: NextBlockInfo;
   stage?: StagedBlock[];
   modifyData?: ModifyData[];
   tempFront?: TempDataType[];
@@ -97,10 +108,12 @@ export const INIT_BLOCK_STATE       = 'INIT_BLOCK_STATE' as const;
 export const RESET_BLOCK            = 'RESET_BLOCK' as const;
 export const CHANGE_EDITING_ID      = 'CHANGE_EDITING_ID' as const;
 export const ADD_BLOCK              = 'ADD_BLOCK' as const;
+export const ADD_TEXT_BLOCK         = 'ADD_TEXT_BLOCK' as const;
 export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
 export const COMMIT_BLOCK           = 'COMMIT_BLOCK' as const;
 export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
 export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
+export const DELETE_TEXT_BLOCK      = 'DELETE_TEXT_BLOCK' as const;
 export const UPDATE_BLOCK           = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
 export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
 export const REVERT_BLOCK           = 'REVERT_BLOKC' as const;
@@ -115,6 +128,8 @@ export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
 export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
 export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
 export const CLEAR_MODIFYDATA       = 'CLEAR_MODIFYDATA' as const;
+export const CLEAR_NEXTBLOCKINFO    = 'CLEAR_NEXTBLOCKINFO' as const;
+export const SET_NEXTBLOCKINFO      = 'CLEAR_NEXTBLOCKINFO' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
@@ -122,9 +137,12 @@ export type BLOCK_ACTION_TYPES =
   typeof INIT_BLOCK_STATE
   | typeof RESET_BLOCK 
   | typeof ADD_BLOCK
+  | typeof ADD_TEXT_BLOCK
   | typeof EDIT_BLOCK
   | typeof COMMIT_BLOCK
+  | typeof CHANGE_BLOCK_CONTENTS
   | typeof DELETE_BLOCK
+  | typeof DELETE_TEXT_BLOCK
   | typeof UPDATE_BLOCK
   | typeof SWITCH_BLOCK
   | typeof REVERT_BLOCK
@@ -139,6 +157,8 @@ export type BLOCK_ACTION_TYPES =
   | typeof CHANGE_STYLE_TYPE
   | typeof CHANGE_FETCH_STATE
   | typeof CLEAR_MODIFYDATA
+  | typeof SET_NEXTBLOCKINFO
+  | typeof CLEAR_NEXTBLOCKINFO
 ;
 
 /**
@@ -147,11 +167,13 @@ export type BLOCK_ACTION_TYPES =
 export const initBlockState       = actionBlock.initBlockState;
 export const resetBlock           = actionBlock.resetBlock;
 export const addBlock             = actionBlock.addBlock;
+export const addTextBlock         = actionBlock.addTextBlock;
 export const changeEditingId      = actionBlock.changeEditingId;
 export const editBlock            = actionBlock.editBlock;
 export const commitBlock          = actionBlock.commitBlock;
 export const changeBlockContents  = actionBlock.changeBlockContents;
 export const deleteBlock          = actionBlock.deleteBlock;
+export const deleteTextBlock      = actionBlock.deleteTextBlock;
 export const updateBlock          = actionBlock.updateBlock;
 export const changeTextStyle      = actionBlock.changeTextStyle;
 export const revertBlock          = actionBlock.revertBlock;
@@ -166,17 +188,21 @@ export const resetEditorState     = actionBlock.resetEditorState;
 export const changeFetchState     = actionBlock.changeFetchState;
 export const changeStyleType      = actionBlock.changeStyleType;
 export const clearModifyData      = actionBlock.clearModifyData;
+export const clearNextBlockInfo   = actionBlock.clearNextBlockInfo;
+export const setNextBlockInfo     = actionBlock.setNextBlockInfo;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
 export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
+  | ReturnType<typeof addTextBlock>
   | ReturnType<typeof changeEditingId>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
   | ReturnType<typeof changeBlockContents>
   | ReturnType<typeof deleteBlock>
+  | ReturnType<typeof deleteTextBlock>
   | ReturnType<typeof updateBlock>
   | ReturnType<typeof changeTextStyle>
   | ReturnType<typeof revertBlock>
@@ -192,6 +218,8 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof changeFetchState>
   | ReturnType<typeof changeStyleType>
   | ReturnType<typeof clearModifyData>
+  | ReturnType<typeof clearNextBlockInfo>
+  | ReturnType<typeof setNextBlockInfo>
 ;
 
 //converter
@@ -200,6 +228,7 @@ export const changeStyleTextContents = converter.changeStyleTextContents;
 export const deleteContentsStyle     = converter.deleteContentsStyle;
 export const parseHtmlContents       = converter.parseHtmlContents;
 export const sliceTextContents       = converter.sliceTextContents;
+export const mergeTextContents       = converter.mergeTextContents;
 
 // block order utils;
 export const sortBlock     = orderingBlockUtils.sortBlock;
@@ -217,6 +246,7 @@ export const changeBlockTextStyle  = blockUtils.changeBlockTextStyle;
 export const addToStage            = blockUtils.addToStage;
 export const addBlockInList        = blockUtils.addBlockInList;
 export const removeBlockInList     = blockUtils.removeBlockInList;
+export const removeTextBlockInList = blockUtils.removeTextBlockInList;
 export const changeBlockPosition   = blockUtils.changeBlockPosition;
 export const switchBlockList       = blockUtils.switchBlockList;
 export const restoreBlock          = blockUtils.restoreBlock;
