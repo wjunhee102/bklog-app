@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/bklog-app/static/css/main.58bf2a6d.chunk.css",
-    "main.js": "/bklog-app/static/js/main.e7b6f1b8.chunk.js",
-    "main.js.map": "/bklog-app/static/js/main.e7b6f1b8.chunk.js.map",
+    "main.css": "/bklog-app/static/css/main.4f075b4c.chunk.css",
+    "main.js": "/bklog-app/static/js/main.a5cab33b.chunk.js",
+    "main.js.map": "/bklog-app/static/js/main.a5cab33b.chunk.js.map",
     "runtime-main.js": "/bklog-app/static/js/runtime-main.6ae366e4.js",
     "runtime-main.js.map": "/bklog-app/static/js/runtime-main.6ae366e4.js.map",
-    "static/js/2.14c2bae2.chunk.js": "/bklog-app/static/js/2.14c2bae2.chunk.js",
-    "static/js/2.14c2bae2.chunk.js.map": "/bklog-app/static/js/2.14c2bae2.chunk.js.map",
+    "static/js/2.6104a4b4.chunk.js": "/bklog-app/static/js/2.6104a4b4.chunk.js",
+    "static/js/2.6104a4b4.chunk.js.map": "/bklog-app/static/js/2.6104a4b4.chunk.js.map",
     "index.html": "/bklog-app/index.html",
-    "precache-manifest.b64075ca26718bd32a30475495427332.js": "/bklog-app/precache-manifest.b64075ca26718bd32a30475495427332.js",
+    "precache-manifest.1e569c89fbe5b4c7b6afa22d59a0d4da.js": "/bklog-app/precache-manifest.1e569c89fbe5b4c7b6afa22d59a0d4da.js",
     "service-worker.js": "/bklog-app/service-worker.js",
-    "static/css/main.58bf2a6d.chunk.css.map": "/bklog-app/static/css/main.58bf2a6d.chunk.css.map",
-    "static/js/2.14c2bae2.chunk.js.LICENSE.txt": "/bklog-app/static/js/2.14c2bae2.chunk.js.LICENSE.txt"
+    "static/css/main.4f075b4c.chunk.css.map": "/bklog-app/static/css/main.4f075b4c.chunk.css.map",
+    "static/js/2.6104a4b4.chunk.js.LICENSE.txt": "/bklog-app/static/js/2.6104a4b4.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.6ae366e4.js",
-    "static/js/2.14c2bae2.chunk.js",
-    "static/css/main.58bf2a6d.chunk.css",
-    "static/js/main.e7b6f1b8.chunk.js"
+    "static/js/2.6104a4b4.chunk.js",
+    "static/css/main.4f075b4c.chunk.css",
+    "static/js/main.a5cab33b.chunk.js"
   ]
 }
