@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, HashRouter, Redirect} from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import useBase from './hooks/useBase';
@@ -7,11 +7,14 @@ import BkPage from './pages/BKPage'
 import GlobalNav from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';
-import useSocket from './hooks/useSocket';
 
 function App() {
 
   const { baseState: { dark } } = useBase();
+
+  useEffect(() => {
+    console.log(process.env);
+  });
 
   return (
     <div className={classNames(
