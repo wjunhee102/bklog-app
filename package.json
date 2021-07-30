@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "yarn build:css &&  react-scripts build",
+    "build": "yarn build:css && react-scripts build",
     "deploy": "gh-pages -d build",
     "predeploy": "yarn build",
     "test": "react-scripts test",
@@ -72,5 +72,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://wjunhee102.github.io/bklog-app/"
+  "homepage": "https://bklog-app-gfbo53vpy-wjunhee102.vercel.app/"
 }
