@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
 import useBlock from './hooks/useBlock';
-import { BlockData, ModifyData, ModifyDataType } from './types';
-import { replaceModifyData } from './reducer/utils';
+import { BlockData } from './types';
 import useConnectRedux from './hooks/useConnectRedux';
 import Block from './components/Block';
 import './assets/block.scss';

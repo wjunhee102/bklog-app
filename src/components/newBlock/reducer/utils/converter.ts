@@ -1004,7 +1004,11 @@ function mergeTextContents(
   const copyTargetContents = targetContents.concat();
   const frontContent: TextContents = copyToBeMergedContents.pop();
   const backContent: TextContents  = copyTargetContents.shift();
-  
+
+  if(!frontContent) {
+    return targetContents;
+  }
+
   if(equalsArray(frontContent[1]? frontContent[1] : [], backContent[1]? backContent[1] : [])){
     frontContent[0] += backContent[0];
     copyToBeMergedContents.push(frontContent, ...copyTargetContents);
@@ -1012,8 +1016,6 @@ function mergeTextContents(
     copyToBeMergedContents.push(frontContent, backContent, ...copyTargetContents);
     console.log("1", frontContent, backContent, copyTargetContents);
   }
-
-  console.log(copyToBeMergedContents);
 
   return copyToBeMergedContents;
 }

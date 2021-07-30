@@ -11,7 +11,7 @@ interface TextBlockEleProps extends BlockProps {
 
 const TextBlockEle: React.FC<TextBlockEleProps> = ({ 
   blockData, 
-  hooks, 
+  useBlockReducer, 
   selected,
   setSelect
 }) => {
@@ -32,7 +32,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     reBlockFocus,
     editable,
     setEditable
-  } = useTextBlock(blockData, hooks, selected);
+  } = useTextBlock(blockData, useBlockReducer, selected);
 
   useEffect(() => {
     setEditable(!selected);
@@ -63,11 +63,12 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
         styleToggle? 
         <TextStyleToggle
           blockIndex={blockData.index}
+          styleType={blockData.styleType}
+          contents={blockData.contents}
           startPosition={cursorStart}
           endPosition={cursorEnd}
-          contents={blockData.contents}
           reBlockFocus={reBlockFocus}
-          hooks={hooks}
+          useBlockReducer={useBlockReducer}
         /> : null
       }
     </div>

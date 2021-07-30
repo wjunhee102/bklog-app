@@ -609,6 +609,8 @@ function switchBlockList(
  * @param restoreData 
  */
 function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockUtils {
+  console.log(blocks, restoreData);
+  
   const tempData: TempDataType = {}
   const modifyData: ModifyData[] = [];
 

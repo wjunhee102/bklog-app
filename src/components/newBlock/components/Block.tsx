@@ -1,8 +1,9 @@
 import React from "react";
 import { UseBlockType } from "../hooks/useBlock";
 import { BlockData } from "../types";
-import '../assets/block.scss';
 import TextBlock from "./elements/text";
+
+import '../assets/block.scss';
 
 export type ParentInfoType = {
   type: string;
@@ -11,21 +12,35 @@ export type ParentInfoType = {
 
 export interface BlockProps {
   blockData: BlockData;
-  hooks: UseBlockType;
-  parentInfo?: ParentInfoType | undefined;
+  useBlockReducer: UseBlockType;
+  parentInfo?: ParentInfoType;
 }
+
+// const BlockHandler = {
+//   ["text"]: (
+//       blockData: BlockData, 
+//       useBlockReducer: UseBlockType, 
+//       parentInfo?: ParentInfoType
+//     ) =>  <TextBlock blockData={blockData} useBlockReducer={useBlockReducer} parentInfo={parentInfo} />
+
+// }
 
 const Block: React.FC<BlockProps> = ({
   blockData,
-  hooks,
+  useBlockReducer,
   parentInfo
 }) => {
   switch(blockData.type) {
     case "text":
-      return <TextBlock blockData={blockData} hooks={hooks} parentInfo={parentInfo} />
+      return <TextBlock blockData={blockData} useBlockReducer={useBlockReducer} parentInfo={parentInfo} />
     default:
       return null;
   };
+  // if(BlockHandler.hasOwnProperty(blockData.type)) {
+  //   return BlockHandler[blockData.type](blockData, useBlockReducer, parentInfo);
+  // } else {
+  //   return null
+  // }
 }
 
 export default Block;

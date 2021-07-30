@@ -71,8 +71,7 @@ import {
   sliceTextContents,
   parseHtmlContents,
   ADD_TEXT_BLOCK,
-  TempDataType,
-  
+  TempDataType
 } from "./utils";
 
 function initBlockStateHandler(
@@ -407,6 +406,8 @@ function revertBlockHandler(
   state: BlockState,
   { front }: ReturnType<typeof revertBlock>
 ): BlockState {
+  console.log("revert", state);
+
   if(!front && state.tempBack[0]) {
     const length = state.tempBack.length - 1;
     const editingBlockId = state.tempBack[length].editingBlockId? state.tempBack[length].editingBlockId : null;
@@ -414,6 +415,8 @@ function revertBlockHandler(
     const tempBack = state.tempBack.concat();
     tempBack.pop();
     tempData.editingBlockId = state.editingBlockId;
+
+    console.log(tempBack);
 
     return updateObject<BlockState, BlockStateProps>(state, {
       editingBlockId,
@@ -431,6 +434,8 @@ function revertBlockHandler(
     const tempFront = state.tempFront.concat();
     tempFront.pop();
     tempData.editingBlockId = state.editingBlockId;
+
+    console.log(tempFront);
 
     return updateObject<BlockState, BlockStateProps>(state, {
       blockList,
@@ -548,6 +553,7 @@ function changeStyleTypeHandler(
 
     return updateObject<BlockState, BlockStateProps>(state, {
       blockList,
+      isFetch: true,
       tempBack: tempDataPush(state.tempBack, tempData),
       modifyData: updateModifyData(state.modifyData, modifyData)
     })

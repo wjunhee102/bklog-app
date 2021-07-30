@@ -14,7 +14,7 @@ import {
 } from '../utils/selectionText';
 import { createBlockData, sliceTextContents } from "../reducer/utils";
 
-function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boolean) {
+function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selected: boolean) {
   const [ editable, setEditable]        = useState<boolean>(true);
   const [ cursorStart, setCursorStart ] = useState<number>(0);
   const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
@@ -40,7 +40,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
     onRevertBlock,
     onSwitchBlock,
     onClearNextBlockInfo
-  } = hooks;
+  } = useBlockReducer;
 
   const createMarkup = useMemo(()=> {
     const htmlElement = blockData.contents[0]?
@@ -57,7 +57,7 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   // keyboard methods text
   const handleKeyUp = useCallback((e:any) => {
     if(e.ctrlKey) return;
-    
+
     setCursorStart(getSelectionStart(e.target));
     setCursorEnd(getSelectionEnd(e.target));
     
@@ -120,7 +120,6 @@ function useTextBlock(blockData: BlockData, hooks: UseBlockType, selected: boole
   }
 
   const handleKeyDown = (e: any) => {
-    
     if (e.key === "Backspace") {
       const cursorStartPoint = getSelectionStart(e.target);
       const cursorEndPoint   = getSelectionEnd(e.target);

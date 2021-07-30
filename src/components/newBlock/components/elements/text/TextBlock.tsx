@@ -3,11 +3,11 @@ import { BlockProps } from "../../Block";
 import BaseBlockZone from "../../zone/BaseBlockZone";
 import TextBlockEle from "./TextBlockEle";
 
-const TextBlock: React.FC<BlockProps> = ({ blockData, hooks, parentInfo }) => {
+const TextBlock: React.FC<BlockProps> = ({ blockData, useBlockReducer, parentInfo }) => {
   return (
     <BaseBlockZone
       blockData={blockData}
-      hooks={hooks}
+      useBlockReducer={useBlockReducer}
       parentInfo={parentInfo}
     >
       {
@@ -15,7 +15,7 @@ const TextBlock: React.FC<BlockProps> = ({ blockData, hooks, parentInfo }) => {
           return (
             <TextBlockEle 
               blockData={blockData} 
-              hooks={hooks} 
+              useBlockReducer={useBlockReducer} 
               selected={selected}
               setSelect={setSelect}
             />

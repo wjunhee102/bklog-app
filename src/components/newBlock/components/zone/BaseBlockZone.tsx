@@ -14,7 +14,9 @@ interface BaseBlockZoneProps extends BlockProps {
   parentInfo?: ParentInfoType | undefined;
 }
 
-const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentInfo, children }) => {
+const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ 
+  blockData, useBlockReducer, parentInfo, children 
+}) => {
   const {
     parentSelected,
     isHover,
@@ -32,7 +34,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentI
     handleContentsBlur,
     handleContentsHover,
     handleContentsMouseLeave
-  } = useBlockBase(blockData, hooks, parentInfo);
+  } = useBlockBase(blockData, useBlockReducer, parentInfo);
 
   return (
     <div 
@@ -69,7 +71,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentI
       
       <ChildrenBlock 
         childrenBlockData={childrenBlockData} 
-        hooks={hooks} 
+        useBlockReducer={useBlockReducer} 
         parentInfo={{
           type: blockData.type,
           selected
@@ -83,7 +85,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ blockData, hooks, parentI
       }
       <div className={classNames(
         "block-select-area",
-        { selected:  hooks.isGrab }
+        { selected:  useBlockReducer.isGrab }
       )}>
 
         <div className={classNames(

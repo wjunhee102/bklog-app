@@ -24,7 +24,7 @@ function calculatrionPosition(
   }
 }
 
-function useBlockBase(blockData: BlockData, hooks: UseBlockType, parentInfo?: ParentInfoType) {
+function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, parentInfo?: ParentInfoType) {
   const {
     state,
     initBlock,
@@ -38,7 +38,7 @@ function useBlockBase(blockData: BlockData, hooks: UseBlockType, parentInfo?: Pa
     onChangeTargetPosition,
     onSetTempClip,
     onClearTempClip
-  } = hooks;
+  } = useBlockReducer;
 
   const [ isHover, setHover ]   = useState<boolean>(false);
   const [ selected, setSelect ] = useState<boolean>(false);

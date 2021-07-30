@@ -100,7 +100,6 @@ function useConnectRedux(useBlockReducer: UseBlockType) {
 
   useEffect(() => {
     if(socket && pageId) {
-      console.log(socket, pageId);
       socket.emit("roomjoin", pageId);
     }
   }, [socket, pageId]);
@@ -125,7 +124,6 @@ function useConnectRedux(useBlockReducer: UseBlockType) {
 
   useEffect(() => {
     if(socket && pageId) {
-      console.log(editingBlockId);
       if(editingBlockId) {
         socket.emit("edit", [ pageId, {
           penName: "junhee",
