@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
 import useBlock from './hooks/useBlock';
@@ -90,6 +90,10 @@ const BlockEditor: React.FC = () => {
     timeout: 10 * 60 * 2,
     onIdle: handleOnIdle,
     debounce: 500
+  });
+
+  useEffect(() => {
+    console.log(process.env);
   });
 
   return (
