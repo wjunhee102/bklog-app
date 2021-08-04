@@ -7,7 +7,7 @@ import { ModifyDataType } from "../types";
 import { UseBlockType } from "./useBlock";
 
 function useConnectRedux(useBlockReducer: UseBlockType) {
-  const socket = useSocket(process.env.NODE_ENV === "production"? "https://27.96.134.8:4600/bklog" : "http://localhost:4600/bklog");
+  const socket = useSocket(process.env.NODE_ENV === "production"? "http://27.96.134.8:4600/bklog" : "http://localhost:4600/bklog");
 
   const [ newVersion, setVersion ] = useState<string | null>(null);
   const [ updated, setUpdated ]    = useState<boolean>(false);
