@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { RequestArg, ResType } from './index'; 
 
-const baseURL = "http://localhost:4500/v2";
+const baseURL = process.env.NODE_ENV === "production"? "106.10.55.195:4500" : "http://localhost:4500/v2";
 
 async function baseFetch(req: RequestArg): Promise<ResType> {
   // try {
