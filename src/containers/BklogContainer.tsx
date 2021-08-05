@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import BlockEditor from '../components/newBlock';
+import BlockComponent from '../components/newBlock';
 import { BlockData } from '../types/bklog';
 import Sibebar from '../components/sidebar';
 import usePage from '../hooks/usePage';
@@ -19,7 +19,7 @@ function BklogContainer() {
         "flex-auto w-full h-full py-2 pr-2 ml-2"
       )}>
         {
-          pageInfo?  <BlockEditor /> : "loading..."
+          pageInfo?  <BlockComponent /> : "loading..."
         }
         
       </div>

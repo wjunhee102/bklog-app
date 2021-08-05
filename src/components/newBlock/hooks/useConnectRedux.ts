@@ -9,8 +9,9 @@ import { UseBlockType } from "./useBlock";
 function useConnectRedux(useBlockReducer: UseBlockType) {
   const socket = useSocket(process.env.NODE_ENV === "production"? "http://27.96.134.8:4600/bklog" : "http://localhost:4600/bklog");
 
-  const [ newVersion, setVersion ] = useState<string | null>(null);
-  const [ updated, setUpdated ]    = useState<boolean>(false);
+  const [ newVersion, setVersion ]            = useState<string | null>(null);
+  const [ updated, setUpdated ]               = useState<boolean>(false);
+  const [ updatingId, setUpdatingId ] = useState<string | null>(null);
 
   const {
     bklogState, 
@@ -51,9 +52,14 @@ function useConnectRedux(useBlockReducer: UseBlockType) {
         console.log("connected");
       });
 
+      socket.on("update", (clientId: string) => {
+        setUpdatingId(clientId);
+      });
+
       socket.on("updated", (data: string) => {
         console.log(`updated: ${data}`);
         setVersion(data);
+        setUpdatingId(null);
       });
 
       socket.on("disconnect", () => {
@@ -81,19 +87,20 @@ function useConnectRedux(useBlockReducer: UseBlockType) {
   }, [bklogState.blockList]);
 
   useEffect(() => {
-    if(isFetch && !isFetching && modifyData[0]) {
+    if(isFetch && !isFetching && modifyData[0] && !updatingId) {
       onAddPushModifyData(convertModifyData(state.modifyData));
     }
-  }, [modifyData]);
+  }, [modifyData, isFetch, isFetching, updatingId]);
 
   useEffect(() => {
     if(isUpdated && socket) {
-      socket.emit("update", [bklogState.pageInfo.id, currentVersion]);
+      socket.emit("updated", [bklogState.pageInfo.id, currentVersion]);
       onChangeUpdateState();
       onClearModifyData();
     } 
   }, [isUpdated]);
 
+  // 일단 서버에서 충돌 막을 방법을 찾아야 할 듯.
   useEffect(onUpdateBklog, [pushModifyData]);
 
   useEffect(eventSocket, [socket]);
@@ -144,6 +151,16 @@ function useConnectRedux(useBlockReducer: UseBlockType) {
       return () => clearTimeout(timer);
     }
   }, [updated]);
+
+  useEffect(() => {
+    if(updatingId) {
+      const timer = setTimeout(() => {
+        setUpdatingId(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [updatingId]);
 
   return {
     updated

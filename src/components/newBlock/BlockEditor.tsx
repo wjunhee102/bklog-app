@@ -1,19 +1,17 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
-import useBlock from './hooks/useBlock';
+import { UseBlockType } from './hooks/useBlock';
 import { BlockData } from './types';
-import useConnectRedux from './hooks/useConnectRedux';
 import Block from './components/Block';
 import './assets/block.scss';
 
-const BlockEditor: React.FC = () => {
-  
-  // custom hooks
-  const useBlockReducer = useBlock();
+interface BlockEditorProps {
+  useBlockReducer: UseBlockType;
+  updated?: boolean;
+}
 
-  // redux & api
-  const { updated } = useConnectRedux(useBlockReducer);
+const BlockEditor: React.FC<BlockEditorProps> = ({ useBlockReducer, updated }) => {
   
   const {
     state,
@@ -114,7 +112,7 @@ const BlockEditor: React.FC = () => {
         "h-full", 
         "block-container",
         {"not-drag": (isGrab || isCliping)? true : false},
-        {"updated": updated}
+        {"updated": updated? true : false}
       )}>
         {
           initBlock?
