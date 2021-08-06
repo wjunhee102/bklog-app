@@ -13,7 +13,7 @@ function App() {
   const { baseState: { dark } } = useBase();
 
   useEffect(() => {
-    console.log(process.env);
+    console.log(process.env, process.env.REACT_APP_API_URL);
   });
 
   return (

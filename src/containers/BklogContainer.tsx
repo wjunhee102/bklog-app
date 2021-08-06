@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import BlockComponent from '../components/newBlock';
-import { BlockData } from '../types/bklog';
+import BlockEditor from '../components/newBlock';
 import Sibebar from '../components/sidebar';
-import usePage from '../hooks/usePage';
 import useBklog from '../hooks/useBKlog';
 import { PageInfoType } from '../store/modules/bklog/utils';
+import useConnectBklogStore from '../hooks/useConnectBklogStore';
 
 function BklogContainer() { 
   const { bklogState } = useBklog();
@@ -19,7 +18,7 @@ function BklogContainer() {
         "flex-auto w-full h-full py-2 pr-2 ml-2"
       )}>
         {
-          pageInfo?  <BlockComponent /> : "loading..."
+          pageInfo?  <BlockEditor connectStoreHook={useConnectBklogStore} /> : "loading..."
         }
         
       </div>

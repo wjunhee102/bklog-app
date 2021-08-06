@@ -52,6 +52,7 @@ export const Api      = api.Api;
 export const Rest     = api.Rest;
 export const ApiError = api.ApiError;
 
-const API_SERVER_URL = process.env.NODE_ENV === "production"? "http://27.96.134.8:4500/v2" : "http://localhost:4500/v2";
+export const API_SERVER_URL = process.env.REACT_APP_API_URL;
+export const SOCKET_URL = process.env.REACT_APP_SOCKET_URL;
 
 export const BaseRestFetch = new Rest(API_SERVER_URL);

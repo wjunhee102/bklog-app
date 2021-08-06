@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useBklog from "../../../hooks/useBKlog";
-import useSocket from "../../../hooks/useSocket";
-import { EditingUserInfo } from "../../../store/modules/bklog/utils";
-import { convertModifyData } from "../reducer/utils";
-import { ModifyDataType } from "../types";
-import { UseBlockType } from "./useBlock";
+import { ReturnConnectStoreHook } from "../components/newBlock";
+import { UseBlockType } from "../components/newBlock/hooks/useBlock";
+import { convertModifyData } from "../components/newBlock/reducer/utils";
+import { ModifyDataType } from "../components/newBlock/types";
+import { EditingUserInfo } from "../store/modules/bklog/utils";
+import { SOCKET_URL } from "../utils/api-utils";
+import useBklog from "./useBKlog";
+import useSocket from "./useSocket";
 
-function useConnectRedux(useBlockReducer: UseBlockType) {
-  const socket = useSocket(process.env.NODE_ENV === "production"? "http://27.96.134.8:4600/bklog" : "http://localhost:4600/bklog");
+function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStoreHook {
+  const socket = useSocket(SOCKET_URL);
 
   const [ newVersion, setVersion ]            = useState<string | null>(null);
   const [ updated, setUpdated ]               = useState<boolean>(false);
@@ -167,4 +169,4 @@ function useConnectRedux(useBlockReducer: UseBlockType) {
   };
 }
 
-export default useConnectRedux;
+export default useConnectBklogStore;

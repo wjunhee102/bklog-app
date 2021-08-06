@@ -1,18 +1,25 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import classNames from 'classnames';
-import { UseBlockType } from './hooks/useBlock';
+import useBlock, { UseBlockType } from './hooks/useBlock';
+import { ReturnConnectStoreHook } from '.';
 import { BlockData } from './types';
 import Block from './components/Block';
 import './assets/block.scss';
 
+const valueNotConnectStoreHook: ReturnConnectStoreHook = {
+  updated: false
+};
+
 interface BlockEditorProps {
-  useBlockReducer: UseBlockType;
-  updated?: boolean;
+  connectStoreHook?: (useBlockReducer: UseBlockType) => ReturnConnectStoreHook;
 }
 
-const BlockEditor: React.FC<BlockEditorProps> = ({ useBlockReducer, updated }) => {
-  
+const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
+  const useBlockReducer = useBlock();
+
+  const { updated } = connectStoreHook? connectStoreHook(useBlockReducer) : valueNotConnectStoreHook; 
+
   const {
     state,
     stage,
@@ -112,7 +119,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ useBlockReducer, updated }) =
         "h-full", 
         "block-container",
         {"not-drag": (isGrab || isCliping)? true : false},
-        {"updated": updated? true : false}
+        {"updated": updated}
       )}>
         {
           initBlock?
