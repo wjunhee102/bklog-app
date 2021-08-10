@@ -97,13 +97,9 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
     debounce: 500
   });
 
-  useEffect(() => {
-    console.log(process.env);
-  });
-
   return (
     <div 
-      className="block-editor blockEditor items-center overflow-auto w-full notranslate text-gray-700 bg-white h-full rounded-md shadow-md"
+      className="block-editor blockEditor items-center w-full notranslate text-gray-700 bg-white h-auto rounded-md shadow-md"
       ref={editorRef}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
@@ -112,7 +108,6 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
       onDrag={handleDrag}
       onKeyDown={handleKeyDown}
     >
-      <div className="cover"></div>
       <div className={classNames(
         "pt-8",
         "m-auto", 

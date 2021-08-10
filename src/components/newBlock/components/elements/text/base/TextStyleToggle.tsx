@@ -60,9 +60,13 @@ const TextStyleToggles: React.FC<TextStyleTogglesProps> = ({
     ) !== -1? true : false;
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     setStyle(findTextStyle(contents, startPosition));
   }, [contents, startPosition]);
+
+  useEffect(() => {
+    console.log(findTextStyle(contents, startPosition), addDelToggle(["b"]));
+  });
 
   return (
     <div 

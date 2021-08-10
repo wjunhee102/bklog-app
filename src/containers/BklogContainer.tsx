@@ -15,10 +15,16 @@ function BklogContainer() {
     <div className="flex h-full relative overflow-auto">
       <Sibebar />
       <div className={classNames(
-        "flex-auto w-full h-full py-2 pr-2 ml-2"
+        "flex-auto w-full h-full py-2 pr-2 ml-2 pb-2"
       )}>
         {
-          pageInfo?  <BlockEditor connectStoreHook={useConnectBklogStore} /> : "loading..."
+          //  cover 분리
+          pageInfo? 
+           <>
+            <div className="cover"></div>
+            <BlockEditor connectStoreHook={useConnectBklogStore} />
+           </>
+           : "loading..."
         }
         
       </div>
