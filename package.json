@@ -72,6 +72,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://bklogapi.com",
   "homepage": "https://bklog-app-deploy.vercel.app"
 }
