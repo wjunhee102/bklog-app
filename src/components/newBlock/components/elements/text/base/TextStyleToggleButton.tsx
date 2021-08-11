@@ -15,7 +15,6 @@ const TextStyleToggleButton: React.FC<TextStyleToggleButtonProps> = ({
   const addDelClassName = (() => addDelToggle? "del" : "add")();
 
   const handleClick = () => {
-    console.log(addDelToggle, styleType);
     onStyleChange([styleType], addDelClassName);
   }
 

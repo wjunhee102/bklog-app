@@ -64,10 +64,6 @@ const TextStyleToggles: React.FC<TextStyleTogglesProps> = ({
     setStyle(findTextStyle(contents, startPosition));
   }, [contents, startPosition]);
 
-  useEffect(() => {
-    console.log(findTextStyle(contents, startPosition), addDelToggle(["b"]));
-  });
-
   return (
     <div 
       style={{left: `${startPosition * 16}px`}}
