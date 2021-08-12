@@ -2,24 +2,19 @@
 
 ## App Start
 
-### start
-
+start
 > yarn start ( react-scripts start )
 
-### build:css
-
+build:css
 > yarn build:css
 
-### build
-
+build
 > yarn build ( yarn build:css && react-scripts build )
 
-### test
-
+test
 > yarn test ( react-scripts test )
 
-### eject
-
+eject
 > yarn eject ( react-scripts eject )
 
 
