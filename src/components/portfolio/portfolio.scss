@@ -1,0 +1,18 @@
+.portfolio {
+  width: 100%;
+
+  .cover-area {
+    width: 100%;
+    background-color: #ff0;
+
+    .profile-photo {
+      overflow: hidden;
+      width: 200px;
+      height: 200px;
+      
+      img {
+        width: 100%;
+      }
+    }
+  }
+}
