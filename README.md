@@ -1,12 +1,39 @@
 # Bklog App
 
-```
-  yarn build:css && npm run build:css
-  yarn start && npm run start
-```
+## App Start
+
+### start
+
+> yarn start ( react-scripts start )
+
+### build:css
+
+> yarn build:css
+
+### build
+
+> yarn build ( yarn build:css && react-scripts build )
+
+### test
+
+> yarn test ( react-scripts test )
+
+### eject
+
+> yarn eject ( react-scripts eject )
+
+
 
 ## App Structure
 ```
+(src)
+├─── /assets
+├─── /components
+├─── /containers
+├─── /hooks
+├─── /pages
+├─── /store
+└─── /utils
 ```
 ---
 
@@ -15,7 +42,7 @@
 
 ### 1. Commit Message Structure
 ```
-type
+#issue type
 
 body
 ```
@@ -30,14 +57,3 @@ body
 + test: 테스트 코드
 + chore: 빌드 업무 수정, 패키지 매니저 수정
 + temp: 임시 저장 
-
-## 오류 
-### 2021/01/29
- - block을 추가하는 과정에서 preBlockId가 제외되어서 제거될때 preBlock의 데이터가 변경되지 않는 문제가 있었음.
-
-## 해야할 일
-* api 연동
-* style 적용
-* 되돌리기 기능 추가
-* block에 ordering할때 오류 처리 추가
-* converting할때 `<`나 `>`등 특수문자 예외처리 추가할 것.
