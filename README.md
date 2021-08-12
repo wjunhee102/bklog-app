@@ -7,7 +7,7 @@
 $ yarn
 
 # react-scripts start
-$ yarn start ( react-scripts start )
+$ yarn start
 
 # postcss src/assets/tailwind.css -o src/assets/main.css
 $ yarn build:css
