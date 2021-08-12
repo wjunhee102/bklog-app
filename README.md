@@ -34,6 +34,20 @@ $ yarn eject
 ├─── /pages
 ├─── /store
 └─── /utils
+
+(component)
+├─── /utils
+├─── component
+└─── index
+
+(store)
+├─── /utils
+|     ├─ actions
+|     ├─ apiUtils
+|     └─ index
+├─── handler
+├─── saga
+└─── index
 ```
 ---
 
