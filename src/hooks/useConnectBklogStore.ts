@@ -22,7 +22,8 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     onAddPushModifyData, 
     onGetPage,
     onUpdateVersion,
-    onChangeUpdateState
+    onChangeUpdateState,
+    onReleaseUpdating
   } = useBklog();
 
   const {
@@ -148,6 +149,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     if(updated) {
       const timer = setTimeout(() => {
         setUpdated(false);
+        onReleaseUpdating();
       }, 1500);
 
       return () => clearTimeout(timer);
