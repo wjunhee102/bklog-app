@@ -1,23 +1,28 @@
 # Bklog App
 
-## App Start
+## App Commands
 
-start
-> yarn start ( react-scripts start )
+```bash
+# install
+$ yarn
 
-build:css
-> yarn build:css
+# react-scripts start
+$ yarn start ( react-scripts start )
 
-build
-> yarn build ( yarn build:css && react-scripts build )
+# postcss src/assets/tailwind.css -o src/assets/main.css
+$ yarn build:css
 
-test
-> yarn test ( react-scripts test )
+# yarn build:css && react-scripts build
+$ yarn build
 
-eject
-> yarn eject ( react-scripts eject )
+# react-scripts test
+$ yarn test
 
+# react-scripts eject
+$ yarn eject
+```
 
+---
 
 ## App Structure
 ```
