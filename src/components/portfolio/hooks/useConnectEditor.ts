@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { ReturnConnectStoreHook } from "../../newBlock";
-import { UseBlockType } from "../../newBlock/hooks/useBlock";
-import { RawBlockData } from "../../newBlock/types";
+import { ReturnConnectStoreHook } from "../../block";
+import { UseBlockType } from "../../block/hooks/useBlock";
+import { RawBlockData } from "../../block/types";
 
 const initialBlockList: RawBlockData[] = [
   {

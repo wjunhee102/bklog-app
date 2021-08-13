@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ModifyDataType } from '../components/newBlock/types';
+import { ModifyDataType } from '../components/block/types';
 import { RootState } from '../store/modules';
 import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdateState, ClearBklogStateType, clearBklogState, releaseUpdating } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';

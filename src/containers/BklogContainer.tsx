@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import BlockEditor from '../components/newBlock';
+import BlockEditor from '../components/block';
 import Sibebar from '../components/sidebar';
 import useBklog from '../hooks/useBKlog';
 import { PageInfoType } from '../store/modules/bklog/utils';

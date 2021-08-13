@@ -1,5 +1,5 @@
 import React from "react";
-import BlockEditor from "../newBlock";
+import BlockEditor from "../block";
 import useConnectEditor from "./hooks/useConnectEditor";
 import junheeImg from "../../assets/junhee.jpg";
 import './portfolio.scss';

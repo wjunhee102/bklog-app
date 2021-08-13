@@ -1,8 +1,7 @@
 import { 
   ContentType, 
   TextContents, 
-  BlockData,
-  TextProps
+  BlockData
 } from "../../types";
 import { OrderType } from ".";
 
@@ -402,8 +401,6 @@ function parseHtmlContents(text:string):TextContents[] {
   const newContents: any[] = [];
   const textLength: number = text.length;
 
-  console.log(text);
-
   let saveToggle:boolean = true;
 
   let content: any = [];
@@ -652,12 +649,22 @@ export function equalsArray(aryA: any[], aryB: any[]): boolean {
   return targetBList.length? false : true;
 }
 
-export function arrayFindIndex(array: any[], factor: any): number {
-  const JSONFactor = JSON.stringify(factor[0]);
+// export function arrayFindIndex2(array: any[], factor: any): number {
+//   const JSONFactor = JSON.stringify(factor[0]);
+//   console.log(JSONFactor, factor);
 
+//   for(let i = 0; i < array.length; i++) {
+//     const JSONArray = JSON.stringify(array[i][0]);
+//     if(JSONArray === JSONFactor) {
+//       return i;
+//     }
+//   }
+//   return -1;
+// }
+
+export function arrayFindIndex(array: any[], factor: any[]): number {
   for(let i = 0; i < array.length; i++) {
-    const JSONArray = JSON.stringify(array[i][0]);
-    if(JSONArray === JSONFactor) {
+    if(array[i][0] === factor[0]) {
       return i;
     }
   }
@@ -852,19 +859,19 @@ function deleteContentsStyle(
  * @param order 
  */
 function changeStyleTextContents(
-  changedTextStyleBlock: BlockData<TextProps>, 
+  changedTextStyleBlock: BlockData, 
   styleType: ContentType,
   startPoint: number, 
   endPoint: number,
   order: OrderType
-):BlockData<TextProps> {
+):BlockData {
   
   let changedTextContents: TextContents[];
 
   switch(order) {
     case "add":
       changedTextContents = addContentsStyle(
-        changedTextStyleBlock.property.contents,
+        changedTextStyleBlock.contents,
         startPoint,
         endPoint,
         styleType
@@ -873,7 +880,7 @@ function changeStyleTextContents(
 
     case "del":
       changedTextContents = deleteContentsStyle(
-        changedTextStyleBlock.property.contents,
+        changedTextStyleBlock.contents,
         startPoint,
         endPoint,
         styleType
@@ -883,7 +890,7 @@ function changeStyleTextContents(
     case "color":
       changedTextContents = addContentsStyle(
         deleteContentsStyle(
-          changedTextStyleBlock.property.contents,
+          changedTextStyleBlock.contents,
           startPoint,
           endPoint,
           styleType
@@ -897,7 +904,7 @@ function changeStyleTextContents(
     case "link":
       changedTextContents = addContentsStyle(
         deleteContentsStyle(
-          changedTextStyleBlock.property.contents,
+          changedTextStyleBlock.contents,
           startPoint,
           endPoint,
           styleType
@@ -909,24 +916,117 @@ function changeStyleTextContents(
       break;
 
     default: 
-      changedTextContents = changedTextStyleBlock.property.contents;
+      changedTextContents = changedTextStyleBlock.contents;
   }
 
   return Object.assign({}, 
     changedTextStyleBlock, {
-      property: Object.assign({}, 
-        changedTextStyleBlock.property, {
-          contents: changedTextContents
-      })
+      contents: changedTextContents
     }
   );
+}
+
+function sliceTextContents(
+  preTexts: TextContents[], 
+  startPoint:number, 
+  endPoint:number, 
+): TextContents[][] {
+
+  let count = 0;
+  let partTexts: TextContents | null = null;
+  let frontTexts: TextContents[] = [];
+  let backTexts: TextContents[] = [];
+
+  if(startPoint === 0 && endPoint === 0) {
+    return [frontTexts, preTexts];
+  }
+
+  for(const texts of preTexts) {
+    const textsLength = texts[0].length - 1;
+
+    for(let i = 0; i <= textsLength; i++) {
+      if(count < startPoint || count > endPoint) {
+
+        if(!partTexts) {
+          if(texts[1]) {
+            partTexts = ["", texts[1]];
+          } else {
+            partTexts = [""];
+          }
+        } else if(i === 0) {
+          if(partTexts[1] && texts[1] && !equalsArray(partTexts[1], texts[1])) {
+            backTexts.push(partTexts);
+            partTexts = ["", texts[1]];
+          } 
+        }
+
+        partTexts[0] += texts[0][i];
+        
+        if(i === textsLength && partTexts) {
+          if(count < startPoint) {
+            frontTexts.push(partTexts);
+          } else {
+            backTexts.push(partTexts);
+          }
+          partTexts = null;
+        }
+      } else {
+        
+        if(count === startPoint && partTexts) {
+          frontTexts.push(partTexts);
+          partTexts = null;
+        } 
+
+        if(count === endPoint) {
+          if(texts[1]) {
+            partTexts = [texts[0][i], texts[1]];
+          } else {
+            partTexts = [texts[0][i]];
+          }
+        }
+        
+      }
+
+      count++;
+    }
+  }
+
+  if(partTexts) backTexts.push(partTexts);
+
+  return [frontTexts, backTexts];
+}
+
+function mergeTextContents(
+  toBeMergedContents: TextContents[],
+  targetContents: TextContents[]
+): TextContents[] {
+  const copyToBeMergedContents = toBeMergedContents.concat();
+  const copyTargetContents = targetContents.concat();
+  const frontContent: TextContents = copyToBeMergedContents.pop();
+  const backContent: TextContents  = copyTargetContents.shift();
+
+  if(!frontContent) {
+    return targetContents;
+  }
+
+  if(equalsArray(frontContent[1]? frontContent[1] : [], backContent[1]? backContent[1] : [])){
+    frontContent[0] += backContent[0];
+    copyToBeMergedContents.push(frontContent, ...copyTargetContents);
+  } else {
+    copyToBeMergedContents.push(frontContent, backContent, ...copyTargetContents);
+    console.log("1", frontContent, backContent, copyTargetContents);
+  }
+
+  return copyToBeMergedContents;
 }
 
 const converter = {
   parseHtmlContents,
   addContentsStyle,
   deleteContentsStyle,
-  changeStyleTextContents
+  changeStyleTextContents,
+  sliceTextContents,
+  mergeTextContents
 }
 
 export default converter;

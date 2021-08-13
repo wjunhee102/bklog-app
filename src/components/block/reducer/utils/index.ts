@@ -1,157 +1,208 @@
-import {
-  BlockData,
-  UUID
-} from "../../types";
-import converter from './converter';
-import * as ordering  from './ordering';
-import blocksUtils from './blocksUtils';
-import sideStoreUtils from './sideUtils';
-import actionBlock from './actionTypes';
+import { BlockData, ModifyData } from "../../types";
+import actionBlock from "./actions";
+import blockUtils from "./blockUtils";
+import converter from "./converter";
+import orderingBlockUtils from "./ordering";
+import sideStoreUtils from "./sideUtils";
 
 /**
- * types
+ * block - state
  */
-export interface EditedBlock {
-  blockId: UUID;
-  blockIndex: number;
-  text: string;
-}
+export type OrderType = "add" | "del" | "color" | "link";
+
 export interface StagedBlock{
-  id: UUID;
+  id: string;
   contents: any;
   blockIndex: number;
 }
-export interface TempData {
-  type: string;
-  data: any;
-}
-export type ModifyCommand = "update" | "create" | "delete";
-export type ModifySet = "block" | "property" | "comment"; 
 
-export interface ParamModifyBlock {
-  blockId: string;
-  set: ModifySet;
-  payload: any;
-}
+// export interface TempData {
+//   type: string;
+//   data: any;
+// }
 
-export interface ParamCreateBlock {
-  blockId: string;
-  set: "block";
-  payload: BlockData;
-}
-
-export interface ParamCreateComment {
-  blockId: string;
-  set: "comment";
-  payload: any;
-}
-
-export type ParamCreateModifyBlock = ParamCreateBlock | ParamCreateComment;
-
-export class ParamDeleteModity {
-  blockIdList?: string[];
-  commentIdList?: string[];
-}
-
-export interface ModifyBlockType {
-  create?: ParamCreateModifyBlock[];
-  update?: ParamModifyBlock[];
-  delete?: ParamDeleteModity;
-}
-
-export interface ModifyBlockData<T = any> {
-  id?: UUID | string;
-  type?: string;
-  parentBlockId?: UUID | string | null;
-  preBlockId?: UUID | string | null;
-  nextBlockId?: UUID | string | null;
-  // 수정할 것.
-  property?: T;
-  children?: UUID[];
-}
-
-export interface ModifyData<T = any> {
-  command: ModifyCommand;
-  blockId: string;
-  set: ModifySet;
-  payload: T;
-}
-
-export interface BlockState {
-  editingId: string | null;
-  blocks: BlockData<any>[];
-  stage: StagedBlock[];
-  rightToEdit: boolean;
-  tempBack: TempData[];
-  tempFront: TempData[];
-  tempClip: number[];
-  clipboard: BlockData<any>[];
-  test: any;
-  modifyData: ModifyData[];
+export interface ChangeEditorStateProps {
+  isGrab?: boolean;
+  isHoldingDown?: boolean;
+  isCliping?: boolean;
 }
 
 export interface BlockStateProps {
-  editingId?: string | null;
-  blocks?: BlockData<any>[];
-  stage?: StagedBlock[];
-  rightToEdit?: boolean;
-  tempBack?: TempData[];
-  tempFront?: TempData[];
-  tempClip?: number[];
-  clipboard?: BlockData<any>[];
-  test?: any;
+  blockList?: BlockData[];
   modifyData?: ModifyData[];
 }
 
-export type OrderType = "add" | "del" | "color" | "link";
+export type SetBlockDataList = {
+  [type: string]: BlockData[];
+}
+
+/** 
+ * temp Data
+*/
+export type TempSet = "block" | "comment"; 
+
+export interface TempData<T = any> {
+  blockId: string;
+  payload: T;
+}
+
+export interface TempDataType {
+  editingBlockId?: string;
+  nextBlockInfo?: NextBlockInfo;
+  create?: TempData<BlockData>[];
+  update?: TempData[];
+  delete?: TempData[];
+}
+
+export interface ResBlockUtils {
+  blockList: BlockData[];
+  modifyData: ModifyData[];
+  tempData: TempDataType;
+}
+
+export interface NextTextBlockInfo {
+  type: "text",
+  payload: [string, any];
+}
+
+export type NextBlockInfo = NextTextBlockInfo | { type: string, payload: any } | null;
+
+export interface BlockState {
+  isFetch: boolean;
+  isGrab: boolean;
+  isHoldingDown: boolean;
+  isCliping: boolean;
+  targetPosition: string | null;
+  blockList: BlockData[];
+  editingBlockId: string | null;
+  nextBlockInfo: NextBlockInfo;
+  stage: StagedBlock[];
+  modifyData: ModifyData[];
+  tempFront: TempDataType[];
+  tempBack: TempDataType[];
+  tempClipData: number[];
+  clipBoard: BlockData[];
+}
+
+export interface BlockStateProps {
+  isFetch?: boolean;
+  isGrab?: boolean;
+  isHoldingDown?: boolean;
+  isCliping?: boolean;
+  targetPosition?: string | null;
+  blockList?: BlockData[];
+  editingBlockId?: string | null;
+  nextBlockInfo?: NextBlockInfo;
+  stage?: StagedBlock[];
+  modifyData?: ModifyData[];
+  tempFront?: TempDataType[];
+  tempBack?: TempDataType[];
+  tempClipData?: number[];
+  clipBoard?: BlockData[];
+}
 
 /**
- * action Type
+ * action type
  */
-export const RESET_BLOCK       = 'RESET_BLOCK' as const;
-export const ADD_BLOCK         = 'ADD_BLOCK' as const;
-export const ADD_BLOCKLIST     = 'ADD_BLOCKLIST' as const;
-export const EDITABLE          = 'EDITABLE' as const; 
-export const EDIT_BLOCK        = 'EDIT_BLOCK' as const; // 임시 데이터로 이동
-export const COMMIT_BLOCK      = 'COMMIT_BLOCK' as const;
-export const DELETE_BLOCK      = 'DELETE_BLOCK' as const;
-export const UPDATE_BLOCK      = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
-export const SWITCH_BLOCK      = 'SWITCH_BLOCK' as const;
-export const REVERT_BLOCK      = 'REVERT_BLOKC' as const;
-export const CHANGE_TEXT_STYLE = 'CHANGE_TEXT_STYLE' as const;
-export const SET_CLIPBOARD     = 'SET_CLIPBOARD' as const;
-export const CLEAR_CLIPBOARD   = 'CLEAR_CLIPBOARD' as const;
-export const SET_TEMPCLIP      = 'SET_TEMPCLIP' as const;
-export const CLEAR_TEMPCLIP    = 'CLEAR_TEMPCLIP' as const;
+export const INIT_BLOCK_STATE       = 'INIT_BLOCK_STATE' as const;
+export const RESET_BLOCK            = 'RESET_BLOCK' as const;
+export const CHANGE_EDITING_ID      = 'CHANGE_EDITING_ID' as const;
+export const ADD_BLOCK              = 'ADD_BLOCK' as const;
+export const ADD_TEXT_BLOCK         = 'ADD_TEXT_BLOCK' as const;
+export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
+export const COMMIT_BLOCK           = 'COMMIT_BLOCK' as const;
+export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
+export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
+export const DELETE_TEXT_BLOCK      = 'DELETE_TEXT_BLOCK' as const;
+export const UPDATE_BLOCK           = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
+export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
+export const REVERT_BLOCK           = 'REVERT_BLOKC' as const;
+export const CHANGE_TEXT_STYLE      = 'CHANGE_TEXT_STYLE' as const;
+export const SET_CLIPBOARD          = 'SET_CLIPBOARD' as const;
+export const CLEAR_CLIPBOARD        = 'CLEAR_CLIPBOARD' as const;
+export const SET_TEMPCLIP           = 'SET_TEMPCLIP' as const;
+export const CLEAR_TEMPCLIP         = 'CLEAR_TEMPCLIP' as const;
+export const CHANGE_EDITOR_STATE    = 'CHANGE_EDITOR_STATE' as const;
+export const CHANGE_TARGET_POSITION = 'CHANGE_TARGET_POSITION' as const;
+export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
+export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
+export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
+export const CLEAR_MODIFYDATA       = 'CLEAR_MODIFYDATA' as const;
+export const CLEAR_NEXTBLOCKINFO    = 'CLEAR_NEXTBLOCKINFO' as const;
+export const SET_NEXTBLOCKINFO      = 'CLEAR_NEXTBLOCKINFO' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
+export type BLOCK_ACTION_TYPES = 
+  typeof INIT_BLOCK_STATE
+  | typeof RESET_BLOCK 
+  | typeof ADD_BLOCK
+  | typeof ADD_TEXT_BLOCK
+  | typeof EDIT_BLOCK
+  | typeof COMMIT_BLOCK
+  | typeof CHANGE_BLOCK_CONTENTS
+  | typeof DELETE_BLOCK
+  | typeof DELETE_TEXT_BLOCK
+  | typeof UPDATE_BLOCK
+  | typeof SWITCH_BLOCK
+  | typeof REVERT_BLOCK
+  | typeof CHANGE_TEXT_STYLE
+  | typeof SET_CLIPBOARD
+  | typeof CLEAR_CLIPBOARD
+  | typeof SET_CLIPBOARD
+  | typeof CLEAR_TEMPCLIP
+  | typeof CHANGE_EDITOR_STATE
+  | typeof CHANGE_TARGET_POSITION
+  | typeof TEST_CLIPBOARD
+  | typeof CHANGE_STYLE_TYPE
+  | typeof CHANGE_FETCH_STATE
+  | typeof CLEAR_MODIFYDATA
+  | typeof SET_NEXTBLOCKINFO
+  | typeof CLEAR_NEXTBLOCKINFO
+;
 
-export const resetBlock      = actionBlock.resetBlock;
-export const addBlock        = actionBlock.addBlock;
-export const addBlockList    = actionBlock.addBlockList;
-export const editAble        = actionBlock.editAble;
-export const editBlock       = actionBlock.editBlock;
-export const commitBlock     = actionBlock.commitBlock;
-export const deleteBlock     = actionBlock.deleteBlock;
-export const updateBlock     = actionBlock.updateBlock;
-export const changeTextStyle = actionBlock.changeTextStyle;
-export const revertBlock     = actionBlock.revertBlock;
-export const switchBlock     = actionBlock.switchBlock;
-export const setClipboard    = actionBlock.setClipboard;
-export const clearClipboard  = actionBlock.clearClipboard;
-export const setTempClip     = actionBlock.setTempClip;
-export const clearTempClip   = actionBlock.clearTempClip;
+/**
+ * Actions
+ */
+export const initBlockState       = actionBlock.initBlockState;
+export const resetBlock           = actionBlock.resetBlock;
+export const addBlock             = actionBlock.addBlock;
+export const addTextBlock         = actionBlock.addTextBlock;
+export const changeEditingId      = actionBlock.changeEditingId;
+export const editBlock            = actionBlock.editBlock;
+export const commitBlock          = actionBlock.commitBlock;
+export const changeBlockContents  = actionBlock.changeBlockContents;
+export const deleteBlock          = actionBlock.deleteBlock;
+export const deleteTextBlock      = actionBlock.deleteTextBlock;
+export const updateBlock          = actionBlock.updateBlock;
+export const changeTextStyle      = actionBlock.changeTextStyle;
+export const revertBlock          = actionBlock.revertBlock;
+export const switchBlock          = actionBlock.switchBlock;
+export const setClipboard         = actionBlock.setClipboard;
+export const clearClipboard       = actionBlock.clearClipboard;
+export const setTempClip          = actionBlock.setTempClip;
+export const clearTempClip        = actionBlock.clearTempClip;
+export const changeEditorState    = actionBlock.chageEditorState;
+export const changeTargetPosition = actionBlock.changeTargetPosition;
+export const resetEditorState     = actionBlock.resetEditorState;
+export const changeFetchState     = actionBlock.changeFetchState;
+export const changeStyleType      = actionBlock.changeStyleType;
+export const clearModifyData      = actionBlock.clearModifyData;
+export const clearNextBlockInfo   = actionBlock.clearNextBlockInfo;
+export const setNextBlockInfo     = actionBlock.setNextBlockInfo;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
-export type BlockActions = ReturnType<typeof resetBlock>
+export type BlockActions = ReturnType<typeof initBlockState>
+  | ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
-  | ReturnType<typeof addBlockList>
-  | ReturnType<typeof editAble>
+  | ReturnType<typeof addTextBlock>
+  | ReturnType<typeof changeEditingId>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
+  | ReturnType<typeof changeBlockContents>
   | ReturnType<typeof deleteBlock>
+  | ReturnType<typeof deleteTextBlock>
   | ReturnType<typeof updateBlock>
   | ReturnType<typeof changeTextStyle>
   | ReturnType<typeof revertBlock>
@@ -160,58 +211,56 @@ export type BlockActions = ReturnType<typeof resetBlock>
   | ReturnType<typeof clearClipboard>
   | ReturnType<typeof setTempClip>
   | ReturnType<typeof clearTempClip>
+  | ReturnType<typeof changeEditorState>
+  | ReturnType<typeof changeTargetPosition>
   | ReturnType<typeof testClipAdd>
+  | ReturnType<typeof resetEditorState>
+  | ReturnType<typeof changeFetchState>
+  | ReturnType<typeof changeStyleType>
+  | ReturnType<typeof clearModifyData>
+  | ReturnType<typeof clearNextBlockInfo>
+  | ReturnType<typeof setNextBlockInfo>
 ;
 
-/**
- * converter
- */
-export const parseHtmlContents       = converter.parseHtmlContents;
+//converter
 export const addContentsStyle        = converter.addContentsStyle;
-export const deleteContentsStyle     = converter.deleteContentsStyle;
 export const changeStyleTextContents = converter.changeStyleTextContents;
+export const deleteContentsStyle     = converter.deleteContentsStyle;
+export const parseHtmlContents       = converter.parseHtmlContents;
+export const sliceTextContents       = converter.sliceTextContents;
+export const mergeTextContents       = converter.mergeTextContents;
 
-/**
- * ordering
- */
-export const orderingBlock = ordering.default;
+// block order utils;
+export const sortBlock     = orderingBlockUtils.sortBlock;
+export const orderingBlock = orderingBlockUtils.orderingBlock;
+export const initBlock     = orderingBlockUtils.initBlock;
+export const setBlockList  = orderingBlockUtils.setBlockList;
 
-/**
- * blocksUtils
- */
-export const createBlockData   = blocksUtils.createBlockData;
-export const copyBlockData     = blocksUtils.copyBlockData;
-export const copyBlockDataList = blocksUtils.copyBlockDataList;
-export const insertBlock       = blocksUtils.insertBlock;
-export const insertChild       = blocksUtils.insertChild;
-export const updateContents    = blocksUtils.updateContents;
-export const excludeBlock      = blocksUtils.excludeBlock;
-export const excludeBlockList  = blocksUtils.excludeBlockList;
-export const switchingBlock    = blocksUtils.switchingBlock;
-export const restoreBlock      = blocksUtils.restoreBlock;
+// block utils
+export const copyToNewObjectArray  = blockUtils.copyToNewObjectArray;
+export const createBlockData       = blockUtils.createBlockData;
+export const resetToTargetPosition = blockUtils.resetToTargetPosition;
+export const reissueBlockId        = blockUtils.reissueBlockId;
+export const updateBlockContents   = blockUtils.updateBlockContents;
+export const changeBlockTextStyle  = blockUtils.changeBlockTextStyle;
+export const addToStage            = blockUtils.addToStage;
+export const addBlockInList        = blockUtils.addBlockInList;
+export const removeBlockInList     = blockUtils.removeBlockInList;
+export const removeTextBlockInList = blockUtils.removeTextBlockInList;
+export const changeBlockPosition   = blockUtils.changeBlockPosition;
+export const switchBlockList       = blockUtils.switchBlockList;
+export const restoreBlock          = blockUtils.restoreBlock;
+export const changeBlockStyleType  = blockUtils.changeBlockStyleType;
+export const updateBlockData       = blockUtils.updateBlockData;
 
-/**
- * tempStoreUtils
- */
-export const tempDataPush           = sideStoreUtils.tempDataPush;
-export const getContentsToBeChanged = sideStoreUtils.getContentsToBeChanged;
-export const updateModifyData       = sideStoreUtils.updateModifyData;
-
-export function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
-  return Object.assign({}, oldObject, newValues);
-};
-
-export const initialState:BlockState = (() => {
-  return {
-    blocks: [],
-    editingId: null,
-    stage: [],
-    rightToEdit: false,
-    tempBack: [],
-    tempFront: [],
-    tempClip: [],
-    clipboard: [],
-    test: null,
-    modifyData: []
-  };
-})();
+// side utils 
+export const tempDataPush               = sideStoreUtils.tempDataPush;
+export const getContentsToBeChanged     = sideStoreUtils.getContentsToBeChanged;
+export const createTempData             = sideStoreUtils.createTempData;
+export const createModifyData           = sideStoreUtils.createModifyData;
+export const updateModifyData           = sideStoreUtils.updateModifyData;
+export const setCreateModifyDataOfBlock = sideStoreUtils.setCreateModifyDataOfBlock;
+export const setUpdateModifyDataOfBlock = sideStoreUtils.setUpdateModifyDataOfBlock;
+export const setDeleteModifyDataOfBlock = sideStoreUtils.setDeleteModifyDataOfBlock;
+export const convertModifyData          = sideStoreUtils.convertModifyData;
+export const replaceModifyData          = sideStoreUtils.replaceModifyData;

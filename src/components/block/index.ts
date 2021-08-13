@@ -1,3 +1,9 @@
-import Block from './Block';
+import { EditingUserInfo } from '../../store/modules/bklog/utils';
+import BlockEditor from './BlockEditor';
 
-export default Block;
+export interface ReturnConnectStoreHook {
+  updated: boolean;
+  editionUserList?: EditingUserInfo[];
+};
+
+export default BlockEditor;

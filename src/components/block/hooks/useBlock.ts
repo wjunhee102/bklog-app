@@ -1,177 +1,227 @@
 import { useCallback, useMemo, useReducer } from 'react';
-import blockState from '../reducer';
-import {
+import { ModifyBlockData, ModifyDataType } from '../types';
+import { testDB } from '../db';
+import blockReducer, { initialBlockState } from '../reducer';
+import { 
+  BlockState, 
+  initBlock, 
+  SetBlockDataList, 
+  setBlockList, 
   addBlock, 
-  editAble,
-  editBlock,
-  commitBlock,
-  deleteBlock,
-  changeTextStyle,
-  switchBlock,
-  revertBlock,
-  initialState,
-  setClipboard,
-  clearClipboard,
+  commitBlock, 
+  deleteBlock, 
+  changeTextStyle, 
+  OrderType, 
+  switchBlock, 
+  revertBlock, 
+  editBlock, 
+  changeEditingId,
+  ChangeEditorStateProps,
+  changeEditorState,
+  changeTargetPosition,
   setTempClip,
-  clearTempClip,
-  addBlockList,
-  testClipAdd
+  clearClipboard,
+  resetEditorState,
+  changeBlockStyleType,
+  changeStyleType,
+  changeFetchState,
+  clearModifyData,
+  initBlockState,
+  updateBlock,
+  changeBlockContents,
+  deleteTextBlock,
+  clearNextBlockInfo,
+  setNextBlockInfo,
+  NextBlockInfo,
+  addTextBlock,
+  StagedBlock
 } from '../reducer/utils';
-import { BlockState, OrderType } from '../reducer/utils';
-import orderingBlock from '../reducer/utils/ordering';
-import {
-  UUID,
-  ContentType,
-  BlockData
-} from '../types';
+import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
-/**
- * 임시
- */
-import { page } from '../../../data/db.json';
-//
-
-export const initialState2: BlockState = (() => {
-  return {
-    blocks: orderingBlock(page.blocks),
-    editingId: null,
-    stage: [],
-    rightToEdit: true,
-    tempBack: [],
-    tempFront: [],
-    tempClip: [],
-    clipboard: [],
-    test: null,
-    modifyData: []
-  };
-})();
-
+// state 값을 전부 useReducer로 통합할 것.
 function useBlock() {
+  const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
+
+  // state
+  const initBlock: SetBlockDataList | null = useMemo(()=>
+    setBlockList(state.blockList), [state.blockList]);
+
+  const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
+
+  const editingBlockId: string | null = useMemo(() => state.editingBlockId, [state.editingBlockId]);
+
+  const isGrab: boolean = useMemo(() => state.isGrab, [state.isGrab]);
+
+  const isCliping: boolean = useMemo(() => state.isCliping, [state.isCliping]);
   
-  const [ state, dispatch ] = useReducer(blockState, initialState2);
+  const isHoldingDown: boolean = useMemo(() => state.isHoldingDown, [state.isHoldingDown]);
 
-  // 이거가 메모리가 2중으로드는 거 같음... 아닌가? referance 값으로 가지고 있으니까 상관없나?
-  const initBlock: BlockData<any>[] = useMemo(()=> 
-    state.blocks.filter(block => block.parentBlockId === null ), [state.blocks]);
+  const isFetch: boolean = useMemo(() => state.isFetch, [state.isFetch]);
 
-  // 사파리 커밋 문제를 이걸로 해결하려고 함
-  const getEditAbleId = useMemo(() => state.editingId, [state.editingId]);
+  const stage: StagedBlock[] = useMemo(() => state.stage, [state.stage]);
 
-  const getStagedBlocks = state.stage;
+  const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
 
-  const getChilrenBlock = (blockId: UUID):BlockData<any>[] => 
-    state.blocks.filter(block => block.parentBlockId === blockId); 
+  const targetPosition: string | null = useMemo(() => state.targetPosition, [state.targetPosition]);
 
-  const getBlockState = (blockId: UUID): BlockData<any>  => 
-    state.blocks.filter(blockState => blockState.id === blockId)[0];
-  
-  const getStagedBlock = (blockId: UUID) =>
-    state.stage.filter(statedBlock => statedBlock.id === blockId)[0];
+  const modifyData: ModifyData[] = useMemo(() => state.modifyData, [state.modifyData]);
 
-  const getRightToEdit = useMemo(() => state.rightToEdit,[]);
+  const nextBlockInfo: NextBlockInfo = useMemo(() => state.nextBlockInfo, [state.nextBlockInfo]);
 
-  const getTempClip = state.tempClip;
+  // dispatch
+  const onInitBlockState = useCallback((rawBlockData: RawBlockData[]) => {
+    dispatch(initBlockState(rawBlockData));
+  }, [dispatch]);
 
-  const getClipboard = state.clipboard;
+  const onChangeEditorState = useCallback((payload: ChangeEditorStateProps) => {
+    dispatch(changeEditorState(payload));
+  }, [dispatch]);
 
-  const getTest = state.test;
+  const onChangeEditingId = useCallback((nextEditInfo?: string | number) => {
+    dispatch(changeEditingId(nextEditInfo));
+  }, [dispatch]);
 
-  const getBlocksContents = (): any[] => state
-    .tempClip
-    .sort((a, b) => a - b)
-    .map((idx) => state.blocks[idx - 1].type === "text"? state.blocks[idx - 1].property.contents : null)
-    .filter((content) => content !== null);
+  const onEditBlock = useCallback((blockId: string, blockIndex: number, contents: string) => {
+    dispatch(editBlock(blockId, blockIndex, contents));
+  }, [dispatch]);
 
+  const onCommitBlock = useCallback(() => {
+    dispatch(commitBlock());
+  }, [dispatch]);
 
-  // Block 추가
+  const onChangeBlockContents = useCallback((index: number, contents: any) => {
+    dispatch(changeBlockContents(index, contents));
+  }, [dispatch]);
+
   const onAddBlock = useCallback((
-      blockId?: UUID, 
-      type?: string, 
-      blockData?: BlockData<any>
-    ) => dispatch(addBlock(blockId, type, blockData)), [dispatch]);
+    blockList: BlockData[], 
+    targetPosition: string,
+    nextEditInfo?: string | number
+  ) => {
+    dispatch(addBlock(blockList, targetPosition, nextEditInfo));
+  }, [dispatch]);
 
-  const onAddBlockList = useCallback((preBlockId: string, blockList: BlockData[]) => 
-    dispatch(addBlockList(preBlockId, blockList)), [dispatch]);
+  const onAddTextBlock = useCallback((
+    index: number,
+    innerHTML: string,
+    cursorStart: number,
+    cursorEnd: number
+  ) => {
+    dispatch(addTextBlock(index, innerHTML, cursorStart, cursorEnd));
+  }, [dispatch])
 
-  // edit중인 block focus
-  const onEditAble = useCallback((blockId: UUID | null, index?:number) =>
-      dispatch(editAble(blockId, index))
-    ,[dispatch]);
+  const onDeleteBlock = useCallback((
+    removedBlockList: BlockData[],
+    nextEditInfo?: string | number
+  ) => {
+    dispatch(deleteBlock(removedBlockList, nextEditInfo));
+  }, [dispatch]);
 
-  // 이거를 각 블럭마다 state값으로 하려고 함.
-  const onEditBlock = useCallback((blockId: UUID, blockIndex: number,content: string) =>
-      dispatch(editBlock({blockId, blockIndex, text: content}))
-    ,[dispatch]);
-
-  const onCommitBlock = useCallback(()=>
-      dispatch(commitBlock())
-    ,[dispatch]);
-
-  const onDeleteBlock = useCallback((blockId: UUID) =>
-      dispatch(deleteBlock(blockId))
-    , [dispatch]);
+  const onDeleteTextBlock = useCallback((index: number, innerHTML: string, textLength: number) => {
+    dispatch(deleteTextBlock(index, innerHTML, textLength));
+  }, [dispatch]);
 
   const onChangeTextStyle = useCallback((
-      index: number, 
-      style: ContentType,
-      startPoint: number,
-      endPoint: number,
-      order: OrderType
-    ) => 
-      dispatch(changeTextStyle(index, style, startPoint, endPoint, order))
-    , [dispatch]);
-  
-  const onSwitchBlock = useCallback((blockId: UUID, preBlockId: UUID, parentType: boolean) => 
-    dispatch(switchBlock(blockId, preBlockId, parentType)), [dispatch]);
+    index: number, 
+    styleType: ContentType, 
+    startPoint: number,
+    endPoint: number,
+    order: OrderType
+  ) => {
+    dispatch(changeTextStyle(index, styleType, startPoint, endPoint, order));
+  }, [dispatch]);
 
-  const onRevertBlock = useCallback(() => 
-    dispatch(revertBlock()), [dispatch]);
+  const onSwitchBlock = useCallback((
+    changedBlockIdList: string[],
+    container?: boolean
+  ) => {
+    dispatch(switchBlock(changedBlockIdList, container))
+  }, [dispatch]);
 
-  const onSetTempClip = useCallback((index: number) => 
-    dispatch(setTempClip(index)), [dispatch]);
+  const onRevertBlock = useCallback((front?: boolean) => {
+    dispatch(revertBlock(front));
+  }, [dispatch]);
 
-  const onClearTempClip = useCallback(() => 
-    dispatch(clearTempClip()), [dispatch]);
+  const onChangeTargetPosition = useCallback((targetPosition?: string) => {
+    dispatch(changeTargetPosition(targetPosition));
+  }, [dispatch]);
 
-  const onSetClipboard = useCallback(() => 
-    dispatch(setClipboard()), [dispatch]);
+  const onSetTempClip = useCallback((index: number[]) => {
+    dispatch(setTempClip(index));
+  }, [dispatch]);
 
-  const onClearClipboard = useCallback(() => 
-    dispatch(clearClipboard()), [dispatch]);
+  const onClearTempClip = useCallback(() => {
+    dispatch(clearClipboard());
+  }, [dispatch]);
 
-  const onTestClipAdd = useCallback((dom: any) => 
-    dispatch(testClipAdd(dom)), [dispatch]);
+  const onResetEditorState = useCallback((isCliping: boolean) => {
+    dispatch(resetEditorState(isCliping));
+  }, [dispatch]);
+
+  const onChangeStyleType = useCallback((blockInfo: string | number, styleType: string) => {
+    dispatch(changeStyleType(blockInfo, styleType));
+  }, [dispatch]);
+
+  const onChangeFetchState = useCallback((fetchState?: boolean) => {
+    dispatch(changeFetchState(fetchState));
+  }, [dispatch]);
+
+  const onClearModifyData = useCallback(() => {
+    dispatch(clearModifyData());
+  }, [dispatch]);
+
+  const onUpdateBlock = useCallback((modifyData: ModifyDataType) => {
+    dispatch(updateBlock(modifyData));
+  }, [dispatch]);
+
+  const onClearNextBlockInfo = useCallback(() => {
+    dispatch(clearNextBlockInfo());
+  }, [dispatch]);
+
+  const onSetNextBlockInfo = useCallback((nextBlockInfo: NextBlockInfo) => {
+    dispatch(setNextBlockInfo(nextBlockInfo));
+  }, [dispatch]);
 
   return { 
     state, 
+    editingBlockId,
+    isGrab,
+    isHoldingDown,
+    isCliping,
+    isFetch,
+    stage,
+    tempClipData,
+    targetPosition,
+    modifyData,
+    nextBlockInfo,
+    onEditBlock,
     initBlock,
-    getRightToEdit,
-    getChilrenBlock,
-    getBlockState,
-    getStagedBlocks,
-    getStagedBlock,
-    getEditAbleId, 
-    getTempClip,
-    getClipboard,
-    getBlocksContents,
+    blockLength,
+    onInitBlockState,
+    onChangeEditorState,
+    onChangeEditingId,
+    onCommitBlock,
+    onChangeBlockContents,
     onAddBlock,
-    onAddBlockList,
-    onEditAble, 
-    onEditBlock, 
-    onCommitBlock, 
+    onAddTextBlock,
     onDeleteBlock,
+    onDeleteTextBlock,
     onChangeTextStyle,
     onSwitchBlock,
     onRevertBlock,
+    onChangeTargetPosition,
     onSetTempClip,
     onClearTempClip,
-    onSetClipboard,
-    onClearClipboard,
-    onTestClipAdd,
-    getTest
+    onResetEditorState,
+    onChangeStyleType,
+    onChangeFetchState,
+    onClearModifyData,
+    onUpdateBlock,
+    onClearNextBlockInfo,
+    onSetNextBlockInfo,
   };
 }
 
-export type UseBlockTypes = ReturnType<typeof useBlock>;
+export type UseBlockType = ReturnType<typeof useBlock>;
 
 export default useBlock;

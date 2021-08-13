@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ReturnConnectStoreHook } from "../components/newBlock";
-import { UseBlockType } from "../components/newBlock/hooks/useBlock";
-import { convertModifyData } from "../components/newBlock/reducer/utils";
-import { ModifyDataType } from "../components/newBlock/types";
+import { ReturnConnectStoreHook } from "../components/block";
+import { UseBlockType } from "../components/block/hooks/useBlock";
+import { convertModifyData } from "../components/block/reducer/utils";
+import { ModifyDataType } from "../components/block/types";
 import { EditingUserInfo } from "../store/modules/bklog/utils";
 import { SOCKET_URL } from "../utils/api-utils";
 import useBklog from "./useBKlog";

@@ -2,7 +2,7 @@ import { TextContents, ContentType, RawBlockData } from '../types';
 import { 
   equalsArray, 
 } from '../reducer/utils/converter';
-import { createBlockData, parseHtmlContents } from '../reducer/utils';
+import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -114,6 +114,7 @@ export function findTextStyle(
 }
 
 export function arrayFindIndex(array: any[], props: any): number {
+  // JSON stringfy는 연산 속도가 느리니 수정 할 것.
   const JSONProps = JSON.stringify(props);
 
   for(let i = 0; i < array.length; i++) {
@@ -146,7 +147,7 @@ export function createBlockList(contentsList: string[]) {
   });
 }
 
-export function pasteText(text: string): string | RawBlockData[] {
-  const contents = divideText(text);
-  return typeof contents !== "string"? createBlockList(contents) : contents;
-}
+// export function pasteText(text: string): string | RawBlockData[] {
+//   const contents = divideText(text);
+//   return typeof contents !== "string"? createBlockList(contents) : contents;
+// }

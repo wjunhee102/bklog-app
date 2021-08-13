@@ -1,4 +1,4 @@
-import { RawBlockData, ModifyDataType } from "../../../../components/newBlock/types";
+import { RawBlockData, ModifyDataType } from "../../../../components/block/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 import actions from "./actions";
 import apiUtils from "./apiUtils";

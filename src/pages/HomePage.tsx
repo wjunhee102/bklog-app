@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import BlockEditor from '../components/newBlock';
+import BlockEditor from '../components/block';
 import Portfolio from '../components/portfolio';
 
 const Home: React.FC = () => {
