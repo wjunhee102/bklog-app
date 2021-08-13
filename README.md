@@ -48,6 +48,24 @@ $ yarn eject
 ├─── handler
 ├─── saga
 └─── index
+
+(block src/components/block)
+├─── /assets
+├─── /components
+├─── /containers
+├─── /hooks
+├─── /pages
+├─── /types
+├─── /reducer(store)
+├─── /BlockEditor
+├─── /index
+└─── /utils
+
+(block/components)
+├─── /elements
+├─── /zone
+├─── Block
+└─── ChildrenBlock
 ```
 ---
 
