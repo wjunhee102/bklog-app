@@ -33,7 +33,8 @@ export interface AuthState {
     signInUser: SignInError | null,
     signUpUser: SignUpError,
     signOutUser: any
-  }
+  },
+  errorA: ApiErrorType | null
 }
 
 export interface AuthState2 {

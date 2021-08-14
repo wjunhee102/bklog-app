@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import SignIn from '../components/auth/sign-in';
 import SignUp from '../components/auth/sign-up';
+import ErrorPopup from '../components/base/ErrorPopup';
 import useAuth from '../hooks/useAuth';
 import usePage from '../hooks/usePage';
 
@@ -9,7 +10,7 @@ import usePage from '../hooks/usePage';
 
 
 function AuthPage() {
-  const { authState: { user } } = useAuth();
+  const { authState: { user, errorA } } = useAuth();
   const { onChangeToggle } = usePage();
 
   useEffect(() => {
@@ -33,6 +34,9 @@ function AuthPage() {
           <SignIn />
         </Route>
       </Switch>
+      {
+        errorA? <ErrorPopup error={errorA} /> : null
+      }
     </div>
   )
 }

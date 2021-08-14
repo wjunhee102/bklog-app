@@ -30,7 +30,8 @@ const initialState = ((): AuthState  => {
         penNameUsed: false
       },
       signOutUser: null
-    }
+    },
+    errorA: null
   }
 })();
 

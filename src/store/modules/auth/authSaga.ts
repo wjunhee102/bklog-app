@@ -14,7 +14,6 @@ import {
   SIGNINUSER_ERROR,
   RESET_AUTH
 } from './utils/index';
-import { ResType } from '../../../utils/api-utils';
 import { ALL_RESET, createPromiseSaga } from '../../utils';
 import { ApiError } from '../../../utils/api-utils';
 
