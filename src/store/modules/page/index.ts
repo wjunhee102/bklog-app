@@ -1,125 +1,37 @@
-import { CHANGE_PAGE_TITLE, PageState, CHANGE_TOGGLE } from "./utils";
-
-export function changeToggle(toggle?: boolean) {
-  return {
-    type: CHANGE_TOGGLE,
-    payload: {
-      toggle
-    }
-  }
-}
-
-export function changePageTitle(pageId: string, title: string) {
-  return {
-    type: CHANGE_PAGE_TITLE,
-    payload: {
-      title,
-      pageId
-    }
-  }
-}
-
-type PageActions = ReturnType<typeof changePageTitle>
-  | ReturnType<typeof changeToggle>;
+import { createReducer } from "../../utils";
+import handler from "./handler";
+import { PageState } from "./utils";
 
 const initialState: PageState = {
   toggle: false,
   loading: false,
+  tempPageInfo: null,
   pageEditor: {
     penName: "Junhee",
     profileId: "4c382a569f1f4ea7841b25bd2efe78d8",
-    bio: "프론트엔드 개발자",
-    userPhoto: "https://avatars.githubusercontent.com/u/59816563?v=4"
+    userPhoto: null,
+    bio: null
   },
   pageList: [
     {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-      pageTitle: "관리자 사용 설명서"
+      id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+      title: "관리자 사용 설명서",
+      disclosureScope: 5
     },
     {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e62",
-      pageTitle: "사용자 사용 설명서"
+      id: "d5cc2725-97ec-494b-bc80-c16f96379e62",
+      title: "사용자 사용 설명서",
+      disclosureScope: 5
     },
     {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e63",
-      pageTitle: "사용자 이용 문의 방법"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e64",
-      pageTitle: "감사합니다."
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e65",
-      pageTitle: "test5"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-      pageTitle: "관리자 사용 설명서"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e62",
-      pageTitle: "사용자 사용 설명서"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e63",
-      pageTitle: "사용자 이용 문의 방법"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e64",
-      pageTitle: "감사합니다."
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e65",
-      pageTitle: "test5"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-      pageTitle: "관리자 사용 설명서"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e62",
-      pageTitle: "사용자 사용 설명서"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e63",
-      pageTitle: "사용자 이용 문의 방법"
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e64",
-      pageTitle: "감사합니다."
-    },
-    {
-      pageId: "d5cc2725-97ec-494b-bc80-c16f96379e65",
-      pageTitle: "test5"
-    }
-  ]
-};
-
-export default function page(state: PageState = initialState, action: PageActions) {
-
-  switch(action.type) {
-    case CHANGE_TOGGLE:
-      return Object.assign({}, state, {
-        toggle: action.payload.toggle !== undefined? action.payload : !state.toggle
-      });
-
-    case CHANGE_PAGE_TITLE:
-      const { title, pageId } = action.payload;
-
-      return Object.assign({}, state, {
-        pageList: state.pageList.map(page => {
-          if(page.pageId === pageId) {
-            return Object.assign({}, page, {
-              pageTitle: title
-            });
-          } else {
-            return page
-          }
-        })
-      });
-
-    default: 
-      return state;
-  }
-
+      id: "d5cc2725-97ec-494b-bc80-c16f96379e63",
+      title: "사용자 이용 문의 방법",
+      disclosureScope: 5
+    }  
+  ],
+    error: null
 }
+
+const page = createReducer(initialState, handler);
+
+export default page;
