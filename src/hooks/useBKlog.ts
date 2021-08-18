@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ModifyDataType } from '../components/block/types';
 import { RootState } from '../store/modules';
-import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdateState, ClearBklogStateType, clearBklogState, releaseUpdating } from '../store/modules/bklog/utils';
+import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdatedState, ClearBklogStateType, clearBklogState, releaseUpdating, changeUpdatingState } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
 function useBklog() {
@@ -48,8 +48,12 @@ function useBklog() {
     dispatch(updateVersion(id, preId));
   }, [dispatch]);
 
-  const onChangeUpdateState = useCallback((isUpdated?: boolean) => {
-    dispatch(changeUpdateState(isUpdated));
+  const onChangeUpdatedState = useCallback((isUpdated?: boolean) => {
+    dispatch(changeUpdatedState(isUpdated));
+  }, [dispatch]);
+
+  const onChangeUpdatingState = useCallback((isUpdating?: boolean) => {
+    dispatch(changeUpdatingState(isUpdating));
   }, [dispatch]);
 
   const onReleaseUpdating = useCallback(() => {
@@ -64,7 +68,8 @@ function useBklog() {
     onAddPushModifyData,
     onUpdateBklog,
     onUpdateVersion,
-    onChangeUpdateState,
+    onChangeUpdatedState,
+    onChangeUpdatingState,
     onReleaseUpdating
   };
 }

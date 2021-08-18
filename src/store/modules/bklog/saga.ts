@@ -1,8 +1,8 @@
 import { takeEvery } from "redux-saga/effects";
 import { createPromiseSaga } from "../../utils";
-import { bklogFetchGet, bklogFetchPost, GET_PAGE, RELEASE_UPDATING, ReqUpdateBklog, UPDATE_BKLOG, UPDATE_VERSION } from "./utils";
+import { bklogFetchGet, bklogFetchPost, GET_PAGE, RELEASE_UPDATING, UpdateBklogPayload, UPDATE_BKLOG, UPDATE_VERSION } from "./utils";
 
-function updateBklog(data: ReqUpdateBklog) {
+function updateBklog(data: UpdateBklogPayload) {
   return bklogFetchPost("t-modify", data);
 }
 
@@ -17,7 +17,7 @@ function updateVersion(versions: { id: string, preId: string } ) {
 }
 
 function releaseUpdating(pageId: string) {
-  return bklogFetchGet(`release-updating/${pageId}`);
+  return bklogFetchGet(`t-release-updating/${pageId}`);
 }
 
 const getPageSaga         = createPromiseSaga(GET_PAGE, getPage);

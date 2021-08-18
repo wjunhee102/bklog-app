@@ -78,6 +78,7 @@ export interface BklogState {
   isFetching: boolean; 
   isRefresh: boolean;
   isUpdated: boolean;
+  isUpdating: boolean;
   pageInfo: PageInfoType | null;
   version: string | null;
   pageStar: PageStarType | null;
@@ -95,6 +96,7 @@ export interface BklogStateProps {
   isFetching?: boolean;
   isRefresh?: boolean;
   isUpdated?: boolean;
+  isUpdating?: boolean;
   pageInfo?: PageInfoType | null;
   version?: string | null;
   pageStar?: PageStarType | null;
@@ -108,7 +110,7 @@ export interface BklogStateProps {
 }
 
 // request type
-export interface ReqUpdateBklog {
+export interface UpdateBklogPayload {
   pageId: string;
   pageVersions: {
     current: string;
@@ -149,7 +151,8 @@ export const UPDATE_VERSION           = 'bklog/UPDATE_VERSION' as const;
 export const UPDATE_VERSION_SUCCESS   = 'bklog/UPDATE_VERSION_SUCCESS' as const;
 export const UPDATE_VERSION_ERROR     = 'bklog/UPDATE_VERSION_ERROR' as const;
 export const CLEAR_MODIFY_DATA        = 'bklog/CLEAR_MODIFY_DATA' as const;
-export const CHANGE_UPDATE_STATE      = 'bklog/CHANGE_UPDATE_STATE' as const;
+export const CHANGE_UPDATED_STATE     = 'bklog/CHANGE_UPDATED_STATE' as const;
+export const CHANGE_UPDATING_STATE    = 'bklog/CHANGE_UPDATING_STATE' as const;
 export const RELEASE_UPDATING         = 'bklog/RELEASE_UPDATING' as const;
 export const RELEASE_UPDATING_SUCCESS = 'bklog/RELEASE_UPDATING_SUCCESS' as const;
 export const RELEASE_UPDATING_ERROR   = 'bklog/RELEASE_UPDATING_ERROR' as const; 
@@ -166,7 +169,8 @@ export const updateBklogError       = actions.updateBklogError;
 export const updateVersion          = actions.updateVersion;
 export const updateVersionSuccess   = actions.updateVersionSuccess;
 export const updateVersionError     = actions.updateVersionError;
-export const changeUpdateState      = actions.changeUpdateState;
+export const changeUpdatedState     = actions.changeUpdatedState;
+export const changeUpdatingState    = actions.changeUpdatingState;
 export const releaseUpdating        = actions.releaseUpdating;
 export const releaseUpdatingSuccess = actions.releaseUpdatingSuccess;
 export const releaseUpdatingError   = actions.releaseUpdatingError;

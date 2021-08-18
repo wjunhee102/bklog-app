@@ -11,8 +11,8 @@ import useSocket from "./useSocket";
 function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStoreHook {
   const socket = useSocket(SOCKET_URL);
 
-  const [ newVersion, setVersion ]            = useState<string | null>(null);
-  const [ updated, setUpdated ]               = useState<boolean>(false);
+  const [ newVersion, setVersion ]    = useState<string | null>(null);
+  const [ updated, setUpdated ]       = useState<boolean>(false);
   const [ updatingId, setUpdatingId ] = useState<string | null>(null);
 
   const {
@@ -22,7 +22,8 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     onAddPushModifyData, 
     onGetPage,
     onUpdateVersion,
-    onChangeUpdateState,
+    onChangeUpdatedState,
+    onChangeUpdatingState,
     onReleaseUpdating
   } = useBklog();
 
@@ -39,6 +40,8 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   const isFetching: boolean = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
 
   const isUpdated: boolean = useMemo(() => bklogState.isUpdated, [bklogState.isUpdated]);
+
+  const isUpdating: boolean = useMemo(() =>  bklogState.isUpdating, [bklogState.isUpdating]);
 
   const isRefresh: boolean = useMemo(() => bklogState.isRefresh, [bklogState.isRefresh]);
 
@@ -57,6 +60,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
       socket.on("update", (clientId: string) => {
         setUpdatingId(clientId);
+        onChangeUpdatingState(true);
       });
 
       socket.on("updated", (data: string) => {
@@ -98,13 +102,18 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   useEffect(() => {
     if(isUpdated && socket) {
       socket.emit("updated", [bklogState.pageInfo.id, currentVersion]);
-      onChangeUpdateState();
+      onChangeUpdatedState();
       onClearModifyData();
     } 
   }, [isUpdated]);
 
   // 일단 서버에서 충돌 막을 방법을 찾아야 할 듯.
-  useEffect(onUpdateBklog, [pushModifyData]);
+  useEffect(() => {
+    if(!updatingId && socket) {
+      onUpdateBklog();
+      socket.emit("update");
+    }
+  }, [pushModifyData]);
 
   useEffect(eventSocket, [socket]);
 
@@ -149,7 +158,6 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     if(updated) {
       const timer = setTimeout(() => {
         setUpdated(false);
-        onReleaseUpdating();
       }, 1500);
 
       return () => clearTimeout(timer);
@@ -165,6 +173,18 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
       return () => clearTimeout(timer);
     }
   }, [updatingId]);
+
+  useEffect(() => {
+    if(!updatingId && pushModifyData) {
+      onUpdateBklog();
+    } else {
+      const timer = setTimeout(() => {
+        onReleaseUpdating();
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isUpdating]);
 
   return {
     updated
