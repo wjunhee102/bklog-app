@@ -19,7 +19,7 @@ function Profile() {
         <>
           <EditorBlock
             penName={pageEditor.penName}
-            userPhoto={pageEditor.userPhoto}
+            photo={pageEditor.photo}
             bio={pageEditor.bio}
           />
         </>

@@ -23,8 +23,8 @@ function PageList({ pageEditor, pageList }: PageListProps) {
           pageList? pageList.map((page, idx) =>
             <li key={idx} className="h-auto flex justify-between px-2">
               <div className="h-8 leading-8 w-5/6 flex-none">
-                <Link to={`/bklog/${pageEditor.penName}/${page.pageId}`}>
-                  {` ${page.pageTitle}`}
+                <Link to={`/bklog/penname/${pageEditor.penName}/${page.id}`}>
+                  {` ${page.title}`}
                 </Link>
               </div>
                {/**

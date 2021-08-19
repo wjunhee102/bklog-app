@@ -17,7 +17,8 @@ import {
   getPageListError,
   GET_PAGE_LIST,
   GET_PAGE_LIST_SUCCESS,
-  GET_PAGE_LIST_ERROR
+  GET_PAGE_LIST_ERROR,
+  getUserProfile
 } from "./utils";
 
 
@@ -89,6 +90,15 @@ function createPageErrorHandler(
   });
 }
 
+function getUserProfileHandler(
+  state: PageState,
+  actions: ReturnType<typeof getUserProfile>
+): PageState {
+  return updateObject<PageState, PageStateProps>(state, {
+    loading: true
+  });
+}
+
 function getPageListHandler(
   state: PageState,
   { payload }: ReturnType<typeof getPageList>
@@ -100,11 +110,15 @@ function getPageListHandler(
 
 function getPageListSuccessHandler(
   state: PageState,
-  { payload }: ReturnType<typeof getPageListSuccess>
+  { payload: { pageInfoList, userProfile } }: ReturnType<typeof getPageListSuccess>
 ): PageState {
+
+  console.log("getPageList", pageInfoList, userProfile);
+
   return updateObject<PageState, PageStateProps>(state, {
     loading: false,
-    pageList: payload
+    pageList: pageInfoList,
+    pageEditor: userProfile
   });
 }
 

@@ -10,8 +10,13 @@ import {
   GET_PAGE_LIST_SUCCESS,
   GET_PAGE_LIST_ERROR,
   GetPageListReqType,
-  GetPageListQuery
+  GetPageListQuery,
+  GET_USER_PROFILE,
+  GET_USER_PROFILE_SUCCCESS,
+  GET_USER_RPOFILE_ERROR,
+  ResGetPageList
 } from ".";
+import { UserProfile } from "../../auth/utils";
 
 
 function changeToggle(toggle?: boolean) {
@@ -59,6 +64,30 @@ function createPageError(error: ApiErrorType) {
   }
 }
 
+function getUserProfile(type: GetPageListReqType, userInfo: string) {
+  return {
+    type: GET_USER_PROFILE,
+    payload: {
+      type,
+      userInfo
+    }
+  }
+}
+
+function getUserProfileSuccess(userProfile: UserProfile) {
+  return {
+    type: GET_USER_PROFILE_SUCCCESS,
+    payload: userProfile
+  }
+}
+
+function getUserProfileError(error: ApiErrorType) {
+  return {
+    type: GET_USER_RPOFILE_ERROR,
+    payload: error
+  }
+}
+
 function getPageList(type: GetPageListReqType, userInfo: string, query?: GetPageListQuery) {
   return {
     type: GET_PAGE_LIST,
@@ -70,10 +99,10 @@ function getPageList(type: GetPageListReqType, userInfo: string, query?: GetPage
   }
 }
 
-function getPageListSuccess(pageList: Page[]) {
+function getPageListSuccess(data: ResGetPageList) {
   return {
     type: GET_PAGE_LIST_SUCCESS,
-    payload: pageList
+    payload: data
   }
 }
 
@@ -90,6 +119,9 @@ export default {
   createPage,
   createPageSuccess,
   createPageError,
+  getUserProfile,
+  getUserProfileSuccess,
+  getUserProfileError,
   getPageList,
   getPageListSuccess,
   getPageListError

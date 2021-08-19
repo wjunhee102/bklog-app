@@ -8,8 +8,10 @@ const initialState: PageState = {
   tempPageInfo: null,
   pageEditor: {
     penName: "Junhee",
-    profileId: "4c382a569f1f4ea7841b25bd2efe78d8",
-    userPhoto: null,
+    id: "4c382a569f1f4ea7841b25bd2efe78d8",
+    photo: null,
+    coverImage: null,
+    coverColor: null,
     bio: null
   },
   pageList: [

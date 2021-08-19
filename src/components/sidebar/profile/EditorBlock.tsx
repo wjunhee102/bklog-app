@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 interface EditorBlockProps {
   penName: string;
-  userPhoto: string | null;
+  photo: string;
   bio: string;
 }
 
-function EditorBlock({ penName, bio ,userPhoto }: EditorBlockProps) {
+function EditorBlock({ penName, bio, photo }: EditorBlockProps) {
   return (
     <div className="user-block px-4 pt-4 bg-purple-50">
       <div className="profile-text-block">
@@ -26,8 +26,8 @@ function EditorBlock({ penName, bio ,userPhoto }: EditorBlockProps) {
             title={`${penName} page 이동`}
           >
             {
-              userPhoto? 
-              <img className="w-full h-full" src={userPhoto} alt={penName} />
+              photo? 
+              <img className="w-full h-full" src={photo} alt={penName} />
               : <div className="w-full h-full">{penName[0]}</div>
             }
           </Link>
