@@ -16,24 +16,16 @@ import {
   RESET_AUTH,
 } from './utils';
 
-const initialState = ((): AuthState  => {
-  return {
-    loading: false,
-    user: null,
-    error: {
-      signInUser: null,
-      signUpUser: {
-        emailValid: false,
-        passwordValid: false,
-        penNameValid: false,
-        emailUsed: false,
-        penNameUsed: false
-      },
-      signOutUser: null
-    },
-    errorA: null
-  }
-})();
+const initialState: AuthState = {
+  loading: false,
+  user: null,
+  error: null,
+  signUpState: {
+    penNameUsed: false,
+    emailUsed: true
+  },
+  signUpSuccess: null
+}
 
 const initialError = ()=> {
   return  {

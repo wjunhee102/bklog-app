@@ -26,29 +26,13 @@ export const RESET_AUTH = "auth/RESET_AUTH" as const;
 
 export const ERROR_AUTH = 'auth/RESET_AUTH' as const;
 
-export interface AuthState {
-  loading: boolean;
-  user: UserInfo | null;
-  error: {
-    signInUser: SignInError | null,
-    signUpUser: SignUpError,
-    signOutUser: any
-  },
-  errorA: ApiErrorType | null
-}
-
-export interface AuthState2 {
-  loading: boolean;
-  user: UserInfo | null;
-  signUp: SignUpError; 
-  error: ApiErrorType;
-}
-
 export interface UserProfile {
   penName: string;
-  profileId: string;
-  userPhoto: string;
-  bio: string; 
+  id: string;
+  photo: string | null;
+  coverImage: string | null;
+  coverColor: string | null;
+  bio: string | null; 
 }
 
 export interface UserInfo extends UserProfile {
@@ -85,9 +69,6 @@ export interface RequiredUserInfo extends UserAuthInfo {
 }
 
 export interface SignUpError {
-  emailValid: boolean;
-  passwordValid: boolean;
-  penNameValid: boolean;
   emailUsed: boolean;
   penNameUsed: boolean;
 }
@@ -100,6 +81,28 @@ export interface ResSignUpUser {
     emailUsed: boolean;
     penNameUsed: boolean;
   }
+}
+
+export interface AuthState2 {
+  loading: boolean;
+  user: UserInfo | null;
+  error: {
+    signInUser: SignInError | null,
+    signUpUser: SignUpError,
+    signOutUser: any
+  },
+  errorA: ApiErrorType | null
+}
+
+export interface AuthState {
+  loading: boolean;
+  user: UserInfo | null;
+  signUpSuccess: boolean;
+  signUpState: {
+    penNameUsed: boolean,
+    emailUsed: boolean
+  }; 
+  error: ApiErrorType;
 }
 
 /**
@@ -143,4 +146,5 @@ export type AuthActions =
 
 export const authFetchPost = authApiUtils.authFetchPost;
 export const authFetchGet  = authApiUtils.authFetchGet;
+
 

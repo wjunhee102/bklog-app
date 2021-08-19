@@ -8,10 +8,7 @@ import usePage from '../../hooks/usePage';
 import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
 
-
-const LinkClasses = "hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium";
-
-function GlobalNav() {
+const GlobalNav: React.FC = () => {
 
   const [ onUserMenu, setOnUserMenu ] = useState<boolean>(false); 
 
@@ -62,7 +59,7 @@ function GlobalNav() {
                   user?
                   <UserBlock
                     className={classNames({"hover:bg-purple-500 hover:text-white outline-none": onUserMenu})}
-                    userPhoto={user.userPhoto}
+                    photo={user.photo}
                     penName={user.penName}
                     onClick={handleClickUserMenu}
                   />
@@ -75,8 +72,8 @@ function GlobalNav() {
                       <div className="hidden md:block">
                         <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
             
-                          <Link className={LinkClasses} to="/auth/sign-in">Sign In</Link>
-                          <Link className={LinkClasses} to="/auth/sign-up">Sign up</Link>
+                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-in">Sign In</Link>
+                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-up">Sign up</Link>
             
                         </div>
                       </div>
@@ -101,7 +98,7 @@ function GlobalNav() {
             <div className="hidden md:block">
               <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
 
-                <Link className={LinkClasses} to="/home">Home</Link>
+                <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/home">Home</Link>
 
               </div>
             </div>

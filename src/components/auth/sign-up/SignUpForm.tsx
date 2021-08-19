@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import InputComponent from '../InputComponent';
 import useChange from '../../../hooks/useChange';
@@ -30,10 +30,11 @@ interface InputPropsType {
   onChange: (e: any) => void;
   error: boolean;
   errorMessage?: string;
+  onBlur?: any;
 }
 
 // 전송 전에 validation 체크
-function SignUpForm() {
+const SignUpForm: React.FC = () => {
 
   const [ lastName, handleInputLName, errorLastName, handleErrorLName ] = useChange<string>("");
   const [ firstName, handleInputFName, errorFirstName, handleErrorFName ] = useChange<string>("");
@@ -41,8 +42,18 @@ function SignUpForm() {
   const [ email, handleInputEmail, errorEmail, handleErrorEmail ] = useChange<string>("");
   const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange<string>("");
 
-  const { authState: { error: {signUpUser : 
-    { emailUsed, emailValid, passwordValid, penNameUsed, penNameValid }}}, 
+  const [ emailUsed, setEmailUsed ]      = useState<boolean>(false);
+  const [ emailValid, setEmailValid ]    = useState<boolean>(false);
+  const [ passwordValid, setPwdValid ]   = useState<boolean>(false);
+  const [ penNameUsed, setPNUsed ]       = useState<boolean>(false);
+  const [ penNameValid, setPNValid ]     = useState<boolean>(false);
+
+  // const { authState: { error: {signUpUser : 
+  //   { emailUsed, emailValid, passwordValid, penNameUsed, penNameValid }}}, 
+  //   onSignUpUser 
+  // } = useAuth();
+
+  const { 
     onSignUpUser 
   } = useAuth();
 
@@ -82,7 +93,7 @@ function SignUpForm() {
         name: "필명",
         used: penNameUsed,
         valid: penNameValid
-      }) 
+      })
     },
     {
       id: "email-address",
@@ -114,6 +125,11 @@ function SignUpForm() {
       }) 
     }
   ];
+
+  const regEmail    = new RegExp(/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i);
+  const regPassword = new RegExp(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/);
+  const regPenName  = new RegExp(/^[a-zA-Z0-9].{3,12}$/);
+  const regName     = new RegExp(/\s/g);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -148,7 +164,28 @@ function SignUpForm() {
     if(passwordValid) {
       handleErrorPwd(true);
     }
-  },[emailUsed, emailValid, passwordValid, penNameUsed, penNameValid])
+  },[emailUsed, emailValid, passwordValid, penNameUsed, penNameValid]);
+
+  useEffect(() => {
+    if(penName && !regPenName.test(penName)) {
+      setPNValid(true);
+      handleErrorPName(true);
+    }
+  }, [penName]);
+
+  useEffect(() => {
+    if(email && !regEmail.test(email)) {
+      setEmailValid(true);
+      handleErrorEmail(true);
+    }
+  }, [email]);
+
+  useEffect(() => {
+    if(password && !regPassword.test(password)) {
+      setPwdValid(true);
+      handleErrorPwd(true);
+    }
+  }, [password]);
 
   return (
     <form onSubmit={handleSubmit}>

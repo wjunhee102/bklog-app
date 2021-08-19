@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import SignIn from '../components/auth/sign-in';
 import SignUp from '../components/auth/sign-up';
-import ErrorPopup from '../components/base/ErrorPopup';
+import ErrorPopup from '../components/base/popup/ErrorPopup';
 import useAuth from '../hooks/useAuth';
 import usePage from '../hooks/usePage';
 
@@ -10,7 +10,7 @@ import usePage from '../hooks/usePage';
 
 
 function AuthPage() {
-  const { authState: { user, errorA } } = useAuth();
+  const { authState: { user, error } } = useAuth();
   const { onChangeToggle } = usePage();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function AuthPage() {
   },[user]);
 
   if(user) {
-    return <Redirect to={`/bklog/${user.penName}`} />
+    return <Redirect to={`/bklog/penname/${user.penName}`} />
   }
 
   return (
@@ -34,9 +34,7 @@ function AuthPage() {
           <SignIn />
         </Route>
       </Switch>
-      {
-        errorA? <ErrorPopup error={errorA} /> : null
-      }
+      { error? <ErrorPopup error={error} /> : null }
     </div>
   )
 }

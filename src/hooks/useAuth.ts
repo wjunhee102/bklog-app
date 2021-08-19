@@ -35,8 +35,7 @@ function useAuth() {
   const onCheckToken = async () => {
     const response = await authApiUtils.authFetchGet('check-token');
     console.log(response);
-    const data = response.data? response.data : null;
-    const success = response.data? response.data.success : false;
+    const success = response.data === "success"? true : false;
 
      if(!success) {
 

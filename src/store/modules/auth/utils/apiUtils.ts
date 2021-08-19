@@ -1,10 +1,10 @@
 import { BaseRestFetch } from "../../../../utils/api-utils";
 
-function authFetchGet(url: string, query?: any) {
+function authFetchGet(url: string, qs?: any) {
   return BaseRestFetch.restApi({
     method: "get",
     url: `auth/${url}`,
-    qs: query,
+    qs,
     withCredentials: true
   });
 }

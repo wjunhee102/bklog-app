@@ -13,6 +13,7 @@ interface InputComponentProps {
   id?: string;
   children?: any;
   autoComplete?: string;
+  onBlur?: any;
 }
 
 function InputComponent({
@@ -27,7 +28,8 @@ function InputComponent({
   name,
   id,
   autoComplete,
-  children
+  children,
+  onBlur
 }: InputComponentProps) {
   return (
     <div className={boxClass}>
@@ -46,6 +48,7 @@ function InputComponent({
         value={value}
         onChange={onChange}
         autoComplete={autoComplete}
+        onBlur={onBlur}
       />
       { children }
     </div>

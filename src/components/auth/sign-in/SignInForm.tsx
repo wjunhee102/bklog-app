@@ -24,7 +24,7 @@ interface InputPropsType {
 function SignInForm() {
 
   const {
-    authState : { error: { signInUser } },
+    authState,
     onSignInUser
   } = useAuth();
 
@@ -70,11 +70,11 @@ function SignInForm() {
     }
   }
 
-  useEffect(() => {
-    if(signInUser) {
-      setError(true);
-    }
-  },[signInUser]);
+  // useEffect(() => {
+  //   if(signInUser) {
+  //     setError(true);
+  //   }
+  // },[signInUser]);
 
   return (
     <form className="mt-12" onSubmit={handleClickSubmit} action="#">
