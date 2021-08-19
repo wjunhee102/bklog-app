@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route, HashRouter, Redirect} from 'rea
 import AuthPage from './pages/AuthPage';
 import useBase from './hooks/useBase';
 import Home from './pages/HomePage';
-import BkPage from './pages/BKPage'
+import BkPage from './pages/bkpage';
 import GlobalNav from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';
@@ -30,7 +30,7 @@ function App() {
             <Redirect to="/home" />
           </Route>
           <Route path="/home" component={Home} />
-          <Route path="/bklog/:penName/:id" component={BkPage} />
+          <Route path="/bklog" component={BkPage} />
           <Route path="/auth" component={AuthPage} />
         </Switch>
       </Router>

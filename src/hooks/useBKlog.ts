@@ -15,9 +15,9 @@ function useBklog() {
     dispatch(clearBklogState(key));
   }, [dispatch]);
 
-  const onGetPage = useCallback((id: string) => {
+  const onGetPage = useCallback((pageId: string) => {
     console.log("페이지 불러오기");
-    dispatch(getPage(id));
+    dispatch(getPage(pageId));
   }, [dispatch]);
 
   const onResetBklog = useCallback(() => {

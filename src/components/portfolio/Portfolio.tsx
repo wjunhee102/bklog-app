@@ -170,7 +170,7 @@ const InfoComponent: React.FC<InfoComponentProps> = ({
 
 const Portfolio: React.FC = () => {
   return (
-    <main className="portfolio">
+    <main className="portfolio h-screen">
       
       {/* <header className="cover-area">
         <div className="container">

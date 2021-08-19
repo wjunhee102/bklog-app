@@ -3,13 +3,17 @@ import { createPromiseSaga } from "../../utils";
 import { bklogFetchGet, bklogFetchPost, GET_PAGE, RELEASE_UPDATING, UpdateBklogPayload, UPDATE_BKLOG, UPDATE_VERSION } from "./utils";
 
 function updateBklog(data: UpdateBklogPayload) {
-  return bklogFetchPost("t-modify", data);
+  return bklogFetchPost("modify", data);
 }
 
 function getPage(pageId: string) {
-  return bklogFetchGet("t-getpage", {
+  return bklogFetchGet("getpage", {
     id: pageId
   });
+}
+
+function getPageA(path: string) {
+  return bklogFetchGet(`getPage/${path}`);
 }
 
 function updateVersion(versions: { id: string, preId: string } ) {
@@ -17,7 +21,7 @@ function updateVersion(versions: { id: string, preId: string } ) {
 }
 
 function releaseUpdating(pageId: string) {
-  return bklogFetchGet(`t-release-updating/${pageId}`);
+  return bklogFetchGet(`release-updating/${pageId}`);
 }
 
 const getPageSaga         = createPromiseSaga(GET_PAGE, getPage);

@@ -83,7 +83,7 @@ function initBlockStateHandler(
   return updateObject<BlockState, BlockStateProps>(state, 
     updateObject<BlockState, BlockStateProps>(initialBlockState, {
       blockList: blockList,
-      modifyData,
+      modifyData: updateModifyData(state.modifyData, modifyData),
       isFetch: modifyData[0]? true : false
     })
   );
@@ -93,6 +93,7 @@ function resetBlockHandler(
   state: BlockState,
   action: ReturnType<typeof resetBlock>
 ): BlockState {
+  console.log("reset")
   return initialBlockState;
 }
 
@@ -416,8 +417,6 @@ function revertBlockHandler(
     tempBack.pop();
     tempData.editingBlockId = state.editingBlockId;
 
-    console.log(tempBack);
-
     return updateObject<BlockState, BlockStateProps>(state, {
       editingBlockId,
       blockList,
@@ -434,8 +433,6 @@ function revertBlockHandler(
     const tempFront = state.tempFront.concat();
     tempFront.pop();
     tempData.editingBlockId = state.editingBlockId;
-
-    console.log(tempFront);
 
     return updateObject<BlockState, BlockStateProps>(state, {
       blockList,
@@ -564,6 +561,7 @@ function clearModifyDataHandler(
   state: BlockState,
   action: ReturnType<typeof clearModifyData>
 ): BlockState {
+  const modifyData = updateObject({}, state.modifyData.map((data) => Object.assign({}, data)));
   return updateObject<BlockState, BlockStateProps>(state, {
     modifyData: []
   });
@@ -574,7 +572,7 @@ function updateBlockHandler(
   { payload }: ReturnType<typeof updateBlock>
 ): BlockState {
   const { blockList, tempData, modifyData } = updateBlockData(state.blockList, payload);
-  
+
   tempData.editingBlockId = state.editingBlockId;
 
   return updateObject<BlockState, BlockStateProps>(state, {

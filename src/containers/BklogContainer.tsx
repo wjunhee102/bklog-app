@@ -5,31 +5,48 @@ import Sibebar from '../components/sidebar';
 import useBklog from '../hooks/useBKlog';
 import { PageInfoType } from '../store/modules/bklog/utils';
 import useConnectBklogStore from '../hooks/useConnectBklogStore';
+import { RouteComponentProps } from 'react-router-dom';
 
-function BklogContainer() { 
-  const { bklogState } = useBklog();
+interface MatchParams {
+  pageId: string;
+}
+
+const BklogContainer: React.FC<RouteComponentProps<MatchParams>> = ({ 
+  match: { 
+    params: { 
+      pageId
+    }
+  } 
+}) => { 
+  const { 
+    bklogState,
+    onGetPage
+   } = useBklog();
 
   const pageInfo: PageInfoType = useMemo(() => bklogState.pageInfo, [bklogState.pageInfo]);
 
+  useEffect(() => {
+    console.log(pageId);
+    onGetPage(pageId);
+  }, [pageId]);
+
+
+
   return (
-    <div className="flex h-full relative overflow-auto">
-      <Sibebar />
-      <div className={classNames(
-        "flex-auto w-full h-full py-2 pr-2 ml-2 pb-2"
-      )}>
-        {
-          //  cover 분리
-          pageInfo? 
-           <>
-            <div className="cover"></div>
-            <BlockEditor connectStoreHook={useConnectBklogStore} />
-           </>
-           : "loading..."
-        }
-        
-      </div>
-    </div>
-    
+    <div className={classNames(
+      "flex-auto w-full h-full py-2 pr-2 ml-2 pb-2"
+    )}>
+      {
+        //  cover 분리
+        pageInfo? 
+          <>
+          <div className="cover"></div>
+          <BlockEditor connectStoreHook={useConnectBklogStore} />
+          </>
+          : "loading..."
+      }
+      
+    </div>    
   )
 }
 

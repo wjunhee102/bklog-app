@@ -99,7 +99,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
 
   return (
     <div 
-      className="block-editor blockEditor items-center w-full notranslate text-gray-700 bg-white h-auto rounded-md shadow-md"
+      className="block-editor blockEditor items-center w-full notranslate text-gray-700 bg-white h-auto"
       ref={editorRef}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}

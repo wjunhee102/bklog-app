@@ -87,14 +87,16 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   // effect
   useEffect(() => {
     if(bklogState.blockList) {
+      console.log("init 실행");
       onInitBlockState(bklogState.blockList);
       onClearBklogState("blockList");
-      onClearModifyData();
+      // onClearModifyData();
     }
   }, [bklogState.blockList]);
 
   useEffect(() => {
     if(isFetch && !isFetching && modifyData[0] && !updatingId) {
+      console.log("실행", modifyData);
       onAddPushModifyData(convertModifyData(state.modifyData));
     }
   }, [modifyData, isFetch, isFetching, updatingId]);
@@ -179,12 +181,20 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
       onUpdateBklog();
     } else {
       const timer = setTimeout(() => {
-        onReleaseUpdating();
+        if(bklogState.isUpdating) onReleaseUpdating();
       }, 3000);
 
       return () => clearTimeout(timer);
     }
   }, [isUpdating]);
+
+  useEffect(() => {
+    console.log(modifyData);
+  }, [modifyData]);
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   return {
     updated
