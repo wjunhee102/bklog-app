@@ -1,4 +1,3 @@
-import apiUtils    from './apiUtils';
 import cookieUtils from './cookieUtils';
 import { AxiosRequestConfig } from 'axios';
 import api from './api';
@@ -33,11 +32,6 @@ export interface IGqlObject {
   variables?: object,
   query     : string
 }
-
-/**
- * Api Utils
- */
-export const baseFetch = apiUtils.baseFetch;
 
 /**
  * Cookie Utils
