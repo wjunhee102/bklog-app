@@ -16,110 +16,166 @@ import {
   SIGNUPUSER_ERROR,
   REISSUETOKEN_ERROR,
   REISSUETOKEN,
-  RESET_AUTH
+  RESET_AUTH,
+  CHECK_EMAIL_USED,
+  CHECK_EMAIL_USED_SUCCESS,
+  CHECK_EMAIL_USED_ERROR,
+  CHECK_PENNAME_USED,
+  CHECK_PENNAME_USED_ERROR,
+  CHECK_PENNAME_USED_SUCCESS,
+  UserInfo
  } from ".";
+import { ApiErrorType } from "../../../../utils/api-utils";
 
-const signUpUser = ( requiredUserInfo: RequiredUserInfo ) => {
+function checkEmailUsed(email: string) {
+  return {
+    type: CHECK_EMAIL_USED,
+    payload: email
+  }
+} 
+
+function checkEmailUsedSuccess(used: string) {
+  return {
+    type: CHECK_EMAIL_USED_SUCCESS,
+    payload: used
+  }
+}
+
+function checkEmailUsedError(error: ApiErrorType) {
+  return {
+    type: CHECK_EMAIL_USED_ERROR,
+    payload: error
+  }
+}
+
+function checkPenNameUsed(penName: string) {
+  return {
+    type: CHECK_PENNAME_USED,
+    payload: penName
+  }
+} 
+
+function checkPenNameUsedSuccess(used: string) {
+  return {
+    type: CHECK_PENNAME_USED_SUCCESS,
+    payload: used
+  }
+}
+
+function checkPenNameUsedError(error: ApiErrorType) {
+  return {
+    type: CHECK_PENNAME_USED_ERROR,
+    payload: error
+  }
+}
+
+function signUpUser(requiredUserInfo: RequiredUserInfo) {
   return {
     type: SIGNUPUSER,
     payload: requiredUserInfo
   }
 }
 
-const signUpUserSuccess = () => {
+function signUpUserSuccess(success: string) {
   return {
-    type: SIGNUPUSER_SUCCESS
+    type: SIGNUPUSER_SUCCESS,
+    payload: success
   }
 }
 
-const signUpUserError = (error: any) => {
+function signUpUserError(error: ApiErrorType) {
   return {
     type: SIGNUPUSER_ERROR,
-    payload: {
-      error
-    }
+    payload: error
   }
 }
 
-const signInUser = ( userAuthInfo: UserAuthInfo ) => {
+function signInUser(userAuthInfo: UserAuthInfo) {
   return {
     type: SIGNINUSER,
     payload: userAuthInfo
   }
 }
 
-const signInUserSuccess = (payload: User) => {
+function signInUserSuccess(payload: UserInfo) {
   return {
     type: SIGNINUSER_SUCCESS,
     payload
   }
 };
 
-const signInUserError = (payload: User) => {
+function signInUserError(payload: ApiErrorType) {
   return {
     type: SIGNINUSER_ERROR,
     payload
   }
 }
   
-const signOutUser = () => {
+function signOutUser() {
   return {
     type: SIGNOUTUSER
   }
 }
 
-const signOutUserSuccess = () => {
+function signOutUserSuccess() {
   return {
     type: SIGNOUTUSER_SUCCESS
   }
 }
 
-const signOutUserError = () => {
+function signOutUserError(error: ApiErrorType) {
   return {
-    type: SIGNOUTUSER_ERROR
+    type: SIGNOUTUSER_ERROR,
+    payload: error
   }
 };
 
-const reSignInUser = () => {
+function reSignInUser() {
   return {
     type: RESIGNINUSER
   }
 }
 
-const reSignInUserSuccess = (payload: User) => {
+function reSignInUserSuccess(payload: UserInfo) {
   return {
     type: RESIGNINUSER_SUCCESS,
     payload
   }
 };
 
-const reSignInUserError = (payload: User) => {
+function reSignInUserError(payload: ApiErrorType) {
   return {
     type: RESIGNINUSER_ERROR,
     payload
   }
 };
 
-const reissueToken = () => {
+function reissueToken() {
   return {
     type: REISSUETOKEN
   }
 }
 
-const reissueTokenError = (payload: User) => {
+function reissueTokenError(payload: ApiErrorType) {
   return {
     type: REISSUETOKEN_ERROR,
     payload
   }
 }
 
-const resetAuth = () => {
+function resetAuth() {
   return {
     type: RESET_AUTH
   }
 }
 
-const actions = {
+export default {
+  checkEmailUsed,
+  checkEmailUsedSuccess,
+  checkEmailUsedError,
+  checkPenNameUsed,
+  checkPenNameUsedSuccess,
+  checkPenNameUsedError,
   signUpUser,
   signUpUserSuccess,
   signUpUserError,
@@ -136,5 +192,3 @@ const actions = {
   reissueTokenError,
   resetAuth
 }
-
-export default actions;

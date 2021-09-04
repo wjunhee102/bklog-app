@@ -4,19 +4,25 @@ import {
   authFetchPost, 
   SIGNINUSER, 
   SIGNOUTUSER, 
-  UserAuthInfo, 
-  User,
+  UserAuthInfo,
   RequiredUserInfo,
-  ResSignUpUser,
   SIGNUPUSER,
   RESIGNINUSER,
   REISSUETOKEN,
   SIGNINUSER_ERROR,
-  RESET_AUTH
+  CHECK_EMAIL_USED,
+  CHECK_PENNAME_USED
 } from './utils/index';
 import { ALL_RESET, createPromiseSaga } from '../../utils';
 import { ApiError } from '../../../utils/api-utils';
 
+function checkEmailUsed(email: string) {
+  return authFetchGet("check-email", { email });
+}
+
+function checkPenNameUsed(penName: string) {
+  return authFetchGet("check-penname", { penName });
+}
 
 function signInUser(userAuthInfo: UserAuthInfo) {
   return authFetchPost("sign-in", userAuthInfo);
@@ -56,10 +62,7 @@ function* reissueTokenSaga({ payload }: any) {
     if(error.type !== "System") {
       yield put({ type: ALL_RESET });
     } else {
-      yield put({ type: SIGNINUSER_ERROR, payload: {
-        userInfo: null,
-        error: error
-      }});
+      yield put({ type: SIGNINUSER_ERROR, payload: new ApiError(error).get });
   
       if(payload) {
         yield put({ type: `${payload.type}_ERROR`, error: new ApiError(error).get });
@@ -71,12 +74,16 @@ function* reissueTokenSaga({ payload }: any) {
 
 const AUTH_ERROR = "auth/AUTH_ERROR" as const;
 
-const signInUserSaga = createPromiseSaga(SIGNINUSER, signInUser, AUTH_ERROR);
-const signOutUserSaga = createPromiseSaga(SIGNOUTUSER, signOutUser, AUTH_ERROR);
-const signUpUserSaga = createPromiseSaga(SIGNUPUSER, signUpUser, AUTH_ERROR);
-const reSignInUserSaga = createPromiseSaga(RESIGNINUSER, reSignInUser, AUTH_ERROR);
+const checkEmailUsedSaga   = createPromiseSaga(CHECK_EMAIL_USED, checkEmailUsed);
+const checkPenNameUsedSaga = createPromiseSaga(CHECK_PENNAME_USED, checkPenNameUsed);
+const signInUserSaga       = createPromiseSaga(SIGNINUSER, signInUser, AUTH_ERROR);
+const signOutUserSaga      = createPromiseSaga(SIGNOUTUSER, signOutUser, AUTH_ERROR);
+const signUpUserSaga       = createPromiseSaga(SIGNUPUSER, signUpUser, AUTH_ERROR);
+const reSignInUserSaga     = createPromiseSaga(RESIGNINUSER, reSignInUser, AUTH_ERROR);
 
 export default function* authSaga() {
+  yield takeEvery(CHECK_EMAIL_USED, checkEmailUsedSaga);
+  yield takeEvery(CHECK_PENNAME_USED, checkPenNameUsedSaga);
   yield takeEvery(SIGNINUSER, signInUserSaga);
   yield takeEvery(SIGNOUTUSER, signOutUserSaga);
   yield takeEvery(SIGNUPUSER, signUpUserSaga);
