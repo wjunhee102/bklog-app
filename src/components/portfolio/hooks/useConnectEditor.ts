@@ -6,7 +6,7 @@ import { RawBlockData } from "../../block/types";
 const initialBlockList: RawBlockData[] = [
   {
     position: "1",
-    id: "d5cc2725-92ec-494b-bc80-c16f96379e61",
+    id: "d5cc272592ec494bbc80c16f96379e61",
     type: "text",
     styleType: "bk-p",
     styles: {
@@ -19,7 +19,7 @@ const initialBlockList: RawBlockData[] = [
   },
   {
     position: "2",
-    id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+    id: "d5cc272597ec494bbc80c16f96379e61",
     type: "text",
     styleType: "bk-p",
     styles: {
