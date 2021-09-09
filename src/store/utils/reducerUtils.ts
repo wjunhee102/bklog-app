@@ -48,23 +48,9 @@ function handleAsyncActions (type: any, key: any, keepData: boolean = false) {
   };
 }
 
-function updateObject<T = any, P = any>(oldObject: T, newValues: P): T {
-  return Object.assign({}, oldObject, newValues);
+function updateObject<T = any, P = any>(oldObject: T, ...newValues: P[]): T {
+  return Object.assign({}, oldObject, ...newValues);
 };
-
-// function createReducer<P extends string, State, T extends ActionsCreators<P>>(
-//   handlers: ActionHandlers<P, T, State>,
-//   initialState: State
-// ) {
-//   return (state: State = initialState, action: ActionsUnion<P, T>): State => {
-
-//       if (handlers.hasOwnProperty(action.type)) {
-//         return handlers[action.type](state, action);
-//       }
-
-//       return state;
-//   }
-// }
 
 type TypeConstant = string;
 
@@ -80,7 +66,6 @@ function createAction<T = any, TType extends TypeConstant = TypeConstant>(type: 
     };
   }
 }
-
 
 function createReducer<State, T extends Action>(
   initialState: State,
