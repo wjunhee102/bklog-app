@@ -1,28 +1,30 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { ApiErrorType } from "../../../utils/api-utils";
 import { Dialog, Transition } from "@headlessui/react"
 import { ExclamationIcon } from "@heroicons/react/outline"
 
 interface ErrorPopupProps {
-  error: ApiErrorType
+  error: ApiErrorType | null;
+  callback?: Function;
 }
 
-const ErrorPopup2: React.FC<ErrorPopupProps> = ({error}) => {
-  const { message } = error;
+const ErrorPopup: React.FC<ErrorPopupProps> = ({ error, callback }) => {
+  const [open, setOpen] = useState(true);
 
-  return (
-    <div className="error-popup">
-      <div className="message-box">
-        <p>{ message }</p>
-      </div>
-    </div>
-  )
-} 
+  const cancelButtonRef = useRef(null);
 
-const ErrorPopup: React.FC<ErrorPopupProps> = ({ error }) => {
-  const [open, setOpen] = useState(true)
+  const handleClick = () => {
+    setOpen(true);
+    if(callback) callback();
+  }
 
-  const cancelButtonRef = useRef(null)
+  useEffect(() => {
+    if(error) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [error]);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -81,18 +83,18 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({ error }) => {
                 <button
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => setOpen(false)}
+                  onClick={handleClick}
                 >
-                  Deactivate
+                  확인
                 </button>
-                <button
+                {/* <button
                   type="button"
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => setOpen(false)}
                   ref={cancelButtonRef}
                 >
                   Cancel
-                </button>
+                </button> */}
               </div>
             </div>
           </Transition.Child>
