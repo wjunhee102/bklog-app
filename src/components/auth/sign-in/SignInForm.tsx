@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import useAuth from '../../../hooks/useAuth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import InputComponent from '../InputComponent';
 import useChange from '../../../hooks/useChange';
+import { regEmail, regPassword } from '../utils';
 
 interface InputPropsType {
   value: string;
-  onChange: (e: any) => void;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
   id: string;
   name: string;
   type: string;
@@ -19,24 +20,20 @@ interface InputPropsType {
   style: string;
 }
 
-
-// 전송 전에 validation 체크
-function SignInForm() {
+const SignInForm: React.FC = () => {
 
   const {
-    authState,
+    authState: { error },
     onSignInUser
   } = useAuth();
 
-  const [error, setError] = useState<boolean>(false);
-
-  const [ email, handleInputEmail, errorEmail, handleErrorEmail ] = useChange<string>("");
-  const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange<string>("");
+  const [ email, handleInputEmail, errorEmail, handleErrorEmail ] = useChange("test@test.com");
+  const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange("password12!");
 
   const inputProps: InputPropsType[] = [
     {
       value: email,
-      onChange: handleInputEmail,
+      onChange: handleInputEmail(),
       id: "email-address",
       name: "email",
       type: "email",
@@ -48,7 +45,7 @@ function SignInForm() {
     },
     {
       value: password,
-      onChange: handleInputPwd,
+      onChange: handleInputPwd(),
       id: "password",
       name: "password",
       type: "password",
@@ -62,19 +59,33 @@ function SignInForm() {
 
   const handleClickSubmit = (e: any) => {
     e.preventDefault();
-    if(email && password) {
-      onSignInUser({email, password});
-    } else {
-      handleErrorEmail(email? false : true);
-      handleErrorPwd(password? false : true);
-    }
+
+    if(!errorEmail && !errorPwd) {
+      if(email && password) {
+        onSignInUser({email, password});
+      } else {
+        handleErrorEmail(email? false : true);
+        handleErrorPwd(password? false : true);
+      }
+    } 
+    
   }
 
-  // useEffect(() => {
-  //   if(signInUser) {
-  //     setError(true);
-  //   }
-  // },[signInUser]);
+  useEffect(() => {
+    if(email) {
+      if(!regEmail.test(email)) {
+        handleErrorEmail(true);
+      }
+    }
+  }, [email]);
+
+  useEffect(() => {
+    if(password) {
+      if(!regPassword.test(password)) {
+        handleErrorPwd(true);
+      }
+    }
+  }, [password]);
 
   return (
     <form className="mt-12" onSubmit={handleClickSubmit} action="#">

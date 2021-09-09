@@ -3,7 +3,7 @@ import React from 'react';
 interface InputComponentProps {
   boxClass?: string;
   labelClass?: string;
-  onChange: any;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
   value: string | number; 
   placeholder: string;
   label: string;
@@ -16,7 +16,7 @@ interface InputComponentProps {
   onBlur?: any;
 }
 
-function InputComponent({
+const InputComponent: React.FC<InputComponentProps> = ({
   boxClass,
   labelClass,
   onChange,
@@ -30,7 +30,7 @@ function InputComponent({
   autoComplete,
   children,
   onBlur
-}: InputComponentProps) {
+}) => {
   return (
     <div className={boxClass}>
       <label 
