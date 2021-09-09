@@ -13,6 +13,8 @@ import {
   CHECK_PENNAME_USED_SUCCESS, 
   reissueTokenError, 
   REISSUETOKEN_ERROR, 
+  resetError, 
+  RESET_ERROR, 
   RESIGNINUSER, 
   reSignInUser, 
   reSignInUserSuccess, 
@@ -86,7 +88,8 @@ function signUpUserHandler(
   return updateObject<AuthState, AuthStateProps>(state, {
     loading: true,
     error: null,
-    signUpSuccess: null
+    signUpSuccess: null,
+    waitingCount: 0
   })
 }
 
@@ -115,7 +118,8 @@ function signInUserHandler(
   return updateObject<AuthState, AuthStateProps>(state, {
     loading: true,
     user: null,
-    error: null
+    error: null,
+    waitingCount: 0
   })
 }
 
@@ -125,7 +129,8 @@ function signInUserSuccessHandler(
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, {
     loading: false,
-    user: payload
+    user: payload,
+    waitingCount: 0
   });
 }
 
@@ -146,7 +151,8 @@ function reSignInUserHandler(
   return updateObject<AuthState, AuthStateProps>(state, {
     loading: true,
     user: null,
-    error: null
+    error: null,
+    waitingCount: 0
   })
 }
 
@@ -193,6 +199,7 @@ function signOutUserErrorHandler(
   { payload }: ReturnType<typeof signOutUserError>
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, initialState, {
+    loading: false,
     error: payload
   });
 }
@@ -202,7 +209,19 @@ function reissueTokenErrorHandler(
   { payload }: ReturnType<typeof reissueTokenError>
 ) {
   return updateObject<AuthState, AuthStateProps>(state, initialState, {
+    loading: true,
+    waitingCount: ++state.waitingCount,
     error: payload
+  });
+}
+
+function resetErrorHandler(
+  state: AuthState,
+  action: ReturnType<typeof resetError>
+) {
+  return updateObject<AuthState, AuthStateProps>(state, {
+    error: null,
+    waitingCount: 0
   });
 }
 
@@ -223,5 +242,6 @@ export default {
   [SIGNOUTUSER]                : signOutUserHandler,
   [SIGNOUTUSER_SUCCESS]        : signOutUserSuccessHandler,
   [SIGNOUTUSER_ERROR]          : signOutUserErrorHandler,
-  [REISSUETOKEN_ERROR]         : reissueTokenErrorHandler
+  [REISSUETOKEN_ERROR]         : reissueTokenErrorHandler,
+  [RESET_ERROR]                : resetErrorHandler
 }

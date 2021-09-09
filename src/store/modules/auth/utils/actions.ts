@@ -23,7 +23,8 @@ import {
   CHECK_PENNAME_USED,
   CHECK_PENNAME_USED_ERROR,
   CHECK_PENNAME_USED_SUCCESS,
-  UserInfo
+  UserInfo,
+  RESET_ERROR
  } from ".";
 import { ApiErrorType } from "../../../../utils/api-utils";
 
@@ -163,6 +164,12 @@ function reissueTokenError(payload: ApiErrorType) {
   }
 }
 
+function resetError() {
+  return {
+    type: RESET_ERROR
+  }
+}
+
 function resetAuth() {
   return {
     type: RESET_AUTH
@@ -190,5 +197,6 @@ export default {
   reSignInUserSuccess,
   reissueToken,
   reissueTokenError,
-  resetAuth
+  resetError,
+  resetAuth  
 }

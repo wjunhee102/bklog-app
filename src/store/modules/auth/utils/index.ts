@@ -86,6 +86,7 @@ export interface AuthState {
   signUpSuccess: boolean | null;
   signUpState: SignUpState; 
   error: ApiErrorType | null;
+  waitingCount: number;
 }
 
 export interface AuthStateProps {
@@ -94,6 +95,7 @@ export interface AuthStateProps {
   signUpSuccess?: boolean | null;
   signUpState?: SignUpState;
   error?: ApiErrorType;
+  waitingCount?: number;
 }
 
 /**
@@ -126,6 +128,8 @@ export const RESIGNINUSER_ERROR   = "auth/RESIGN_IN_USER_ERROR" as const;
 export const REISSUETOKEN       = "REISSUETOKEN" as const;
 export const REISSUETOKEN_ERROR = "REISSUETOKEN_ERROR" as const;
 
+export const RESET_ERROR = "auth/RESET_ERROR" as const;
+
 export const RESET_AUTH = "auth/RESET_AUTH" as const;
 
 export const ERROR_AUTH = 'auth/RESET_AUTH' as const;
@@ -150,6 +154,7 @@ export const reSignInUserSuccess     = actions.reSignInUserSuccess;
 export const reSignInUserError       = actions.reSignInUserError;
 export const reissueToken            = actions.reissueToken;
 export const reissueTokenError       = actions.reissueTokenError;
+export const resetError              = actions.resetError;
 export const resetAuth               = actions.resetAuth;
 
 export type AuthActions = 

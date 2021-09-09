@@ -10,7 +10,8 @@ import {
   RequiredUserInfo,
   signUpUser,
   checkEmailUsed,
-  checkPenNameUsed
+  checkPenNameUsed,
+  resetError
 } from '../store/modules/auth/utils';
 import { RootState } from '../store/modules';
 import authApiUtils from '../store/modules/auth/utils/apiUtils';
@@ -48,6 +49,10 @@ function useAuth() {
     dispatch(reissueToken())
   },[dispatch]);
 
+  const onResetError = useCallback(() => {
+    dispatch(resetError());
+  }, [dispatch]);
+
   const onCheckToken = async () => {
     const response = await authApiUtils.authFetchGet('check-token');
 
@@ -77,7 +82,8 @@ function useAuth() {
     onReSignInUser,
     onSignOutUser,
     onReissueToken,
-    onCheckToken
+    onCheckToken,
+    onResetError
   }
 }
 

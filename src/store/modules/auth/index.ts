@@ -10,7 +10,8 @@ export const initialState: AuthState = {
     penNameUsed: false,
     emailUsed: true
   },
-  signUpSuccess: null
+  signUpSuccess: null,
+  waitingCount: 0
 }
 
 const auth = createReducer(initialState, handlers);

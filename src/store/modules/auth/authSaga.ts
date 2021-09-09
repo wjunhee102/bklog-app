@@ -9,9 +9,9 @@ import {
   SIGNUPUSER,
   RESIGNINUSER,
   REISSUETOKEN,
-  SIGNINUSER_ERROR,
   CHECK_EMAIL_USED,
-  CHECK_PENNAME_USED
+  CHECK_PENNAME_USED,
+  RESIGNINUSER_ERROR
 } from './utils/index';
 import { ALL_RESET, createPromiseSaga } from '../../utils';
 import { ApiError } from '../../../utils/api-utils';
@@ -21,7 +21,7 @@ function checkEmailUsed(email: string) {
 }
 
 function checkPenNameUsed(penName: string) {
-  return authFetchGet("check-penname", { penName });
+  return authFetchGet("check-penname", { penname: penName });
 }
 
 function signInUser(userAuthInfo: UserAuthInfo) {
@@ -62,7 +62,7 @@ function* reissueTokenSaga({ payload }: any) {
     if(error.type !== "System") {
       yield put({ type: ALL_RESET });
     } else {
-      yield put({ type: SIGNINUSER_ERROR, payload: new ApiError(error).get });
+      yield put({ type: RESIGNINUSER_ERROR, payload: new ApiError(error).get });
   
       if(payload) {
         yield put({ type: `${payload.type}_ERROR`, error: new ApiError(error).get });
@@ -72,14 +72,12 @@ function* reissueTokenSaga({ payload }: any) {
   }
 }
 
-const AUTH_ERROR = "auth/AUTH_ERROR" as const;
-
 const checkEmailUsedSaga   = createPromiseSaga(CHECK_EMAIL_USED, checkEmailUsed);
 const checkPenNameUsedSaga = createPromiseSaga(CHECK_PENNAME_USED, checkPenNameUsed);
-const signInUserSaga       = createPromiseSaga(SIGNINUSER, signInUser, AUTH_ERROR);
-const signOutUserSaga      = createPromiseSaga(SIGNOUTUSER, signOutUser, AUTH_ERROR);
-const signUpUserSaga       = createPromiseSaga(SIGNUPUSER, signUpUser, AUTH_ERROR);
-const reSignInUserSaga     = createPromiseSaga(RESIGNINUSER, reSignInUser, AUTH_ERROR);
+const signInUserSaga       = createPromiseSaga(SIGNINUSER, signInUser);
+const signOutUserSaga      = createPromiseSaga(SIGNOUTUSER, signOutUser);
+const signUpUserSaga       = createPromiseSaga(SIGNUPUSER, signUpUser);
+const reSignInUserSaga     = createPromiseSaga(RESIGNINUSER, reSignInUser);
 
 export default function* authSaga() {
   yield takeEvery(CHECK_EMAIL_USED, checkEmailUsedSaga);
