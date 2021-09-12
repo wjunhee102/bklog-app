@@ -38,6 +38,10 @@ const GlobalNav: React.FC = () => {
     onSignOutUser();
   }
 
+  useEffect(() => {
+    console.log(user, loading, "gnb");
+  }, [user, loading]);
+
   return (
     <nav className="bg-white dark:bg-black absolute left-0 top-0 z-10 shadow w-full">
       <div className="w-full pr-4 pl-1">
