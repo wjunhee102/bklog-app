@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import useAuth from '../../../hooks/useAuth';
+import useAuth from '../../../../hooks/useAuth';
 
 import EditorBlock from './EditorBlock';
 
 import './profile.scss';
-import usePage from '../../../hooks/usePage';
+import usePage from '../../../../hooks/usePage';
 
 function Profile() {
 
