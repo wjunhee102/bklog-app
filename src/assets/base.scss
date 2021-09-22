@@ -1,18 +1,31 @@
-.error-popup {
-  display: flex;
+// .error-popup {
+//   display: flex;
+//   position: absolute;
+//   left: 0;
+//   top: 0;
+//   width: 100vw;
+//   height: 100vh;
+//   z-index: 20;
+//   background-color: rgba(0, 0, 0, 0.255);
+//   justify-items: center;
+
+//   .message-box {
+//     background-color: #fff;
+//     width: 200px;
+//     height: 150px;
+//     text-align: center;
+//   }
+// }
+
+.loading-window {
   position: absolute;
+  background-color: #fff;
   left: 0;
   top: 0;
+  z-index: 15;
   width: 100vw;
   height: 100vh;
-  z-index: 20;
-  background-color: rgba(0, 0, 0, 0.255);
-  justify-items: center;
-
-  .message-box {
-    background-color: #fff;
-    width: 200px;
-    height: 150px;
-    text-align: center;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
