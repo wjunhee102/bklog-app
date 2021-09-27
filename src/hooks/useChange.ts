@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-type UseChangeType<T> = [T, (e: any)=> void, boolean, (P: boolean)=> void];
+export type UseChangeType = [string, (callback?: any) => (e: React.ChangeEvent<HTMLInputElement>) => void, boolean, (P: boolean)=> void];
 
-function useChange<T = string>(defaultValue: T): UseChangeType<T> {
-  const [ value, setValue ] = useState<T>(defaultValue);
+function useChange(defaultValue: string): UseChangeType {
+  const [ value, setValue ] = useState<string>(defaultValue);
   const [ error, setError ] = useState<boolean>(false);
 
-  const handleValue = (e:any) => {
+  const handleValue = (callback?: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if(error) {
       setError(false);
     }
+    
     setValue(e.target.value);
+    if(callback) callback(e.target.value);
   }
 
   const handleError = (data: boolean) => {

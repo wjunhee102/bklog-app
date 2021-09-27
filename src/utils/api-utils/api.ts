@@ -92,13 +92,13 @@ export class Api {
     });
   }
 
-  call (ajaxInfo: AxiosRequestConfig): Promise<any> {
+  call (ajaxInfo: AxiosRequestConfig): Promise<AxiosResponse | ApiErrorType> {
     return new Promise((resolve, reject) => {
       this._ajax(ajaxInfo)
-      .then((result: any) => {
+      .then((result: AxiosResponse) => {
         resolve(result);
       })
-      .catch((error: ApiError) => {
+      .catch((error: ApiErrorType) => {
         reject(error);
       });
     });
@@ -124,15 +124,7 @@ export class Rest extends Api {
   }
 
   restApi (restObject: IRestObject): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.call(this._restConvert(restObject))
-      .then((result: AxiosResponse) => {
-        resolve(result);
-      })
-      .catch((error: any) => {
-        reject(error);
-      })
-    })
+    return this.call(this._restConvert(restObject));
   }
 }
 

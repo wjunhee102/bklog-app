@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { changePageTitle, changeToggle, createPage, getPageList, GetPageListQuery, GetPageListReqType, getUserProfile } from '../store/modules/page/utils';
 import { PageState } from '../store/modules/page/utils';
 import { RootState } from '../store/modules';
@@ -8,9 +8,9 @@ import { UserProfile } from '../store/modules/auth/utils';
 function usePage() {
   const state: PageState = useSelector((state: RootState) => state.page);
 
-  const pageEditor: UserProfile = state.pageEditor;
+  const pageEditor: UserProfile = useMemo(() => state.pageEditor, [state]);
 
-  const pageToggle: boolean = state.toggle;
+  const pageToggle: boolean = useMemo(() => state.toggle, [state]);
 
   const dispatch = useDispatch();
 

@@ -7,7 +7,7 @@ import usePage from '../../hooks/usePage';
 import useAuth from '../../hooks/useAuth';
 import CreatePageButton from './component/CreatePageButton';
 
-function Sidebar() {
+const Sidebar: React.FC = () => {
 
   const {
     authState

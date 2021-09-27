@@ -11,9 +11,11 @@ import useSocket from "./useSocket";
 function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStoreHook {
   const socket = useSocket(SOCKET_URL);
 
-  const [ newVersion, setVersion ]    = useState<string | null>(null);
-  const [ updated, setUpdated ]       = useState<boolean>(false);
-  const [ updatingId, setUpdatingId ] = useState<string | null>(null);
+  const [ newVersion, setVersion ]          = useState<string | null>(null);
+  const [ updated, setUpdated ]             = useState<boolean>(false);
+  const [ updatingId, setUpdatingId ]       = useState<string | null>(null);
+  const [ updatedTimer, setUpdatedTimer ]   = useState<boolean>(false);
+  const [ updatingTimer, setUpdatingTimer ] = useState<boolean>(false);
 
   const {
     bklogState, 
@@ -157,9 +159,12 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [editingBlockId]);
 
   useEffect(() => {
-    if(updated) {
+    if(updated && !updatedTimer) {
+      setUpdatedTimer(true);
+
       const timer = setTimeout(() => {
         setUpdated(false);
+        setUpdatedTimer(false)
       }, 1500);
 
       return () => clearTimeout(timer);
@@ -167,8 +172,11 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [updated]);
 
   useEffect(() => {
-    if(updatingId) {
+    if(updatingId && !updatingTimer) {
+      setUpdatingTimer(true);
+
       const timer = setTimeout(() => {
+        setUpdatingTimer(false);
         setUpdatingId(null);
       }, 3000);
 

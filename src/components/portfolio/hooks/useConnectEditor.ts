@@ -27,8 +27,20 @@ const initialBlockList: RawBlockData[] = [
       backgroudColor: "white"
     },
     contents: [
-      ["Bklog 데모입니다.", [["b"]]],
-      ["문서", [["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
+      ["Bklog 데모입니다.", [["b"]]]
+    ]
+  },
+  {
+    position: "3",
+    id: "d5cc272597ec494bbc80c16f96379e61",
+    type: "text",
+    styleType: "bk-h4",
+    styles: {
+      color: "black",
+      backgroudColor: "white"
+    },
+    contents: [
+      ["문서", [["b"], ["fc", "rgb(73, 203, 255)"], ["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
     ]
   }
 ]

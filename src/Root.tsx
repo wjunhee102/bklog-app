@@ -3,7 +3,7 @@ import App   from './App';
 import { Provider } from 'react-redux';
 import configureStore from './store';
 
-function Root() {
+const Root: React.FC = () => {
   return (
     <Provider store={configureStore}>
       <App />
