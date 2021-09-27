@@ -27,7 +27,8 @@ const initialBlockList: RawBlockData[] = [
       backgroudColor: "white"
     },
     contents: [
-      ["Bklog 데모입니다.", [["b"]]]
+      ["Bklog 데모입니다.", [["b"]]],
+      ["문서", [["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
     ]
   }
 ]
