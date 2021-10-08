@@ -5,9 +5,9 @@ import { RootState } from '../store/modules';
 import { useSelector, useDispatch } from 'react-redux';
 import { UserProfile } from '../store/modules/auth/utils';
 
-function usePage() {
-  const state: PageState = useSelector((state: RootState) => state.page);
+export const useConnectPageStore = (): PageState => useSelector((state: RootState) => state.page);
 
+function usePageActions(state: PageState) {
   const pageEditor: UserProfile = useMemo(() => state.pageEditor, [state]);
 
   const pageToggle: boolean = useMemo(() => state.toggle, [state]);
@@ -46,4 +46,4 @@ function usePage() {
   }
 }
 
-export default usePage;
+export default () => usePageActions(useConnectPageStore());

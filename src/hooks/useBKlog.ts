@@ -5,9 +5,9 @@ import { RootState } from '../store/modules';
 import { addPushModifyData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdatedState, ClearBklogStateType, clearBklogState, releaseUpdating, changeUpdatingState } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
-function useBklog() {
-  
-  const bklogState: BklogState = useSelector((state: RootState) => state.bklog);
+export const useConnectBklogStore = (): BklogState => useSelector((state: RootState) => state.bklog);
+
+function useBklogActions(bklogState: BklogState) {
   
   const dispatch = useDispatch();
 
@@ -74,4 +74,4 @@ function useBklog() {
   };
 }
 
-export default useBklog;
+export default () => useBklogActions(useConnectBklogStore());

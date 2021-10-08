@@ -16,9 +16,10 @@ import {
 import { RootState } from '../store/modules';
 import authApiUtils from '../store/modules/auth/utils/apiUtils';
 
-function useAuth() {
-  const state: AuthState = useSelector((state: RootState) => state.auth);
+export const useConnectAuthStore = (): AuthState => useSelector((state: RootState) => state.auth);
 
+function useAuthActions(state: AuthState) {
+  
   const dispatch = useDispatch();
 
   const onCheckEmailUsed = useCallback((email: string) => {
@@ -87,4 +88,4 @@ function useAuth() {
   }
 }
 
-export default useAuth;
+export default () => useAuthActions(useConnectAuthStore());

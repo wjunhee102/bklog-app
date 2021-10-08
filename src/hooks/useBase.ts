@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/modules";
 import { useCallback } from "react";
 
-function useBase() {
-  const state: BaseState = useSelector((state: RootState) => state.base);
+export const useConnectBaseStore = (): BaseState => useSelector((state: RootState) => state.base);
 
+function useBaseActions(state: BaseState) {
   const dispatch = useDispatch();
 
   const onChangeMode = useCallback(()=> dispatch(changeDarkMode()), [dispatch]);;
@@ -16,4 +16,4 @@ function useBase() {
   }
 }
 
-export default useBase;
+export default () => useBaseActions(useConnectBaseStore());
