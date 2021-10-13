@@ -1,0 +1,36 @@
+.block-scroll-menu {
+  @apply h-auto rounded shadow-md bg-opacity-50 bg-white absolute overflow-auto;
+  max-height: 50vh;
+  width: 180px;
+
+  .title {
+    @apply uppercase text-gray-600 font-medium px-4 text-left mt-2 mb-2.5;
+    font-size: 11px;
+  }
+
+  .action-btn {
+    width: 180px;
+
+    @apply h-8 px-4 text-left flex items-center;
+
+    &:hover {
+      @apply bg-opacity-50 bg-gray-300;
+    }
+
+    .action-btn-icon-box {
+      width: 22px;
+      height: 22px;
+      @apply rounded overflow-hidden border border-gray-300;
+    }
+
+    .action-btn-text {
+      @apply ml-2;
+    }
+  }
+}
+
+.test {
+  @apply bg-red-400 p-12;
+  width: 500px;
+  height: 600px;
+}
