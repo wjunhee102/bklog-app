@@ -19,7 +19,7 @@ const initialBlockList: RawBlockData[] = [
   },
   {
     position: "2",
-    id: "d5cc272597ec494bbc80c16f96379e61",
+    id: "d5cc272597ec494bbc80c16f96379e62",
     type: "text",
     styleType: "bk-p",
     styles: {
@@ -32,7 +32,7 @@ const initialBlockList: RawBlockData[] = [
   },
   {
     position: "3",
-    id: "d5cc272597ec494bbc80c16f96379e61",
+    id: "d5cc272597ec494bbc80c16f96379a61",
     type: "text",
     styleType: "bk-h4",
     styles: {
