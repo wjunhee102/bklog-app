@@ -12,6 +12,11 @@
   }
 }
 
+.blur-bg {
+  @apply bg-opacity-70 bg-white;
+  backdrop-filter: saturate(180%) blur(10px);
+}
+
 .block-editor {
   .drag-elements {
     position: absolute;
@@ -233,20 +238,29 @@
         &.bk-h1 {
           font: {
             size: 2em;
-            weight: 600;
+            weight: 500;
           }
         }
         
         &.bk-h2 {
-          font-size: 1.75em;
+          font: {
+            size: 1.75em;
+            weight: 500;
+          } 
         }
         
         &.bk-h3 {
-          font-size: 1.5em;
+          font: {
+            size: 1.5em;
+            weight: 500;
+          } 
         }
         
         &.bk-h4 {
-          font-size: 1.25em;
+          font: {
+            size: 1.25em;
+            weight: 500;
+          } 
         }
         
         &.bk-p {

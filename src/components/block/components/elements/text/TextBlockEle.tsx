@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import useTextBlock from '../../../hooks/useTextBlock';
 import { BlockProps } from '../../Block';
+import TextBlockActionMenuBar from './base/action-menubar';
 import ContentEditableEle from './base/ContentEditableEle';
-import TextStyleToggle from './base/TextStyleToggle';
 
 interface TextBlockEleProps extends BlockProps {
   selected: boolean;
@@ -43,25 +43,23 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
       className="text-block"
       onBlur={handleBlur}
     > 
-      { 
-        <ContentEditableEle
-          className={blockData.styleType}
-          editable={editable}
-          dangerouslySetInnerHTML={createMarkup}
-          ref={blockContentsRef}
-          onKeyUp={handleKeyUp}
-          onKeyPress={handleKeyPress}
-          onKeyDown={handleKeyDown}
-          onClick={handleClick}
-          onMouseDown={isFocus}
-          onMouseUp={handleMouseUp}
-          onFocus={isFocus}
-          placeholder="입력해주세요..."
-        />
-      }
+      <ContentEditableEle
+        className={blockData.styleType}
+        editable={editable}
+        dangerouslySetInnerHTML={createMarkup}
+        ref={blockContentsRef}
+        onKeyUp={handleKeyUp}
+        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyDown}
+        onClick={handleClick}
+        onMouseDown={isFocus}
+        onMouseUp={handleMouseUp}
+        onFocus={isFocus}
+        placeholder="입력해주세요..."
+      />
       {
-        styleToggle? 
-        <TextStyleToggle
+        styleToggle?
+        <TextBlockActionMenuBar 
           blockIndex={blockData.index}
           styleType={blockData.styleType}
           contents={blockData.contents}

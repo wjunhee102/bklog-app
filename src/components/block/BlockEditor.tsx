@@ -5,7 +5,7 @@ import useBlock, { UseBlockType } from './hooks/useBlock';
 import { ReturnConnectStoreHook } from '.';
 import { BlockData } from './types';
 import Block from './components/Block';
-import './assets/block.scss';
+import './assets/BlockEditor.scss';
 
 const valueNotConnectStoreHook: ReturnConnectStoreHook = {
   updated: false

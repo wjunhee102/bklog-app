@@ -3,8 +3,6 @@ import { UseBlockType } from "../hooks/useBlock";
 import { BlockData } from "../types";
 import TextBlock from "./elements/text";
 
-import '../assets/block.scss';
-
 export type ParentInfoType = {
   type: string;
   selected: boolean;

@@ -1,7 +1,7 @@
 .block-scroll-menu {
-  @apply h-auto rounded shadow-md bg-opacity-50 bg-white absolute overflow-auto;
+  @apply h-auto rounded shadow-md overflow-auto h-auto;
   max-height: 50vh;
-  width: 180px;
+  background-color: inherit;
 
   .title {
     @apply uppercase text-gray-600 font-medium px-4 text-left mt-2 mb-2.5;
@@ -9,28 +9,23 @@
   }
 
   .action-btn {
-    width: 180px;
-
     @apply h-8 px-4 text-left flex items-center;
+    width: 180px;
+    font-weight: inherit;
 
     &:hover {
       @apply bg-opacity-50 bg-gray-300;
     }
 
     .action-btn-icon-box {
+      @apply rounded overflow-hidden border border-gray-300;
       width: 22px;
       height: 22px;
-      @apply rounded overflow-hidden border border-gray-300;
     }
 
     .action-btn-text {
       @apply ml-2;
+      color: inherit;
     }
   }
-}
-
-.test {
-  @apply bg-red-400 p-12;
-  width: 500px;
-  height: 600px;
 }

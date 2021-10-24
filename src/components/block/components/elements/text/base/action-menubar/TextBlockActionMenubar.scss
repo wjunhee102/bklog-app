@@ -1,0 +1,59 @@
+.text-block-action-menubar{
+  @apply absolute bg-transparent z-20 bottom-full;
+
+  .action-menu-box {
+    @apply relative h-full px-2 border-r border-gray-300 font-medium text-gray-700; 
+
+    &:last-child {
+      @apply border-r-0;
+    }
+
+    .action-menu-toggle {
+      @apply font-medium;
+      height: 32px;
+      line-height: 32px;
+
+      .toggle-icon {
+        @apply ml-2 text-gray-400;
+      }
+
+      .color-toggle {
+        @apply font-semibold inline-block rounded box-border;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        margin: 4px 0px;
+      }
+    }
+    
+    .text-style-toggle {
+      @apply box-border;
+      width: 32px;
+      height: 32px;
+      padding: 4px;
+
+      .text-style-toggle-title {
+        @apply rounded block;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+      }
+    }
+
+    .menu-box {
+      @apply absolute -left-1/2 top-3/4 bg-white bg-opacity-100 h-auto w-auto z-30;
+    }
+  }
+    
+}
+
+.color-action-icon {
+    font-size: 16px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+  
+    @apply text-center font-semibold;
+}

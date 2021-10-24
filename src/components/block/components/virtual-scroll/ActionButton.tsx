@@ -1,14 +1,14 @@
 import React from 'react';
-import { ButtonProps } from './BlockScrollMenu';
+import { ButtonProps } from './BlockScrollMenuAriticles';
 
 interface ActionButtonProps extends ButtonProps {
-  handleClick: any;
+  handleClick: (value: string) => () => void;
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
   title,
   value,
-  img,
+  IconComponent,
   handleClick
 }) => {
   return (
@@ -17,9 +17,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     onClick={handleClick(value)}
   >
     {
-      img? 
+      IconComponent? 
       <div className="action-btn-icon-box">
-        <img src={img} alt=""/>
+        { IconComponent }
       </div>
       : null
     }

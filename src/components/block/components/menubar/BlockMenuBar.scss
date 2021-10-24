@@ -1,0 +1,10 @@
+.block-menu-bar-box {
+  @apply p-3 bottom-full bg-transparent;
+  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+
+  .block-menu-bar {
+    @apply rounded flex shadow-lg border border-gray-200 box-content;
+  }
+}
+
