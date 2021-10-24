@@ -13,7 +13,7 @@ const BACKGROUND_COLOR = "bc" as const;
 const ANCHOR = "a" as const;
 const FONT = "f" as const;
 
-const BK_BOLB = "bk-bold";
+const BK_BOLD = "bk-bold";
 const BK_ITALIC = "bk-italic";
 const BK_UNDER = "bk-underbar";
 const BK_COLOR = "color";
@@ -24,23 +24,19 @@ const FONT_STYLE = "font-style";
 const TEXT_DECORATION = "text-decoration";
 const BOLDER_BOTTOM = "border-bottom";
 
-function convertType(prop: string):any {
-  switch(prop) {
-    case BK_BOLB:
-      return BOLD;
-    case BK_ITALIC:
-      return ITALY;
-    case BK_UNDER:
-      return UNDERBAR;
-    case BK_COLOR:
-      return FONT_COLOR;
-    case BK_BACKGROUND_COLOR:
-      return BACKGROUND_COLOR;
-    case BOLDER_BOTTOM:
-      return UNDERBAR;
-    default:
-      return null;
-  }
+const convertTypeTable = {
+  [BK_BOLD]: BOLD,
+  [BK_ITALIC]: ITALY,
+  [BK_UNDER]: UNDERBAR,
+  [BK_COLOR]: FONT_COLOR,
+  [BK_BACKGROUND_COLOR]: BACKGROUND_COLOR,
+  [BOLDER_BOTTOM]: UNDERBAR
+}
+
+function convertType(prop: string): string | null {
+  return convertTypeTable.hasOwnProperty(prop)? 
+    convertTypeTable[prop] 
+    : null;
 }
 
 /**
@@ -56,6 +52,108 @@ function convertProperty(prop: string):any {
     default:
       return prop;
   }
+}
+
+const specialCharactersTable = {
+  "&quot;": `"`,
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&nbsp;": " ",
+  "&iexcl;": "¡",
+  "&cent;": "￠",
+  "&pound;": "￡",
+  "&curren;": "¤",
+  "&yen;": "￥",
+  "&brvbar;": "|",
+  "&sect;": "§",
+  "&uml;": "¨",
+  "&copy;": "ⓒ",
+  "&ordf;": "ª",
+  "&laquo;": "≪",
+  "&not;": "￢",
+  "&shy;": "-",
+  "&reg;": "?",
+  "&macr;": "¯",
+  "&deg;": "°",
+  "&plusmn;": "±",
+  "&sup1;": "¹",
+  "&sup2;": "²",
+  "&sup3;": "³",
+  "&acute;": "´",
+  "&micro;": "μ",
+  "&para;": "¶",
+  "&middot;": "·",
+  "&cedil;": "¸",
+  "&ordm;": "º",
+  "&raquo;": "≫",
+  "&frac14;": "¼",
+  "&frac12;": "½",
+  "&frac34;": "¾",
+  "&iquest;": "¿",
+  "&Agrave;": "A",
+  "&Aacute;": "A",
+  "&Acirc;": "A",
+  "&Atilde;": "A",
+  "&Auml;": "A",
+  "&AElig;": "Æ",
+  "&Ccedil;": "C",
+  "&Egrave;": "E",
+  "&Eacute;": "E",
+  "&Ecirc;": "E",
+  "&Euml;": "E",
+  "&Igrave;": "I",
+  "&Iacute;": "I",
+  "&Icirc;": "I",
+  "&Iuml;": "I",
+  "&ETH;": "Ð",
+  "&Ntilde;": "N",
+  "&Ograve;": "O",
+  "&Oacute;": "O",
+  "&Ocirc;": "O",
+  "&Otilde;": "O",
+  "&Ouml;": "O",
+  "&times;": "×",
+  "&Oslash;": "Ø",
+  "&Ugrave;": "U",
+  "&Uacute;": "U",
+  "&Ucirc;": "U",
+  "&Uuml;": "U",
+  "&Yacute;": "Y",
+  "&THORN;": "Þ",
+  "&szlig;": "ß",
+  "&agrave;": "a",
+  "&aacute;": "a",
+  "&acirc;": "a",
+  "&atilde;": "a",
+  "&auml;": "a",
+  "&aring;": "a",
+  "&aelig;": "æ",
+  "&ccedil;": "c",
+  "&egrave;": "e",
+  "&eacute;": "e",
+  "&ecirc;": "e",
+  "&euml;": "e",
+  "&igrave;": "i",
+  "&iacute;": "i",
+  "&icirc;": "i",
+  "&iuml;": "i",
+  "&eth;": "ð",
+  "&ntilde;": "n",
+  "&ograve;": "o",
+  "&oacute;": "o",
+  "&ocirc;": "o",
+  "&otilde;": "o",
+  "&ouml;": "o",
+  "&divide;": "÷",
+  "&oslash;": "ø",
+  "&ugrave;": "u",
+  "&uacute;": "u",
+  "&ucirc;": "u",
+  "&uuml;": "u",
+  "&yacute;": "y",
+  "&thorn;": "þ",
+  "&yuml;": "y"
 }
 
 /**
@@ -79,311 +177,17 @@ function specialCharacters(
     count++;
   }
 
-  if(text[count] === ";") {
-    switch(word) {
-      case "&quot;": 
-        convertedWord = `"`;
-        break;
-      case "&amp;":
-        convertedWord = "&";
-        break;
-      case "&lt;":
-        convertedWord = "<";
-        break;
-      case "&gt;":
-        convertedWord = ">";
-        break;
-      case "&nbsp;":
-        convertedWord = " ";
-        break;
-      case "&iexcl;":
-        convertedWord = "¡";
-        break;
-      case "&cent;":
-        convertedWord = "￠";
-        break;
-      case "&pound;":
-        convertedWord = "￡";
-        break;
-      case "&curren;":
-        convertedWord = "¤";
-        break;
-      case "&yen;":
-        convertedWord = "￥";
-        break;
-      case "&brvbar;":
-        convertedWord = "|";
-        break;
-      case "&sect;":
-        convertedWord = "§";
-        break;
-      case "&uml;":
-        convertedWord = "¨";
-        break;
-      case "&copy;":
-        convertedWord = "ⓒ";
-        break;
-      case "&ordf;":
-        convertedWord = "ª";
-        break;
-      case "&laquo;":
-        convertedWord = "≪";
-        break;
-      case "&not;":
-        convertedWord = "￢";
-        break;
-      case "&shy;":
-        convertedWord = "-";
-        break;
-      case "&reg;":
-        convertedWord = "?";
-        break;
-      case "&macr;":
-        convertedWord = word;
-        break;
-      case "&deg;":
-        convertedWord = "°";
-        break;
-      case "&plusmn;":
-        convertedWord = "±";
-        break;
-      case "&sup1;":
-        convertedWord = "¹";
-        break;
-      case "&sup2;":
-        convertedWord = "²";
-        break;
-      case "&sup3;":
-        convertedWord = "³";
-        break;
-      case "&acute;":
-        convertedWord = "´";
-        break;
-      case "&micro;":
-        convertedWord = "μ";
-        break;
-      case "&para;":
-        convertedWord = "¶";
-        break;
-      case "&middot;":
-        convertedWord = "·";
-        break;
-      case "&cedil;":
-        convertedWord = "¸";
-        break;
-      case "&ordm;":
-        convertedWord = "º";
-        break;
-      case "&raquo;":
-        convertedWord = "≫";
-        break;
-      case "&frac14;":
-        convertedWord = "¼";
-        break;
-      case "&frac12;":
-        convertedWord = "½";
-        break;
-      case "&frac34;":
-        convertedWord = "¾";
-        break;
-      case "&iquest;":
-        convertedWord = "¿";
-        break;
-      case "&Agrave;":
-        convertedWord = "A";
-        break;
-      case "&Aacute;":
-        convertedWord = "A";
-        break;
-      case "&Acirc;":
-        convertedWord = "A";
-        break;
-      case "&Atilde;":
-        convertedWord = "A";
-        break;
-      case "&Auml;":
-        convertedWord = "A";
-        break;
-      case "&Aring;":
-        convertedWord = "A";
-        break;
-      case "&AElig;":
-        convertedWord = "Æ";
-        break;
-      case "&Ccedil;":
-        convertedWord = "C";
-        break;
-      case "&Egrave;":
-        convertedWord = "E";
-        break;
-      case "&Eacute;":
-        convertedWord = "E";
-        break;
-      case "&Ecirc;":
-        convertedWord = "E";
-        break;
-      case "&Euml;":
-        convertedWord = "E";
-        break;
-      case "&Igrave;":
-        convertedWord = "I";
-        break;
-      case "&Iacute;":
-        convertedWord = "I";
-        break;
-      case "&Icirc;":
-        convertedWord = "I";
-        break;
-      case "&Iuml;":
-        convertedWord = "I";
-        break;
-      case "&ETH;":
-        convertedWord = "Ð";
-        break;
-      case "&Ntilde;":
-        convertedWord = "N";
-        break;
-      case "&Ograve;":
-        convertedWord = "O";
-        break;
-      case "&Oacute;":
-        convertedWord = "O";
-        break;
-      case "&Ocirc;":
-        convertedWord = "O";
-        break;
-      case "&Otilde;":
-        convertedWord = "O";
-        break;
-      case "&Ouml;":
-        convertedWord = "O";
-        break;
-      case "&times;":
-        convertedWord = "×";
-        break;
-      case "&Oslash;":
-        convertedWord = "Ø";
-        break;
-      case "&Ugrave;":
-        convertedWord = "U";
-        break;
-      case "&Uacute;":
-        convertedWord = "U";
-        break;
-      case "&Ucirc;":
-        convertedWord = "U";
-        break;
-      case "&Uuml;":
-        convertedWord = "U";
-        break;
-      case "&Yacute;":
-        convertedWord = "Y";
-        break;
-      case "&THORN;":
-        convertedWord = "Þ";
-        break;
-      case "&szlig;":
-        convertedWord = "ß";
-        break;
-      case "&agrave;":
-        convertedWord = "a";
-        break;
-      case "&aacute;":
-        convertedWord = "a";
-        break;
-      case "&acirc;":
-        convertedWord = "a";
-        break;
-      case "&atilde;":
-        convertedWord = "a";
-        break;
-      case "&auml;":
-        convertedWord = "a";
-        break;
-      case "&aring;":
-        convertedWord = "a";
-        break;
-      case "&aelig;":
-        convertedWord = "æ";
-        break;
-      case "&ccedil;":
-        convertedWord = "c";
-        break;
-      case "&egrave;":
-        convertedWord = "e";
-        break;
-      case "&eacute;":
-        convertedWord = "e";
-        break;
-      case "&ecirc;":
-        convertedWord = "e";
-        break;
-      case "&euml;":
-        convertedWord = "e";
-        break;
-      case "&igrave;":
-        convertedWord = "i";
-        break;
-      case "&iacute;":
-        convertedWord = "i";
-        break;
-      case "&icirc;":
-        convertedWord = "i";
-        break;
-      case "&iuml;":
-        convertedWord = "i";
-        break;
-      case "&eth;":
-        convertedWord = "ð";
-        break;
-      case "&ntilde;":
-        convertedWord = "n";
-        break;
-      case "&ograve;":
-        convertedWord = "o";
-        break;
-      case "&oacute;":
-        convertedWord = "o";
-        break;
-      case "&ocirc;":
-        convertedWord = "o";
-        break;
-      case "&otilde;":
-        convertedWord = "o";
-        break;
-      case "&ouml;":
-        convertedWord = "o";
-        break;
-      case "&divide;":
-        convertedWord = "÷";
-        break;
-      case "&oslash;":
-        convertedWord = "ø";
-        break;
-      case "&ugrave;":
-        convertedWord = "u";
-        break;
-      case "&uacute;":
-        convertedWord = "u";
-        break;
-      case "&ucirc;":
-        convertedWord = "u";
-        break;
-      case "&uuml;":
-        convertedWord = "u";
-        break;
-      case "&yacute;":
-        convertedWord = "y";
-        break;
-      case "&thorn;":
-        convertedWord = "þ";
-        break;
-      case "&yuml;":
-        convertedWord = "y";
-        break;
+  if(specialCharactersTable.hasOwnProperty(word)) {
+    convertedWord = specialCharactersTable[word];
+  } else {
+    convertedWord = word;
+  }
 
-      default: 
-        convertedWord = word;
+  if(text[count] === ";") {
+    if(specialCharactersTable.hasOwnProperty(word)) {
+      convertedWord = specialCharactersTable[word];
+    } else {
+      convertedWord = word;
     }
   } else {
     convertedWord = text[i];
@@ -1000,10 +804,10 @@ function mergeTextContents(
   toBeMergedContents: TextContents[],
   targetContents: TextContents[]
 ): TextContents[] {
-  const copyToBeMergedContents = toBeMergedContents.concat();
-  const copyTargetContents = targetContents.concat();
-  const frontContent: TextContents = copyToBeMergedContents.pop();
-  const backContent: TextContents  = copyTargetContents.shift();
+  const copyToBeMergedContents: TextContents[] = toBeMergedContents.concat();
+  const copyTargetContents: TextContents[]     = targetContents.concat();
+  const frontContent: TextContents             = copyToBeMergedContents.pop();
+  const backContent: TextContents              = copyTargetContents.shift();
 
   if(!frontContent) {
     return targetContents;
