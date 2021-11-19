@@ -5,6 +5,7 @@ import Sibebar from "../../components/sidebar";
 import BklogContainer from "../../containers/BklogContainer";
 import usePage from "../../hooks/usePage";
 import { GetPageListReqType } from '../../store/modules/page/utils';
+import NotFoundPage from "../NotFoundPage";
 
 interface MatchParams {
   type: string;

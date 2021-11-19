@@ -8,6 +8,7 @@ import GlobalNav from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';
 import useAuth from './hooks/useAuth';
+import NotFoundPage from './pages/NotFoundPage';
 
 const App: React.FC = () => {
 
@@ -47,9 +48,10 @@ const App: React.FC = () => {
           <Route path="/" exact>
             <Redirect to="/home" />
           </Route>
-          <Route path="/home" component={Home} />
+          <Route exact path="/home" component={Home} />
           <Route path="/bklog" component={BkPage} />
           <Route path="/auth" component={AuthPage} />
+          <Route component={NotFoundPage} />
         </Switch>
       </Router>
       </div>

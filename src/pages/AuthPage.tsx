@@ -6,6 +6,7 @@ import ErrorPopup from '../components/base/popup/ErrorPopup';
 import LoadingWindow from '../components/common/loading-window';
 import useAuth from '../hooks/useAuth';
 import usePage from '../hooks/usePage';
+import NotFoundPage from './NotFoundPage';
 
 const AuthPage: React.FC = () => {
   const { 
@@ -25,16 +26,17 @@ const AuthPage: React.FC = () => {
   return (
     <div className="auth-page w-full h-full items-center p-4 rounded overflow-hidden">
       <Switch>
-        <Route path="/auth/sign-up">
+        <Route exact path="/auth/sign-up">
           <SignUp />
         </Route>
-        <Route path="/auth/sign-in">
+        <Route exact path="/auth/sign-in">
           {
             user? 
             <Redirect to={`/bklog/penname/${user.penName}`} /> 
             : <SignIn />
           }    
         </Route>
+        <Route component={NotFoundPage} />
       </Switch>
       { error? <ErrorPopup error={error} callback={onResetError} /> : null }
       { loading? <LoadingWindow /> : null }
