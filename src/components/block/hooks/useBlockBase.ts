@@ -107,7 +107,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     const { position } = blockData;
     const newBlockData = createBlockData({ position });
     onAddBlock([ newBlockData ], position, newBlockData.id);
-  }, []);
+  }, [blockData]);
 
   useEffect(() => {
     if(!isGrab && (down || right)) {
