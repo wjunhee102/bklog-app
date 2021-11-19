@@ -115,10 +115,6 @@
       z-index: 20;
       display: none;
 
-      &.on {
-        display: flex;
-      }
-
       .block-add-button {
         width: 24px;
         height: 24px;
@@ -130,19 +126,30 @@
       .block-add-button:hover {
         background-color: rgba(187, 187, 187, 0.315);
       }
-    
-      .block-type-change-button {
-        width: 20px;
-        height: 24px;
-        text-align: center;
-        line-height: 24px;
-        border-radius: 3px;
-      }
-      
-      .block-type-change-button:hover {
-        background-color: rgba(187, 187, 187, 0.315);
+
+      .block-type-change-button-box {
+        @apply relative;
+
+        .block-type-change-button {
+          width: 20px;
+          height: 24px;
+          text-align: center;
+          line-height: 24px;
+          border-radius: 3px;
+        }
+        
+        .block-type-change-button:hover {
+          background-color: rgba(187, 187, 187, 0.315);
+        }
+
       }
 
+    }
+
+    &:hover {
+      .block-utils {
+        display: flex;
+      }
     }
 
   }
@@ -162,7 +169,7 @@
 
     .area {
       position: absolute;
-      z-index: 20;
+      z-index: 18;
       box-sizing: content-box;
 
       .box {
