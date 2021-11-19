@@ -1,0 +1,41 @@
+.block-utils-menu-box {
+  @apply absolute box-content;
+
+  width: 200px;
+  height: auto;
+  padding: 5px;
+  left: 14px;
+  top: 0px;
+  z-index: 30;
+
+  .block-utils-menu {
+    @apply relative bg-white dark:bg-black py-2 w-full text-gray-800 dark:text-white;
+
+    .block-delete-btn, .block-duplicate-btn, .block-turninto-btn {
+      .action-btn-icon-box {
+        @apply border-0;
+      }
+
+      .title-box {
+        @apply w-full flex justify-between;
+      }
+    }
+
+    .block-turninto-btn-box {
+      @apply relative;
+
+      .block-turninto-menu {
+        display: none;
+      }
+
+      &:hover {
+        .block-turninto-menu {
+          display: block;
+        }
+      }
+
+    }
+
+  }
+
+}

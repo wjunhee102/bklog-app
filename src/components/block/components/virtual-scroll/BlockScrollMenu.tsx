@@ -5,7 +5,7 @@ const BlockScrollMenu: React.FC = ({
   children
 }) => {
   return (
-    <div className="block-scroll-menu">
+    <div className="block-scroll-menu2">
       { children }
     </div>
   );

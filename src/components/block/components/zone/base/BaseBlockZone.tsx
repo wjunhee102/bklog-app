@@ -1,10 +1,11 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripVertical, faPlus } from '@fortawesome/free-solid-svg-icons';
-import useBlockBase from "../../hooks/useBlockBase";
-import { BlockProps, ParentInfoType } from "../Block";
-import ChildrenBlock from "../ChildrenBlock";
+import useBlockBase from "../../../hooks/useBlockBase";
+import { BlockProps, ParentInfoType } from "../../Block";
+import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
+import BlockUtilsMenu from "../../block-utils-menu";
 
 interface BaseBlockZoneProps extends BlockProps {
   children: (
@@ -24,6 +25,8 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     setSelect,
     down, 
     setDown,
+    utilToggle,
+    setUtilToggle,
     childrenBlockData,
     downPosition,
     rightPosition,
@@ -33,7 +36,8 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     handleGrabMouseDown,
     handleContentsBlur,
     handleContentsHover,
-    handleContentsMouseLeave
+    handleContentsMouseLeave,
+    handleAddBlock
   } = useBlockBase(blockData, useBlockReducer, parentInfo);
 
   return (
@@ -50,19 +54,41 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
         onMouseLeave={handleContentsMouseLeave}
       >
 
-        <div className={classNames(
-          "block-utils",
-          { on: isHover }
-        )}>
-          <div className="block-add-button">
-            <FontAwesomeIcon icon={faPlus} />
+        <div className="block-utils">
+
+          <div className="block-add-button-box">
+
+            <button 
+              className="block-add-button"
+              onClick={handleAddBlock}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+
           </div>
-          <div 
-            className="block-type-change-button"
-            onMouseDown={handleGrabMouseDown}
-          >
-            <FontAwesomeIcon icon={faGripVertical} />
+          
+          <div className="block-type-change-button-box">
+
+            <button
+              className="block-type-change-button"
+              onClick={() => setUtilToggle(!utilToggle)}
+              onMouseDown={handleGrabMouseDown}
+            >
+              <FontAwesomeIcon icon={faGripVertical} />
+            </button>
+
+            {
+              utilToggle? 
+              <BlockUtilsMenu 
+                useBlockReducer={useBlockReducer}
+                blockData={blockData}
+                setToggle={setUtilToggle}
+              />
+              : null
+            }
+
           </div>
+          
         </div>
 
         { children(selected, setSelect) }

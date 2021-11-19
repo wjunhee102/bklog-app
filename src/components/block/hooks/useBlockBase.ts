@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ParentInfoType } from "../components/Block";
+import { createBlockData } from "../reducer/utils";
 import { BlockData } from "../types";
 import { UseBlockType } from "./useBlock";
 
@@ -33,6 +34,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     isHoldingDown,
     isGrab,
     tempClipData,
+    onAddBlock,
     onChangeEditingId,
     onChangeEditorState,
     onChangeTargetPosition,
@@ -40,10 +42,11 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     onClearTempClip
   } = useBlockReducer;
 
-  const [ isHover, setHover ]   = useState<boolean>(false);
-  const [ selected, setSelect ] = useState<boolean>(false);
-  const [ down, setDown ]       = useState<boolean>(false);
-  const [ right, setRight ]     = useState<boolean>(false);
+  const [ isHover, setHover ]         = useState<boolean>(false);
+  const [ selected, setSelect ]       = useState<boolean>(false);
+  const [ down, setDown ]             = useState<boolean>(false);
+  const [ right, setRight ]           = useState<boolean>(false);
+  const [ utilToggle, setUtilToggle ] = useState<boolean>(false);
 
   const parentSelected = parentInfo? parentInfo.selected : false;
 
@@ -100,6 +103,12 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     setHover(false);
   }, []);
 
+  const handleAddBlock = useCallback(() => {
+    const { position } = blockData;
+    const newBlockData = createBlockData({ position });
+    onAddBlock([ newBlockData ], position, newBlockData.id);
+  }, []);
+
   useEffect(() => {
     if(!isGrab && (down || right)) {
       setDown(false);
@@ -123,6 +132,10 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     }
   }, [parentSelected]);
 
+  useEffect(() => {
+    if(!isHover) setUtilToggle(false);
+  }, [isHover]);
+
   return {
     parentSelected,
     isHover,
@@ -132,6 +145,8 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     down,
     setDown,
     setRight,
+    utilToggle,
+    setUtilToggle,
     childrenBlockData,
     downPosition,
     rightPosition,
@@ -141,7 +156,8 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     handleGrabMouseDown,
     handleContentsHover,
     handleContentsMouseLeave,
-    handleContentsBlur
+    handleContentsBlur,
+    handleAddBlock
   }
 }
 

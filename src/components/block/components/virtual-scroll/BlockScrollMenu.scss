@@ -1,7 +1,6 @@
-.block-scroll-menu {
-  @apply h-auto rounded shadow-md overflow-auto h-auto;
+.block-scroll-menu2 {
+  @apply h-auto rounded shadow-md overflow-auto h-auto border border-gray-200 bg-white dark:bg-black;
   max-height: 50vh;
-  background-color: inherit;
 
   .title {
     @apply uppercase text-gray-600 font-medium px-4 text-left mt-2 mb-2.5;

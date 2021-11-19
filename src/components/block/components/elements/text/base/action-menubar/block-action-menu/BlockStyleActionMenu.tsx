@@ -6,50 +6,50 @@ import ActionMenuToggle from '../common/ActionMenuToggle';
 
 const buttonList: ButtonProps[] = [
   {
-    title: "Text",
+    title: "본문",
     value: "bk-p",
     IconComponent: <img src="/img/text.png" alt=""/>
   },
   {
-    title: "Heading 1",
+    title: "제목",
     value: "bk-h1",
     IconComponent: <img src="/img/header1.png" alt=""/>
   },
   {
-    title: "Heading 2",
+    title: "머리말",
     value: "bk-h2",
     IconComponent: <img src="/img/header1.png" alt=""/>
   },
   {
-    title: "Heading 3",
+    title: "부 머리말",
     value: "bk-h3",
     IconComponent: <img src="/img/header1.png" alt=""/>
   },
   {
-    title: "To-do list",
+    title: "체크리스트",
     value: "bk-todo",
     IconComponent: <img src="/img/to-do.png" alt=""/> 
   },
   {
-    title: "Bulleted list",
+    title: "구분점 목록",
     value: "bk-bulleted",
     IconComponent: <img src="/img/bulleted-list.png" alt=""/>
   },
   {
-    title: "Numbered list",
+    title: "번호 목록",
     value: "bk-numbered",
     IconComponent: <img src="/img/numbered-list.png" alt=""/>
   }
 ]
 
 const BlockTypeTable = {
-   "bk-p"        : "Text",
-   "bk-h1"       : "Heading 1",
-   "bk-h2"       : "Heading 2",
-   "bk-h3"       : "Heading 3",
-   "bk-todo"     : "To-do list",
-   "bk-bulleted" : "Bulleted list",
-   "bk-numbered" : "Numbered list"
+   "bk-p"        : "본문",
+   "bk-h1"       : "제목",
+   "bk-h2"       : "머리말",
+   "bk-h3"       : "부 머리말",
+   "bk-todo"     : "체크리스트",
+   "bk-bulleted" : "구분점 목록",
+   "bk-numbered" : "번호 목록"
 }
 
 const switchBlockType = (styleType: string) => styleType in BlockTypeTable? 
@@ -58,7 +58,7 @@ const switchBlockType = (styleType: string) => styleType in BlockTypeTable?
 
 const menuList = (handleClick: (value: string) => () => void) => [
   {
-    title: "turn into",
+    title: "변경하기",
     buttonList,
     handleClick
   }

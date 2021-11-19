@@ -257,6 +257,12 @@ function deleteBlockHandler(
   state: BlockState,
   { payload: { removedBlockList, nextEditInfo } }: ReturnType<typeof deleteBlock>
 ): BlockState {
+  if(!state.blockList[1]) {
+    console.log("block이 하나 입니다.");
+
+    return state;
+  }
+
   const { blockList, modifyData, tempData } = removeBlockInList(state.blockList, removedBlockList);
 
   tempData.editingBlockId = state.editingBlockId;
@@ -289,6 +295,12 @@ function deleteTextBlockHandler(
     textLength
   } }: ReturnType<typeof deleteTextBlock>
 ): BlockState {
+  if(!state.blockList[1]) {
+    console.log("block이 하나 입니다.");
+
+    return state;
+  }
+
   const toBeDeletedBlock: BlockData = updateObject<BlockData, ModifyBlockData>(state.blockList[index], {});
   const editingBlockId: string = index? state.blockList[index - 1].id : state.blockList[0].id;
 
