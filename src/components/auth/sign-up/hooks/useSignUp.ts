@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import classNames from 'classnames';
-import InputComponent from '../InputComponent';
-import useChange from '../../../hooks/useChange';
-import useAuth from '../../../hooks/useAuth';
-import { regEmail, regPassword, regPenName } from '../utils';
+import { useState, useMemo, useEffect } from 'react';
+import useAuth from "../../../../hooks/useAuth";
+import useChange from '../../../../hooks/useChange';
+import { regEmail, regPassword, regPenName } from '../../utils';
 
 interface ErrorType {
   used?: boolean;
@@ -21,7 +19,7 @@ function createErrorMessage({ used, valid, name }: ErrorType) {
   return "필수 정보입니다.";
 }
 
-interface InputPropsType {
+export interface InputPropsType {
   id: string;
   name: string;
   type: string;
@@ -106,7 +104,7 @@ const setInputProps = (
 ];
 
 // 전송 전에 validation 체크
-const SignUpForm: React.FC = () => {
+function useSignUp() {
 
   const [ lastName, handleInputLName, errorLastName, handleErrorLName ] = useChange("");
   const [ firstName, handleInputFName, errorFirstName, handleErrorFName ] = useChange("");
@@ -120,7 +118,7 @@ const SignUpForm: React.FC = () => {
   const [ penNameUsed, setPNUsed ]       = useState<boolean>(false);
   const [ penNameValid, setPNValid ]     = useState<boolean>(false);
 
-  const { 
+  const {
     authState: {
       signUpState
     },
@@ -257,56 +255,10 @@ const SignUpForm: React.FC = () => {
     }
   }, [password]);
 
-  return (
-    <form onSubmit={handleSubmit}>
-
-      <div className="overflow-hidden sm:rounded-md mb-8">
-        
-        <div className="rounded-md p-2 space-y-4">
-          
-          {
-            inputPropsList.map(props =>(
-              <InputComponent 
-                key={props.id}
-                boxClass="relative group"
-                labelClass="pl-1 mb-1 block text-sm font-medium text-gray-700 dark:text-gray-50"
-                className={classNames(
-                  "rounded-md dark:bg-gray-100 appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 focus:ring-1 sm:text-sm",
-                  {"border-red-500": props.error}
-                )}
-                value={props.value}
-                onChange={props.onChange}
-                id={props.id}
-                name={props.name}
-                type={props.type}
-                label={props.label}
-                placeholder={props.placeholder}
-                autoComplete="off"
-              >
-                <span 
-                  className={classNames(
-                    "absolute right-0 top-0 text-red-500 text-sm",
-                    {"hidden": !props.error}
-                  )}
-                >
-                  {props.errorMessage}
-                </span>
-              </InputComponent>
-            ))
-          }
-
-        </div>
-
-      </div>
-
-      <div className="p-2">
-        <button type="submit" onClick={handleSubmit} className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-500 hover:bg-purple-600 active:outline-none active:ring-2 active:ring-offset-2 active:ring-purple-600">
-          Sign up
-        </button>
-      </div>
-
-    </form>
-  )
+  return {
+    handleSubmit,
+    inputPropsList
+  }
 }
 
-export default SignUpForm;
+export default useSignUp;

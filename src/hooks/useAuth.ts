@@ -88,4 +88,6 @@ function useAuthActions(state: AuthState) {
   }
 }
 
+export type UseAuthType = ReturnType<typeof useAuthActions>;
+
 export default () => useAuthActions(useConnectAuthStore());

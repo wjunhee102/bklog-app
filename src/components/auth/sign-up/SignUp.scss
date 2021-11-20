@@ -1,0 +1,15 @@
+.sign-up {
+  @apply relative overflow-auto flex items-center w-full h-full bg-gray-50 dark:bg-black shadow rounded-md;
+}
+
+.sign-up-component {
+  @apply absolute left-0 top-auto py-32 w-full h-auto box-content flex justify-center;
+}
+
+.sign-up-container {
+  @apply max-w-md w-full h-auto space-y-10;
+}
+
+.sign-up-title {
+  @apply text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100;
+}
