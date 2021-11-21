@@ -204,6 +204,14 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     console.log(state);
   }, [state]);
 
+  useEffect(() => {
+    return () => {
+      setUpdated(false);
+      setUpdatedTimer(false);
+      setUpdatingTimer(false);
+    }
+  }, []);
+
   return {
     updated
   };
