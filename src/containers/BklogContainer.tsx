@@ -6,6 +6,7 @@ import useBklog from '../hooks/useBKlog';
 import { PageInfoType } from '../store/modules/bklog/utils';
 import useConnectBklogStore from '../hooks/useConnectBklogStore';
 import { RouteComponentProps } from 'react-router-dom';
+import LoadingWindow from '../components/common/loading-window';
 
 interface MatchParams {
   pageId: string;
@@ -26,11 +27,8 @@ const BklogContainer: React.FC<RouteComponentProps<MatchParams>> = ({
   const pageInfo: PageInfoType = useMemo(() => bklogState.pageInfo, [bklogState.pageInfo]);
 
   useEffect(() => {
-    console.log(pageId);
     onGetPage(pageId);
   }, [pageId]);
-
-
 
   return (
     <div className={classNames(
@@ -43,7 +41,7 @@ const BklogContainer: React.FC<RouteComponentProps<MatchParams>> = ({
           <div className="cover"></div>
           <BlockEditor connectStoreHook={useConnectBklogStore} />
           </>
-          : "loading..."
+          : <LoadingWindow />
       }
       
     </div>    
