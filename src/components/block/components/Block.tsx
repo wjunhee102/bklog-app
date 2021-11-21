@@ -14,31 +14,20 @@ export interface BlockProps {
   parentInfo?: ParentInfoType;
 }
 
-// const BlockHandler = {
-//   ["text"]: (
-//       blockData: BlockData, 
-//       useBlockReducer: UseBlockType, 
-//       parentInfo?: ParentInfoType
-//     ) =>  <TextBlock blockData={blockData} useBlockReducer={useBlockReducer} parentInfo={parentInfo} />
-
-// }
+const BlockTable = {
+  ["text"]: (props: BlockProps) => <TextBlock {...props} />
+}
 
 const Block: React.FC<BlockProps> = ({
   blockData,
   useBlockReducer,
   parentInfo
 }) => {
-  switch(blockData.type) {
-    case "text":
-      return <TextBlock blockData={blockData} useBlockReducer={useBlockReducer} parentInfo={parentInfo} />
-    default:
-      return null;
-  };
-  // if(BlockHandler.hasOwnProperty(blockData.type)) {
-  //   return BlockHandler[blockData.type](blockData, useBlockReducer, parentInfo);
-  // } else {
-  //   return null
-  // }
+  if(BlockTable.hasOwnProperty(blockData.type)) {
+    return BlockTable[blockData.type]({blockData, useBlockReducer, parentInfo});
+  } else {
+    return null
+  }
 }
 
 export default Block;
