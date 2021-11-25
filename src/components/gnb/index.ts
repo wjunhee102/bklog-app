@@ -1,3 +1,3 @@
-import GlobalNav from './GlobalNav';
+import Gnb from './Gnb';
 
-export default GlobalNav;
+export default Gnb;

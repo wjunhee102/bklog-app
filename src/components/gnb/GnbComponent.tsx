@@ -1,46 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import classNames from 'classnames';
-import useAuth from '../../hooks/useAuth';
 import UserBlock from './user/Userblock';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import usePage from '../../hooks/usePage';
 import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
+import { UseGnbConnectStoreType } from './hooks/useGnbConnectStore';
+import useGnb from './hooks/useGnb';
 
-const GlobalNav: React.FC = () => {
+interface GnbComponentProps {
+  useConnectStore: UseGnbConnectStoreType;
+}
 
-  const [ onUserMenu, setOnUserMenu ] = useState<boolean>(false); 
+const GnbComponent: React.FC<GnbComponentProps> = ({
+  useConnectStore
+}) => {
 
   const {
+    onUserMenu,
+    user,
+    loading,
     pageToggle,
-    onChangeToggle
-  } = usePage();
-
-  const { 
-    authState: { loading, user },
-    onSignOutUser
-  } = useAuth();
-
-  const handleClickToggle = () => {
-    onChangeToggle();
-  }
-
-  const handleClickUserMenu = () => {
-    setOnUserMenu(!onUserMenu);
-  }
-
-  const handleClickToggleFalse = (e: any) => {
-    setOnUserMenu(false);
-  }
-
-  const handleClickSignOut = () => {
-    onSignOutUser();
-  }
-
-  useEffect(() => {
-    console.log(user, loading, "gnb");
-  }, [user, loading]);
+    history,
+    handleClickToggle,
+    handleClickUserMenu,
+    handleClickToggleFalse,
+    handleClickSignOut
+  } = useGnb(useConnectStore);
 
   return (
     <nav className="bg-white dark:bg-black absolute left-0 top-0 z-10 shadow w-full">
@@ -76,8 +62,22 @@ const GlobalNav: React.FC = () => {
                       <div className="hidden md:block">
                         <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
             
-                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-in">Sign In</Link>
-                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-up">Sign up</Link>
+                          <button 
+                            className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                            onClick={() => {history.push("/auth/sign-in"); console.log(history)}}
+                          >
+                            Sign in
+                          </button>
+
+                          <button 
+                            className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                            onClick={() => history.push("/auth/sign-up")}
+                          >
+                            Sign up
+                          </button>
+
+                          {/* <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-in">Sign In</Link>
+                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-up">Sign up</Link> */}
             
                         </div>
                       </div>
@@ -121,4 +121,4 @@ const GlobalNav: React.FC = () => {
   )
 }
 
-export default GlobalNav;
+export default GnbComponent;
