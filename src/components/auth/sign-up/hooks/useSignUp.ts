@@ -12,11 +12,11 @@ interface ErrorType {
 function createErrorMessage({ used, valid, name }: ErrorType) {
   if(valid) {
     return `${name} 형식에 맞지 않습니다.`
-  }
-  if(used) {
+  } else if(used) {
     return `사용하고 있는 ${name}입니다.`
+  } else {
+    return "필수 정보입니다.";
   }
-  return "필수 정보입니다.";
 }
 
 export interface InputPropsType {
@@ -227,7 +227,7 @@ function useSignUp() {
   }, [penName, signUpState.penNameUsed]);
 
   useEffect(() => {
-    if(email && !regEmail.test(email)) {
+    if(email) {
       if(!regEmail.test(email)) {
         setEmailValid(true);
         if(!errorEmail) handleErrorEmail(true);
