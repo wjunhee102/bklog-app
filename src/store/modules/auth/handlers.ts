@@ -98,6 +98,7 @@ function signUpUserSuccessHandler(
   { payload }: ReturnType<typeof signUpUserSuccess>
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, {
+    loading: false,
     signUpSuccess: true
   });
 }
@@ -107,6 +108,7 @@ function signUpUserErrorHandler(
   { payload }: ReturnType<typeof signUpUserError>
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, {
+    loading: false,
     error: payload
   });
 }
