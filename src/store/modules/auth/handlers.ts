@@ -11,6 +11,7 @@ import {
   CHECK_EMAIL_USED_SUCCESS, 
   CHECK_PENNAME_USED_ERROR, 
   CHECK_PENNAME_USED_SUCCESS, 
+  initFetchState, 
   reissueTokenError, 
   REISSUETOKEN_ERROR, 
   resetError, 
@@ -57,7 +58,8 @@ function checkEmailUsedErrorHandler(
   { payload }: ReturnType<typeof checkEmailUsedError>
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, {
-    error: payload
+    error: payload,
+    errorToggle: false
   });
 }
 
@@ -77,7 +79,8 @@ function checkPenNameUsedErrorHandler(
   { payload }: ReturnType<typeof checkPenNameUsedError>
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, {
-    error: payload
+    error: payload,
+    errorToggle: false
   });
 }
 
@@ -85,12 +88,9 @@ function signUpUserHandler(
   state: AuthState, 
   action: ReturnType<typeof signInUser>
 ): AuthState {
-  return updateObject<AuthState, AuthStateProps>(state, {
-    loading: true,
-    error: null,
-    signUpSuccess: null,
-    waitingCount: 0
-  })
+  return updateObject<AuthState, AuthStateProps>(state, initFetchState, {
+    signUpSuccess: null
+  });
 }
 
 function signUpUserSuccessHandler(
@@ -109,7 +109,8 @@ function signUpUserErrorHandler(
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, {
     loading: false,
-    error: payload
+    error: payload,
+    errorToggle: true
   });
 }
 
@@ -117,12 +118,9 @@ function signInUserHandler(
   state: AuthState,
   action: ReturnType<typeof signInUser>
 ): AuthState {
-  return updateObject<AuthState, AuthStateProps>(state, {
-    loading: true,
-    user: null,
-    error: null,
-    waitingCount: 0
-  })
+  return updateObject<AuthState, AuthStateProps>(state, initFetchState, {
+    user: null
+  });
 }
 
 function signInUserSuccessHandler(
@@ -142,7 +140,8 @@ function signInUserErrorHandler(
 ) {
   return updateObject<AuthState, AuthStateProps>(state, {
     loading: false,
-    error: payload
+    error: payload,
+    errorToggle: true
   });
 }
 
@@ -150,11 +149,8 @@ function reSignInUserHandler(
   state: AuthState,
   action: ReturnType<typeof reSignInUser>
 ): AuthState {
-  return updateObject<AuthState, AuthStateProps>(state, {
-    loading: true,
-    user: null,
-    error: null,
-    waitingCount: 0
+  return updateObject<AuthState, AuthStateProps>(state, initFetchState, {
+    user: null
   })
 }
 
@@ -202,7 +198,8 @@ function signOutUserErrorHandler(
 ): AuthState {
   return updateObject<AuthState, AuthStateProps>(state, initialState, {
     loading: false,
-    error: payload
+    error: payload,
+    errorToggle: true
   });
 }
 
@@ -213,7 +210,8 @@ function reissueTokenErrorHandler(
   return updateObject<AuthState, AuthStateProps>(state, initialState, {
     loading: true,
     waitingCount: ++state.waitingCount,
-    error: payload
+    error: payload,
+    errorToggle: true
   });
 }
 
@@ -223,7 +221,8 @@ function resetErrorHandler(
 ) {
   return updateObject<AuthState, AuthStateProps>(state, {
     error: null,
-    waitingCount: 0
+    waitingCount: 0,
+    errorToggle: false
   });
 }
 

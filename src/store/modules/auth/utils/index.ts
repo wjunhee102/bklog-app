@@ -87,6 +87,7 @@ export interface AuthState {
   signUpState: SignUpState; 
   error: ApiErrorType | null;
   waitingCount: number;
+  errorToggle: boolean;
 }
 
 export interface AuthStateProps {
@@ -96,6 +97,14 @@ export interface AuthStateProps {
   signUpState?: SignUpState;
   error?: ApiErrorType;
   waitingCount?: number;
+  errorToggle?: boolean;
+}
+
+export const initFetchState = {
+  loading: true,
+  error: null,
+  errorToggle: false,
+  waitingCount: 0
 }
 
 /**
