@@ -15,7 +15,8 @@ const App: React.FC = () => {
   const { baseState: { dark } } = useBase();
   const { 
     authState: { waitingCount, user },
-    onReissueToken
+    onReissueToken,
+    onReSignInUser
   } = useAuth();
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
         const timer = setTimeout(() => {
           onReissueToken();
         }, 2000);
+        console.log(waitingCount);
 
         return () => clearTimeout(timer);
       } else {
@@ -34,6 +36,12 @@ const App: React.FC = () => {
       }
     }
   }, [waitingCount]);
+
+  useEffect(() => {
+    if(!user) {
+      onReSignInUser();
+    }
+  }, []);
 
   return (
     <div className={classNames(
