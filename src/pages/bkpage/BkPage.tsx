@@ -1,12 +1,25 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React from 'react';
 import classNames from 'classnames';
-import BklogContainer from '../../containers/BklogContainer';
 import useAuth from '../../hooks/useAuth';
 import useBklog from '../../hooks/useBKlog';
-import { Redirect, Switch, Route } from 'react-router-dom';
+import { Route, useHistory, Switch } from 'react-router-dom';
 import ErrorPopup from '../../components/base/popup/ErrorPopup';
-import BkPageSwitchComponent from './BkPageSwitchComponent';
+import { History } from 'history';
+import NotFoundPage from '../NotFoundPage';
+import PenNameRoute from './route/PenNameRoute';
+import IdRoute from './route/IdRoute';
+
+function handleErrorPopup({
+  type, 
+  code
+}: { type: string, code: string | number}, 
+  history?: History<unknown>){
+    return () => {
+      if(type === "AUTH" && code == "002" && history) {
+        history.push("/home");
+      }
+  } 
+}
 
 const BkPage: React.FC = () => {
 
@@ -19,9 +32,13 @@ const BkPage: React.FC = () => {
     onGetPage
   } = useBklog();
 
-  useEffect(() => {
-    // onCheckToken();
-  });
+  const history = useHistory();
+
+  const handleCallback = bklogState.error? handleErrorPopup({ type: bklogState.error.type, code: bklogState.error.code }, history) : null;
+
+  // useEffect(() => {
+  //   // onCheckToken();
+  // });
 
   // useEffect(() => {
   //   if(match.params.id) onGetPage(match.params.id);
@@ -35,12 +52,13 @@ const BkPage: React.FC = () => {
 
   return (
     <div className={classNames("bk-page", "h-full", "overflow-scroll")}>
-      <div>
-        환영합니다.
-      </div>
-      <Route path="/bklog/:type/:userInfo" component={BkPageSwitchComponent} />
-      {/* { id? <BklogContainer /> : null } */}
-      { bklogState.error? <ErrorPopup error={bklogState.error} /> : null }
+      <Switch>
+        <Route path="/bklog/penname/:userInfo" component={PenNameRoute} />
+        <Route path="/bklog/id/:userInfo" component={IdRoute} />
+        <Route component={NotFoundPage} />
+      </Switch>
+      
+      { bklogState.error? <ErrorPopup error={bklogState.error} callback={handleCallback} /> : null }
       
     </div>
   );
