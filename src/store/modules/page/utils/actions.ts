@@ -12,12 +12,20 @@ import {
   GetPageListReqType,
   GetPageListQuery,
   GET_USER_PROFILE,
-  GET_USER_PROFILE_SUCCCESS,
+  GET_USER_PROFILE_SUCCESS,
   GET_USER_RPOFILE_ERROR,
-  ResGetPageList
+  ResGetPageList,
+  RESET_PAGE,
+  CHANGE_PAGE_TITLE_SUCCESS,
+  CHANGE_PAGE_TITLE_ERROR
 } from ".";
 import { UserProfile } from "../../auth/utils";
 
+function resetPage() {
+  return {
+    type: RESET_PAGE
+  }
+}
 
 function changeToggle(toggle?: boolean) {
   return {
@@ -28,7 +36,6 @@ function changeToggle(toggle?: boolean) {
   }
 }
 
-
 function changePageTitle(id: string, title: string) {
   return {
     type: CHANGE_PAGE_TITLE,
@@ -36,6 +43,20 @@ function changePageTitle(id: string, title: string) {
       title,
       id
     }
+  }
+}
+
+function changePageTitleSuccess(pageId: string) {
+  return {
+    type: CHANGE_PAGE_TITLE_SUCCESS,
+    payload: pageId
+  }
+}
+
+function changePageTitleError(error: ApiErrorType) {
+  return {
+    type: CHANGE_PAGE_TITLE_ERROR,
+    payload: error
   }
 }
 
@@ -76,7 +97,7 @@ function getUserProfile(type: GetPageListReqType, userInfo: string) {
 
 function getUserProfileSuccess(userProfile: UserProfile) {
   return {
-    type: GET_USER_PROFILE_SUCCCESS,
+    type: GET_USER_PROFILE_SUCCESS,
     payload: userProfile
   }
 }
@@ -114,7 +135,10 @@ function getPageListError(error: ApiErrorType) {
 }
 
 export default {
+  resetPage,
   changePageTitle,
+  changePageTitleSuccess,
+  changePageTitleError,
   changeToggle,
   createPage,
   createPageSuccess,

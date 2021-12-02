@@ -14,7 +14,11 @@ function usePageActions(state: PageState) {
 
   const dispatch = useDispatch();
 
-  const onChangeToggle = useCallback((toggle?: boolean)=> {
+  const onResetPage = useCallback(() => {
+    dispatch(onResetPage());
+  }, [dispatch]);
+
+  const onChangeToggle = useCallback((toggle?: boolean) => {
     dispatch(changeToggle(toggle))
   },[dispatch]);
 
@@ -38,6 +42,7 @@ function usePageActions(state: PageState) {
     pageState: state,
     pageEditor,
     pageToggle,
+    onResetPage,
     onChangeToggle,
     onChangePageTitle,
     onGetUserProfile,
