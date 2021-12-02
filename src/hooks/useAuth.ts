@@ -11,7 +11,8 @@ import {
   signUpUser,
   checkEmailUsed,
   checkPenNameUsed,
-  resetError
+  resetError,
+  resetAuth
 } from '../store/modules/auth/utils';
 import { RootState } from '../store/modules';
 import authApiUtils from '../store/modules/auth/utils/apiUtils';
@@ -54,6 +55,10 @@ function useAuthActions(state: AuthState) {
     dispatch(resetError());
   }, [dispatch]);
 
+  const onResetAuth = useCallback(() => {
+    dispatch(resetAuth());
+  }, [dispatch]);
+
   const onCheckToken = async () => {
     const response = await authApiUtils.authFetchGet('check-token');
 
@@ -84,7 +89,8 @@ function useAuthActions(state: AuthState) {
     onSignOutUser,
     onReissueToken,
     onCheckToken,
-    onResetError
+    onResetError,
+    onResetAuth
   }
 }
 
