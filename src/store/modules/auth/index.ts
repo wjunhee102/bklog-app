@@ -2,7 +2,7 @@ import { createReducer } from '../../utils';
 import handlers from './handlers';
 import { AuthState } from './utils';
 
-export const initialState: AuthState = {
+export const initialAuthState: AuthState = {
   loading: false,
   user: null,
   error: null,
@@ -15,6 +15,6 @@ export const initialState: AuthState = {
   errorToggle: false
 }
 
-const auth = createReducer(initialState, handlers);
+const auth = createReducer(initialAuthState, handlers);
 
 export default auth;
