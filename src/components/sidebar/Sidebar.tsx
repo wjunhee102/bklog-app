@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
   } = usePage();
 
   const handleClick = () => {
-    onCreatePage(authState.user.profileId, "page", 5);
+    onCreatePage(authState.user.id, "page", 5);
   }
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
             pageList={pageState.pageList}
           />
           {
-            authState.user && (authState.user.profileId === pageState.pageEditor.profileId)? 
+            authState.user && (authState.user.id === pageState.pageEditor.id)? 
               <CreatePageButton onClick={handleClick} /> : null
           }
         </nav>

@@ -28,7 +28,7 @@ function EditorBlock({ penName, bio, photo }: EditorBlockProps) {
             {
               photo? 
               <img className="w-full h-full" src={photo} alt={penName} />
-              : <div className="w-full h-full">{penName[0]}</div>
+              : <div className="w-full h-full">{penName? penName[0] : ""}</div>
             }
           </Link>
         </div>

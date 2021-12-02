@@ -4,7 +4,7 @@ import { ApiErrorType } from '../../../../utils/api-utils';
 
 export interface UserProfile {
   penName: string;
-  profileId: string;
+  id: string;
   photo: string | null;
   coverImage: string | null;
   coverColor: string | null;
@@ -141,7 +141,7 @@ export const RESET_ERROR = "auth/RESET_ERROR" as const;
 
 export const RESET_AUTH = "auth/RESET_AUTH" as const;
 
-export const ERROR_AUTH = 'auth/RESET_AUTH' as const;
+export const ERROR_AUTH = 'auth/ERROR_AUTH' as const;
 
 export const checkEmailUsed          = actions.checkEmailUsed;
 export const checkEmailUsedSuccess   = actions.checkEmailUsedSuccess;
