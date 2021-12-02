@@ -1,30 +1,30 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { ApiErrorType } from "../../../utils/api-utils";
 import { Dialog, Transition } from "@headlessui/react"
 import { ExclamationIcon } from "@heroicons/react/outline"
 
 interface ErrorPopupProps {
-  error: ApiErrorType | null;
+  message: string | null;
+  toggle: boolean;
   callback?: Function;
 }
 
-const ErrorPopup: React.FC<ErrorPopupProps> = ({ error, callback }) => {
-  const [open, setOpen] = useState(true);
+const ErrorPopup: React.FC<ErrorPopupProps> = ({ message, callback, toggle }) => {
+  const [ open, setOpen ] = useState(toggle);
 
   const cancelButtonRef = useRef(null);
 
   const handleClick = () => {
-    setOpen(true);
+    setOpen(false);
     if(callback) callback();
   }
 
   useEffect(() => {
-    if(error) {
+    if(toggle) {
       setOpen(true);
     } else {
       setOpen(false);
     }
-  }, [error]);
+  }, [toggle]);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -33,7 +33,7 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({ error, callback }) => {
         auto-reopen="true"
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
-        onClose={setOpen}
+        onClose={handleClick}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -73,7 +73,7 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({ error, callback }) => {
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        { error.message }
+                        { message }
                       </p>
                     </div>
                   </div>
