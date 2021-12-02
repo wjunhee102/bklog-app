@@ -88,7 +88,7 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
               {
                 onUserMenu && user? 
                 <div onMouseLeave={handleClickToggleFalse} className="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
-                  <Link to={`/bklog/${user.penName}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Page</Link>
+                  <Link to={`/bklog/id/${user.id}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Page</Link>
                   <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">View Profile</a>
                   <button 
                     className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

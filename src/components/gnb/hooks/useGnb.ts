@@ -13,7 +13,8 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
     onChangeToggle,
     loading,
     user,
-    onSignOutUser
+    onSignOutUser,
+    onAllReset
   } = useConnectStore;
 
   const handleClickToggle = () => {
@@ -30,6 +31,8 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
 
   const handleClickSignOut = () => {
     onSignOutUser();
+    onAllReset();
+    history.push('/home');
   }
 
   useEffect(() => {

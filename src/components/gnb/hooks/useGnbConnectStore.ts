@@ -1,5 +1,6 @@
 import useAuth from "../../../hooks/useAuth";
 import usePage from "../../../hooks/usePage";
+import useStoreReset from "../../../hooks/useStoreReset";
 
 function useGnbConnectStore() {
   const {
@@ -12,12 +13,17 @@ function useGnbConnectStore() {
     onSignOutUser
   } = useAuth();
 
+  const {
+    onAllReset
+  } = useStoreReset();
+
   return {
     pageToggle,
     onChangeToggle,
     loading,
     user,
-    onSignOutUser
+    onSignOutUser,
+    onAllReset
   }
 }
 
