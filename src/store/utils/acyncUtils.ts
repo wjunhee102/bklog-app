@@ -2,6 +2,7 @@ import { call, put } from 'redux-saga/effects';
 import { REISSUETOKEN, RESET_AUTH } from '../modules/auth/utils';
 import { ApiError } from '../../utils/api-utils';
 import { RESET_BKLOG } from '../modules/bklog/utils';
+import { RESET_PAGE } from '../modules/page/utils';
 
 function createPromiseSaga<T = any>(
   type: string, 
@@ -30,6 +31,7 @@ function createPromiseSaga<T = any>(
 function* allResetSaga(action: any) {
   yield put({ type: RESET_AUTH });
   yield put({ type: RESET_BKLOG });
+  yield put({ type: RESET_PAGE });
 }
 
 const acyncUtils = {

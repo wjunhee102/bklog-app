@@ -1,3 +1,4 @@
+import { initialPageState } from ".";
 import { updateObject } from "../../utils";
 import { 
   CHANGE_PAGE_TITLE, 
@@ -18,9 +19,17 @@ import {
   GET_PAGE_LIST,
   GET_PAGE_LIST_SUCCESS,
   GET_PAGE_LIST_ERROR,
-  getUserProfile
+  getUserProfile,
+  resetPage,
+  RESET_PAGE
 } from "./utils";
 
+function resetPageHandler(
+  state: PageState, 
+  { type }: ReturnType<typeof resetPage>
+) {
+  return updateObject<PageState, PageStateProps>(state, initialPageState);  
+}
 
 function changeToggleHandler(
   state: PageState,
@@ -133,6 +142,7 @@ function getPageListErrorHandler(
 }
 
 export default {
+  [RESET_PAGE]            : resetPageHandler,
   [CHANGE_TOGGLE]         : changeToggleHandler,
   [CHANGE_PAGE_TITLE]     : changePageTitleHandler,
   [CREATE_PAGE]           : createPageHandler,
