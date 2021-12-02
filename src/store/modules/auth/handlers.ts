@@ -1,4 +1,4 @@
-import { initialState } from ".";
+import { initialAuthState } from ".";
 import { updateObject } from "../../utils";
 import { 
   AuthState, 
@@ -14,7 +14,9 @@ import {
   initFetchState, 
   reissueTokenError, 
   REISSUETOKEN_ERROR, 
+  resetAuth, 
   resetError, 
+  RESET_AUTH, 
   RESET_ERROR, 
   RESIGNINUSER, 
   reSignInUser, 
@@ -189,14 +191,14 @@ function signOutUserSuccessHandler(
   state: AuthState,
   action: ReturnType<typeof signOutUserSuccess>
 ): AuthState {
-  return updateObject<AuthState, AuthStateProps>(state, initialState);
+  return updateObject<AuthState, AuthStateProps>(state, initialAuthState);
 }
 
 function signOutUserErrorHandler(
   state: AuthState,
   { payload }: ReturnType<typeof signOutUserError>
 ): AuthState {
-  return updateObject<AuthState, AuthStateProps>(state, initialState, {
+  return updateObject<AuthState, AuthStateProps>(state, initialAuthState, {
     loading: false,
     error: payload,
     errorToggle: true
@@ -207,7 +209,7 @@ function reissueTokenErrorHandler(
   state: AuthState,
   { payload }: ReturnType<typeof reissueTokenError>
 ) {
-  return updateObject<AuthState, AuthStateProps>(state, initialState, {
+  return updateObject<AuthState, AuthStateProps>(state, initialAuthState, {
     loading: true,
     waitingCount: ++state.waitingCount,
     error: payload,
@@ -220,10 +222,18 @@ function resetErrorHandler(
   action: ReturnType<typeof resetError>
 ) {
   return updateObject<AuthState, AuthStateProps>(state, {
+    loading: false,
     error: null,
     waitingCount: 0,
     errorToggle: false
   });
+}
+
+function resetAuthHandler(
+  state: AuthState,
+  action: ReturnType<typeof resetAuth>
+) {
+  return updateObject<AuthState, AuthStateProps>(state, initialAuthState);
 }
 
 export default {
@@ -244,5 +254,6 @@ export default {
   [SIGNOUTUSER_SUCCESS]        : signOutUserSuccessHandler,
   [SIGNOUTUSER_ERROR]          : signOutUserErrorHandler,
   [REISSUETOKEN_ERROR]         : reissueTokenErrorHandler,
-  [RESET_ERROR]                : resetErrorHandler
+  [RESET_ERROR]                : resetErrorHandler,
+  [RESET_AUTH]                 : resetAuthHandler
 }
