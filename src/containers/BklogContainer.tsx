@@ -7,6 +7,7 @@ import { PageInfoType } from '../store/modules/bklog/utils';
 import useConnectBklogStore from '../hooks/useConnectBklogStore';
 import { RouteComponentProps } from 'react-router-dom';
 import LoadingWindow from '../components/common/loading-window';
+import NotFoundPage from '../pages/NotFoundPage';
 
 interface MatchParams {
   pageId: string;
@@ -41,7 +42,9 @@ const BklogContainer: React.FC<RouteComponentProps<MatchParams>> = ({
           <div className="cover"></div>
           <BlockEditor connectStoreHook={useConnectBklogStore} />
           </>
-          : <LoadingWindow />
+          : bklogState.isLoading? 
+          <LoadingWindow />
+          : <NotFoundPage />
       }
       
     </div>    
