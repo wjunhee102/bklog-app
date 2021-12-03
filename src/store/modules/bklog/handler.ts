@@ -1,7 +1,6 @@
 import { initialState } from ".";
-import { ModifyDataType } from "../../../components/block/types";
 import { updateObject } from "../../utils";
-import { addPushModifyData, ADD_PUSH_MODIFY_DATA, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from "./utils";
+import { addPushModifyData, ADD_PUSH_MODIFY_DATA, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from "./utils";
 
 function resetBklogHandler(
   state: BklogState, 
@@ -48,7 +47,9 @@ function getPageErrorHandler(
   { payload }: ReturnType<typeof getPageError>
 ): BklogState {
   return updateObject<BklogState, BklogStateProps>(state, {
-    error: payload
+    error: payload,
+    isLoading: false,
+    isFetching: false
   });
 }
 
@@ -187,6 +188,7 @@ function releaseUpdatingErrorHandler(
 export default {
   [RESET_BKLOG]              : resetBklogHandler,
   [CLEAR_BKLOG_STATE]        : clearBklogStateHandler,
+  [GET_PAGE]                 : getPageHandler,
   [GET_PAGE_SUCCESS]         : getPageSuccessHandler,
   [GET_PAGE_ERROR]           : getPageErrorHandler,
   [ADD_PUSH_MODIFY_DATA]     : addPushModifyDataHandler,
