@@ -23,9 +23,9 @@ const dummyUseConnectStore = (
   onSignOutUser: () => {}
 });
 
-const userInfo = {
+const userInfo: UserInfo = {
   penName: "test",
-  profileId: "test123!22",
+  id: "test123!22",
   photo: null,
   coverImage: null,
   coverColor: null,
