@@ -2,7 +2,7 @@ import React from "react";
 import BlockEditor from "../block";
 import useConnectEditor from "./hooks/useConnectEditor";
 import junheeImg from "../../assets/junhee.jpg";
-import './Portfolio.scss';
+import './portfolio.scss';
 
 
 const INFO_DATA: InfoComponentProps[] = [
