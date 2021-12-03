@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import BlockEditor from '../components/block';
-import Portfolio from '../components/portfolio';
+import Portfolio from '../../components/portfolio';
+import useHomePage from './hooks/useHomePage';
 
 const Home: React.FC = () => {
+  
+  useHomePage();
+
   return (
     <div className="home overflow-auto h-full">
       <div className="portfolio-container">
