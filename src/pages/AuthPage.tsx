@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import SignIn from '../components/auth/sign-in';
 import SignUp from '../components/auth/sign-up';
@@ -9,6 +9,7 @@ import usePage from '../hooks/usePage';
 import NotFoundPage from './NotFoundPage';
 
 const AuthPage: React.FC = () => {
+  const [ errMessage, setErrMessage ] = useState<string>(null); 
 
   const history = useHistory();
 
@@ -23,9 +24,17 @@ const AuthPage: React.FC = () => {
   useEffect(() => {
     if(user) {
       onChangeToggle(true);
-      history.push(`/bklog/penname/${user.penName}`);
+      history.push(`/bklog/id/${user.id}`);
     }
   },[user]);
+
+  useEffect(() => {
+    if(error) {
+      setErrMessage(error.message);
+    } else {
+      setErrMessage(null);
+    }
+  }, [error]);
 
   useEffect(() => {
     if(error) {
@@ -48,7 +57,7 @@ const AuthPage: React.FC = () => {
         </Route>
         <Route component={NotFoundPage} />
       </Switch>
-      { errorToggle? <ErrorPopup error={error} callback={onResetError} /> : null }
+      <ErrorPopup message={errMessage} toggle={errorToggle} callback={onResetError} />
       { loading? <LoadingWindow /> : null }
     </div>
   );
