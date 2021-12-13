@@ -208,7 +208,7 @@
 
 .block-zone {
   .contents-area {
-    .text-block {
+    .text-block, .title-block {
       position: relative;
       // max-width: 1488px;
       width: 100%;
@@ -240,6 +240,13 @@
           content: attr(placeholder);
           display: block; /* For Firefox */
           font-size: 1em;
+        }
+
+        &.bk-title {
+          font: {
+            size: 2.25em;
+            weight: 600;
+          }
         }
       
         &.bk-h1 {

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { UseBlockType } from './useBlock';
 
@@ -15,6 +15,8 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
     onResetEditorState,
     onRevertBlock
   } = useBlockReducer;
+
+  const titleBlock = useMemo(() => state.titleBlock, [state.titleBlock]);
 
    // elements
    const editorRef = useRef<HTMLDivElement>(null);
@@ -84,6 +86,7 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
   return {
     state,
     initBlock,
+    titleBlock,
     tempClipData,
     isGrab,
     isCliping,

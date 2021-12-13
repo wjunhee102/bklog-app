@@ -24,6 +24,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
   const {
     state,
     initBlock,
+    titleBlock,
     tempClipData,
     isGrab,
     isCliping,
@@ -58,6 +59,14 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
         {"not-drag": (isGrab || isCliping)? true : false},
         {"updated": updated}
       )}>
+        {
+          titleBlock?
+          <Block 
+            key={titleBlock.id}
+            blockData={titleBlock}
+            useBlockReducer={useBlockReducer}
+          /> : null
+        }
         {
           initBlock?
           initBlock.root.map((block: BlockData) =>

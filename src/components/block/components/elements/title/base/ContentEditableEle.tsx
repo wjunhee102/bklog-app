@@ -14,8 +14,8 @@ interface ContentEditableEle {
   onMouseMove?: any;
   onFocus?: any;
   onBlur?: any;
-  placeholder: string;
-  dangerouslySetInnerHTML: {
+  placeholder?: string;
+  dangerouslySetInnerHTML?: {
     __html: any
   }
   contents?: string;
@@ -58,6 +58,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
       contentEditable={editable}
       dangerouslySetInnerHTML={dangerouslySetInnerHTML}
       placeholder={placeholder} 
+      suppressContentEditableWarning={true}
     >
       { contents }
     </div>

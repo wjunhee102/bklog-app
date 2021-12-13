@@ -2,6 +2,7 @@ import React from "react";
 import { UseBlockType } from "../hooks/useBlock";
 import { BlockData } from "../types";
 import TextBlock from "./elements/text";
+import TitleBlock from "./elements/title";
 
 export type ParentInfoType = {
   type: string;
@@ -15,7 +16,8 @@ export interface BlockProps {
 }
 
 const BlockTable = {
-  ["text"]: (props: BlockProps) => <TextBlock {...props} />
+  ["text"]: (props: BlockProps) => <TextBlock {...props} />,
+  ["title"]: (props: BlockProps) => <TitleBlock {...props} />
 }
 
 const Block: React.FC<BlockProps> = ({

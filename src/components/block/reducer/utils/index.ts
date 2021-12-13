@@ -32,7 +32,7 @@ export interface BlockStateProps {
   modifyData?: ModifyData[];
 }
 
-export type SetBlockDataList = {
+export interface SetBlockDataList {
   [type: string]: BlockData[];
 }
 
@@ -49,6 +49,7 @@ export interface TempData<T = any> {
 export interface TempDataType {
   editingBlockId?: string;
   nextBlockInfo?: NextBlockInfo;
+  pageTitle?: string;
   create?: TempData<BlockData>[];
   update?: TempData[];
   delete?: TempData[];
@@ -73,6 +74,7 @@ export interface BlockState {
   isHoldingDown: boolean;
   isCliping: boolean;
   targetPosition: string | null;
+  titleBlock: BlockData;
   blockList: BlockData[];
   editingBlockId: string | null;
   nextBlockInfo: NextBlockInfo;
@@ -90,6 +92,7 @@ export interface BlockStateProps {
   isHoldingDown?: boolean;
   isCliping?: boolean;
   targetPosition?: string | null;
+  titleBlock?: BlockData | null;
   blockList?: BlockData[];
   editingBlockId?: string | null;
   nextBlockInfo?: NextBlockInfo;
@@ -116,7 +119,7 @@ export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
 export const DELETE_TEXT_BLOCK      = 'DELETE_TEXT_BLOCK' as const;
 export const UPDATE_BLOCK           = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
 export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
-export const REVERT_BLOCK           = 'REVERT_BLOKC' as const;
+export const REVERT_BLOCK           = 'REVERT_BLOCK' as const;
 export const CHANGE_TEXT_STYLE      = 'CHANGE_TEXT_STYLE' as const;
 export const SET_CLIPBOARD          = 'SET_CLIPBOARD' as const;
 export const CLEAR_CLIPBOARD        = 'CLEAR_CLIPBOARD' as const;
@@ -130,6 +133,8 @@ export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
 export const CLEAR_MODIFYDATA       = 'CLEAR_MODIFYDATA' as const;
 export const CLEAR_NEXTBLOCKINFO    = 'CLEAR_NEXTBLOCKINFO' as const;
 export const SET_NEXTBLOCKINFO      = 'CLEAR_NEXTBLOCKINFO' as const;
+export const INIT_PAGE_TITLE        = 'INIT_PAGE_TITLE' as const;
+export const EDIT_PAGE_TITLE        = 'EDIT_PAGE_TITLE' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
@@ -190,6 +195,8 @@ export const changeStyleType      = actionBlock.changeStyleType;
 export const clearModifyData      = actionBlock.clearModifyData;
 export const clearNextBlockInfo   = actionBlock.clearNextBlockInfo;
 export const setNextBlockInfo     = actionBlock.setNextBlockInfo;
+export const initPageTitle        = actionBlock.initPageTitle;
+export const editPageTitle        = actionBlock.editPageTitle;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
@@ -220,6 +227,8 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof clearModifyData>
   | ReturnType<typeof clearNextBlockInfo>
   | ReturnType<typeof setNextBlockInfo>
+  | ReturnType<typeof initPageTitle>
+  | ReturnType<typeof editPageTitle>
 ;
 
 //converter
@@ -262,5 +271,7 @@ export const updateModifyData           = sideStoreUtils.updateModifyData;
 export const setCreateModifyDataOfBlock = sideStoreUtils.setCreateModifyDataOfBlock;
 export const setUpdateModifyDataOfBlock = sideStoreUtils.setUpdateModifyDataOfBlock;
 export const setDeleteModifyDataOfBlock = sideStoreUtils.setDeleteModifyDataOfBlock;
-export const convertModifyData          = sideStoreUtils.convertModifyData;
-export const replaceModifyData          = sideStoreUtils.replaceModifyData;
+export const convertModifyBlockData     = sideStoreUtils.convertModifyBlockData;
+export const replaceModifyBlockData     = sideStoreUtils.replaceModifyBlockData;
+export const createPageTitleBlockData   = sideStoreUtils.createPageTitleBlockData;
+export const revertBlockState           = sideStoreUtils.revertBlockState;
