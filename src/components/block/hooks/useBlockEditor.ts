@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { UseBlockType } from './useBlock';
 
@@ -75,6 +75,10 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
        }
      }
    }, [onRevertBlock, stage, tempClipData]);
+
+   useEffect(() => {
+      console.log(state.blockList);
+   }, [state.blockList])
 
    // idle
   const { getLastActiveTime } = useIdleTimer({

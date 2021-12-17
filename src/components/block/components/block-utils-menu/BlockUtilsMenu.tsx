@@ -34,7 +34,7 @@ const BlockUtilsMenu: React.FC<BlockUtilsMenuProps> = ({
       id: Token.getUUID()
     });
 
-    onAddBlock([newBlockData], blockData.position, newBlockData.id);
+    onAddBlock([newBlockData], blockData.position, true, newBlockData.id);
     setToggle(false);
   }
 

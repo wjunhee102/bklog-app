@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useReducer } from 'react';
-import { ModifyBlockData, ModifyDataType } from '../types';
+import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { ModifyBlockData, ModifyBlockDataType } from '../types';
 import { testDB } from '../db';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
@@ -34,7 +34,9 @@ import {
   setNextBlockInfo,
   NextBlockInfo,
   addTextBlock,
-  StagedBlock
+  StagedBlock,
+  editPageTitle,
+  initPageTitle
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -43,8 +45,7 @@ function useBlock() {
   const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
 
   // state
-  const initBlock: SetBlockDataList | null = useMemo(()=>
-    setBlockList(state.blockList), [state.blockList]);
+  const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 
@@ -96,9 +97,10 @@ function useBlock() {
   const onAddBlock = useCallback((
     blockList: BlockData[], 
     targetPosition: string,
-    nextEditInfo?: string | number
+    currentBlockPosition: boolean,
+    nextEditInfo?: string | number 
   ) => {
-    dispatch(addBlock(blockList, targetPosition, nextEditInfo));
+    dispatch(addBlock(blockList, targetPosition, currentBlockPosition, nextEditInfo));
   }, [dispatch]);
 
   const onAddTextBlock = useCallback((
@@ -170,7 +172,7 @@ function useBlock() {
     dispatch(clearModifyData());
   }, [dispatch]);
 
-  const onUpdateBlock = useCallback((modifyData: ModifyDataType) => {
+  const onUpdateBlock = useCallback((modifyData: ModifyBlockDataType) => {
     dispatch(updateBlock(modifyData));
   }, [dispatch]);
 
@@ -182,8 +184,17 @@ function useBlock() {
     dispatch(setNextBlockInfo(nextBlockInfo));
   }, [dispatch]);
 
+  const onInitPageTitle = useCallback((title: string) => {
+    dispatch(initPageTitle(title));
+  }, [dispatch]);
+
+  const onEditPageTitle = useCallback((title: string) => {
+    dispatch(editPageTitle(title));
+  }, [dispatch]);
+
   return { 
     state, 
+    initBlock,
     editingBlockId,
     isGrab,
     isHoldingDown,
@@ -195,7 +206,6 @@ function useBlock() {
     modifyData,
     nextBlockInfo,
     onEditBlock,
-    initBlock,
     blockLength,
     onInitBlockState,
     onChangeEditorState,
@@ -219,6 +229,8 @@ function useBlock() {
     onUpdateBlock,
     onClearNextBlockInfo,
     onSetNextBlockInfo,
+    onInitPageTitle,
+    onEditPageTitle
   };
 }
 

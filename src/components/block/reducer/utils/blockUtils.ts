@@ -1,4 +1,4 @@
-import { BlockData, ContentType, ModifyBlockData, ModifyDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
+import { BlockData, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
 import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData } from '.';
 import { Token } from '../../utils/token';
 import { updateObject } from '../../../../store/utils';
@@ -8,27 +8,29 @@ function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
 }
 
-interface BlockDataProps {
+interface BlockDataProps<T = TextContents[]> {
   position: string;
+  id?: string;
   type?: string;
   styleType?: string;
   parentId?: string;
   styles?: any;
-  contents?: TextContents[]
+  contents?: T
 }
 
-function createBlockData({ 
+function createBlockData<T = TextContents[]>({ 
   position,
   type,
   styleType,
   styles,
   parentId,
-  contents
-}: BlockDataProps): BlockData {
+  contents,
+  id
+}: BlockDataProps<T>): BlockData {
   return  {
     index: 0,
     position,
-    id: Token.getUUID(),
+    id: id? id : Token.getUUID(),
     type: type? type : "text",
     styleType: styleType? styleType : "bk-p",
     parentId: parentId? parentId : "null",
@@ -299,7 +301,8 @@ function changeBlockTextStyle(
 function addBlockInList(
   blockList: BlockData[], 
   addBlockList: BlockData[],
-  targetPosition: string
+  targetPosition: string,
+  currentBlockFrontPosition: boolean = true
 ): ResBlockUtils {
   const modifyData: ModifyData[] = [];
   const tempData: TempDataType = {
@@ -311,12 +314,22 @@ function addBlockInList(
   
   const index = newBlockList.findIndex(block => block.position === targetPosition);
 
-  newBlockList.splice(
-    index, 
-    1, 
-    blockList[index], 
-    ...resetToTargetPosition(addBlockList, targetPosition)
-  );
+  if(currentBlockFrontPosition) {
+    newBlockList.splice(
+      index, 
+      1, 
+      blockList[index], 
+      ...resetToTargetPosition(addBlockList, targetPosition)
+    );
+  } else {
+    console.log(index, blockList[index]);
+    newBlockList.splice(
+      index, 
+      1, 
+      ...resetToTargetPosition(addBlockList, targetPosition),
+      blockList[index]
+    );
+  }
 
   const result = orderingBlock(newBlockList);
 
@@ -609,8 +622,6 @@ function switchBlockList(
  * @param restoreData 
  */
 function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockUtils {
-  console.log(blocks, restoreData);
-  
   const tempData: TempDataType = {}
   const modifyData: ModifyData[] = [];
 
@@ -675,7 +686,7 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
  * @param blocks 
  * @param updatedData 
  */
-function updateBlockData(blocks: BlockData[], updatedData: ModifyDataType) {
+function updateBlockData(blocks: BlockData[], updatedData: ModifyBlockDataType) {
   const tempData: TempDataType = {};
   const modifyData: ModifyData[] = [];
 
@@ -713,7 +724,7 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyDataType) {
     const blockIdList: string[] | null = updatedData.delete.blockIdList? 
       updatedData.delete.blockIdList : null;
     const commentIdList: string[] | null = updatedData.delete.commentIdList?
-    updatedData.delete.commentIdList : null;
+      updatedData.delete.commentIdList : null;
 
     if(blockIdList) {
       const [ removedBlockList, targetBlockList ] = divideBlock(preBlockList, blockIdList);
@@ -772,9 +783,15 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyDataType) {
     }
   }
 
+  // return {
+  //   blockList: result.blockList,
+  //   modifyData: result.modifyData,
+  //   tempData
+  // }
+
   return {
     blockList: result.blockList,
-    modifyData: result.modifyData,
+    modifyData: [],
     tempData
   }
 }

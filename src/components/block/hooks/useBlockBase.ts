@@ -106,7 +106,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
   const handleAddBlock = useCallback(() => {
     const { position } = blockData;
     const newBlockData = createBlockData({ position });
-    onAddBlock([ newBlockData ], position, newBlockData.id);
+    onAddBlock([ newBlockData ], position, true, newBlockData.id);
   }, [blockData]);
 
   useEffect(() => {

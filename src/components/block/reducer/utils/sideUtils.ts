@@ -1,6 +1,6 @@
-import { TempData, StagedBlock, TempDataType, TempSet } from ".";
+import { TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps } from ".";
 import { updateObject } from "../../../../store/utils";
-import { BlockData, RawBlockData, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, ModifyDataType } from "../../types";
+import { BlockData, RawBlockData, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, ModifyBlockDataType, BlockDataProps, ParamCreateModifyBlock, ParamModifyBlock, ParamDeleteModity } from "../../types";
 
 function tempDataPush(
   tempStore: TempDataType[], 
@@ -39,6 +39,10 @@ function getContentsToBeChanged(
   })
 }
 
+const CREATE = "create";
+const UPDATE = "update";
+const DELETE = 'delete';
+
 function createTempData<T = any>(
   blockId: string, 
   payload?: T
@@ -64,79 +68,89 @@ function createModifyData<T = any>(
 }
 
 function setCreateModifyDataOfBlock(block: BlockData): ModifyData {
-  return createModifyData<RawBlockData>("create", "block", block.id, updateObject(block, {
+  return createModifyData<RawBlockData>(CREATE, "block", block.id, updateObject(block, {
     index: undefined,
     parentId: undefined
   }));
 }
 
 function setDeleteModifyDataOfBlock(blockId: string): ModifyData {
-  return createModifyData("delete", "block", blockId);
+  return createModifyData(DELETE, "block", blockId);
 }
 
 function setUpdateModifyDataOfBlock(blockId: string, payload: ModifyBlockData) {
-  return createModifyData<ModifyBlockData>("update", "block", blockId, payload);
+  return createModifyData<ModifyBlockData>(UPDATE, "block", blockId, payload);
+}
+
+function pushModifyDataList(modifyDataList: ModifyData[], newModifyDataList: ModifyData[]) {
+  if(!newModifyDataList[0]) return;
+
+  const modifyData = newModifyDataList.pop();
+
+  let index = modifyDataList.findIndex((data) => data.blockId === modifyData.blockId);
+
+    if(index !== -1) {
+      const { command, blockId, set, payload } = modifyDataList[index];
+
+      if(set === modifyData.set) {
+
+        if(command === DELETE && modifyData.command === CREATE) {
+
+          modifyDataList.splice(index, 1);
+          
+        } else {
+          console.log("중복",modifyDataList[index], modifyData)
+          modifyDataList[index] = {
+            blockId,
+            set,
+            command: command === UPDATE && modifyData.command === CREATE? CREATE : modifyData.command,
+            payload: payload? Object.assign({}, modifyData.payload, payload) : modifyData.payload
+          }
+
+        }
+
+    } else {
+
+      if(set !== "block" && command !== DELETE) {
+        modifyDataList.push(modifyData); 
+      }
+
+      }
+
+  } else { 
+    modifyDataList.push(modifyData);
+  }
+
+  pushModifyDataList(modifyDataList, newModifyDataList);
 }
 
 function updateModifyData(preModifyData: ModifyData[], newModifyData: ModifyData[]) {
   if(!newModifyData[0]) {
     return preModifyData;
   }
-  
-  const newModifyDataList = [...preModifyData];
 
-  for(const modifyData of newModifyData) {
-    let index = newModifyDataList.findIndex((data) => data.blockId === modifyData.blockId);
+  const modifyDataList = [...preModifyData];
 
-    if(index !== -1) {
-      const { command, blockId, set, payload } = newModifyDataList[index];
+  pushModifyDataList(modifyDataList, newModifyData);
 
-      if(set === modifyData.set) {
-
-        if(command === "create" && modifyData.command === "delete") {
-
-          newModifyDataList.splice(index, 1);
-          
-        } else {
-
-          newModifyDataList[index] = {
-            blockId,
-            set,
-            command: command === "create" && modifyData.command === "update"? "create" : modifyData.command,
-            payload: payload? Object.assign({}, payload, modifyData.payload) : modifyData.payload
-          }
-
-        }
-
-      } else {
-
-        if(set !== "block" && command !== "delete") {
-         newModifyDataList.push(modifyData); 
-        }
-
-      }
-
-    } else { 
-      newModifyDataList.push(modifyData);
-    }
-  }
-
-  return newModifyDataList;
+  return modifyDataList;
 }
 
-const modifyDataReducer = (acc: ModifyDataType, cur: ModifyData) => {
+const modifyDataReducer = (acc: ModifyBlockDataType, cur: ModifyData) => {
   switch (cur.command) {
-    case "create":
+    case CREATE:
+      cur.command = undefined;
       acc.create.push(cur);
       
       break;
 
-    case "update":
+    case UPDATE:
+      cur.command = undefined;
       acc.update.push(cur);
       
       break;
 
-    case "delete":
+    case DELETE:
       if(cur.set === "block") {
         acc.delete.blockIdList.push(cur.blockId);
       } else if(cur.set === "comment") {
@@ -149,8 +163,10 @@ const modifyDataReducer = (acc: ModifyDataType, cur: ModifyData) => {
   return acc;
 }
 
-function convertModifyData(modifyDataList: ModifyData[]) {
-  const acc: ModifyDataType = {
+function convertModifyBlockData(modifyDataList: ModifyData[] | null) {
+  if(!modifyDataList[0] || !modifyDataList) return null;
+
+  const acc: ModifyBlockDataType = {
     create: [],
     update: [],
     delete: {
@@ -158,7 +174,7 @@ function convertModifyData(modifyDataList: ModifyData[]) {
       commentIdList: []
     }
   }
-  const modifyData: ModifyDataType = modifyDataList.reduce(modifyDataReducer, acc);
+  const modifyData: ModifyBlockDataType = modifyDataList.reduce(modifyDataReducer, acc);
   
   if(!modifyData.create[0]) modifyData.create = undefined;
   if(!modifyData.update[0]) modifyData.update = undefined;
@@ -169,7 +185,7 @@ function convertModifyData(modifyDataList: ModifyData[]) {
   return modifyData;
 }
 
-function replaceModifyData(currentData: ModifyData[], replaceData: ModifyDataType): ModifyData[] {
+function replaceModifyBlockData(currentData: ModifyData[], replaceData: ModifyBlockDataType): ModifyData[] {
   if(!currentData[0]) return [];
 
   const updateData = replaceData.update? replaceData.update : null;
@@ -193,11 +209,9 @@ function replaceModifyData(currentData: ModifyData[], replaceData: ModifyDataTyp
 
       const index = newModifyData.findIndex(modifyData => 
         modifyData.blockId === data.blockId && modifyData.set === data.set);
-      
-      console.log(data, index);
 
       if(index !== -1) {
-        if(newModifyData[index].command !== "delete") {
+        if(newModifyData[index].command !== DELETE) {
           let deleteCheck = true;
 
           for(const [ key, value ] of Object.entries(newModifyData[index].payload)) {
@@ -231,6 +245,83 @@ function replaceModifyData(currentData: ModifyData[], replaceData: ModifyDataTyp
   return newModifyData;
 }
 
+function createPageTitleBlockData(title: string) {
+  return createBlockData<string>({
+    id: "title",
+    position: "title",
+    type: "title",
+    styleType: "bk-title",
+    parentId: "title",
+    contents: title
+  });
+}
+
+function revertBlockState(
+  state: BlockState, 
+  front: boolean
+): BlockState {
+  if(!front && state.tempBack[0]) {
+    const tempBack = state.tempBack.concat();
+    const lastTempBack = tempBack.pop();
+    const editingBlockId = lastTempBack.editingBlockId? lastTempBack.editingBlockId : null;
+    const { blockList, tempData, modifyData } = restoreBlock(state.blockList, lastTempBack);
+
+    let titleBlockData = null;
+    let lastTitleBlockData = state.titleBlock;
+
+    if(lastTempBack.pageTitle) {
+      if(lastTempBack.pageTitle) {
+        titleBlockData = createPageTitleBlockData(lastTempBack.pageTitle);
+      }
+    }
+
+    console.log(lastTempBack);
+    
+    tempData.editingBlockId = state.editingBlockId;
+    tempData.pageTitle = titleBlockData? lastTitleBlockData.contents : undefined;
+
+    return updateObject<BlockState, BlockStateProps>(state, {
+      editingBlockId,
+      blockList,
+      titleBlock: titleBlockData? titleBlockData : lastTitleBlockData,
+      tempBack,
+      tempFront: tempDataPush(state.tempFront, tempData),
+      modifyData: updateModifyData(state.modifyData, modifyData),
+      isFetch: true
+    });
+
+  } else if(state.tempFront[0]) {
+    const tempFront = state.tempFront.concat();
+    const lastTempFront = tempFront.pop();
+    const editingBlockId = lastTempFront.editingBlockId? lastTempFront.editingBlockId : null;
+    const { blockList, tempData, modifyData } = restoreBlock(state.blockList, lastTempFront);
+
+    let titleBlockData = null;
+    let lastTitleBlockData = state.titleBlock;
+
+    if(lastTempFront.pageTitle) {
+      if(lastTempFront.pageTitle) {
+        titleBlockData = createPageTitleBlockData(lastTempFront.pageTitle);
+      }
+    }
+    
+    tempData.editingBlockId = state.editingBlockId;
+    tempData.pageTitle = titleBlockData? lastTitleBlockData.contents : undefined;
+
+    return updateObject<BlockState, BlockStateProps>(state, {
+      blockList,
+      editingBlockId,
+      tempFront,
+      tempBack: tempDataPush(state.tempBack, tempData),
+      modifyData: updateModifyData(state.modifyData, modifyData),
+      isFetch: true
+    });
+
+  } else {
+    return state;
+  }
+}
+
 const sideStoreUtils = {
   tempDataPush,
   getContentsToBeChanged,
@@ -240,8 +331,10 @@ const sideStoreUtils = {
   setDeleteModifyDataOfBlock,
   setUpdateModifyDataOfBlock,
   updateModifyData,
-  convertModifyData,
-  replaceModifyData
+  convertModifyBlockData,
+  replaceModifyBlockData,
+  createPageTitleBlockData,
+  revertBlockState
 }
 
 export default sideStoreUtils;
