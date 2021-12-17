@@ -1,18 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BlockData } from "../types";
 import { UseBlockType } from "./useBlock";
-import { 
-  contentsElement,
-  copyInClipboard,
-  createClipboardContentsText,
-  createContentsElement
-} from '../utils';
-import { 
-  getSelectionStart,
-  getSelectionEnd,
-  setSelectionRange
-} from '../utils/selectionText';
-import { createBlockData, sliceTextContents } from "../reducer/utils";
+import { contentsElement, copyInClipboard, createClipboardContentsText, createContentsElement } from '../utils';
+import { getSelectionStart,getSelectionEnd, setSelectionRange } from '../utils/selectionText';
 
 function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selected: boolean) {
   const [ editable, setEditable]        = useState<boolean>(true);
@@ -23,7 +13,6 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
   const blockContentsRef = useRef<HTMLDivElement>(null);
 
   const {
-    initBlock,
     isGrab,
     isHoldingDown,
     isCliping,
@@ -32,13 +21,9 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
     onChangeEditingId,
     onEditBlock,
     onAddTextBlock,
-    onChangeTextStyle,
     onCommitBlock,
-    onChangeBlockContents,
     onDeleteBlock,
     onDeleteTextBlock,
-    onRevertBlock,
-    onSwitchBlock,
     onClearNextBlockInfo
   } = useBlockReducer;
 
@@ -253,6 +238,10 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
       }
     }
   }, [blockContentsRef]);
+
+  useEffect(() => {
+    setEditable(!selected);
+  }, [selected]);
 
   return {
     cursorStart,

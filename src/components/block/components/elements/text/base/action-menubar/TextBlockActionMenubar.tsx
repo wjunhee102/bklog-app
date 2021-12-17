@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UseBlockType } from '../../../../../hooks/useBlock';
 import { ContentType, OrderType } from '../../../../../types';
 import { findTextStyle } from '../../../../../utils';
@@ -7,6 +7,7 @@ import BlockStyleActionMenu from './block-action-menu/BlockStyleActionMenu';
 import TextStyleToggleMenu from './text-style-toggle-menu/TextStyleToggleMenu';
 import BlockMenuBar from '../../../../menubar';
 import './TextBlockActionMenubar.scss';
+import classNames from 'classnames';
 
 const FONT_SIZE_TABLE = {
   "bk-h1": 24,
@@ -27,6 +28,7 @@ const FONT_SIZE_TABLE = {
 export type MenuName = "not" | "color" | "blockStyleType";
 
 interface TextBlockActionMenuBarProps {
+  show: boolean;
   blockIndex: number;
   styleType: string;
   contents: any;
@@ -37,6 +39,7 @@ interface TextBlockActionMenuBarProps {
 }
 
 const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
+  show,
   blockIndex,
   styleType,
   contents,
@@ -87,7 +90,9 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
 
   return (
     <div 
-      className="text-block-action-menubar"
+      className={classNames("text-block-action-menubar", {
+        "block": show
+      })}
       style={{left: `${startPosition * setLeftPosition(styleType)}px`}}
     >
       <BlockMenuBar bgColor="blur-bg">

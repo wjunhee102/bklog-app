@@ -28,9 +28,11 @@ import {
   CLEAR_NEXTBLOCKINFO,
   NextBlockInfo,
   SET_NEXTBLOCKINFO,
-  ADD_TEXT_BLOCK
+  ADD_TEXT_BLOCK,
+  INIT_PAGE_TITLE,
+  EDIT_PAGE_TITLE
 } from ".";
-import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyDataType } from "../../types";
+import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType } from "../../types";
 
 function initBlockState(rawBlockData: RawBlockData[]) {
   return {
@@ -45,12 +47,13 @@ function resetBlock() {
   }
 }
 
-function addBlock(addBlockList: BlockData[], targetPosition: string, nextEditInfo?: string | number) {
+function addBlock(addBlockList: BlockData[], targetPosition: string, currentBlockPosition: boolean, nextEditInfo?: string | number) {
   return {
     type: ADD_BLOCK,
     payload: {
       addBlockList,
       targetPosition,
+      currentBlockPosition,
       nextEditInfo
     }
   }
@@ -60,7 +63,9 @@ function addTextBlock(
   index: number, 
   innerHTML: string,
   cursorStart: number,
-  cursorEnd: number
+  cursorEnd: number,
+  type?: string,
+  styleType?: string
 ) {
   return {
     type: ADD_TEXT_BLOCK,
@@ -68,7 +73,9 @@ function addTextBlock(
       index,
       innerHTML,
       cursorStart,
-      cursorEnd
+      cursorEnd,
+      type,
+      styleType
     }
   }
 }
@@ -128,7 +135,7 @@ function deleteTextBlock(index: number, innerHTML: string, textLength: number) {
   };
 }
 
-function updateBlock(modifyData: ModifyDataType) {
+function updateBlock(modifyData: ModifyBlockDataType) {
   return {
     type: UPDATE_BLOCK,
     payload: modifyData
@@ -262,6 +269,20 @@ function setNextBlockInfo(nextBlockInfo: NextBlockInfo) {
   };
 }
 
+function initPageTitle(title: string) {
+  return {
+    type: INIT_PAGE_TITLE,
+    payload: title
+  }
+}
+
+function editPageTitle(title: string) {
+  return {
+    type: EDIT_PAGE_TITLE,
+    payload: title
+  }
+}
+
 const actionBlock = {
   initBlockState,
   resetBlock,
@@ -289,7 +310,9 @@ const actionBlock = {
   changeStyleType,
   clearModifyData,
   clearNextBlockInfo,
-  setNextBlockInfo
+  setNextBlockInfo,
+  initPageTitle,
+  editPageTitle
 }
 
 export default actionBlock;

@@ -4,6 +4,7 @@ import { UseBlockType } from "./useBlock";
 import { contentsElement, copyInClipboard, createClipboardContentsText, createContentsElement } from '../utils';
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../utils/selectionText';
 import { createBlockData, parseHtmlContents, sliceTextContents } from "../reducer/utils";
+import { useIdleTimer } from "react-idle-timer";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   const [ editable, setEditable]        = useState<boolean>(true);
@@ -78,7 +79,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     if(e.key === "Enter") {
       e.preventDefault();
 
-      const [ front, back ] = sliceTextContents(parseHtmlContents(e.target.innerHTML), cursorStart, cursorEnd);
+      const [ front, back ] = sliceTextContents(parseHtmlContents(e.target.innerText), cursorStart, cursorEnd);
 
       console.log(front, back, cursorStart, cursorEnd);
 
@@ -89,7 +90,9 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
         contents: back
       });
 
-      onEditPageTitle(front[0]? front[0][0] : "");
+      
+      setStage(front? front[0][0] : "");
+      e.target.innerText = front? front[0][0] : "";
 
       onAddBlock([newBlock], "1", false, newBlock.id);
     }
@@ -121,9 +124,9 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     if(e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
       setCursorStart(0);
       setCursorEnd(0);
-      // onEditPageTitle(stage);
+      onEditPageTitle(stage);
       onChangeEditingId();
-      console.log("blur")
+      console.log("blur", stage);
     }
   }, []);
 
@@ -134,6 +137,16 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   const isFocus = () => {
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
   }
+
+  const handleOnIdle = useCallback(() => {
+    if(stage) onEditPageTitle(stage);
+  }, [stage, onEditPageTitle]);
+
+  const { getLastActiveTime } = useIdleTimer({
+    timeout: 10 * 60 * 2,
+    onIdle: handleOnIdle,
+    debounce: 500
+  })
 
   useEffect(() => {
     const focused = document.activeElement;
@@ -164,9 +177,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   }, [editingBlockId]);
 
   useEffect(() => {
-    if(isGrab) {
-      setEditable(!isGrab);
-    } 
+    setEditable(!isGrab);
   }, [isGrab]);
 
   useEffect(() => {

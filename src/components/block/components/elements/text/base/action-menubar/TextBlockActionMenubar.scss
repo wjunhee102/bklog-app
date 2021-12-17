@@ -1,5 +1,5 @@
 .text-block-action-menubar{
-  @apply absolute bg-transparent z-20 bottom-full;
+  @apply absolute bg-transparent z-20 bottom-full hidden;
 
   .action-menu-box {
     @apply relative h-full px-2 border-r border-gray-300 font-medium text-gray-700; 

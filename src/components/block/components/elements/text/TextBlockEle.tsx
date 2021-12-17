@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import useTextBlock from '../../../hooks/useTextBlock';
 import { BlockProps } from '../../Block';
 import TextBlockActionMenuBar from './base/action-menubar';
-import ContentEditableEle from './base/ContentEditableEle';
+import ContentEditableEle from '../../common/ContentEditableEle';
 
 interface TextBlockEleProps extends BlockProps {
   selected: boolean;
@@ -34,10 +34,6 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     setEditable
   } = useTextBlock(blockData, useBlockReducer, selected);
 
-  useEffect(() => {
-    setEditable(!selected);
-  }, [selected]);
-
   return (
     <div 
       className="text-block"
@@ -60,6 +56,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
       {
         styleToggle?
         <TextBlockActionMenuBar 
+          show={styleToggle}
           blockIndex={blockData.index}
           styleType={blockData.styleType}
           contents={blockData.contents}
