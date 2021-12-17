@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BlockEditor from "../block";
 import useConnectEditor from "./hooks/useConnectEditor";
 import junheeImg from "../../assets/junhee.jpg";
@@ -168,7 +168,25 @@ const InfoComponent: React.FC<InfoComponentProps> = ({
   )
 }
 
+const test = {
+  a: 1,
+  b: 2
+}
+
 const Portfolio: React.FC = () => {
+  const [ count, setCount ] = useState<number>(0);
+
+  useEffect(() => {
+    if(count < 12) {
+      const timer = setTimeout(() => {
+        setCount(count + 1);
+        console.log(count);
+      }, 1000);
+    
+    return () => clearTimeout(timer);
+    }
+  }, [count]);
+
   return (
     <main className="portfolio h-screen">
       
