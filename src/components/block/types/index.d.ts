@@ -77,10 +77,30 @@ export class ParamDeleteModity {
   commentIdList?: string[];
 }
 
-export interface ModifyDataType {
+export interface ModifyBlockDataType {
   create?: ParamCreateModifyBlock[];
   update?: ParamModifyBlock[];
   delete?: ParamDeleteModity;
+}
+
+export interface ModifyPageInfoType {
+  createdDate?: Date;
+  updatedDate?: Date;
+  id?: string;
+  title?: string;
+  coverImage?: string;
+  coverColor?: string;
+  lastAccessDate?: Date;
+  views?: number;
+  disclosureScope?: number;
+  version?: string;
+  profileId?: string;
+  editable?: boolean;
+}
+
+export interface ModifyBklogDataType {
+  modifyPageInfo?: ModifyPageInfoType;
+  modifyBlockData?: ModifyBlockType;
 }
 
 export interface ModifyBlockData<T = any, P = any> {

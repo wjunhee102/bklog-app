@@ -48,8 +48,10 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     onInitBlockState,
     onClearModifyData,
     onUpdateBlock,
-    onEditPageTitle
+    onInitPageTitle
   } = useBlockReducer;
+
+  const userId: string = useMemo(() => user? user.id : "", [user]);
 
   const pageTitle: string | null = useMemo(() => bklogState.pageInfo? bklogState.pageInfo.title : null, [bklogState.pageInfo]);
 
@@ -83,9 +85,9 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
         onChangeUpdatingState(true);
       });
 
-      socket.on("updated", (data: string) => {
-        console.log(`updated: ${data}`);
-        setVersion(data);
+      socket.on("updated", (version: string) => {
+        console.log(`updated: ${version}`);
+        setVersion(version);
         setUpdatingId(null);
       });
 
@@ -109,9 +111,8 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     if(bklogState.blockList) {
       console.log("init 실행");
       onInitBlockState(bklogState.blockList);
-      onEditPageTitle(bklogState.pageInfo.title);
+      onInitPageTitle(bklogState.pageInfo.title);
       onClearBklogState("blockList");
-      // onClearModifyData();
     }
   }, [bklogState.blockList]);
 
@@ -191,7 +192,6 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [updated]);
 
   useEffect(() => {
-    console.log(updatingId);
     if(updatingId && !updatingTimer) {
       setUpdatingTimer(true);
 
@@ -208,10 +208,8 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
    // 일단 서버에서 충돌 막을 방법을 찾아야 할 듯.
   useEffect(() => {
-    console.log(pushModifyBlockData, pushModifyPageInfo, isFetching, updatingId, socket);
     if(!updatingId && !isFetching && socket && (pushModifyBlockData || pushModifyPageInfo)) {
-      console.log("on update");
-      onUpdateBklog();
+      onUpdateBklog(userId);
       socket.emit("update");
     }
   }, [pushModifyBlockData, pushModifyPageInfo]);
@@ -219,7 +217,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   useEffect(() => {
     if(isFetching && (pushModifyBlockData || pushModifyPageInfo)) {
       if(!updatingId && !isUpdating) {
-        onUpdateBklog();
+        onUpdateBklog(userId);
       } else {
         const timer = setTimeout(() => {
           if(isUpdating) onReleaseUpdating();

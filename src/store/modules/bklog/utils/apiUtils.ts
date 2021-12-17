@@ -18,4 +18,13 @@ function bklogFetchPost(url: string, data: object) {
   });
 }
 
-export default { bklogFetchGet, bklogFetchPost };
+function bklogFetchDelete(url: string, data: object) {
+  return BaseRestFetch.restApi({
+    method: "delete",
+    url: `bklog/${url}`,
+    withCredentials: true,
+    data
+  })
+}
+
+export default { bklogFetchGet, bklogFetchPost, bklogFetchDelete };

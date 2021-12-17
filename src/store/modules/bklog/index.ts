@@ -12,10 +12,12 @@ export const initialState: BklogState = {
   version: null,
   pageStar: null,
   pageComments: null,
+  pageEditorList: null,
   blockList: null,
   blockComments: null,
-  pullModifyData: null,
-  pushModifyData: null,
+  pushModifyBlockData: null,
+  pushModifyPageInfo: null,
+  pullModifyBlockData: null,
   editingUserList: [],
   error: null
 };

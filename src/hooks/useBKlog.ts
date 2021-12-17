@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ModifyBlockDataType, ModifyPageInfoType } from '../components/block/types';
 import { RootState } from '../store/modules';
-import { addPushModifyBlockData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdatedState, ClearBklogStateType, clearBklogState, releaseUpdating, changeUpdatingState, changePageInfo } from '../store/modules/bklog/utils';
+import { addPushModifyBlockData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdatedState, ClearBklogStateType, clearBklogState, releaseUpdating, changeUpdatingState, changePageInfo, addPageEditor, excludePageEditor } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
 export const useConnectBklogStore = (): BklogState => useSelector((state: RootState) => state.bklog);
@@ -32,9 +32,10 @@ function useBklogActions(bklogState: BklogState) {
     dispatch(changePageInfo(modifyPageInfo));
   }, [dispatch]);
 
-  const onUpdateBklog = useCallback(() => {
+  const onUpdateBklog = useCallback((profileId: string) => {
     if(bklogState.pageInfo && (bklogState.pushModifyBlockData || bklogState.pushModifyPageInfo)) {
       dispatch(updateBklog({
+        profileId,
         pageId: bklogState.pageInfo.id,
         pageVersions: {
           current: bklogState.version,
@@ -64,6 +65,22 @@ function useBklogActions(bklogState: BklogState) {
     dispatch(releaseUpdating(bklogState.pageInfo.id));
   }, [dispatch, bklogState.pageInfo]);
 
+  const onAddPageEditor = useCallback((profileId: string, targetProfileId: string) => {
+    dispatch(addPageEditor({
+      pageId: bklogState.pageInfo.id, 
+      profileId, 
+      targetProfileId
+    }))
+  }, [dispatch]);
+
+  const onExcludePageEditor = useCallback((profileId: string, targetProfileId: string) => {
+    dispatch(excludePageEditor({
+      pageId: bklogState.pageInfo.id, 
+      profileId, 
+      targetProfileId
+    }))
+  }, [dispatch]);
+
   return { 
     bklogState,
     onClearBklogState,
@@ -75,7 +92,9 @@ function useBklogActions(bklogState: BklogState) {
     onUpdateVersion,
     onChangeUpdatedState,
     onChangeUpdatingState,
-    onReleaseUpdating
+    onReleaseUpdating,
+    onAddPageEditor,
+    onExcludePageEditor
   };
 }
 

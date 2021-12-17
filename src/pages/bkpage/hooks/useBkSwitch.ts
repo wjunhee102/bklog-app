@@ -8,7 +8,8 @@ function useBkSwitch(type: GetPageListReqType, userInfo: string) {
     pageState: {
       pageList
     },
-    onGetPageList
+    onGetPageList,
+    onChangeToggle
   } = usePage();
 
   const history = useHistory();
@@ -22,6 +23,10 @@ function useBkSwitch(type: GetPageListReqType, userInfo: string) {
     //   history.push(`/bklog/${type}/${userInfo}/${pageList[0].id}`)
     // }
   }, [pageList]);
+
+  useEffect(() => {
+    onChangeToggle(true);
+  }, []);
 }
 
 export default useBkSwitch;

@@ -1,6 +1,6 @@
 import { initialState } from ".";
 import { updateObject } from "../../utils";
-import { addPushModifyData, ADD_PUSH_MODIFY_DATA, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS } from "./utils";
+import { addPushModifyBlockData, changePageInfo, ADD_PUSH_MODIFY_BLOCK_DATA, CHANGE_PAGE_INFO, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS, addPageEditor, addPageEditorSuccess, addPageEditorError, ADD_PAGE_EDITOR, ADD_PAGE_EDITOR_SUCCESS, ADD_PAGE_EDITOR_ERROR } from "./utils";
 
 function resetBklogHandler(
   state: BklogState, 
@@ -13,7 +13,11 @@ function clearBklogStateHandler(
   state: BklogState,
   { payload }: ReturnType<typeof clearBklogState>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, { [payload]: null });
+  if(initialState.hasOwnProperty(payload)) {
+    return updateObject<BklogState, BklogStateProps>(state, { [payload]: initialState[payload] });
+  } else {
+    return state;
+  }
 }
 
 function getPageHandler(
@@ -37,8 +41,8 @@ function getPageSuccessHandler(
     isLoading: false,
     isRefresh: false,
     isFetching: false,
-    pushModifyData: null,
-    pullModifyData: null
+    pushModifyBlockData: null,
+    pullModifyBlockData: null
   });
 }
 
@@ -53,13 +57,29 @@ function getPageErrorHandler(
   });
 }
 
-function addPushModifyDataHandler(
+function addPushModifyBlockDataHandler(
   state: BklogState, 
-  { payload }: ReturnType<typeof addPushModifyData>
+  { payload }: ReturnType<typeof addPushModifyBlockData>
 ): BklogState {
   return updateObject<BklogState, BklogStateProps>(state, {
-    pushModifyData: payload
+    pushModifyBlockData: payload
   });
+}
+
+function changePageInfoHandler(
+  state: BklogState,
+  { payload }: ReturnType<typeof changePageInfo>
+): BklogState {
+  const pushModifyPageInfo = state.pushModifyPageInfo? 
+    updateObject(state.pushModifyPageInfo, payload)
+    : payload
+
+  const pageInfo = updateObject<PageInfoType, PageInfoProps>(state.pageInfo, payload);
+
+  return updateObject<BklogState, BklogStateProps>(state, {
+    pageInfo,
+    pushModifyPageInfo
+  })
 }
 
 function updateBklogHandler(
@@ -78,7 +98,8 @@ function updateBklogSuccessHandler(
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,
     isUpdated: true,
-    pushModifyData: null,
+    pushModifyBlockData: null,
+    pushModifyPageInfo: null,
     version: pageVersion
   });
 }
@@ -87,21 +108,28 @@ function updateBklogErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof updateBklogError>
 ): BklogState {
-  if(payload.type === "Bklog" && payload.code === "002") {
+  console.log(payload);
+  if(payload.type === "Bklog" && (payload.code === "002" || payload.code === "004")) {
 
     if(payload.code === "002") {
+      return updateObject<BklogState, BklogStateProps>(state, {
+        isLoading: false,
+        isUpdating: true
+      });
+    } else {
       return updateObject<BklogState, BklogStateProps>(state, {
         isLoading: true,
         isRefresh: true
       });
-    } else if(payload.code === "003") {
-      return updateObject<BklogState, BklogStateProps>(state, {
-        isUpdating: true
-      });
     }
+
   } else {
     return updateObject<BklogState, BklogStateProps>(state, {
+      isFetching: false,
       isLoading: true,
+      isRefresh: true,
+      pushModifyBlockData: null,
+      pushModifyPageInfo: null,
       error: payload
     });
   }
@@ -118,15 +146,15 @@ function updateVersionHandler(
 
 function updateVersionSuccessHandler(
   state: BklogState,
-  { payload: { id, data: { pageInfo, modifyData } } }: ReturnType<typeof updateVersionSuccess>
+  { payload: { id, data: { modifyPageInfo, modifyBlockData } } }: ReturnType<typeof updateVersionSuccess>
 ): BklogState {
 
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,
-    pageInfo: pageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, pageInfo) 
+    pageInfo: modifyPageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, modifyPageInfo) 
     : state.pageInfo,
     version: id,
-    pullModifyData: modifyData? modifyData : state.pullModifyData
+    pullModifyBlockData: modifyBlockData? modifyBlockData : state.pullModifyBlockData
   });
 }
 
@@ -135,7 +163,7 @@ function updateVersionErrorHandler(
   { payload }: ReturnType<typeof updateVersionError>
 ): BklogState {
   console.log(payload);
-  if(payload.type === "Bklog" && payload.code === "002") {
+  if(payload.type === "Bklog" && payload.code === "004") {
     return updateObject<BklogState, BklogStateProps>(state, {
       isLoading: true,
       isRefresh: true
@@ -143,6 +171,7 @@ function updateVersionErrorHandler(
   } else {
     return updateObject<BklogState, BklogStateProps>(state, {
       isLoading: true,
+      isRefresh: true,
       error: payload
     });
   }
@@ -185,21 +214,53 @@ function releaseUpdatingErrorHandler(
   });
 }
 
+function addPageEditorHandler(
+  state: BklogState,
+  action: ReturnType<typeof addPageEditor>
+): BklogState {
+  return updateObject<BklogState, BklogStateProps>(state, {
+    isLoading: true
+  });
+}
+
+function addPageEditorSuccessHandler(
+  state: BklogState,
+  action: ReturnType<typeof addPageEditorSuccess>
+): BklogState {
+  return updateObject<BklogState, BklogStateProps>(state, {
+    isLoading: false
+  });
+}
+
+function addPageEditorErrorHandler(
+  state: BklogState,
+  { payload }: ReturnType<typeof addPageEditorError>
+): BklogState {
+  return updateObject<BklogState, BklogStateProps>(state, {
+    isLoading: false,
+    error: payload
+  });
+}
+
 export default {
-  [RESET_BKLOG]              : resetBklogHandler,
-  [CLEAR_BKLOG_STATE]        : clearBklogStateHandler,
-  [GET_PAGE]                 : getPageHandler,
-  [GET_PAGE_SUCCESS]         : getPageSuccessHandler,
-  [GET_PAGE_ERROR]           : getPageErrorHandler,
-  [ADD_PUSH_MODIFY_DATA]     : addPushModifyDataHandler,
-  [UPDATE_BKLOG]             : updateBklogHandler,
-  [UPDATE_BKLOG_SUCCESS]     : updateBklogSuccessHandler,
-  [UPDATE_BKLOG_ERROR]       : updateBklogErrorHandler,
-  [UPDATE_VERSION]           : updateVersionHandler,
-  [UPDATE_VERSION_SUCCESS]   : updateVersionSuccessHandler,
-  [UPDATE_VERSION_ERROR]     : updateVersionErrorHandler,
-  [CHANGE_UPDATED_STATE]     : changeUpdatedStateHandler,
-  [CHANGE_UPDATING_STATE]    : changeUpdatingStateHandler,
-  [RELEASE_UPDATING_SUCCESS] : releaseUpdatingSuccessHandler,
-  [RELEASE_UPDATING_ERROR]   : releaseUpdatingErrorHandler
+  [RESET_BKLOG]                : resetBklogHandler,
+  [CLEAR_BKLOG_STATE]          : clearBklogStateHandler,
+  [GET_PAGE]                   : getPageHandler,
+  [GET_PAGE_SUCCESS]           : getPageSuccessHandler,
+  [GET_PAGE_ERROR]             : getPageErrorHandler,
+  [ADD_PUSH_MODIFY_BLOCK_DATA] : addPushModifyBlockDataHandler,
+  [CHANGE_PAGE_INFO]           : changePageInfoHandler,
+  [UPDATE_BKLOG]               : updateBklogHandler,
+  [UPDATE_BKLOG_SUCCESS]       : updateBklogSuccessHandler,
+  [UPDATE_BKLOG_ERROR]         : updateBklogErrorHandler,
+  [UPDATE_VERSION]             : updateVersionHandler,
+  [UPDATE_VERSION_SUCCESS]     : updateVersionSuccessHandler,
+  [UPDATE_VERSION_ERROR]       : updateVersionErrorHandler,
+  [CHANGE_UPDATED_STATE]       : changeUpdatedStateHandler,
+  [CHANGE_UPDATING_STATE]      : changeUpdatingStateHandler,
+  [RELEASE_UPDATING_SUCCESS]   : releaseUpdatingSuccessHandler,
+  [RELEASE_UPDATING_ERROR]     : releaseUpdatingErrorHandler,
+  [ADD_PAGE_EDITOR]            : addPageEditorHandler,
+  [ADD_PAGE_EDITOR_SUCCESS]    : addPageEditorSuccessHandler,
+  [ADD_PAGE_EDITOR_ERROR]      : addPageEditorErrorHandler
 }

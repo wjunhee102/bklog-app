@@ -43,7 +43,7 @@ function useBkPage() {
 
   useEffect(() => {
     if(bklogState.error) {
-      if(bklogState.error.type === "AUTH" && bklogState.error.code === "002") {
+      if(bklogState.error.type !== "Bklog" && bklogState.error.code !== "002" && bklogState.error.code !== "004") {
         setErrToggle(true);
         setErrMessage(bklogState.error.message);
       }

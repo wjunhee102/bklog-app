@@ -22,12 +22,14 @@ const BklogContainer: React.FC<RouteComponentProps<MatchParams>> = ({
 }) => { 
   const { 
     bklogState,
-    onGetPage
+    onGetPage,
+    onResetBklog
    } = useBklog();
 
   const pageInfo: PageInfoType = useMemo(() => bklogState.pageInfo, [bklogState.pageInfo]);
 
   useEffect(() => {
+    onResetBklog();
     onGetPage(pageId);
   }, [pageId]);
 

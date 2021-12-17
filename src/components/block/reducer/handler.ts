@@ -1,6 +1,6 @@
 import { initialBlockState } from ".";
 import { ActionHandlers, updateObject } from "../../../store/utils";
-import { BlockData, ModifyBlockData } from "../types";
+import { BlockData, BlockDataProps, ModifyBlockData } from "../types";
 import { 
   BlockState, 
   createBlockData,
@@ -55,7 +55,7 @@ import {
   updateBlock,
   updateBlockData,
   UPDATE_BLOCK,
-  replaceModifyData,
+  replaceModifyBlockData,
   changeBlockContents,
   CHANGE_BLOCK_CONTENTS,
   createModifyData,
@@ -71,7 +71,13 @@ import {
   sliceTextContents,
   parseHtmlContents,
   ADD_TEXT_BLOCK,
-  TempDataType
+  TempDataType,
+  initPageTitle,
+  createPageTitleBlockData,
+  editPageTitle,
+  INIT_PAGE_TITLE,
+  EDIT_PAGE_TITLE,
+  revertBlockState
 } from "./utils";
 
 function initBlockStateHandler(
@@ -110,9 +116,17 @@ function changeEditingIdHandler(
       editingBlockId: null
     });
   } else {
-    return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: state.blockList[payload]? state.blockList[payload].id : null
-    });
+
+    if(payload > 0) {
+      return updateObject<BlockState, BlockStateProps>(state, {
+        editingBlockId: state.blockList[payload]? state.blockList[payload].id : null
+      });
+    } else {
+      return updateObject<BlockState, BlockStateProps>(state, {
+        editingBlockId: "title"
+      });
+    }
+    
   }
 }
 
@@ -173,10 +187,10 @@ function changeBlockContentsHandler(
 function addBlockHandler(
   state: BlockState, 
   { 
-    payload: { addBlockList, targetPosition, nextEditInfo } 
+    payload: { addBlockList, targetPosition, nextEditInfo, currentBlockPosition } 
   }: ReturnType<typeof addBlock>
 ): BlockState {
-  const { blockList, modifyData, tempData } = addBlockInList(state.blockList, addBlockList, targetPosition);
+  const { blockList, modifyData, tempData } = addBlockInList(state.blockList, addBlockList, targetPosition, currentBlockPosition);
 
   tempData.editingBlockId = state.editingBlockId;
 
@@ -202,7 +216,7 @@ function addBlockHandler(
 function addTextBlockHandler(
   state: BlockState, 
   { payload: {
-    index, innerHTML, cursorStart, cursorEnd
+    index, innerHTML, cursorStart, cursorEnd, type, styleType
   } }: ReturnType<typeof addTextBlock>
 ): BlockState {  
   const [ front, back ] = sliceTextContents(parseHtmlContents(innerHTML), cursorStart, cursorEnd);
@@ -218,8 +232,8 @@ function addTextBlockHandler(
 
   const newBlock = createBlockData({
     position: block.position,
-    type: block.type,
-    styleType: block.styleType,
+    type: type? type : block.type,
+    styleType: styleType? styleType : block.styleType,
     contents: back
   });
 
@@ -296,8 +310,6 @@ function deleteTextBlockHandler(
   } }: ReturnType<typeof deleteTextBlock>
 ): BlockState {
   if(!state.blockList[1]) {
-    console.log("block이 하나 입니다.");
-
     return state;
   }
 
@@ -419,46 +431,7 @@ function revertBlockHandler(
   state: BlockState,
   { front }: ReturnType<typeof revertBlock>
 ): BlockState {
-  console.log("revert", state);
-
-  if(!front && state.tempBack[0]) {
-    const length = state.tempBack.length - 1;
-    const editingBlockId = state.tempBack[length].editingBlockId? state.tempBack[length].editingBlockId : null;
-    const { blockList, tempData, modifyData } = restoreBlock(state.blockList, state.tempBack[length]);
-    const tempBack = state.tempBack.concat();
-    tempBack.pop();
-    tempData.editingBlockId = state.editingBlockId;
-
-    return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId,
-      blockList,
-      tempBack,
-      tempFront: tempDataPush(state.tempFront, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData),
-      isFetch: true
-    });
-
-  } else if(state.tempFront[0]) {
-    const length = state.tempFront.length - 1;
-    const editingBlockId = state.tempFront[length].editingBlockId? state.tempFront[length].editingBlockId : null;
-    const { blockList, tempData, modifyData } = restoreBlock(state.blockList, state.tempFront[length]);
-    const tempFront = state.tempFront.concat();
-    tempFront.pop();
-    tempData.editingBlockId = state.editingBlockId;
-
-    return updateObject<BlockState, BlockStateProps>(state, {
-      blockList,
-      editingBlockId,
-      tempFront,
-      tempBack: tempDataPush(state.tempBack, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData),
-      isFetch: true
-    });
-
-  } else {
-    return state;
-  }
-
+  return revertBlockState(state, front);
 }
 
 function changeEditorStateHandler(
@@ -573,7 +546,6 @@ function clearModifyDataHandler(
   state: BlockState,
   action: ReturnType<typeof clearModifyData>
 ): BlockState {
-  const modifyData = updateObject({}, state.modifyData.map((data) => Object.assign({}, data)));
   return updateObject<BlockState, BlockStateProps>(state, {
     modifyData: []
   });
@@ -591,8 +563,8 @@ function updateBlockHandler(
     blockList,
     tempBack: tempDataPush(state.tempBack, tempData),
     modifyData: modifyData[0]? 
-      updateModifyData(replaceModifyData(state.modifyData, payload), modifyData) 
-      : replaceModifyData(state.modifyData, payload)
+      updateModifyData(replaceModifyBlockData(state.modifyData, payload), modifyData) 
+      : replaceModifyBlockData(state.modifyData, payload)
   });
 }
 
@@ -611,6 +583,30 @@ function setNextBlockInfoHandler(
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
     nextBlockInfo: payload
+  });
+}
+
+function initPageTitleHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof initPageTitle>
+): BlockState {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    titleBlock: createPageTitleBlockData(payload)
+  });
+}
+
+function editPageTitleHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof editPageTitle>
+): BlockState {
+  if(!state.titleBlock) return state;
+  const pageTitle: string = state.titleBlock.contents;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    titleBlock: updateObject<BlockData, BlockDataProps<string, string>>(state.titleBlock, {
+      contents: payload
+    }),
+    tempBack: tempDataPush(state.tempBack, { pageTitle })
   });
 }
 
@@ -638,7 +634,9 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CLEAR_MODIFYDATA]       : clearModifyDataHandler,
   [UPDATE_BLOCK]           : updateBlockHandler,
   [CLEAR_NEXTBLOCKINFO]    : clearNextBlockInfoHandler,
-  [SET_NEXTBLOCKINFO]      : setNextBlockInfoHandler
+  [SET_NEXTBLOCKINFO]      : setNextBlockInfoHandler,
+  [INIT_PAGE_TITLE]        : initPageTitleHandler,
+  [EDIT_PAGE_TITLE]        : editPageTitleHandler
 };
 
 export default blockHandlers;

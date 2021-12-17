@@ -1,12 +1,11 @@
 import { 
-  ADD_PUSH_MODIFY_DATA, 
+  ADD_PUSH_MODIFY_BLOCK_DATA, 
   CHANGE_UPDATED_STATE, 
   ClearBklogStateType, 
   CLEAR_BKLOG_STATE, 
   GET_PAGE, 
   GET_PAGE_ERROR, 
   GET_PAGE_SUCCESS, 
-  PageModifyDateType, 
   RELEASE_UPDATING, 
   RELEASE_UPDATING_ERROR, 
   RELEASE_UPDATING_SUCCESS, 
@@ -19,9 +18,17 @@ import {
   UPDATE_VERSION, 
   UPDATE_VERSION_ERROR, 
   UPDATE_VERSION_SUCCESS, 
-  CHANGE_UPDATING_STATE
+  CHANGE_UPDATING_STATE,
+  CHANGE_PAGE_INFO,
+  ReqEditPageEditor,
+  ADD_PAGE_EDITOR,
+  EXCLUDE_PAGE_EDITOR,
+  ADD_PAGE_EDITOR_SUCCESS,
+  ADD_PAGE_EDITOR_ERROR,
+  EXCLUDE_PAGE_EDITOR_SUCCESS,
+  EXCLUDE_PAGE_EDITOR_ERROR
 } from ".";
-import { ModifyDataType } from "../../../../components/block/types";
+import { ModifyBklogDataType, ModifyBlockDataType, ModifyPageInfoType } from "../../../../components/block/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 
 function resetBklog() {
@@ -58,17 +65,25 @@ function getPageError(error: ApiErrorType) {
   };
 }
 
-function addPushModifyData(modifyData: ModifyDataType) {
+function addPushModifyBlockData(modifyBlockData: ModifyBlockDataType) {
   return {
-    type: ADD_PUSH_MODIFY_DATA,
-    payload: modifyData
+    type: ADD_PUSH_MODIFY_BLOCK_DATA,
+    payload: modifyBlockData
   };
 }
 
-function updateBklog(reqData: UpdateBklogPayload) {
+function changePageInfo(modifyPageInfo: ModifyPageInfoType) {
+  return {
+    type: CHANGE_PAGE_INFO,
+    payload: modifyPageInfo
+  }
+}
+
+function updateBklog(payload: UpdateBklogPayload) {
+  console.log(payload);
   return {
     type: UPDATE_BKLOG,
-    payload: reqData
+    payload
   }
 }
 
@@ -96,7 +111,7 @@ function updateVersion(id: string, preId: string) {
   };
 }
 
-function updateVersionSuccess(data: {id: string, data: PageModifyDateType}) {
+function updateVersionSuccess(data: {id: string, data: ModifyBklogDataType}) {
   return {
     type: UPDATE_VERSION_SUCCESS,
     payload: data
@@ -144,13 +159,53 @@ function releaseUpdatingError(error: ApiErrorType) {
   }
 }
 
+function addPageEditor(data: ReqEditPageEditor) {
+  return {
+    type: ADD_PAGE_EDITOR
+  }
+}
+
+function addPageEditorSuccess(payload: string) {
+  return {
+    type: ADD_PAGE_EDITOR_SUCCESS
+  }
+}
+
+function addPageEditorError(payload: ApiErrorType) {
+  return {
+    type: ADD_PAGE_EDITOR_ERROR,
+    payload
+  }
+}
+
+function excludePageEditor(data: ReqEditPageEditor) {
+  return {
+    type: EXCLUDE_PAGE_EDITOR
+  }
+}
+
+function excludePageEditorSuccess(data: string) {
+  return {
+    type: EXCLUDE_PAGE_EDITOR_SUCCESS
+  }
+}
+
+function excludePageEditorError(payload: ApiErrorType) {
+  return {
+    type: EXCLUDE_PAGE_EDITOR_ERROR,
+    payload
+  }
+}
+
+
 export default {
   resetBklog,
   clearBklogState,
   getPage,
   getPageSuccess,
   getPageError,
-  addPushModifyData,
+  addPushModifyBlockData,
+  changePageInfo,
   updateBklog,
   updateBklogSuccess,
   updateBklogError,
@@ -161,5 +216,11 @@ export default {
   changeUpdatingState,
   releaseUpdating,
   releaseUpdatingSuccess,
-  releaseUpdatingError
+  releaseUpdatingError,
+  addPageEditor,
+  addPageEditorSuccess,
+  addPageEditorError,
+  excludePageEditor,
+  excludePageEditorSuccess,
+  excludePageEditorError
 };
