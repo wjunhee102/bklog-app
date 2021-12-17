@@ -17,7 +17,11 @@ import {
   ResGetPageList,
   RESET_PAGE,
   CHANGE_PAGE_TITLE_SUCCESS,
-  CHANGE_PAGE_TITLE_ERROR
+  CHANGE_PAGE_TITLE_ERROR,
+  ReqUpdatePageInfo,
+  UPDATE_PAGE_INFO,
+  UPDATE_PAGE_INFO_SUCCESS,
+  UPDATE_PAGE_INFO_ERROR
 } from ".";
 import { UserProfile } from "../../auth/utils";
 
@@ -134,6 +138,25 @@ function getPageListError(error: ApiErrorType) {
   }
 }
 
+function updatePageInfo(data: ReqUpdatePageInfo) {
+  return {
+    type: UPDATE_PAGE_INFO
+  }
+}
+
+function updatePageInfoSuccess(res: string) {
+  return {
+    type: UPDATE_PAGE_INFO_SUCCESS
+  }
+}
+
+function updatePageInfoError(error: ApiErrorType) {
+  return {
+    type: UPDATE_PAGE_INFO_ERROR,
+    payload: error
+  }
+}
+
 export default {
   resetPage,
   changePageTitle,
@@ -148,5 +171,8 @@ export default {
   getUserProfileError,
   getPageList,
   getPageListSuccess,
-  getPageListError
+  getPageListError,
+  updatePageInfo,
+  updatePageInfoSuccess,
+  updatePageInfoError
 }

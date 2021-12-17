@@ -11,10 +11,14 @@ function useHomePage() {
     onAllReset
    } = useStoreReset();
 
+   const {
+    onChangeToggle,
+    pageState
+   } = usePage();
+
   useEffect(() => {
-    // onAllReset();
-    console.log("reset");
-  }, []);
+    onChangeToggle(false);
+  }, [pageState.toggle]);
 }
 
 export default useHomePage;

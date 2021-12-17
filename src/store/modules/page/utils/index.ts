@@ -1,3 +1,4 @@
+import { ModifyPageInfoType } from "../../../../components/block/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 import { UserProfile } from "../../auth/utils";
 import actions from "./actions";
@@ -7,6 +8,11 @@ export interface ReqCreatePage {
   profileId: string;
   title: string;
   disclosureScope: number;
+}
+
+export interface ReqUpdatePageInfo {
+  pageId: string;
+  data: ModifyPageInfoType
 }
 
 export type GetPageListReqType = "penname" | "id";
@@ -69,6 +75,9 @@ export const GET_USER_RPOFILE_ERROR    = "page/GET_USER_RPOFILE_ERROR" as const;
 export const GET_PAGE_LIST             = "page/GET_PAGE_LIST" as const;
 export const GET_PAGE_LIST_SUCCESS     = "page/GET_PAGE_LIST_SUCCESS" as const;
 export const GET_PAGE_LIST_ERROR       = "page/GET_PAGE_LIST_ERROR" as const;
+export const UPDATE_PAGE_INFO          = "page/UPDATE_PAGE_INFO" as const;
+export const UPDATE_PAGE_INFO_SUCCESS  = "page/UPDATE_PAGE_INFO_SUCCESS" as const;
+export const UPDATE_PAGE_INFO_ERROR    = "page/UPDATE_PAGE_INFO_ERROR" as const;
 
 export const resetPage              = actions.resetPage;
 export const changeToggle           = actions.changeToggle;
@@ -84,6 +93,9 @@ export const getUserProfileError    = actions.getUserProfileError;
 export const getPageList            = actions.getPageList;
 export const getPageListSuccess     = actions.getPageListSuccess;
 export const getPageListError       = actions.getPageListError;
+export const updatePageInfo         = actions.updatePageInfo;
+export const updatePageInfoSuccess  = actions.updatePageInfoSuccess;
+export const updatePageInfoError    = actions.updatePageInfoError;
 
 export type pageActions = ReturnType<typeof changeToggle>
 | ReturnType<typeof changePageTitle>
