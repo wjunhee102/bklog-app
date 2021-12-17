@@ -14,7 +14,7 @@ const AuthPage: React.FC = () => {
   const history = useHistory();
 
   const { 
-    authState: { user, error, loading, errorToggle },  
+    authState: { user, error, loading, errorToggle, signUpSuccess },  
     onResetError
   } = useAuth();
   const { 
@@ -41,6 +41,12 @@ const AuthPage: React.FC = () => {
       onResetError();
     }
   }, []);
+
+  useEffect(() => {
+    if(signUpSuccess) {
+      history.push(`/auth/sign-in`);
+    }
+  }, [signUpSuccess]);
 
   return (
     <div className="auth-page w-full h-full items-center p-4 rounded overflow-hidden">

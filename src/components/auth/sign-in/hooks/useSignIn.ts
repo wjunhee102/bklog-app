@@ -24,7 +24,7 @@ function useSignIn() {
   } = useAuth();
 
   const [ email, handleInputEmail, errorEmail, handleErrorEmail ] = useChange("test@test.com");
-  const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange("password12!");
+  const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange("1q2w3e4r!");
 
   const inputProps: InputPropsType[] = [
     {
