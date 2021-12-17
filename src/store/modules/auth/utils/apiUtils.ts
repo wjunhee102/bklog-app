@@ -18,4 +18,13 @@ function authFetchPost(url: string, data: object) {
   });
 }
 
-export default { authFetchPost, authFetchGet };
+function authFetchDelete(url: string, data: object) {
+  return BaseRestFetch.restApi({
+    method: "delete",
+    url: `auth/${url}`,
+    data,
+    withCredentials: true
+  });
+}
+
+export default { authFetchPost, authFetchGet, authFetchDelete };

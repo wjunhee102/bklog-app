@@ -183,7 +183,8 @@ export type AuthActions =
   | ReturnType<typeof resetAuth>
 ;
 
-export const authFetchPost = authApiUtils.authFetchPost;
-export const authFetchGet  = authApiUtils.authFetchGet;
+export const authFetchPost   = authApiUtils.authFetchPost;
+export const authFetchGet    = authApiUtils.authFetchGet;
+export const authFetchDelete = authApiUtils.authFetchDelete;
 
 
