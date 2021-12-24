@@ -30,7 +30,8 @@ import {
   SET_NEXTBLOCKINFO,
   ADD_TEXT_BLOCK,
   INIT_PAGE_TITLE,
-  EDIT_PAGE_TITLE
+  EDIT_PAGE_TITLE,
+  EditorStateType
 } from ".";
 import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType } from "../../types";
 
@@ -203,10 +204,13 @@ function clearTempClip() {
   }
 }
 
-function chageEditorState(payload: ChangeEditorStateProps) {
+function chageEditorState(type: EditorStateType, toggle: boolean) {
   return {
     type: CHANGE_EDITOR_STATE,
-    payload
+    payload: {
+      type,
+      toggle
+    }
   }
 }
 

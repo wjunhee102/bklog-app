@@ -55,6 +55,8 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   const pageTitle: string | null = useMemo(() => bklogState.pageInfo? bklogState.pageInfo.title : null, [bklogState.pageInfo]);
 
+  const isKeyPress: boolean = useMemo(() => state.isPress, [state.isPress]);
+
   const isFetching: boolean = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
 
   const isUpdated: boolean = useMemo(() => bklogState.isUpdated, [bklogState.isUpdated]);
@@ -126,10 +128,10 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [pageTitle, state.titleBlock]);
 
   useEffect(() => {
-    if(isFetch && !isFetching && modifyData[0] && !updatingId && !isUpdated) {
+    if(isFetch && !isFetching && modifyData[0] && !updatingId && !isUpdated && !isKeyPress) {
       onAddPushModifyBlockData(convertModifyBlockData(state.modifyData));
     }
-  }, [modifyData, isFetch, isFetching, updatingId]);
+  }, [modifyData, isFetch, isFetching, updatingId, isKeyPress]);
 
   useEffect(() => {
     if(isUpdated && socket) {

@@ -36,7 +36,8 @@ import {
   addTextBlock,
   StagedBlock,
   editPageTitle,
-  initPageTitle
+  initPageTitle,
+  EditorStateType
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -74,8 +75,8 @@ function useBlock() {
     dispatch(initBlockState(rawBlockData));
   }, [dispatch]);
 
-  const onChangeEditorState = useCallback((payload: ChangeEditorStateProps) => {
-    dispatch(changeEditorState(payload));
+  const onChangeEditorState = useCallback((type: EditorStateType, toggle: boolean) => {
+    dispatch(changeEditorState(type, toggle));
   }, [dispatch]);
 
   const onChangeEditingId = useCallback((nextEditInfo?: string | number) => {

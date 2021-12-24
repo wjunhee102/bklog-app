@@ -80,7 +80,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
   }, [tempClipData, isGrab]);
 
   const handleGrabMouseDown = useCallback(() => {
-    onChangeEditorState({ isGrab: true });
+    onChangeEditorState('isGrab', true);
     onChangeEditingId(null);
     if(!isCliping) {
       if(childrenBlockData) {

@@ -8,7 +8,9 @@ import sideStoreUtils from "./sideUtils";
 /**
  * block - state
  */
-export type OrderType = "add" | "del" | "color" | "link";
+export type OrderType = 'add' | 'del' | 'color' | 'link';
+
+export type EditorStateType = 'isGrab' | 'isHoldingDown' | 'isCliping' | 'isPress';
 
 export interface StagedBlock{
   id: string;
@@ -71,6 +73,7 @@ export type NextBlockInfo = NextTextBlockInfo | { type: string, payload: any } |
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
+  isPress: boolean;
   isHoldingDown: boolean;
   isCliping: boolean;
   targetPosition: string | null;
@@ -89,6 +92,7 @@ export interface BlockState {
 export interface BlockStateProps {
   isFetch?: boolean;
   isGrab?: boolean;
+  isPress?: boolean;
   isHoldingDown?: boolean;
   isCliping?: boolean;
   targetPosition?: string | null;

@@ -436,14 +436,12 @@ function revertBlockHandler(
 
 function changeEditorStateHandler(
   state: BlockState, { 
-    payload: { isGrab, isHoldingDown, isCliping } 
+    payload: { type, toggle } 
   }: ReturnType<typeof changeEditorState>
 ): BlockState {
 
   return updateObject<BlockState, BlockStateProps>(state, {
-    isGrab: isGrab !== undefined? isGrab : state.isGrab,
-    isCliping: isCliping !== undefined? isCliping : state.isCliping,
-    isHoldingDown: isHoldingDown !== undefined? isHoldingDown : state.isHoldingDown
+    [type]: toggle
   });
 }
 
@@ -504,6 +502,7 @@ function editorStateResetHandler(
     isCliping: payload? false : state.isCliping,
     isHoldingDown: false,
     isGrab: false,
+    isPress: false,
     tempClipData: [],
     targetPosition: null
   });
@@ -555,6 +554,7 @@ function updateBlockHandler(
   state: BlockState,
   { payload }: ReturnType<typeof updateBlock>
 ): BlockState {
+
   const { blockList, tempData, modifyData } = updateBlockData(state.blockList, payload);
 
   tempData.editingBlockId = state.editingBlockId;

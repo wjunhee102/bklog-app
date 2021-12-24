@@ -7,6 +7,7 @@ const defaultTitleBlock = createPageTitleBlockData("무제");
 export const initialBlockState: BlockState = {
   isFetch: false,
   isGrab: false,
+  isPress: false,
   isHoldingDown: false,
   isCliping: false,
   targetPosition: null,
