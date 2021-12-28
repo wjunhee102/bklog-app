@@ -30,19 +30,19 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
     isCliping,
     editorRef,
     dragRef,
-    handleOnIdle,
     handleMouseDown,
     handleMouseMove,
     handleDrag,
     handleMouseUp,
     handleMouseLeave,
     handleKeyDown,
+    handleKeyUp,
     getLastActiveTime
   } = useBlockEditor(useBlockReducer);
 
   return (
     <div 
-      className="block-editor items-center w-full notranslate text-gray-700 bg-white h-auto"
+      className="block-editor notranslate"
       ref={editorRef}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
@@ -50,33 +50,35 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
       onMouseDown={handleMouseDown}
       onDrag={handleDrag}
       onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
     >
-      <div className={classNames(
-        "pt-8",
-        "m-auto", 
-        "h-full", 
-        "block-container",
-        {"not-drag": (isGrab || isCliping)? true : false},
-        {"updated": updated}
-      )}>
-        {
-          titleBlock?
-          <Block 
-            key={titleBlock.id}
-            blockData={titleBlock}
-            useBlockReducer={useBlockReducer}
-          /> : null
-        }
-        {
-          initBlock?
-          initBlock.root.map((block: BlockData) =>
-            <Block
-              key={block.id}
-              blockData={block}
+      <div className="block-container-outer">
+        <div className={classNames(
+          "block-container",
+          {"not-drag": (isGrab || isCliping)? true : false},
+          {"updated": updated}
+        )}>
+
+          {
+            titleBlock?
+            <Block 
+              key={titleBlock.id}
+              blockData={titleBlock}
               useBlockReducer={useBlockReducer}
-            />
-          ) : <div> Loading... </div>
-        }
+            /> : null
+          }
+          {
+            initBlock?
+            initBlock.root.map((block: BlockData) =>
+              <Block
+                key={block.id}
+                blockData={block}
+                useBlockReducer={useBlockReducer}
+              />
+            ) : <div> Loading... </div>
+          }
+        </div>
+        
       </div>
 
       {

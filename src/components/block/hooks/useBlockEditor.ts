@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { UseBlockType } from './useBlock';
 
@@ -13,7 +13,9 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
     initBlock,
     onCommitBlock,
     onResetEditorState,
-    onRevertBlock
+    onRevertBlock,
+    onChangeEditorState,
+    onChangeFetchState
   } = useBlockReducer;
 
   const titleBlock = useMemo(() => state.titleBlock, [state.titleBlock]);
@@ -23,18 +25,15 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
 
    const dragRef = useRef<HTMLDivElement>(null);
  
-   // callback
-   const handleOnIdle = useCallback(() => {
-     if(stage[0]) onCommitBlock();
-   }, [stage, onCommitBlock]);
- 
+   // callback 
    const handleMouseDown = useCallback((e: React.MouseEvent) => {
-     dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 70}px)`);
+     console.log(`client(${e.clientX}, ${e.clientY}), page(${e.pageX}, ${e.pageY}), screen(${e.screenX}, ${e.screenY}) movement(${e.movementX}, ${e.movementY}) scroll(${window.scrollY})`, e)
+     dragRef.current?.setAttribute("style", `transform: translate(${e.screenX - 40}px, ${e.screenY - 70}px)`);
    }, [dragRef]);
  
    const handleMouseMove = useCallback((e: React.MouseEvent) => {
      if(isGrab) {
-       dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 70}px)`);
+       dragRef.current?.setAttribute("style", `transform: translate(${e.pageX - 40}px, ${e.pageY - 70}px)`);
      }
    }, [isGrab, dragRef]);
  
@@ -52,7 +51,8 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
    }, [onResetEditorState]);
  
    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
- 
+      onChangeEditorState('isPress', true);
+
      if((e.metaKey || e.ctrlKey)) {
        if(!stage[0]) {
          switch(e.key) {
@@ -76,16 +76,26 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
      }
    }, [onRevertBlock, stage, tempClipData]);
 
-   useEffect(() => {
-      console.log(state.blockList);
-   }, [state.blockList])
+  const handleKeyUp = useCallback((e: React.KeyboardEvent) => {
+    onChangeEditorState('isPress', false);
+  }, [onChangeEditorState])
 
    // idle
+   const handleOnIdle = useCallback(() => {
+    if(stage[0]) onCommitBlock();
+    onResetEditorState(true);
+    onChangeFetchState(true);
+  }, [stage, onCommitBlock]);
+
   const { getLastActiveTime } = useIdleTimer({
-    timeout: 10 * 60 * 2,
+    timeout: 10 * 60 * 1,
     onIdle: handleOnIdle,
     debounce: 500
   });
+
+  useEffect(() => {
+    console.log(state.blockList);
+ }, [state.blockList]);
 
   return {
     state,
@@ -103,6 +113,7 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
     handleMouseUp,
     handleMouseLeave,
     handleKeyDown,
+    handleKeyUp,
     getLastActiveTime
   }
 }

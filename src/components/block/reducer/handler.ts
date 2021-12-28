@@ -139,6 +139,7 @@ function editBlockHandler(
   });
 }
 
+// 원래 isFetch true
 function commitBlockHandler(
   state: BlockState,
   action: ReturnType<typeof commitBlock>
@@ -154,7 +155,7 @@ function commitBlockHandler(
     stage: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
     tempBack: tempDataPush(state.tempBack, tempData),
-    isFetch: true
+    isFetch: false
   });
 }
 
@@ -209,7 +210,7 @@ function addBlockHandler(
     ),
     tempBack: tempDataPush(state.tempBack, tempData),
     tempFront: [],
-    isFetch: true
+    isFetch: false
   });
 }
 
@@ -263,7 +264,7 @@ function addTextBlockHandler(
     editingBlockId: newBlock.id,
     tempBack: tempDataPush(state.tempBack, tempData),
     modifyData: updateModifyData(state.modifyData, modifyData),
-    isFetch: true
+    isFetch: false
   });
 }
 
@@ -297,7 +298,7 @@ function deleteBlockHandler(
     tempBack: tempDataPush(state.tempBack, tempData),
     tempFront: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
-    isFetch: true
+    isFetch: false
   });
 }
 
@@ -340,7 +341,7 @@ function deleteTextBlockHandler(
       modifyData: updateModifyData(state.modifyData, modifyData),
       tempFront: [],
       stage,
-      isFetch: true
+      isFetch: false
     });
 
   } else if(!innerHTML) {
@@ -357,7 +358,7 @@ function deleteTextBlockHandler(
       tempBack: tempDataPush(state.tempBack, tempData),
       tempFront: [],
       modifyData: updateModifyData(state.modifyData, modifyData),
-      isFetch: true
+      isFetch: false
     });
 
   } else {

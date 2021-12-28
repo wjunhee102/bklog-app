@@ -87,35 +87,28 @@ function pushModifyDataList(modifyDataList: ModifyData[], newModifyDataList: Mod
 
   const modifyData = newModifyDataList.pop();
 
-  let index = modifyDataList.findIndex((data) => data.blockId === modifyData.blockId);
+  let index = modifyDataList.findIndex((data) => data.blockId === modifyData.blockId && data.set === modifyData.set);
 
-    if(index !== -1) {
-      const { command, blockId, set, payload } = modifyDataList[index];
+  if(index !== -1) {
+    const { command, blockId, set, payload } = modifyDataList[index];
 
-      if(set === modifyData.set) {
+    if(set === "block") {
 
-        if(command === DELETE && modifyData.command === CREATE) {
+      if(modifyData.command === DELETE) {
 
-          modifyDataList.splice(index, 1);
-          
+        if(command === CREATE) {
+          newModifyDataList.splice(index, 1);
         } else {
-          console.log("중복",modifyDataList[index], modifyData)
-          modifyDataList[index] = {
-            blockId,
-            set,
-            command: command === UPDATE && modifyData.command === CREATE? CREATE : modifyData.command,
-            payload: payload? Object.assign({}, modifyData.payload, payload) : modifyData.payload
-          }
-
+          newModifyDataList[index].command = DELETE;
         }
 
+      } else {
+        if(modifyData.payload) modifyDataList[index].payload = payload? Object.assign({}, payload, modifyData.payload) : modifyData.payload;
+      }
+
     } else {
-
-      if(set !== "block" && command !== DELETE) {
-        modifyDataList.push(modifyData); 
-      }
-
-      }
+      modifyDataList.push(modifyData); 
+    }
 
   } else { 
     modifyDataList.push(modifyData);
@@ -130,6 +123,8 @@ function updateModifyData(preModifyData: ModifyData[], newModifyData: ModifyData
   }
 
   const modifyDataList = [...preModifyData];
+
+  newModifyData.reverse();
 
   pushModifyDataList(modifyDataList, newModifyData);
 
