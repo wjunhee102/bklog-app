@@ -26,6 +26,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     down, 
     setDown,
     utilToggle,
+    updated,
     setUtilToggle,
     childrenBlockData,
     downPosition,
@@ -44,7 +45,8 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     <div 
       className={classNames(
         "block-zone",
-        { selected: parentSelected? false : selected }
+        { selected: parentSelected? false : selected },
+        { updated }
       )}
     >
       {/*block-utils */}

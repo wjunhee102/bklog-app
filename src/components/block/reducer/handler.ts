@@ -77,7 +77,9 @@ import {
   editPageTitle,
   INIT_PAGE_TITLE,
   EDIT_PAGE_TITLE,
-  revertBlockState
+  revertBlockState,
+  clearStateItem,
+  CLEAR_STATE_ITEM
 } from "./utils";
 
 function initBlockStateHandler(
@@ -99,7 +101,6 @@ function resetBlockHandler(
   state: BlockState,
   action: ReturnType<typeof resetBlock>
 ): BlockState {
-  console.log("reset")
   return initialBlockState;
 }
 
@@ -560,8 +561,15 @@ function updateBlockHandler(
 
   tempData.editingBlockId = state.editingBlockId;
 
+  const updatedBlockIdList = [];
+
+  if(payload.create) payload.create.map(data => updatedBlockIdList.push(data.blockId));
+
+  if(payload.update) payload.update.map(data => updatedBlockIdList.push(data.blockId));
+
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
+    updatedBlockIdList,
     tempBack: tempDataPush(state.tempBack, tempData),
     modifyData: modifyData[0]? 
       updateModifyData(replaceModifyBlockData(state.modifyData, payload), modifyData) 
@@ -611,6 +619,17 @@ function editPageTitleHandler(
   });
 }
 
+function clearStateItemHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof clearStateItem>
+): BlockState {
+  if(initialBlockState.hasOwnProperty(payload)) {
+    return updateObject<BlockState, BlockDataProps>(state, { [payload]: initialBlockState[payload] }) 
+  } else {
+    return state;
+  }
+}
+
 const blockHandlers: ActionHandlers<BlockState> = {
   [INIT_BLOCK_STATE]       : initBlockStateHandler,
   [RESET_BLOCK]            : resetBlockHandler,
@@ -637,7 +656,8 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CLEAR_NEXTBLOCKINFO]    : clearNextBlockInfoHandler,
   [SET_NEXTBLOCKINFO]      : setNextBlockInfoHandler,
   [INIT_PAGE_TITLE]        : initPageTitleHandler,
-  [EDIT_PAGE_TITLE]        : editPageTitleHandler
+  [EDIT_PAGE_TITLE]        : editPageTitleHandler,
+  [CLEAR_STATE_ITEM]       : clearStateItemHandler
 };
 
 export default blockHandlers;

@@ -3,7 +3,7 @@
     background-color: transparent;
   }
 
-  50% {
+  20% {
     background-color: rgba(163, 203, 255, 0.5);
   }
 
@@ -18,6 +18,8 @@
 }
 
 .block-editor {
+  @apply items-center w-full text-gray-700 h-full;
+
   .drag-elements {
     position: absolute;
     opacity: 1;
@@ -37,12 +39,22 @@
 
   background-color: transparent;
 
+  .editing {
+    border: 1px solid #000;
+  }
+
   .updated {
-    animation: initBlock 1.2s linear;
+    animation: initBlock 1s linear;
   }
 }
 
+.block-container-outer {
+  @apply w-full h-full;
+}
+
 .block-container {
+  @apply bg-white pt-8 m-auto h-auto w-auto relative;
+
   max-width: 1500px;
   width: auto;
   margin-left: -44px;

@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { useIdleTimer } from 'react-idle-timer';
+import React from 'react';
 import classNames from 'classnames';
 import useBlock, { UseBlockType } from './hooks/useBlock';
 import { ReturnConnectStoreHook } from '.';
 import { BlockData } from './types';
 import Block from './components/Block';
-import './assets/BlockEditor.scss';
 import useBlockEditor from './hooks/useBlockEditor';
+import './assets/BlockEditor.scss';
 
 const valueNotConnectStoreHook: ReturnConnectStoreHook = {
   updated: false
@@ -36,9 +35,8 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
     handleMouseUp,
     handleMouseLeave,
     handleKeyDown,
-    handleKeyUp,
-    getLastActiveTime
-  } = useBlockEditor(useBlockReducer);
+    handleKeyUp
+  } = useBlockEditor(useBlockReducer, updated);
 
   return (
     <div 
@@ -55,8 +53,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
       <div className="block-container-outer">
         <div className={classNames(
           "block-container",
-          {"not-drag": (isGrab || isCliping)? true : false},
-          {"updated": updated}
+          {"not-drag": (isGrab || isCliping)? true : false}
         )}>
 
           {

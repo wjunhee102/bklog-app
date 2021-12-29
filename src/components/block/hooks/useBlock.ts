@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
-import { ModifyBlockData, ModifyBlockDataType } from '../types';
-import { testDB } from '../db';
+import { ModifyBlockDataType } from '../types';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
-  BlockState, 
-  initBlock, 
   SetBlockDataList, 
   setBlockList, 
   addBlock, 
@@ -16,13 +13,11 @@ import {
   revertBlock, 
   editBlock, 
   changeEditingId,
-  ChangeEditorStateProps,
   changeEditorState,
   changeTargetPosition,
   setTempClip,
   clearClipboard,
   resetEditorState,
-  changeBlockStyleType,
   changeStyleType,
   changeFetchState,
   clearModifyData,
@@ -37,7 +32,9 @@ import {
   StagedBlock,
   editPageTitle,
   initPageTitle,
-  EditorStateType
+  EditorStateType,
+  ClearStateType,
+  clearStateItem
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -61,6 +58,8 @@ function useBlock() {
   const isFetch: boolean = useMemo(() => state.isFetch, [state.isFetch]);
 
   const stage: StagedBlock[] = useMemo(() => state.stage, [state.stage]);
+
+  const updatedBlockIdList: string[] = useMemo(() => state.updatedBlockIdList, [state.updatedBlockIdList]);
 
   const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
 
@@ -193,6 +192,10 @@ function useBlock() {
     dispatch(editPageTitle(title));
   }, [dispatch]);
 
+  const onClearStateItem = useCallback((key: ClearStateType) => {
+    dispatch(clearStateItem(key));
+  }, [dispatch]);
+
   return { 
     state, 
     initBlock,
@@ -201,6 +204,7 @@ function useBlock() {
     isHoldingDown,
     isCliping,
     isFetch,
+    updatedBlockIdList,
     stage,
     tempClipData,
     targetPosition,
@@ -231,7 +235,8 @@ function useBlock() {
     onClearNextBlockInfo,
     onSetNextBlockInfo,
     onInitPageTitle,
-    onEditPageTitle
+    onEditPageTitle,
+    onClearStateItem
   };
 }
 

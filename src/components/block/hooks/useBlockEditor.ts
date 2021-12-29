@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { UseBlockType } from './useBlock';
 
-function useBlockEditor(useBlockReducer: UseBlockType) {
+function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false) {
 
   const {
     state,
@@ -94,8 +94,10 @@ function useBlockEditor(useBlockReducer: UseBlockType) {
   });
 
   useEffect(() => {
-    console.log(state.blockList);
- }, [state.blockList]);
+    if(!updated) {
+      useBlockReducer.onClearStateItem('updatedBlockIdList');
+    }
+  }, [updated]);
 
   return {
     state,

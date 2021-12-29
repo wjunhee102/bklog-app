@@ -31,8 +31,8 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     initBlock,
     onSwitchBlock,
     isCliping,
-    isHoldingDown,
     isGrab,
+    updatedBlockIdList,
     tempClipData,
     onAddBlock,
     onChangeEditingId,
@@ -47,6 +47,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
   const [ down, setDown ]             = useState<boolean>(false);
   const [ right, setRight ]           = useState<boolean>(false);
   const [ utilToggle, setUtilToggle ] = useState<boolean>(false);
+  const [ updated, setUpdated ]       = useState<boolean>(false);
 
   const parentSelected = parentInfo? parentInfo.selected : false;
 
@@ -136,6 +137,14 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     if(!isHover) setUtilToggle(false);
   }, [isHover]);
 
+  useEffect(() => {
+    if(updatedBlockIdList[0]) {
+      setUpdated(updatedBlockIdList.includes(blockData.id));
+    } else {
+      setUpdated(false);
+    }
+  }, [updatedBlockIdList]);
+
   return {
     parentSelected,
     isHover,
@@ -143,6 +152,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     selected,
     setSelect,
     down,
+    updated,
     setDown,
     setRight,
     utilToggle,

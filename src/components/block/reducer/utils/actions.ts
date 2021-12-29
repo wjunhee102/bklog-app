@@ -1,6 +1,5 @@
 import { 
-  OrderType, 
-  ChangeEditorStateProps,
+  OrderType,
   RESET_BLOCK, 
   ADD_BLOCK, 
   COMMIT_BLOCK, 
@@ -31,7 +30,9 @@ import {
   ADD_TEXT_BLOCK,
   INIT_PAGE_TITLE,
   EDIT_PAGE_TITLE,
-  EditorStateType
+  EditorStateType,
+  ClearStateType,
+  CLEAR_STATE_ITEM
 } from ".";
 import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType } from "../../types";
 
@@ -287,6 +288,13 @@ function editPageTitle(title: string) {
   }
 }
 
+function clearStateItem(key: ClearStateType) {
+  return {
+    type: CLEAR_STATE_ITEM,
+    payload: key
+  }
+}
+
 const actionBlock = {
   initBlockState,
   resetBlock,
@@ -316,7 +324,8 @@ const actionBlock = {
   clearNextBlockInfo,
   setNextBlockInfo,
   initPageTitle,
-  editPageTitle
+  editPageTitle,
+  clearStateItem
 }
 
 export default actionBlock;
