@@ -6,13 +6,15 @@ import { getSelectionStart,getSelectionEnd, setSelectionRange } from '../utils/s
 
 function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selected: boolean) {
   const [ editable, setEditable]        = useState<boolean>(true);
-  const [ cursorStart, setCursorStart ] = useState<number>(0);
-  const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
 
   const {
+    cursorStart,
+    cursorEnd,
+    setCursorStart,
+    setCursorEnd,
     isGrab,
     isHoldingDown,
     isCliping,
@@ -73,8 +75,6 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
         setSelectionRange(e.target, contentsLength, contentsLength);
 
         if((cursorEnd && cursorStart) === e.target.innerText.length) {
-          setCursorStart(0);
-          setCursorEnd(0);
           onChangeEditingId(blockData.index + 1);
         }
         
@@ -214,7 +214,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
   }, [editingBlockId]);
 
   useEffect(() => {
-    if(cursorEnd - cursorStart >= 1) {
+    if(cursorEnd - cursorStart >= 1 && blockData.id === editingBlockId) {
       setStyleToggle(true);
     } else {
       setStyleToggle(false);
@@ -222,7 +222,6 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
   }, [cursorStart, cursorEnd]);
 
   useEffect(() => {
-    
     if(isGrab) {
       setEditable(!isGrab);
     } else {

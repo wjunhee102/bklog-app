@@ -7,14 +7,16 @@ import { createBlockData, parseHtmlContents, sliceTextContents } from "../reduce
 import { useIdleTimer } from "react-idle-timer";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
-  const [ editable, setEditable]        = useState<boolean>(true);
-  const [ cursorStart, setCursorStart ] = useState<number>(0);
-  const [ cursorEnd, setCursorEnd ]     = useState<number>(0);
+  const [ editable, setEditable] = useState<boolean>(true);
   const [ stage, setStage ] = useState<string>(blockData.contents);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
 
   const {
+    cursorStart,
+    cursorEnd,
+    setCursorStart,
+    setCursorEnd,
     isGrab,
     nextBlockInfo,
     editingBlockId,

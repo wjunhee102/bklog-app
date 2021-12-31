@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useCallback, useMemo, useReducer, useRef } from 'react';
 import { ModifyBlockDataType } from '../types';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
@@ -38,11 +38,27 @@ import {
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
+interface CursorType {
+  start: number;
+  end: number;
+}
+
 // state 값을 전부 useReducer로 통합할 것.
 function useBlock() {
-  const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
+
+  const cursor = useRef<CursorType>({ start: 0, end: 0 });
+
+  const setCursorStart = useCallback((point: number) => { 
+    cursor.current.start = point 
+  }, [cursor.current]);
+
+  const setCursorEnd = useCallback((point: number) => { 
+    cursor.current.end = point 
+  }, [cursor.current]);
 
   // state
+  const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
+
   const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
@@ -197,6 +213,10 @@ function useBlock() {
   }, [dispatch]);
 
   return { 
+    cursorStart: cursor.current.start,
+    cursorEnd: cursor.current.end,
+    setCursorStart,
+    setCursorEnd,
     state, 
     initBlock,
     editingBlockId,

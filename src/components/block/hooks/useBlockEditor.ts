@@ -11,6 +11,9 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
     isCliping,
     tempClipData,
     initBlock,
+    editingBlockId,
+    setCursorStart,
+    setCursorEnd,
     onCommitBlock,
     onResetEditorState,
     onRevertBlock,
@@ -24,7 +27,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
    const editorRef = useRef<HTMLDivElement>(null);
 
    const dragRef = useRef<HTMLDivElement>(null);
- 
+
    // callback 
    const handleMouseDown = useCallback((e: React.MouseEvent) => {
      console.log(`client(${e.clientX}, ${e.clientY}), page(${e.pageX}, ${e.pageY}), screen(${e.screenX}, ${e.screenY}) movement(${e.movementX}, ${e.movementY}) scroll(${window.scrollY})`, e)
@@ -98,6 +101,13 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
       useBlockReducer.onClearStateItem('updatedBlockIdList');
     }
   }, [updated]);
+
+  useEffect(() => {
+    if(!editingBlockId) {
+      setCursorStart(0);
+      setCursorEnd(0);
+    }
+  }, [editingBlockId]);
 
   return {
     state,
