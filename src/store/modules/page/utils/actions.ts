@@ -21,7 +21,10 @@ import {
   ReqUpdatePageInfo,
   UPDATE_PAGE_INFO,
   UPDATE_PAGE_INFO_SUCCESS,
-  UPDATE_PAGE_INFO_ERROR
+  UPDATE_PAGE_INFO_ERROR,
+  DELETE_PAGE,
+  DELETE_PAGE_ERROR,
+  DELETE_PAGE_SUCCESS
 } from ".";
 import { UserProfile } from "../../auth/utils";
 
@@ -64,11 +67,10 @@ function changePageTitleError(error: ApiErrorType) {
   }
 }
 
-function createPage(profileId: string, title: string, disclosureScope: number = 5) {
+function createPage(title: string, disclosureScope: number = 5) {
   return {
     type: CREATE_PAGE,
     payload: {
-      profileId,
       title,
       disclosureScope
     }
@@ -140,19 +142,42 @@ function getPageListError(error: ApiErrorType) {
 
 function updatePageInfo(data: ReqUpdatePageInfo) {
   return {
-    type: UPDATE_PAGE_INFO
+    type: UPDATE_PAGE_INFO,
+    payload: data
   }
 }
 
 function updatePageInfoSuccess(res: string) {
   return {
-    type: UPDATE_PAGE_INFO_SUCCESS
+    type: UPDATE_PAGE_INFO_SUCCESS, 
+    payload: res
   }
 }
 
 function updatePageInfoError(error: ApiErrorType) {
   return {
     type: UPDATE_PAGE_INFO_ERROR,
+    payload: error
+  }
+}
+
+function deletePage(data: ReqUpdatePageInfo) {
+  return {
+    type: DELETE_PAGE,
+    payload: data
+  }
+}
+
+function deletePageSuccess(res: string) {
+  return {
+    type: DELETE_PAGE_SUCCESS,
+    payload: res
+  }
+}
+
+function deletePageError(error: ApiErrorType) {
+  return {
+    type: DELETE_PAGE_ERROR,
     payload: error
   }
 }
@@ -174,5 +199,8 @@ export default {
   getPageListError,
   updatePageInfo,
   updatePageInfoSuccess,
-  updatePageInfoError
+  updatePageInfoError,
+  deletePage,
+  deletePageSuccess,
+  deletePageError
 }

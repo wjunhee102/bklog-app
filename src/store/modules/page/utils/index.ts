@@ -5,7 +5,6 @@ import actions from "./actions";
 import apiUtils from "./apiUtils";
 
 export interface ReqCreatePage {
-  profileId: string;
   title: string;
   disclosureScope: number;
 }
@@ -18,7 +17,7 @@ export interface ReqUpdatePageInfo {
 export type GetPageListReqType = "penname" | "id";
 
 export interface GetPageListQuery {
-  reqProfileId?: string;
+  id?: string;
   skip?: number;
   take?: number;
 }
@@ -60,6 +59,10 @@ export interface PageStateProps {
   error?: ApiErrorType | null;
 }
 
+export interface ReqDeletePage {
+  pageId: string;
+}
+
 // actions
 export const RESET_PAGE                = "page/RESET_PAGE" as const;
 export const CHANGE_PAGE_TITLE         = "page/CHANGE_PAGE_TITLE" as const;
@@ -78,6 +81,9 @@ export const GET_PAGE_LIST_ERROR       = "page/GET_PAGE_LIST_ERROR" as const;
 export const UPDATE_PAGE_INFO          = "page/UPDATE_PAGE_INFO" as const;
 export const UPDATE_PAGE_INFO_SUCCESS  = "page/UPDATE_PAGE_INFO_SUCCESS" as const;
 export const UPDATE_PAGE_INFO_ERROR    = "page/UPDATE_PAGE_INFO_ERROR" as const;
+export const DELETE_PAGE               = "page/DELETE_PAGE" as const;
+export const DELETE_PAGE_SUCCESS       = "page/DELETE_PAGE_SUCCESS" as const;
+export const DELETE_PAGE_ERROR         = "page/DELETE_PAGE_ERROR" as const;  
 
 export const resetPage              = actions.resetPage;
 export const changeToggle           = actions.changeToggle;
@@ -96,6 +102,9 @@ export const getPageListError       = actions.getPageListError;
 export const updatePageInfo         = actions.updatePageInfo;
 export const updatePageInfoSuccess  = actions.updatePageInfoSuccess;
 export const updatePageInfoError    = actions.updatePageInfoError;
+export const deletePage             = actions.deletePage;
+export const deletePageSuccess      = actions.deletePageSuccess;
+export const deletePageError        = actions.deletePageError;
 
 export type pageActions = ReturnType<typeof changeToggle>
 | ReturnType<typeof changePageTitle>
