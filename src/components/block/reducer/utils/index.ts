@@ -1,4 +1,4 @@
-import { BlockData, ModifyData } from "../../types";
+import { BlockData, ModifyData, ModifyPageInfoType } from "../../types";
 import actionBlock from "./actions";
 import blockUtils from "./blockUtils";
 import converter from "./converter";
@@ -13,7 +13,8 @@ export type OrderType = 'add' | 'del' | 'color' | 'link';
 export type EditorStateType = 'isGrab' | 'isHoldingDown' | 'isCliping' | 'isPress';
 
 export type StateAryType = 'blockList' 
-  | 'stage'
+  | 'stageBlock'
+  | 'stagePage'
   | 'updatedBlockIdList'
   | 'modifyData'
   | 'tempFront'
@@ -36,6 +37,8 @@ export interface StagedBlock{
   contents: any;
   blockIndex: number;
 }
+
+export type StagedPage = ModifyPageInfoType;
 
 // export interface TempData {
 //   type: string;
@@ -96,11 +99,12 @@ export interface BlockState {
   isHoldingDown: boolean;
   isCliping: boolean;
   targetPosition: string | null;
-  titleBlock: BlockData;
+  titleBlock: BlockData | null;
   blockList: BlockData[];
   editingBlockId: string | null;
-  nextBlockInfo: NextBlockInfo;
-  stage: StagedBlock[];
+  nextBlockInfo: NextBlockInfo | null;
+  stageBlock: StagedBlock[];
+  stagePage: StagedPage | null;
   updatedBlockIdList: string[];
   modifyData: ModifyData[];
   tempFront: TempDataType[];
@@ -120,7 +124,8 @@ export interface BlockStateProps {
   blockList?: BlockData[];
   editingBlockId?: string | null;
   nextBlockInfo?: NextBlockInfo;
-  stage?: StagedBlock[];
+  stageBlock?: StagedBlock[];
+  stagePage?: StagedPage | null;
   updatedBlockIdList?: string[];
   modifyData?: ModifyData[];
   tempFront?: TempDataType[];
@@ -161,6 +166,7 @@ export const SET_NEXTBLOCKINFO      = 'CLEAR_NEXTBLOCKINFO' as const;
 export const INIT_PAGE_TITLE        = 'INIT_PAGE_TITLE' as const;
 export const EDIT_PAGE_TITLE        = 'EDIT_PAGE_TITLE' as const;
 export const CLEAR_STATE_ITEM       = 'CLEAR_STATE_ITEM' as const;
+export const EDIT_PAGE_INFO         = 'EDIT_PAGE_INFO' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
@@ -194,6 +200,7 @@ export type BLOCK_ACTION_TYPES =
   | typeof INIT_PAGE_TITLE 
   | typeof EDIT_PAGE_TITLE
   | typeof CLEAR_STATE_ITEM
+  | typeof EDIT_PAGE_INFO
 ;
 
 /**
@@ -228,6 +235,7 @@ export const setNextBlockInfo     = actionBlock.setNextBlockInfo;
 export const initPageTitle        = actionBlock.initPageTitle;
 export const editPageTitle        = actionBlock.editPageTitle;
 export const clearStateItem       = actionBlock.clearStateItem;
+export const editPageInfo         = actionBlock.editPageInfo;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
@@ -261,6 +269,7 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof initPageTitle>
   | ReturnType<typeof editPageTitle>
   | ReturnType<typeof clearStateItem>
+  | ReturnType<typeof editPageInfo>
 ;
 
 //converter

@@ -1,8 +1,6 @@
 import { createReducer } from "../../../store/utils";
 import blockHandlers from "./handler";
-import { BlockActions, BlockState, createPageTitleBlockData } from "./utils";
-
-const defaultTitleBlock = createPageTitleBlockData("무제");
+import { BlockActions, BlockState } from "./utils";
 
 export const initialBlockState: BlockState = {
   isFetch: false,
@@ -15,8 +13,10 @@ export const initialBlockState: BlockState = {
   blockList: [],
   editingBlockId: null,
   nextBlockInfo: null,
-  stage: [],
+  stageBlock: [],
+  stagePage: null,
   modifyData: [],
+  updatedBlockIdList: [],
   tempBack: [],
   tempFront: [],
   tempClipData: [],

@@ -6,7 +6,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
   const {
     state,
-    stage,
+    stageBlock,
     isGrab,
     isCliping,
     tempClipData,
@@ -57,7 +57,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
       onChangeEditorState('isPress', true);
 
      if((e.metaKey || e.ctrlKey)) {
-       if(!stage[0]) {
+       if(!stageBlock[0]) {
          switch(e.key) {
            case "z":
              e.preventDefault();
@@ -77,7 +77,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
  
        }
      }
-   }, [onRevertBlock, stage, tempClipData]);
+   }, [onRevertBlock, stageBlock, tempClipData]);
 
   const handleKeyUp = useCallback((e: React.KeyboardEvent) => {
     onChangeEditorState('isPress', false);
@@ -85,10 +85,10 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
    // idle
    const handleOnIdle = useCallback(() => {
-    if(stage[0]) onCommitBlock();
+    if(stageBlock[0]) onCommitBlock();
     onResetEditorState(true);
     onChangeFetchState(true);
-  }, [stage, onCommitBlock]);
+  }, [stageBlock, onCommitBlock]);
 
   const { getLastActiveTime } = useIdleTimer({
     timeout: 10 * 60 * 1,

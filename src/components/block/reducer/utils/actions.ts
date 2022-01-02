@@ -32,7 +32,9 @@ import {
   EDIT_PAGE_TITLE,
   EditorStateType,
   ClearStateType,
-  CLEAR_STATE_ITEM
+  CLEAR_STATE_ITEM,
+  StagedPage,
+  EDIT_PAGE_INFO
 } from ".";
 import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType } from "../../types";
 
@@ -295,6 +297,13 @@ function clearStateItem(key: ClearStateType) {
   }
 }
 
+function editPageInfo(stagedPage: StagedPage | null) {
+  return {
+    type: EDIT_PAGE_INFO,
+    payload: stagedPage
+  }
+}
+
 const actionBlock = {
   initBlockState,
   resetBlock,
@@ -325,7 +334,8 @@ const actionBlock = {
   setNextBlockInfo,
   initPageTitle,
   editPageTitle,
-  clearStateItem
+  clearStateItem,
+  editPageInfo
 }
 
 export default actionBlock;

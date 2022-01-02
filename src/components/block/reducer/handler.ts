@@ -16,7 +16,6 @@ import {
   switchBlock,
   switchBlockList,
   BlockStateProps,
-  restoreBlock,
   revertBlock,
   COMMIT_BLOCK, 
   ADD_BLOCK, 
@@ -79,7 +78,9 @@ import {
   EDIT_PAGE_TITLE,
   revertBlockState,
   clearStateItem,
-  CLEAR_STATE_ITEM
+  CLEAR_STATE_ITEM,
+  editPageInfo,
+  EDIT_PAGE_INFO
 } from "./utils";
 
 function initBlockStateHandler(
@@ -136,7 +137,7 @@ function editBlockHandler(
   { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editBlock>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    stage: addToStage(state.stage, blockId, blockIndex, contents)
+    stageBlock: addToStage(state.stageBlock, blockId, blockIndex, contents)
   });
 }
 
@@ -145,15 +146,15 @@ function commitBlockHandler(
   state: BlockState,
   action: ReturnType<typeof commitBlock>
 ): BlockState {
-  if(!state.stage[0]) return state;
+  if(!state.stageBlock[0]) return state;
 
-  const { blockList, modifyData, tempData } = updateBlockContents(state.blockList, state.stage);
+  const { blockList, modifyData, tempData } = updateBlockContents(state.blockList, state.stageBlock);
   
   tempData.editingBlockId = state.editingBlockId;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    stage: [],
+    stageBlock: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
     tempBack: tempDataPush(state.tempBack, tempData),
     isFetch: false
@@ -228,8 +229,8 @@ function addTextBlockHandler(
 
   block.contents = front;
 
-  const stage = state.stage[0]? 
-    state.stage.filter(data => data.id !== block.id) 
+  const stageBlock = state.stageBlock[0]? 
+    state.stageBlock.filter(data => data.id !== block.id) 
     : [];
 
   const newBlock = createBlockData({
@@ -261,7 +262,7 @@ function addTextBlockHandler(
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    stage: stage,
+    stageBlock,
     editingBlockId: newBlock.id,
     tempBack: tempDataPush(state.tempBack, tempData),
     modifyData: updateModifyData(state.modifyData, modifyData),
@@ -295,7 +296,7 @@ function deleteBlockHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     editingBlockId,
-    stage: state.stage? state.stage.filter(data => !removeBlockIdList.includes(data.id)) : [],
+    stageBlock: state.stageBlock? state.stageBlock.filter(data => !removeBlockIdList.includes(data.id)) : [],
     tempBack: tempDataPush(state.tempBack, tempData),
     tempFront: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
@@ -327,8 +328,8 @@ function deleteTextBlockHandler(
 
     const { blockList, tempData, modifyData } = result;
 
-    const stage = state.stage[0]?  
-      state.stage.filter(data => data.id !== toBeDeletedBlock.id) 
+    const stageBlock = state.stageBlock[0]?  
+      state.stageBlock.filter(data => data.id !== toBeDeletedBlock.id) 
       : [];
 
     return updateObject<BlockState, BlockStateProps>(state, {
@@ -341,7 +342,7 @@ function deleteTextBlockHandler(
       tempBack: tempDataPush(state.tempBack, tempData),
       modifyData: updateModifyData(state.modifyData, modifyData),
       tempFront: [],
-      stage,
+      stageBlock,
       isFetch: false
     });
 
@@ -624,10 +625,19 @@ function clearStateItemHandler(
   { payload }: ReturnType<typeof clearStateItem>
 ): BlockState {
   if(initialBlockState.hasOwnProperty(payload)) {
-    return updateObject<BlockState, BlockDataProps>(state, { [payload]: initialBlockState[payload] }) 
+    return updateObject<BlockState, BlockStateProps>(state, { [payload]: initialBlockState[payload] }) 
   } else {
     return state;
   }
+}
+
+function editPageInfoHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof editPageInfo>
+): BlockState {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    stagePage: payload
+  });
 }
 
 const blockHandlers: ActionHandlers<BlockState> = {
@@ -657,7 +667,8 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [SET_NEXTBLOCKINFO]      : setNextBlockInfoHandler,
   [INIT_PAGE_TITLE]        : initPageTitleHandler,
   [EDIT_PAGE_TITLE]        : editPageTitleHandler,
-  [CLEAR_STATE_ITEM]       : clearStateItemHandler
+  [CLEAR_STATE_ITEM]       : clearStateItemHandler,
+  [EDIT_PAGE_INFO]         : editPageInfoHandler
 };
 
 export default blockHandlers;

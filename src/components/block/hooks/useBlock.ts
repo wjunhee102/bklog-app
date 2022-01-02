@@ -34,7 +34,9 @@ import {
   initPageTitle,
   EditorStateType,
   ClearStateType,
-  clearStateItem
+  clearStateItem,
+  StagedPage,
+  editPageInfo
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -73,7 +75,9 @@ function useBlock() {
 
   const isFetch: boolean = useMemo(() => state.isFetch, [state.isFetch]);
 
-  const stage: StagedBlock[] = useMemo(() => state.stage, [state.stage]);
+  const stageBlock: StagedBlock[] = useMemo(() => state.stageBlock, [state.stageBlock]);
+
+  const stagePage: StagedPage = useMemo(() => state.stagePage, [state.stagePage]);
 
   const updatedBlockIdList: string[] = useMemo(() => state.updatedBlockIdList, [state.updatedBlockIdList]);
 
@@ -212,6 +216,10 @@ function useBlock() {
     dispatch(clearStateItem(key));
   }, [dispatch]);
 
+  const onEditPageInfo = useCallback((stagedPage: StagedPage | null) => {
+    dispatch(editPageInfo(stagedPage));
+  }, [dispatch]);
+
   return { 
     cursorStart: cursor.current.start,
     cursorEnd: cursor.current.end,
@@ -225,7 +233,8 @@ function useBlock() {
     isCliping,
     isFetch,
     updatedBlockIdList,
-    stage,
+    stageBlock,
+    stagePage,
     tempClipData,
     targetPosition,
     modifyData,
@@ -256,7 +265,8 @@ function useBlock() {
     onSetNextBlockInfo,
     onInitPageTitle,
     onEditPageTitle,
-    onClearStateItem
+    onClearStateItem,
+    onEditPageInfo
   };
 }
 

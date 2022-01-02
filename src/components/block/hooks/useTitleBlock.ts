@@ -21,7 +21,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     nextBlockInfo,
     editingBlockId,
     onChangeEditingId,
-    onEditPageTitle,
+    onEditPageInfo,
     onAddTextBlock,
     onAddBlock,
     onCommitBlock,
@@ -67,12 +67,11 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
 
       case " ":
         setCursorEnd(0);
-        setStage(e.target.innerHTML);
-        onEditPageTitle(e.target.innerHTML);
+        onEditPageInfo({ title: e.target.innerText });
         break;
       
       default:
-        setStage(e.target.innerHTML);
+        setStage(e.target.innerText);
     }
 
   }, [blockData, cursorEnd, cursorStart]);
@@ -92,9 +91,10 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
         contents: back
       });
 
+      console.log(front);
       
-      setStage(front? front[0][0] : "");
-      e.target.innerText = front? front[0][0] : "";
+      setStage(front[0]? front[0][0] : "");
+      e.target.innerText = front[0]? front[0][0] : "";
 
       onAddBlock([newBlock], "1", false, newBlock.id);
     }
@@ -126,9 +126,11 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     if(e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
       setCursorStart(0);
       setCursorEnd(0);
-      onEditPageTitle(stage);
       onChangeEditingId();
-      console.log("blur", stage);
+      if(stage) {
+        onEditPageInfo({ title: stage });
+        setStage(null);
+      }
     }
   }, []);
 
@@ -141,11 +143,11 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   }
 
   const handleOnIdle = useCallback(() => {
-    if(stage) onEditPageTitle(stage);
-  }, [stage, onEditPageTitle]);
+    if(stage) onEditPageInfo({ title: stage });
+  }, [stage, onEditPageInfo]);
 
   const { getLastActiveTime } = useIdleTimer({
-    timeout: 10 * 60 * 2,
+    timeout: 10 * 60,
     onIdle: handleOnIdle,
     debounce: 500
   })

@@ -2,7 +2,6 @@ import { BlockData, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCom
 import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData } from '.';
 import { Token } from '../../utils/token';
 import { updateObject } from '../../../../store/utils';
-import { BlockProps } from '../../components/Block';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
@@ -166,27 +165,27 @@ function addToStage(
  * @param blockDataList 
  * @param stage 
  */
-function updateBlockContents(blockDataList: BlockData[], stage: StagedBlock[]) {
-  const blocks = blockDataList.concat();
+function updateBlockContents(preBlockList: BlockData[], stage: StagedBlock[]) {
+  const blockList = preBlockList.concat();
   const tempData: TempDataType = { update: [] };
   const modifyData: ModifyData[] = [];
 
   for(const { blockIndex, id, contents } of stage) {
-    if(blocks[blockIndex] && id === blocks[blockIndex].id) {
+    if(blockList[blockIndex] && id === blockList[blockIndex].id) {
 
-      if(blocks[blockIndex].type === "text" || blocks[blockIndex].type === "title") {
-        const preContents = typeof blocks[blockIndex].contents === "string"?
-        blocks[blockIndex].contents : blocks[blockIndex].contents.concat();
+      if(blockList[blockIndex].type === "text" || blockList[blockIndex].type === "title") {
+        const preContents = typeof blockList[blockIndex].contents === "string"?
+        blockList[blockIndex].contents : blockList[blockIndex].contents.concat();
 
-        tempData.update?.push(createTempData(blocks[blockIndex].id, {
+        tempData.update?.push(createTempData(blockList[blockIndex].id, {
           contents: preContents
         }));
 
-        blocks[blockIndex].contents = typeof contents === "string"?
+        blockList[blockIndex].contents = typeof contents === "string"?
           parseHtmlContents(contents) : contents;
 
-        modifyData.push(setUpdateModifyDataOfBlock(blocks[blockIndex].id, {
-          contents: blocks[blockIndex].contents
+        modifyData.push(setUpdateModifyDataOfBlock(blockList[blockIndex].id, {
+          contents: blockList[blockIndex].contents
         }));
       }
 
@@ -196,7 +195,7 @@ function updateBlockContents(blockDataList: BlockData[], stage: StagedBlock[]) {
   } 
 
   return {
-    blockList: blocks,
+    blockList,
     modifyData,
     tempData
   }
@@ -783,15 +782,9 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyBlockDataType) 
     }
   }
 
-  // return {
-  //   blockList: result.blockList,
-  //   modifyData: result.modifyData,
-  //   tempData
-  // }
-
   return {
     blockList: result.blockList,
-    modifyData: [],
+    modifyData: result.modifyData,
     tempData
   }
 }
