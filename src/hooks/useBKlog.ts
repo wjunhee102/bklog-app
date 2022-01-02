@@ -28,14 +28,13 @@ function useBklogActions(bklogState: BklogState) {
     dispatch(addPushModifyBlockData(modifyBlockData));
   }, [dispatch]);
 
-  const onAddPushModfiyPageInfo = useCallback((modifyPageInfo: ModifyPageInfoType) => {
+  const onChangePageInfo = useCallback((modifyPageInfo: ModifyPageInfoType) => {
     dispatch(changePageInfo(modifyPageInfo));
   }, [dispatch]);
 
-  const onUpdateBklog = useCallback((profileId: string) => {
+  const onUpdateBklog = useCallback(() => {
     if(bklogState.pageInfo && (bklogState.pushModifyBlockData || bklogState.pushModifyPageInfo)) {
       dispatch(updateBklog({
-        profileId,
         pageId: bklogState.pageInfo.id,
         pageVersions: {
           current: bklogState.version,
@@ -87,7 +86,7 @@ function useBklogActions(bklogState: BklogState) {
     onResetBklog,
     onGetPage,
     onAddPushModifyBlockData,
-    onAddPushModfiyPageInfo,
+    onChangePageInfo,
     onUpdateBklog,
     onUpdateVersion,
     onChangeUpdatedState,
