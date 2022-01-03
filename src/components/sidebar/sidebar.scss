@@ -1,8 +1,9 @@
 
 
 .sidebar {
-  @apply relative;
+  @apply relative h-full flex-none overflow-hidden;
 
+  width: 240px;
   transform: translateX(0%) scaleX(1);
   animation-name: slideOn;
   animation-duration: 0.7s;

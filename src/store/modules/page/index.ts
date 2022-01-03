@@ -1,9 +1,10 @@
 import { createReducer } from "../../utils";
 import handler from "./handler";
-import { PageState } from "./utils";
+import { PageActions, PageState } from "./utils";
 
 export const initialPageState: PageState = {
   toggle: false,
+  editToggle: false,
   loading: false,
   tempPageInfo: null,
   pageEditor: {
@@ -16,9 +17,11 @@ export const initialPageState: PageState = {
   },
   pageEditable: false,
   pageList: [],
+  updatingPageId: null,
+  updatedVersion: null,
   error: null
 }
 
-const page = createReducer(initialPageState, handler);
+const page = createReducer<PageState, PageActions>(initialPageState, handler);
 
 export default page;

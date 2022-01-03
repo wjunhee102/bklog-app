@@ -1,40 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import classNames from 'classnames';
 import Profile from './component/profile';
-import PageList from './component/Page-list';
+import PageList from './component/page-list';
 import './sidebar.scss';
-import usePage from '../../hooks/usePage';
-import useAuth from '../../hooks/useAuth';
 import CreatePageButton from './component/CreatePageButton';
+import useSidebar from './hooks/useSidebar';
 
 const Sidebar: React.FC = () => {
 
   const {
-    authState
-  } = useAuth();
-
-  const { 
     pageState,
-    onCreatePage
-  } = usePage();
-
-  const handleClick = () => {
-    onCreatePage(authState.user.id, "page", 5);
-  }
-
-  useEffect(() => {
-    console.log(authState);
-  }, [authState]);
+    authState,
+    pageListTable,
+    handleClick,
+    handleClick2
+  } = useSidebar();
 
   return (
     <div className={
       classNames(
-        "sidebar h-full flex-none gnb-box overflow-hidden",
+        "sidebar gnb-box",
         {"off": !pageState.toggle}
       )}
     >
-      <div className="h-full py-2 pl-2">
-        <nav className={`h-full rounded-md shadow-md bg-white overflow-hidden relative flex flex-col`}>
+      <div className="h-full">
+        <nav className={`h-full bg-white overflow-hidden relative flex flex-col`}>
           <Profile />
           <PageList
             pageEditor={pageState.pageEditor}
@@ -42,7 +32,7 @@ const Sidebar: React.FC = () => {
           />
           {
             authState.user && (authState.user.id === pageState.pageEditor.id)? 
-              <CreatePageButton onClick={handleClick} /> : null
+              <CreatePageButton onClick={handleClick2} /> : null
           }
         </nav>
       </div>

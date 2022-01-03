@@ -12,10 +12,6 @@ function getPage(pageId: string) {
   });
 }
 
-function getPageA(path: string) {
-  return bklogFetchGet(`getPage/${path}`);
-}
-
 function updateVersion(versions: { id: string, preId: string } ) {
   return bklogFetchGet("getmodifydata", versions);
 }

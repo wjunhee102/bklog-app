@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { changePageTitle, changeToggle, createPage, getPageList, GetPageListQuery, GetPageListReqType, getUserProfile } from '../store/modules/page/utils';
+import { changePageTitle, changeToggle, clearPageState, ClearPageStateType, createPage, getPageList, GetPageListQuery, GetPageListReqType, getUserProfile, ReqUpdatePageInfo, updatePageInfo } from '../store/modules/page/utils';
 import { PageState } from '../store/modules/page/utils';
 import { RootState } from '../store/modules';
 import { useSelector, useDispatch } from 'react-redux';
@@ -34,8 +34,16 @@ function usePageActions(state: PageState) {
     dispatch(getPageList(type, userInfo, query));
   }, [dispatch]);
 
-  const onCreatePage = useCallback((profileId: string, title: string, disclosureScope: number = 5) => {
-    dispatch(createPage(profileId, title, disclosureScope));
+  const onCreatePage = useCallback((title: string, disclosureScope: number = 5) => {
+    dispatch(createPage(title, disclosureScope));
+  }, [dispatch]);
+
+  const onUpdatePage = useCallback((data: ReqUpdatePageInfo) => {
+    dispatch(updatePageInfo(data));
+  }, [dispatch]);
+
+  const onClearPageState = useCallback((key: ClearPageStateType) => {
+    dispatch(clearPageState(key));
   }, [dispatch]);
 
   return {
@@ -47,7 +55,9 @@ function usePageActions(state: PageState) {
     onChangePageTitle,
     onGetUserProfile,
     onGetPageList,
-    onCreatePage
+    onCreatePage,
+    onUpdatePage,
+    onClearPageState
   }
 }
 

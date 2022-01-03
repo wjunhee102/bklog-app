@@ -24,13 +24,22 @@ import {
   UPDATE_PAGE_INFO_ERROR,
   DELETE_PAGE,
   DELETE_PAGE_ERROR,
-  DELETE_PAGE_SUCCESS
+  DELETE_PAGE_SUCCESS,
+  ClearPageStateType,
+  CLEAR_PAGE_STATE
 } from ".";
 import { UserProfile } from "../../auth/utils";
 
 function resetPage() {
   return {
     type: RESET_PAGE
+  }
+}
+
+function clearPageState(key: ClearPageStateType) {
+  return {
+    type: CLEAR_PAGE_STATE,
+    payload: key
   }
 }
 
@@ -147,10 +156,10 @@ function updatePageInfo(data: ReqUpdatePageInfo) {
   }
 }
 
-function updatePageInfoSuccess(res: string) {
+function updatePageInfoSuccess(version: { pageVersion: string }) {
   return {
     type: UPDATE_PAGE_INFO_SUCCESS, 
-    payload: res
+    payload: version
   }
 }
 
@@ -184,6 +193,7 @@ function deletePageError(error: ApiErrorType) {
 
 export default {
   resetPage,
+  clearPageState,
   changePageTitle,
   changePageTitleSuccess,
   changePageTitleError,
