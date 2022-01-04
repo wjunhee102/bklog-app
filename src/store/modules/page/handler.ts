@@ -38,7 +38,10 @@ import {
   DELETE_PAGE_ERROR,
   getUserProfileSuccess,
   getUserProfileError,
-  GET_USER_PROFILE
+  GET_USER_PROFILE,
+  Page,
+  PageProps,
+  createPageInfo
 } from "./utils";
 
 function resetPageHandler(
@@ -101,12 +104,8 @@ function createPageSuccessHandler(
   { payload }: ReturnType<typeof createPageSuccess>
 ): PageState {
   const pageList = state.pageList;
-  
-  pageList.push({
-    id: payload,
-    title: state.tempPageInfo.title,
-    disclosureScope: state.tempPageInfo.disclosureScope
-  });
+
+  pageList.push(updateObject<Page, PageProps>(createPageInfo(payload), state.tempPageInfo));
   
   // disclosureScope;
   pageList.sort((a, b) => a.disclosureScope - b.disclosureScope);
@@ -196,7 +195,8 @@ function updatePageInfoHandler(
 ): PageState {
   return updateObject<PageState, PageStateProps>(state, {
     updatingPageId: payload.pageId,
-    updatedVersion: null
+    updatedVersion: null,
+    tempPageInfo: payload.data
   });
 }
 
@@ -206,7 +206,13 @@ function updatePageInfoSuccessHandler(
 ): PageState {
   return updateObject<PageState, PageStateProps>(state, {
     updatedVersion: [state.updatingPageId, payload.pageVersion],
-    updatingPageId: null
+    updatingPageId: null,
+    pageList: state.pageList.map(page => 
+      page.id !== state.updatingPageId?
+      page 
+      : updateObject<Page, PageProps>(page, state.tempPageInfo)
+    ),
+    tempPageInfo: null
   });
 }
 

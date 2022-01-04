@@ -1,17 +1,31 @@
-import { ModifyPageInfoType } from "../../../../components/block/types";
 import { ApiErrorType } from "../../../../utils/api-utils";
 import { UserProfile } from "../../auth/utils";
 import actions from "./actions";
 import apiUtils from "./apiUtils";
+import sideUtils from './sideUtils';
+
+export interface Page {
+  id: string;
+  title: string;
+  disclosureScope: number;
+  emoji: string | null;
+}
+
+export interface PageProps {
+  title?: string;
+  disclosureScope?: number;
+  emoji?: string | null;
+}
 
 export interface ReqCreatePage {
   title: string;
   disclosureScope: number;
+  emoji?: string | null;
 }
 
 export interface ReqUpdatePageInfo {
   pageId: string;
-  data: ModifyPageInfoType
+  data: PageProps;
 }
 
 export type GetPageListReqType = "penname" | "id";
@@ -33,12 +47,6 @@ export interface ResGetPageList {
   userProfile: UserProfile;
 }
 
-export interface Page {
-  id: string;
-  title: string;
-  disclosureScope: number;
-}
-
 export interface PageState {
   toggle: boolean;
   editToggle: boolean;
@@ -46,7 +54,7 @@ export interface PageState {
   pageEditor: UserProfile;
   pageEditable: boolean;
   pageList: Page[];
-  tempPageInfo: { title: string; disclosureScope: number } | null;
+  tempPageInfo: PageProps | null;
   updatingPageId: string | null;
   updatedVersion: [string, string] | null;
   error: ApiErrorType | null;
@@ -59,7 +67,7 @@ export interface PageStateProps {
   pageEditor?: UserProfile;
   pageEditable?: boolean;
   pageList?: Page[];
-  tempPageInfo?: { title: string; disclosureScope: number } | null;
+  tempPageInfo?: PageProps | null;
   updatingPageId?: string | null;
   updatedVersion?: [string, string] | null;
   error?: ApiErrorType | null;
@@ -147,6 +155,9 @@ export type PageActions = ReturnType<typeof resetPage>
   | ReturnType<typeof deletePageSuccess>
   | ReturnType<typeof deletePageError>
 ;
+
+// side utils
+export const createPageInfo = sideUtils.createPageInfo;
 
 // api
 export const pageFetchGet  = apiUtils.pageFetchGet;
