@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import BlockScrollMenu from '../block-scroll-menu/BlockScrollMenu';
+import BlockScrollMenu from '../block-scroll-menu';
 import './BlockUtilsMenu.scss';
 import BlockDeleteBtn from './elements/BlockDeleteBtn';
 import BlockDuplicateBtn from './elements/BlockDuplicateBtn';
