@@ -1,0 +1,32 @@
+.page-btn-box {
+  @apply box-border py-1 px-4 flex;
+
+  width: 100%;
+  min-height: 27px;
+
+  .page-title-btn-box {
+    @apply w-full overflow-hidden;
+
+    .page-title-box {
+      @apply w-full flex-auto text-gray-800 font-medium;
+  
+      a {
+        @apply truncate block w-full;
+      }
+
+      input {
+        @apply block w-full;
+      }
+    }
+  }
+
+  .page-title-menu-box {
+    @apply flex-none hidden;
+  }
+
+  &:hover {
+    .page-title-menu-box {
+      @apply block;
+    }
+  }
+}

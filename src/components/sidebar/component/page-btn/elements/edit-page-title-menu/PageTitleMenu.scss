@@ -1,0 +1,36 @@
+.page-title-menu-box {
+  @apply relative h-full pl-3 box-border;
+
+  .page-title-menu-btn {
+    @apply bg-transparent rounded block box-border;
+
+    height: 21px;
+    width: 21px;
+
+    &:hover {
+      @apply bg-gray-200;
+    }
+  }
+
+  .page-title-menu {
+    @apply absolute box-content bg-white dark:bg-black py-2 w-full text-gray-800 dark:text-white;
+
+    width: 160px;
+    height: auto;
+    padding: 5px;
+    left: 14px;
+    top: 0px;
+    z-index: 30;
+
+    .action-btn {
+      .action-btn-icon-box {
+        @apply border-transparent;
+      }
+    }
+
+    .title-box {
+      @apply w-full flex justify-between;
+    }
+  }
+
+}
