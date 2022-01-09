@@ -1,21 +1,20 @@
-import { useHistory } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import useBKlog from "../../../hooks/useBKlog";
-import { History } from 'history';
 import { useEffect, useState } from "react";
 import useStoreReset from "../../../hooks/useStoreReset";
 
-function handleErrorPopup({
-  type, 
-  code
-}: { type: string, code: string | number}, 
-  history?: History<unknown>){
-    return () => {
-      if(type === "AUTH" && code == "002" && history) {
-        history.push("/home");
-      }
-  } 
-}
+// function handleErrorPopup({
+//   type, 
+//   code
+// }: { type: string, code: string | number}, 
+//   navigate?: NavigateFunction){
+//     return () => {
+//       if(type === "AUTH" && code == "002" && history) {
+//         navigate("/home");
+//       }
+//   } 
+// }
 
 function useBkPage() {
   const [ errMessage, setErrMessage ] = useState<string>(null);
@@ -34,11 +33,11 @@ function useBkPage() {
     onAllReset
   } = useStoreReset();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleCallback = () => {
     onAllReset();
-    history.push("/home");
+    navigate("/home");
   } 
 
   useEffect(() => {

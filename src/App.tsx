@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, useHistory} from 'react-router-dom';
-import AuthPage from './pages/AuthPage';
 import useBase from './hooks/useBase';
-import HomePage from './pages/homepage';
-import BkPage from './pages/bkpage';
-import Gnb from './components/gnb';
 import classNames from 'classnames';
 import './assets/App.scss';
 import useAuth from './hooks/useAuth';
-import NotFoundPage from './pages/NotFoundPage';
+import Router from './router';
+
 
 const App: React.FC = () => {
 
@@ -52,18 +48,7 @@ const App: React.FC = () => {
       {"light": !dark}
     )}>
       <div className="w-full h-full pt-14 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
-      <Router basename="/">
-        <Gnb />
-        <Switch>
-          <Route path="/" exact>
-            <Redirect to="/home" />
-          </Route>
-          <Route exact path="/home" component={HomePage} />
-          <Route path="/bklog" component={BkPage} />
-          <Route path="/auth" component={AuthPage} />
-          <Route component={NotFoundPage} />
-        </Switch>
-      </Router>
+        <Router />
       </div>
     </div>
   );

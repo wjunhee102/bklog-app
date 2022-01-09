@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
 import { UseGnbConnectStoreType } from './hooks/useGnbConnectStore';
 import useGnb from './hooks/useGnb';
+// import useGnb from './hooks/useGnb';
 
 interface GnbComponentProps {
   useConnectStore: UseGnbConnectStoreType;
@@ -21,12 +22,24 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
     user,
     loading,
     pageToggle,
-    history,
     handleClickToggle,
     handleClickUserMenu,
     handleClickToggleFalse,
-    handleClickSignOut
+    handleClickSignOut,
+    handleNavigate
   } = useGnb(useConnectStore);
+
+  // const {
+  //   onUserMenu,
+  //   user,
+  //   loading,
+  //   pageToggle,
+  //   handleClickToggle,
+  //   handleClickUserMenu,
+  //   handleClickToggleFalse,
+  //   handleClickSignOut,
+  //   handleNavigate
+  // } = useGnb(useConnectStore);
 
   return (
     <nav className="bg-white dark:bg-black absolute left-0 top-0 z-10 shadow w-full">
@@ -62,22 +75,22 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
                       <div className="hidden md:block">
                         <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
             
-                          <button 
+                          {/* <button 
                             className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                            onClick={() => {history.push("/auth/sign-in"); console.log(history)}}
+                            onClick={() => {handleNavigate("/auth/sign-in"); console.log(history)}}
                           >
                             Sign in
                           </button>
 
                           <button 
                             className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                            onClick={() => history.push("/auth/sign-up")}
+                            onClick={() => handleNavigate("/auth/sign-up")}
                           >
                             Sign up
-                          </button>
+                          </button> */}
 
-                          {/* <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-in">Sign In</Link>
-                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-up">Sign up</Link> */}
+                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-in">Sign In</Link>
+                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-up">Sign up</Link>
             
                         </div>
                       </div>

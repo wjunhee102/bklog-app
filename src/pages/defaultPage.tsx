@@ -1,22 +1,22 @@
-import React from 'react';
-import { Redirect, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-interface MatchParams {
-  id?: string;
-}
+const DefaultPage: React.FC = () => {
+  const { id } = useParams();
 
-function DefaultPage({ match }: RouteComponentProps<MatchParams>) {
+  const navigate = useNavigate();
 
-  if(match.params.id) {
-    console.log(match.params.id);
-    return <Redirect to="/" />
-  }
+  useEffect(() => {
+    if(id) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div>
       asdasd
     </div>
-  )
+  );
 }
 
 export default DefaultPage;

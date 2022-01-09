@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useConnectAuthStore } from "../../../hooks/useAuth";
 import usePage from "../../../hooks/usePage";
 import { GetPageListReqType } from "../../../store/modules/page/utils";
 
@@ -12,15 +13,21 @@ function useBkSwitch(type: GetPageListReqType, userInfo: string) {
     onChangeToggle
   } = usePage();
 
-  const history = useHistory();
+  const {
+    user
+  } = useConnectAuthStore();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    onGetPageList(type, userInfo);
-  }, [type, userInfo]);
+    onGetPageList(type, userInfo, user? {
+      id: user.id
+    } : undefined);
+  }, [type, userInfo, user]);
 
   useEffect(() => {
     // if(pageList[0]) {
-    //   history.push(`/bklog/${type}/${userInfo}/${pageList[0].id}`)
+    //   navigate(`/bklog/${type}/${userInfo}/${pageList[0].id}`)
     // }
   }, [pageList]);
 

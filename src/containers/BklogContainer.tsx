@@ -5,7 +5,7 @@ import Sibebar from '../components/sidebar';
 import useBklog from '../hooks/useBKlog';
 import { PageInfoType } from '../store/modules/bklog/utils';
 import useConnectBklogStore from '../hooks/useConnectBklogStore';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import LoadingWindow from '../components/common/loading-window';
 import NotFoundPage from '../pages/NotFoundPage';
 
@@ -13,13 +13,9 @@ interface MatchParams {
   pageId: string;
 }
 
-const BklogContainer: React.FC<RouteComponentProps<MatchParams>> = ({ 
-  match: { 
-    params: { 
-      pageId
-    }
-  } 
-}) => { 
+const BklogContainer: React.FC = () => { 
+  const { pageId } = useParams();
+
   const { 
     bklogState,
     onGetPage,

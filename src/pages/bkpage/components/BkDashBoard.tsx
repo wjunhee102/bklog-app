@@ -25,11 +25,9 @@ const BkDashBoard: React.FC = () => {
 
   const handleClick = () => {
     if(user) {
-      onCreatePage(user.id, "undefined", 5);
+      onCreatePage("undefined", 1);
     }
-  }
-
-  
+  }  
 
   return (
     <div className="bk-dashboard">

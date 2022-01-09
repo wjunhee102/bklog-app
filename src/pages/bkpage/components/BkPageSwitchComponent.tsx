@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route } from 'react-router-dom';
+import { Routes, Route, Outlet, useParams } from 'react-router-dom';
 import LoadingCircle from "../../../components/common/loading-circle";
 import Sibebar from "../../../components/sidebar";
 import BklogContainer from "../../../containers/BklogContainer";
@@ -10,24 +10,22 @@ import BkDashBoard from "./BkDashBoard";
 
 interface BkPageSwitchComponentProps {
   type: GetPageListReqType;
-  userInfo: string;
 }
 
 const BkPageSwitchComponent: React.FC<BkPageSwitchComponentProps> = ({ 
-  type,
-  userInfo
+  type
 }) => {
 
+  const { userInfo } = useParams();
+
   useBkSwitch(type, userInfo);
+
+  console.log(userInfo);
 
   return (
     <div className="flex h-full relative overflow-auto">
       <Sibebar />
-      <Switch>
-        <Route exact path={`/bklog/${type}/${userInfo}`} component={BkDashBoard} />
-        <Route exact path={`/bklog/${type}/${userInfo}/:pageId`} component={BklogContainer} />
-        <Route component={NotFoundPage} />
-      </Switch>
+      <Outlet />
     </div>
   )
 }

@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UseGnbConnectStoreType } from './useGnbConnectStore';
 
 function useGnb( useConnectStore: UseGnbConnectStoreType ) {
 
   const [ onUserMenu, setOnUserMenu ] = useState<boolean>(false); 
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const {
     pageToggle,
@@ -17,23 +17,27 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
     onAllReset
   } = useConnectStore;
 
-  const handleClickToggle = () => {
+  const handleClickToggle = useCallback(() => {
     onChangeToggle();
-  }
+  }, [onChangeToggle]);
 
-  const handleClickUserMenu = () => {
+  const handleClickUserMenu = useCallback(() => {
     setOnUserMenu(!onUserMenu);
-  }
+  }, [setOnUserMenu, onUserMenu]);
 
-  const handleClickToggleFalse = (e: any) => {
+  const handleClickToggleFalse = useCallback((e: any) => {
     setOnUserMenu(false);
-  }
+  }, [setOnUserMenu]);
 
-  const handleClickSignOut = () => {
+  const handleClickSignOut = useCallback(() => {
     onSignOutUser();
     onAllReset();
-    history.push('/home');
-  }
+    navigate('/home');
+  }, [onSignOutUser, onAllReset, navigate]);
+
+  const handleNavigate = useCallback((to: string) => {
+    navigate(to);
+  }, [navigate]);
 
   useEffect(() => {
     console.log(user, loading, "gnb");
@@ -53,7 +57,7 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
     user,
     loading,
     pageToggle,
-    history,
+    handleNavigate,
     handleClickToggle,
     handleClickUserMenu,
     handleClickToggleFalse,
