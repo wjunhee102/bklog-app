@@ -1,25 +1,20 @@
 import React, { useCallback, useState } from 'react';
-import { ReqUpdatePageInfo } from '../../../../store/modules/page/utils';
+import { Page, ReqUpdatePageInfo } from '../../../../store/modules/page/utils';
 import PageTitleBtn from './elements/page-title-btn';
 import EditPageTitleMenu from './elements/edit-page-title-menu';
 import './PageBtn.scss';
 
-export interface SimplePageInfo {
-  penName: string;
-  id: string;
-  title: string;
-}
-
-interface PageBtnProps extends SimplePageInfo {
+interface PageBtnProps {
   onUpdatePage: (data: ReqUpdatePageInfo) => void;
   onDeletePage: (pageId: string) => void;
-  editable: boolean
+  editable: boolean;
+  penName: string;
+  page: Page
 }
 
 const PageBtn: React.FC<PageBtnProps> = ({
   penName,
-  id,
-  title,
+  page,
   onUpdatePage,
   onDeletePage,
   editable
@@ -28,7 +23,7 @@ const PageBtn: React.FC<PageBtnProps> = ({
 
   const handleChange = useCallback((title: string) => {
     onUpdatePage({
-      pageId: id,
+      pageId: page.id,
       data: {
         title
       }
@@ -39,7 +34,7 @@ const PageBtn: React.FC<PageBtnProps> = ({
   const handleAction = useCallback((key: string) => {
     switch(key) {
       case "del":
-        onDeletePage(id);
+        onDeletePage(page.id);
         break
       case "ren":
         setEditToggle(true);
@@ -51,10 +46,10 @@ const PageBtn: React.FC<PageBtnProps> = ({
     <div className="page-btn-box">
 
       <PageTitleBtn
+
         editToggle={editToggle} 
         penName={penName}
-        id={id}
-        title={title}
+        page={page}
         handleChange={handleChange}
       />
 

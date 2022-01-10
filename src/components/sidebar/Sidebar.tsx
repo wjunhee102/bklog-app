@@ -13,7 +13,8 @@ const Sidebar: React.FC = () => {
     authState,
     pageListTable,
     handleClick,
-    handleClick2
+    onDeletePage,
+    onUpdatePage,
   } = useSidebar();
 
   return (
@@ -24,15 +25,26 @@ const Sidebar: React.FC = () => {
       )}
     >
       <div className="h-full">
-        <nav className={`h-full bg-white overflow-hidden relative flex flex-col`}>
+        <nav className={`h-full bg-white relative flex flex-col`}>
           <Profile />
-          <PageList
+          {/* <PageList
             pageEditor={pageState.pageEditor}
             pageList={pageState.pageList}
-          />
+          /> */}
+          {
+            pageListTable?
+            <PageList 
+              penName={pageState.pageEditor.penName} 
+              pageListTable={pageListTable} 
+              editable={true}
+              onDeletePage={onDeletePage}
+              onUpdatePage={onUpdatePage}
+            /> 
+            : null
+          }
           {
             authState.user && (authState.user.id === pageState.pageEditor.id)? 
-              <CreatePageButton onClick={handleClick2} /> : null
+              <CreatePageButton onClick={handleClick} /> : null
           }
         </nav>
       </div>

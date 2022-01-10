@@ -2,10 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSortDown } from '@fortawesome/free-solid-svg-icons';
-import usePage from '../../../hooks/usePage';
-import { UserProfile } from '../../../store/modules/auth/utils';
-import { Page } from '../../../store/modules/page/utils';
-import useAuth from '../../../hooks/useAuth';
+import usePage from '../../../../hooks/usePage';
+import { UserProfile } from '../../../../store/modules/auth/utils';
+import { Page } from '../../../../store/modules/page/utils';
+import useAuth from '../../../../hooks/useAuth';
+import './PageList.scss';
 
 interface PageListProps {
   pageEditor: UserProfile;
@@ -15,8 +16,8 @@ interface PageListProps {
 const PageList: React.FC<PageListProps> = ({ pageEditor, pageList }) => {
 
   return (
-    <div className="page-list flex-1 overflow-auto pt-1">
-      <div className="pl-4 text-base font-semibold">
+    <div className="page-list">
+      <div className="list-title">
         Page list
       </div>
       <ul className="list p-4 font-semibold text-sm text-gray-600">

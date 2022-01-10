@@ -1,0 +1,27 @@
+.page-list-box {
+  
+}
+
+.page-list-block {
+  @apply w-full block h-auto box-border py-1;
+
+  .page-list-title-box {
+    @apply w-full h-auto;
+
+    .page-list-title {
+      @apply text-gray-500 uppercase text-sm block w-full h-8 leading-8 font-semibold rounded bg-transparent tracking-widest text-left box-border px-2;
+      &:hover {
+        @apply bg-gray-200;
+      }
+  
+    }
+  }
+
+  .page-btn-container {
+    @apply block w-full overflow-hidden h-0;
+
+    &.drop {
+      @apply overflow-visible h-auto;
+    }
+  }
+}

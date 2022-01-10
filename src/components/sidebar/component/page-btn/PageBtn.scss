@@ -8,9 +8,9 @@
     @apply w-full overflow-hidden;
 
     .page-title-box {
-      @apply w-full flex-auto text-gray-800 font-medium;
+      @apply w-full flex-auto text-gray-700 font-medium;
   
-      a {
+      .page-title {
         @apply truncate block w-full;
       }
 

@@ -1,17 +1,21 @@
-import { SimplePageInfo } from '../../PageBtn';
+import { Page } from '../../../../../../store/modules/page/utils';
 import PageEditTitle from './PageEditTitle';
 import PageTitleLink from './PageTitleLink';
 
-interface PageTitleBtnProps extends SimplePageInfo {
+interface PageTitleBtnProps {
   editToggle: boolean;
   handleChange: (title: string) => void;
+  penName: string;
+  page: Page
 }
 
 const PageTitleBtn: React.FC<PageTitleBtnProps> = ({
   editToggle,
   penName,
-  id,
-  title,
+  page: {
+    id, 
+    title
+  },
   handleChange
 }) => {
   return (

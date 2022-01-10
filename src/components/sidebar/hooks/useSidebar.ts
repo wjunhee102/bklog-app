@@ -5,7 +5,7 @@ import useSocket from "../../../hooks/useSocket";
 import { Page } from "../../../store/modules/page/utils";
 import { SOCKET_URL } from "../../../utils/api-utils";
 
-interface PageListTable {
+export interface PageListTable {
   private?: Page[];
   public?: Page[];
   follwing?: Page[];
@@ -13,7 +13,7 @@ interface PageListTable {
   followingOrg?: Page[];
 }
 
-const LIST_NAME_TABLE = ["delete", "private", "follwing", "org", "followingOrg", "public"];
+const LIST_NAME_TABLE = ["delete", "private", "follwing", "org", "following / org", "public"];
 
 function setPageListTable(acc: PageListTable, cur: Page) {
   if(acc.hasOwnProperty(LIST_NAME_TABLE[cur.disclosureScope])) {
@@ -35,14 +35,15 @@ function useSidebar() {
     pageState,
     onCreatePage,
     onUpdatePage,
-    onClearPageState
+    onClearPageState,
+    onDeletePage
   } = usePage();
 
   const pageListTable: PageListTable | null = useMemo(() => {
-    return pageState.pageList? 
+    return pageState.pageList && pageState.pageEditor? 
       pageState.pageList.reduce(setPageListTable, {}) 
       : null
-  }, [pageState.pageList]);
+  }, [pageState.pageList, pageState.pageEditor]);
 
   const handleClick = () => {
     onCreatePage("page", 5);
@@ -57,21 +58,13 @@ function useSidebar() {
     }
   }, [socket, pageState.updatedVersion]);
 
-  const handleClick2 = () => {
-    onUpdatePage({
-      pageId: "483b36a4ed5e18c181070ddf16708b42",
-      data: {
-        title: "hello world1234"
-      }
-    });
-  }
-
   return {
     authState,
     pageState,
     pageListTable,
-    handleClick,
-    handleClick2
+    onUpdatePage,
+    onDeletePage,
+    handleClick
   }
 }
 

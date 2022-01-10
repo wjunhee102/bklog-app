@@ -12,12 +12,9 @@ const PageTitleLink: React.FC<PageTitleLinkProps> = ({
 }) => {
   return (
     <div className="page-title-box">
-      {/* <Link to={to}>
+      <Link className="page-title" to={to}>
         { title }
-      </Link> */}
-      <a href="">
-        { title }
-      </a>
+      </Link>
     </div>
   );
 }
