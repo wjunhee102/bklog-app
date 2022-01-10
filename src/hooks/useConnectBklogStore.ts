@@ -6,7 +6,7 @@ import { ModifyBlockDataType, ModifyPageInfoType } from "../components/block/typ
 import { EditingUserInfo } from "../store/modules/bklog/utils";
 import { SOCKET_URL } from "../utils/api-utils";
 import { useConnectAuthStore } from "./useAuth";
-import useBklog from "./useBKlog";
+import useBklog from "./useBklog";
 import usePage from "./usePage";
 import useSocket from "./useSocket";
 

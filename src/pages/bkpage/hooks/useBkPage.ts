@@ -1,8 +1,9 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
-import useBKlog from "../../../hooks/useBKlog";
+import useBklog from "../../../hooks/useBklog"
 import { useEffect, useState } from "react";
 import useStoreReset from "../../../hooks/useStoreReset";
+import usePage from "../../../hooks/usePage";
 
 // function handleErrorPopup({
 //   type, 
@@ -16,18 +17,28 @@ import useStoreReset from "../../../hooks/useStoreReset";
 //   } 
 // }
 
+export interface BkPageHooksTypes {
+  useBklogHooks: ReturnType<typeof useBklog>;
+  usePageHooks: ReturnType<typeof usePage>;
+  useAuthHooks: ReturnType<typeof useAuth>;
+}
+
 function useBkPage() {
   const [ errMessage, setErrMessage ] = useState<string>(null);
   const [ errorToggle, setErrToggle ] = useState<boolean>(false);
 
+  const useAuthHooks = useAuth();
+  const useBklogHooks = useBklog();
+  const usePageHooks = usePage();
+
   const {
     authState,
     onCheckToken,
-  } = useAuth();
+  } = useAuthHooks;
 
   const {
     bklogState
-  } = useBKlog();
+  } = useBklogHooks;
 
   const {
     onAllReset
@@ -42,7 +53,7 @@ function useBkPage() {
 
   useEffect(() => {
     if(bklogState.error) {
-      if(bklogState.error.type !== "Bklog" && bklogState.error.code !== "002" && bklogState.error.code !== "004") {
+      if(bklogState.error.type !== "Bklog" && bklogState.error.code !== "001" && bklogState.error.code !== "004") {
         setErrToggle(true);
         setErrMessage(bklogState.error.message);
       }
@@ -58,7 +69,8 @@ function useBkPage() {
   return {
     handleCallback,
     errorToggle,
-    errMessage
+    errMessage,
+    bkPageHooks: { useAuthHooks, useBklogHooks, usePageHooks }
   }
 }
 

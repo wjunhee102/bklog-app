@@ -9,12 +9,13 @@ const BkPage: React.FC = () => {
   const {
     errMessage,
     errorToggle,
-    handleCallback 
+    handleCallback,
+    bkPageHooks
   } = useBkPage();
 
   return (
-    <div className={classNames("bk-page", "h-full", "overflow-scroll")}>
-      <BkPageRoutes />
+    <div className={classNames("bk-page", "h-auto")}>
+      <BkPageRoutes bkPageHooks={bkPageHooks} />
       <ErrorPopup message={errMessage} callback={handleCallback} toggle={errorToggle} />
     </div>
   );
