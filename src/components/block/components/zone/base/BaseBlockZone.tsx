@@ -5,7 +5,7 @@ import useBlockBase from "../../../hooks/useBlockBase";
 import { BlockProps, ParentInfoType } from "../../Block";
 import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
-import BlockUtilsMenu from "../../block-utils-menu";
+import BlockUtilsMenu from "../../common/block-utils-menu";
 
 interface BaseBlockZoneProps extends BlockProps {
   children: (

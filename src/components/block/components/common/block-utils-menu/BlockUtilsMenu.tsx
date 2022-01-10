@@ -1,8 +1,8 @@
 import React from 'react';
-import { updateObject } from '../../../../store/utils';
-import { UseBlockType } from '../../hooks/useBlock';
-import { BlockData, BlockDataProps } from '../../types';
-import { Token } from '../../utils/token';
+import { updateObject } from '../../../../../store/utils';
+import { UseBlockType } from '../../../hooks/useBlock';
+import { BlockData, BlockDataProps } from '../../../types';
+import { Token } from '../../../utils/token';
 import BlockUtilsMenuArticle from './BlockUtilsMenuArticle';
 
 interface BlockUtilsMenuProps {

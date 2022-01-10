@@ -1,10 +1,10 @@
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import BlockScrollMenu from '../../components/block/components/virtual-scroll/BlockScrollMenu';
+import BlockScrollMenu from '../../components/block/components/common/virtual-scroll/BlockScrollMenu';
 import '../../assets/index.css';
 import '../../components/block/components/elements/text/base/action-menubar/TextBlockActionMenubar.scss';
 import { ColorActionIcon } from '../../components/block/components/elements/text/base/action-menubar/color-action-menu/ColorActionMenu';
-import BlockScrollMenuArticles, { ButtonProps } from '../../components/block/components/virtual-scroll/BlockScrollMenuAriticles';
+import BlockScrollMenuArticles, { ButtonProps } from '../../components/block/components/common/virtual-scroll/BlockScrollMenuAriticles';
 
 export default {
   title: 'Block/BlockScrollMenu',

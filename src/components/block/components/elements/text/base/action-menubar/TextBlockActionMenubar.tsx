@@ -5,7 +5,7 @@ import { findTextStyle } from '../../../../../utils';
 import ColorActionMenu from './color-action-menu/ColorActionMenu';
 import BlockStyleActionMenu from './block-action-menu/BlockStyleActionMenu';
 import TextStyleToggleMenu from './text-style-toggle-menu/TextStyleToggleMenu';
-import BlockMenuBar from '../../../../menubar';
+import BlockMenuBar from '../../../../common/menubar';
 import './TextBlockActionMenubar.scss';
 import classNames from 'classnames';
 

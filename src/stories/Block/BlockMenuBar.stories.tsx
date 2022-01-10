@@ -1,6 +1,6 @@
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import BlockMenuBar from '../../components/block/components/menubar';
+import BlockMenuBar from '../../components/block/components/common/menubar';
 import '../../assets/index.css';
 
 export default {

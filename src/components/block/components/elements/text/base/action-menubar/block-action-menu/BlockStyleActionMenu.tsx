@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import BlockScrollMenu from '../../../../../virtual-scroll/BlockScrollMenu';
-import BlockScrollMenuArticles, { ButtonProps } from '../../../../../virtual-scroll/BlockScrollMenuAriticles';
+import BlockScrollMenu from '../../../../../common/virtual-scroll/BlockScrollMenu';
+import BlockScrollMenuArticles, { ButtonProps } from '../../../../../common/virtual-scroll/BlockScrollMenuAriticles';
 import ActionMenuBox from '../common/ActionMenuBox';
 import ActionMenuToggle from '../common/ActionMenuToggle';
 

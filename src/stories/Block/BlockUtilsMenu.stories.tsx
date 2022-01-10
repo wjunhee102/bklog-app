@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import '../../assets/index.css';
-import BlockUtilsMenuArticle from '../../components/block/components/block-utils-menu/BlockUtilsMenuArticle';
+import BlockUtilsMenuArticle from '../../components/block/components/common/block-utils-menu/BlockUtilsMenuArticle';
 
 export default {
   title: 'Block/BlockUtilsMenu',
