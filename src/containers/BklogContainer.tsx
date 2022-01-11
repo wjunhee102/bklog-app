@@ -8,18 +8,16 @@ import useConnectBklogStore from '../hooks/useConnectBklogStore';
 import { useParams } from 'react-router-dom';
 import LoadingWindow from '../components/common/loading-window';
 import NotFoundPage from '../pages/NotFoundPage';
-import usePage from '../hooks/usePage';
-import useAuth from '../hooks/useAuth';
-import { BkPageHooksTypes } from '../pages/bkpage/hooks/useBkPage';
+import { UseBkPageTypes } from '../pages/bkpage/hooks/useBkPage';
 
-interface BklogContainerProps extends BkPageHooksTypes {
+interface BklogContainerProps {
+  bkPageHooks: UseBkPageTypes;
 }
 
 const BklogContainer: React.FC<BklogContainerProps> = ({
-  useBklogHooks,
-  usePageHooks,
-  useAuthHooks
-}) => { 
+  bkPageHooks: {
+    useBklogHooks,usePageHooks,useAuthHooks
+}}) => { 
   const { pageId } = useParams();
 
   const { 

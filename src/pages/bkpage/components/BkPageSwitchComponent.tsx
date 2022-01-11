@@ -2,13 +2,16 @@ import React from "react";
 import { Routes, Route, Outlet, useParams } from 'react-router-dom';
 import LoadingCircle from "../../../components/common/loading-circle";
 import Sibebar from "../../../components/sidebar";
+import BklogContainer from "../../../containers/BklogContainer";
 import { GetPageListReqType } from '../../../store/modules/page/utils';
-import { BkPageHooksTypes } from "../hooks/useBkPage";
+import NotFoundPage from "../../NotFoundPage";
+import { UseBkPageTypes } from "../hooks/useBkPage";
 import useBkSwitch from "../hooks/useBkSwitch";
+import BkDashBoard from "./BkDashBoard";
 
 interface BkPageSwitchComponentProps {
   type: GetPageListReqType;
-  bkPageHooks: BkPageHooksTypes;
+  bkPageHooks: UseBkPageTypes;
 }
 
 const BkPageSwitchComponent: React.FC<BkPageSwitchComponentProps> = ({ 
@@ -23,7 +26,11 @@ const BkPageSwitchComponent: React.FC<BkPageSwitchComponentProps> = ({
   return (
     <div className="flex h-full relative">
       <Sibebar />
-      <Outlet />
+      <Routes>
+        <Route path="/" element={<BkDashBoard bkPageHooks={bkPageHooks} />} />
+        <Route path=":pageId" element={<BklogContainer bkPageHooks={bkPageHooks} />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </div>
   )
 }

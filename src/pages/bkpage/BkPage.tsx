@@ -1,17 +1,19 @@
 import React from 'react';
 import classNames from 'classnames';
 import ErrorPopup from '../../components/base/popup/ErrorPopup';
-import useBkPage from './hooks/useBkPage';
+import useBkPageLogic from './hooks/useBkPageLogic';
 import BkPageRoutes from './BkPageRoutes';
+import useBkPage from './hooks/useBkPage';
 
 const BkPage: React.FC = () => {
+
+  const bkPageHooks = useBkPage();
 
   const {
     errMessage,
     errorToggle,
-    handleCallback,
-    bkPageHooks
-  } = useBkPage();
+    handleCallback
+  } = useBkPageLogic(bkPageHooks);
 
   return (
     <div className={classNames("bk-page", "h-auto")}>

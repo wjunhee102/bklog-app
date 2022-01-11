@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import useAuth from '../../../hooks/useAuth';
-import usePage from '../../../hooks/usePage';
+import { UseBkPageTypes } from '../hooks/useBkPage';
 
-const BkDashBoard: React.FC = () => {
+interface BkDashBoardProps {
+  bkPageHooks: UseBkPageTypes;
+}
+
+const BkDashBoard: React.FC<BkDashBoardProps> = ({
+  bkPageHooks: {
+    usePageHooks,
+    useAuthHooks
+  }
+}) => {
 
   const [ btnToggle, setBtnToggle ] = useState<boolean>(false);
 
@@ -11,13 +19,13 @@ const BkDashBoard: React.FC = () => {
       pageList
     },
     onCreatePage
-  } = usePage();
+  } = usePageHooks;
 
   const {
     authState: {
       user
     }
-  } = useAuth();
+  } = useAuthHooks
 
   useEffect(() => {
 
