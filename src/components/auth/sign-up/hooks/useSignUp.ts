@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import useAuth from "../../../../hooks/useAuth";
+import { UseAuthType } from "../../../../hooks/useAuth";
 import useChange from '../../../../hooks/useChange';
 import { regEmail, regPassword, regPenName } from '../../utils';
 
@@ -104,7 +104,7 @@ const setInputProps = (
 ];
 
 // 전송 전에 validation 체크
-function useSignUp() {
+function useSignUp(useAuthHooks: UseAuthType) {
 
   const [ lastName, handleInputLName, errorLastName, handleErrorLName ] = useChange("");
   const [ firstName, handleInputFName, errorFirstName, handleErrorFName ] = useChange("");
@@ -125,7 +125,7 @@ function useSignUp() {
     onSignUpUser,
     onCheckEmailUsed,
     onCheckPenNameUsed
-  } = useAuth();
+  } = useAuthHooks;
 
   const inputPropsList = useMemo(() => setInputProps({
     value: lastName,

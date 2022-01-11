@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import useAuth from "../../../../hooks/useAuth";
+import { UseAuthType } from "../../../../hooks/useAuth";
 import useChange from '../../../../hooks/useChange';
 import { regEmail, regPassword } from '../../utils';
 
@@ -16,12 +16,12 @@ export interface InputPropsType {
   style: string;
 }
 
-function useSignIn() {
+function useSignIn(useAuthHooks: UseAuthType) {
 
   const {
     authState: { error },
     onSignInUser
-  } = useAuth();
+  } = useAuthHooks;
 
   const [ email, handleInputEmail, errorEmail, handleErrorEmail ] = useChange("test@test.com");
   const [ password, handleInputPwd, errorPwd, handleErrorPwd ] = useChange("1q2w3e4r!");

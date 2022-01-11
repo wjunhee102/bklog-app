@@ -1,9 +1,16 @@
 import React from 'react';
+import { UseAuthPageTypes } from '../../../pages/authpage/hooks/useAuthPage';
 import useSignUp from './hooks/useSignUp';
 import SignUpComponent from './SignUpComponent';
 
-const SignUp: React.FC = () => {
-  return <SignUpComponent {...useSignUp()} />
+interface SignUpProps {
+  authPageHooks: UseAuthPageTypes;
+}
+
+const SignUp: React.FC<SignUpProps> = ({
+  authPageHooks
+}) => {
+  return <SignUpComponent {...useSignUp(authPageHooks.useAuthHooks)} />
 }
 
 export default SignUp;
