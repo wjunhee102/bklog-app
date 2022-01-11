@@ -1,8 +1,7 @@
 import React from "react";
 import { Routes, Route, Outlet, useParams } from 'react-router-dom';
-import LoadingCircle from "../../../components/common/loading-circle";
 import Sibebar from "../../../components/sidebar";
-import BklogContainer from "../../../containers/BklogContainer";
+import BklogContainer from "../../../containers/bklog-container";
 import { GetPageListReqType } from '../../../store/modules/page/utils';
 import NotFoundPage from "../../NotFoundPage";
 import { UseBkPageTypes } from "../hooks/useBkPage";
