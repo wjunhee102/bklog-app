@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { UseBkPageTypes } from "../../../pages/bkpage/hooks/useBkPage";
 import { PageInfoProps } from "../../../store/modules/bklog/utils";
@@ -6,8 +6,11 @@ import { PageInfoProps } from "../../../store/modules/bklog/utils";
 function useBkContainer({
     useBklogHooks,
     usePageHooks,
-    useAuthHooks
+    useAuthHooks,
+    navigate
 }: UseBkPageTypes) {
+
+  const [ penName, setPenName ] = useState<string | null>(null);
 
   const { 
     bklogState,
@@ -37,6 +40,15 @@ function useBkContainer({
     onGetPage(pageId);
     if(pageEditor) onGetPageList("id", pageEditor.id, user? {id: user.id} : undefined);
   }, [pageId]);
+
+
+
+  useEffect(() => {
+    if(pageEditor && pageEditor.penName !== penName) {
+      if(penName) navigate(`/bklog/penname/${pageEditor.penName}`);
+      setPenName(pageEditor.penName);
+    }
+  }, [penName, pageEditor]);
 
   return {
     pageInfo,

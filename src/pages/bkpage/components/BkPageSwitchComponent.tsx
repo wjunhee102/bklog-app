@@ -18,9 +18,7 @@ const BkPageSwitchComponent: React.FC<BkPageSwitchComponentProps> = ({
   bkPageHooks
 }) => {
 
-  const { userInfo } = useParams();
-
-  useBkSwitch(type, userInfo, bkPageHooks);
+  useBkSwitch(type, bkPageHooks);
 
   return (
     <div className="flex h-full relative">

@@ -1,13 +1,15 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { GetPageListReqType } from "../../../store/modules/page/utils";
 import { UseBkPageTypes } from "./useBkPage";
 
-function useBkSwitch(type: GetPageListReqType, userInfo: string, {
+function useBkSwitch(type: GetPageListReqType, {
   usePageHooks,
   useAuthHooks,
   navigate
 }: UseBkPageTypes) {
+  const { userInfo } = useParams();
+
   const {
     pageState: {
       pageList
