@@ -9,7 +9,7 @@ const convertArg = (arg: any[]): string => {
   return arg.reduce((acc, cur) =>  !acc? `${cur}` : `${acc}-${cur}`);
 }
 
-function calculatrionPosition(
+function calculartionPosition(
   position: string, 
   command: "next" | "child" 
 ) {
@@ -55,11 +55,11 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     initBlock[blockData.id] : null, [initBlock]); 
 
   const downPosition = useMemo(() => 
-    calculatrionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "child" : "next"), 
+    calculartionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "child" : "next"), 
   [blockData.position]);
 
   const rightPosition = useMemo(() => 
-    calculatrionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "next" : "child"), 
+    calculartionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "next" : "child"), 
   [blockData.position]);
 
   const handleSelectMouseEnter = useCallback((

@@ -1,7 +1,7 @@
 import React from 'react';
 import useTextBlock from '../../../hooks/useTextBlock';
 import { BlockProps } from '../../Block';
-import TextBlockActionMenuBar from './base/action-menubar';
+import TextBlockActionMenuBar from './elements/action-menubar';
 import ContentEditableEle from '../../common/ContentEditableEle';
 
 interface TextBlockEleProps extends BlockProps {
