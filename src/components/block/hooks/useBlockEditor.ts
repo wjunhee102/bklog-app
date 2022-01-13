@@ -6,9 +6,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
   const {
     state,
-    titleBlock,
     stageBlock,
-    stagePage,
     isGrab,
     isCliping,
     tempClipData,
@@ -17,12 +15,13 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
     setCursorStart,
     setCursorEnd,
     onCommitBlock,
-    onCommitPage,
     onResetEditorState,
     onRevertBlock,
     onChangeEditorState,
     onChangeFetchState
   } = useBlockReducer;
+
+  const titleBlock = useMemo(() => state.titleBlock, [state.titleBlock]);
 
    // elements
    const editorRef = useRef<HTMLDivElement>(null);
@@ -87,10 +86,9 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
    // idle
    const handleOnIdle = useCallback(() => {
     if(stageBlock[0]) onCommitBlock();
-    if(stagePage) onCommitPage();
     onResetEditorState(true);
     onChangeFetchState(true);
-  }, [stageBlock, stagePage, onCommitBlock, onCommitPage]);
+  }, [stageBlock, onCommitBlock]);
 
   const { getLastActiveTime } = useIdleTimer({
     timeout: 10 * 60 * 1,

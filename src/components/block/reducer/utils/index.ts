@@ -21,7 +21,6 @@ export type StateAryType = 'blockList'
   | 'tempBack'
   | 'tempClipData'
   | 'clipBoard'
-  | 'modifyPageInfo'
 ;
 
 export type StateBolType = 'isFetch' | EditorStateType;
@@ -74,7 +73,7 @@ export interface TempData<T = any> {
 export interface TempDataType {
   editingBlockId?: string;
   nextBlockInfo?: NextBlockInfo;
-  pageInfo?: PageInfo;
+  pageTitle?: string;
   create?: TempData<BlockData>[];
   update?: TempData[];
   delete?: TempData[];
@@ -83,7 +82,7 @@ export interface TempDataType {
 export interface ResBlockUtils {
   blockList: BlockData[];
   modifyData: ModifyData[];
-  tempData: TempDataType | undefined;
+  tempData: TempDataType;
 }
 
 export interface NextTextBlockInfo {
@@ -93,10 +92,6 @@ export interface NextTextBlockInfo {
 
 export type NextBlockInfo = NextTextBlockInfo | { type: string, payload: any } | null;
 
-export type PageInfo = {
-  title: string | null;
-}
-
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
@@ -104,7 +99,7 @@ export interface BlockState {
   isHoldingDown: boolean;
   isCliping: boolean;
   targetPosition: string | null;
-  pageInfo: PageInfo;
+  titleBlock: BlockData | null;
   blockList: BlockData[];
   editingBlockId: string | null;
   nextBlockInfo: NextBlockInfo | null;
@@ -112,7 +107,6 @@ export interface BlockState {
   stagePage: StagedPage | null;
   updatedBlockIdList: string[];
   modifyData: ModifyData[];
-  modifyPageInfo: ModifyPageInfoType | null;
   tempFront: TempDataType[];
   tempBack: TempDataType[];
   tempClipData: number[];
@@ -126,7 +120,7 @@ export interface BlockStateProps {
   isHoldingDown?: boolean;
   isCliping?: boolean;
   targetPosition?: string | null;
-  pageInfo?: { title: string | null};
+  titleBlock?: BlockData | null;
   blockList?: BlockData[];
   editingBlockId?: string | null;
   nextBlockInfo?: NextBlockInfo;
@@ -134,7 +128,6 @@ export interface BlockStateProps {
   stagePage?: StagedPage | null;
   updatedBlockIdList?: string[];
   modifyData?: ModifyData[];
-  modifyPageInfo?: ModifyPageInfoType | null;
   tempFront?: TempDataType[];
   tempBack?: TempDataType[];
   tempClipData?: number[];
@@ -151,7 +144,6 @@ export const ADD_BLOCK              = 'ADD_BLOCK' as const;
 export const ADD_TEXT_BLOCK         = 'ADD_TEXT_BLOCK' as const;
 export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
 export const COMMIT_BLOCK           = 'COMMIT_BLOCK' as const;
-export const COMMIT_PAGE            = 'COMMIT_PAGE' as const;
 export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
 export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
 export const DELETE_TEXT_BLOCK      = 'DELETE_TEXT_BLOCK' as const;
@@ -209,7 +201,6 @@ export type BLOCK_ACTION_TYPES =
   | typeof EDIT_PAGE_TITLE
   | typeof CLEAR_STATE_ITEM
   | typeof EDIT_PAGE_INFO
-  | typeof COMMIT_PAGE
 ;
 
 /**
@@ -222,7 +213,6 @@ export const addTextBlock         = actionBlock.addTextBlock;
 export const changeEditingId      = actionBlock.changeEditingId;
 export const editBlock            = actionBlock.editBlock;
 export const commitBlock          = actionBlock.commitBlock;
-export const commitPage           = actionBlock.commitPage;
 export const changeBlockContents  = actionBlock.changeBlockContents;
 export const deleteBlock          = actionBlock.deleteBlock;
 export const deleteTextBlock      = actionBlock.deleteTextBlock;
@@ -280,7 +270,6 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof editPageTitle>
   | ReturnType<typeof clearStateItem>
   | ReturnType<typeof editPageInfo>
-  | ReturnType<typeof commitPage>
 ;
 
 //converter

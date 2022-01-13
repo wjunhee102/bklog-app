@@ -43,19 +43,16 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   const {
     state,
-    title,
     stagePage,
     editingBlockId,
     isFetch,
     modifyData,
-    modifyPageInfo,
     onInitBlockState,
     onClearModifyData,
     onUpdateBlock,
     onInitPageTitle,
     onEditPageInfo,
-    onEditPageTitle,
-    onClearStateItem
+    onEditPageTitle
   } = useBlockReducer;
 
   const pageTitle: string | null = useMemo(() => bklogState.pageInfo? bklogState.pageInfo.title : null, [bklogState.pageInfo]);
@@ -126,24 +123,30 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   useEffect(() => {
     if(pageTitle) {
+      onEditPageTitle(pageTitle);
       if(pageId) onChangePageTitle(pageId, pageTitle);
-      if(pageTitle !== title) onInitPageTitle(pageTitle);
     }
   }, [pageTitle]);
 
+  // 이부분이 계속 pageTitle을 바뀌게 하는 곳
   useEffect(() => {
-    if(isFetch && !isFetching && !updatingId && !isUpdated && !isKeyPress) {
-      if(modifyData[0]) onAddPushModifyBlockData(convertModifyBlockData(state.modifyData));
-      if(modifyPageInfo) onChangePageInfo(modifyPageInfo);
+    if(stagePage) {
+      onChangePageInfo(stagePage);
+      onEditPageInfo(null);
     }
-  }, [modifyData, modifyPageInfo, isFetch, isFetching, updatingId, isKeyPress]);
+  }, [stagePage]);
+
+  useEffect(() => {
+    if(isFetch && !isFetching && modifyData[0] && !updatingId && !isUpdated && !isKeyPress) {
+      onAddPushModifyBlockData(convertModifyBlockData(state.modifyData));
+    }
+  }, [modifyData, isFetch, isFetching, updatingId, isKeyPress]);
 
   useEffect(() => {
     if(isUpdated && socket) {
       socket.emit("updated", [bklogState.pageInfo.id, currentVersion]);
       onChangeUpdatedState();
       onClearModifyData();
-      onClearStateItem("modifyPageInfo")
     } 
   }, [isUpdated]);
 
@@ -221,7 +224,6 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
    // 일단 서버에서 충돌 막을 방법을 찾아야 할 듯.
   useEffect(() => {
-    console.log(pushModifyPageInfo);
     if(!updatingId && !isFetching && socket && (pushModifyBlockData || pushModifyPageInfo)) {
       onUpdateBklog();
       socket.emit("update");
