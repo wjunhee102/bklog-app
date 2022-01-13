@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer, useRef } from 'react';
-import { ModifyBlockDataType } from '../types';
+import { ModifyBlockDataType, ModifyPageInfoType } from '../types';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
   SetBlockDataList, 
@@ -36,7 +36,9 @@ import {
   ClearStateType,
   clearStateItem,
   StagedPage,
-  editPageInfo
+  editPageInfo,
+  commitPage,
+  createPageTitleBlockData
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -63,6 +65,10 @@ function useBlock() {
 
   const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
+  const title: string | null = useMemo(() => state.pageInfo.title, [state.pageInfo.title]);
+
+  const titleBlock: BlockData | null = useMemo(() => state.pageInfo.title? createPageTitleBlockData(state.pageInfo.title) : null, [state.pageInfo.title]);
+
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 
   const editingBlockId: string | null = useMemo(() => state.editingBlockId, [state.editingBlockId]);
@@ -77,7 +83,7 @@ function useBlock() {
 
   const stageBlock: StagedBlock[] = useMemo(() => state.stageBlock, [state.stageBlock]);
 
-  const stagePage: StagedPage = useMemo(() => state.stagePage, [state.stagePage]);
+  const stagePage: StagedPage | null = useMemo(() => state.stagePage, [state.stagePage]);
 
   const updatedBlockIdList: string[] = useMemo(() => state.updatedBlockIdList, [state.updatedBlockIdList]);
 
@@ -86,6 +92,8 @@ function useBlock() {
   const targetPosition: string | null = useMemo(() => state.targetPosition, [state.targetPosition]);
 
   const modifyData: ModifyData[] = useMemo(() => state.modifyData, [state.modifyData]);
+
+  const modifyPageInfo: ModifyPageInfoType | null = useMemo(() => state.modifyPageInfo, [state.modifyPageInfo]);
 
   const nextBlockInfo: NextBlockInfo = useMemo(() => state.nextBlockInfo, [state.nextBlockInfo]);
 
@@ -108,6 +116,10 @@ function useBlock() {
 
   const onCommitBlock = useCallback(() => {
     dispatch(commitBlock());
+  }, [dispatch]);
+
+  const onCommitPage  = useCallback(() => {
+    dispatch(commitPage());
   }, [dispatch]);
 
   const onChangeBlockContents = useCallback((index: number, contents: any) => {
@@ -227,6 +239,8 @@ function useBlock() {
     setCursorEnd,
     state, 
     initBlock,
+    title,
+    titleBlock,
     editingBlockId,
     isGrab,
     isHoldingDown,
@@ -238,6 +252,7 @@ function useBlock() {
     tempClipData,
     targetPosition,
     modifyData,
+    modifyPageInfo,
     nextBlockInfo,
     onEditBlock,
     blockLength,
@@ -245,6 +260,7 @@ function useBlock() {
     onChangeEditorState,
     onChangeEditingId,
     onCommitBlock,
+    onCommitPage,
     onChangeBlockContents,
     onAddBlock,
     onAddTextBlock,
