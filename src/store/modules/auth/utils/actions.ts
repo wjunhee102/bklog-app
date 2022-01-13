@@ -24,9 +24,18 @@ import {
   CHECK_PENNAME_USED_ERROR,
   CHECK_PENNAME_USED_SUCCESS,
   UserInfo,
-  RESET_ERROR
+  RESET_ERROR,
+  ClearAuthStateType,
+  CLEAR_AUTH_STATE
  } from ".";
 import { ApiErrorType } from "../../../../utils/api-utils";
+
+function clearAuthState(...key: ClearAuthStateType[]) {
+  return {
+    type: CLEAR_AUTH_STATE,
+    payload: key
+  }
+}
 
 function checkEmailUsed(email: string) {
   return {
@@ -177,6 +186,7 @@ function resetAuth() {
 }
 
 export default {
+  clearAuthState,
   checkEmailUsed,
   checkEmailUsedSuccess,
   checkEmailUsedError,

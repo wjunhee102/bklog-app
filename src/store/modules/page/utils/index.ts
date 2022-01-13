@@ -9,18 +9,25 @@ export interface Page {
   title: string;
   disclosureScope: number;
   emoji: string | null;
+  parentId: string | null;
 }
 
 export interface PageProps {
   title?: string;
   disclosureScope?: number;
   emoji?: string | null;
+  parentId?: string | null;
 }
 
 export interface ReqCreatePage {
   title: string;
   disclosureScope: number;
   emoji?: string | null;
+  parentId?: string | null;
+}
+
+export interface ReqDeletePage {
+  pageId: string;
 }
 
 export interface ReqUpdatePageInfo {

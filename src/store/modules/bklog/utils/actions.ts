@@ -37,7 +37,7 @@ function resetBklog() {
   };
 }
 
-function clearBklogState(key: ClearBklogStateType) {
+function clearBklogState(...key: ClearBklogStateType[]) {
   return {
     type: CLEAR_BKLOG_STATE,
     payload: key
@@ -80,7 +80,6 @@ function changePageInfo(modifyPageInfo: ModifyPageInfoType) {
 }
 
 function updateBklog(payload: UpdateBklogPayload) {
-  console.log(payload);
   return {
     type: UPDATE_BKLOG,
     payload

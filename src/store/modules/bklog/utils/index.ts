@@ -7,9 +7,11 @@ export interface PageInfoType {
   createdDate: Date;
   updatedDate: Date;
   id: string;
+  parentId: string | null;
   title: string;
-  coverImage: string;
-  coverColor: string;
+  emoji: string | null;
+  coverImage: string | null;
+  coverColor: string | null;
   lastAccessDate: Date;
   views: number;
   disclosureScope: number;
@@ -21,7 +23,9 @@ export interface PageInfoProps {
   createdDate?: Date;
   updatedDate?: Date;
   id?: string;
+  parentId?: string | null;
   title?: string;
+  emoji?: string;
   coverImage?: string;
   coverColor?: string;
   lastAccessDate?: Date;
@@ -105,7 +109,6 @@ export interface BklogStateProps {
 
 // request type
 export interface UpdateBklogPayload {
-  profileId: string;
   pageId: string;
   pageVersions: {
     current: string;
@@ -127,22 +130,22 @@ export interface ReqEditPageEditor {
   targetProfileId: string;
 }
 
-export type ClearBklogStateType = "isLoading"
-  | "isFetching"
-  | "isRefresh"
-  | "isUpdated"
-  | "isUpdating"
-  | "pageInfo" 
-  | "blockList"
-  | "version"
-  | "pageStar"
-  | "pageComments"
-  | "pageEditorList"
-  | "blockComments"
-  | "pushModifyBlockData"
-  | "pushModifyPageInfo"
-  | "pullModifyBlockData"
-  | "error";
+export type ClearBklogStateType = 'isLoading'
+  | 'isFetching'
+  | 'isRefresh'
+  | 'isUpdated'
+  | 'isUpdating'
+  | 'pageInfo' 
+  | 'blockList'
+  | 'version'
+  | 'pageStar'
+  | 'pageComments'
+  | 'pageEditorList'
+  | 'blockComments'
+  | 'pushModifyBlockData'
+  | 'pushModifyPageInfo'
+  | 'pullModifyBlockData'
+  | 'error';
 
 // actions
 export const RESET_BKLOG                 = 'bklog/RESET_BKLOG' as const;

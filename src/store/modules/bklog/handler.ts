@@ -1,5 +1,5 @@
 import { initialState } from ".";
-import { updateObject } from "../../utils";
+import { createClearStatePart, updateObject } from "../../utils";
 import { addPushModifyBlockData, changePageInfo, ADD_PUSH_MODIFY_BLOCK_DATA, CHANGE_PAGE_INFO, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS, addPageEditor, addPageEditorSuccess, addPageEditorError, ADD_PAGE_EDITOR, ADD_PAGE_EDITOR_SUCCESS, ADD_PAGE_EDITOR_ERROR } from "./utils";
 
 function resetBklogHandler(
@@ -13,11 +13,7 @@ function clearBklogStateHandler(
   state: BklogState,
   { payload }: ReturnType<typeof clearBklogState>
 ): BklogState {
-  if(initialState.hasOwnProperty(payload)) {
-    return updateObject<BklogState, BklogStateProps>(state, { [payload]: initialState[payload] });
-  } else {
-    return state;
-  }
+  return updateObject<BklogState, BklogStateProps>(state, createClearStatePart<BklogStateProps>(initialState, payload));
 }
 
 function getPageHandler(
@@ -79,7 +75,7 @@ function changePageInfoHandler(
   return updateObject<BklogState, BklogStateProps>(state, {
     pageInfo,
     pushModifyPageInfo
-  })
+  });
 }
 
 function updateBklogHandler(
@@ -109,9 +105,9 @@ function updateBklogErrorHandler(
   { payload }: ReturnType<typeof updateBklogError>
 ): BklogState {
   console.log(payload);
-  if(payload.type === "Bklog" && (payload.code === "002" || payload.code === "004")) {
+  if(payload.type === "Bklog" && (payload.code === "001" || payload.code === "005")) {
 
-    if(payload.code === "002") {
+    if(payload.code === "001") {
       return updateObject<BklogState, BklogStateProps>(state, {
         isLoading: false,
         isUpdating: true
@@ -148,6 +144,8 @@ function updateVersionSuccessHandler(
   state: BklogState,
   { payload: { id, data: { modifyPageInfo, modifyBlockData } } }: ReturnType<typeof updateVersionSuccess>
 ): BklogState {
+  console.log(modifyPageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, modifyPageInfo) 
+  : state.pageInfo);
 
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,

@@ -1,5 +1,5 @@
 import { initialAuthState } from ".";
-import { updateObject } from "../../utils";
+import { createClearStatePart, updateObject } from "../../utils";
 import { 
   AuthState, 
   AuthStateProps, 
@@ -11,6 +11,8 @@ import {
   CHECK_EMAIL_USED_SUCCESS, 
   CHECK_PENNAME_USED_ERROR, 
   CHECK_PENNAME_USED_SUCCESS, 
+  clearAuthState, 
+  CLEAR_AUTH_STATE, 
   initFetchState, 
   reissueTokenError, 
   REISSUETOKEN_ERROR, 
@@ -43,6 +45,13 @@ import {
   SIGNUPUSER_ERROR, 
   SIGNUPUSER_SUCCESS
 } from "./utils";
+
+function clearAuthStateHandler(
+  state: AuthState,
+  { payload }: ReturnType<typeof clearAuthState>
+) {
+  return updateObject<AuthState, AuthStateProps>(state, createClearStatePart(initialAuthState, payload));
+}
 
 function checkEmailUsedSuccessHandler(
   state: AuthState,
@@ -237,6 +246,7 @@ function resetAuthHandler(
 }
 
 export default {
+  [CLEAR_AUTH_STATE]           : clearAuthStateHandler,
   [CHECK_EMAIL_USED_SUCCESS]   : checkEmailUsedSuccessHandler,
   [CHECK_EMAIL_USED_ERROR]     : checkEmailUsedErrorHandler,
   [CHECK_PENNAME_USED_SUCCESS] : checkPenNameUsedSuccessHandler,

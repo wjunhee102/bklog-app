@@ -1,5 +1,5 @@
 import { initialPageState } from ".";
-import { updateObject } from "../../utils";
+import { createClearStatePart, updateObject } from "../../utils";
 import { 
   CHANGE_PAGE_TITLE, 
   CHANGE_TOGGLE, 
@@ -55,11 +55,7 @@ function clearPageStateHandler(
   state: PageState,
   { payload }: ReturnType<typeof clearPageState>
 ) {
-  if(initialPageState.hasOwnProperty(payload)) {
-    return updateObject<PageState, PageStateProps>(state, { [payload]: initialPageState[payload]});
-  } else {
-    return state;
-  }
+  return updateObject<PageState, PageStateProps>(state, createClearStatePart(initialPageState, payload));
 }
 
 function changeToggleHandler(
@@ -103,12 +99,21 @@ function createPageSuccessHandler(
   state: PageState,
   { payload }: ReturnType<typeof createPageSuccess>
 ): PageState {
-  const pageList = state.pageList;
+  const pageList = state.pageList.concat();
 
   pageList.push(updateObject<Page, PageProps>(createPageInfo(payload), state.tempPageInfo));
   
-  // disclosureScope;
-  pageList.sort((a, b) => a.disclosureScope - b.disclosureScope);
+  pageList.sort((a, b) => {
+    const titleA = a.title.toUpperCase();
+    const titleB = b.title.toUpperCase();
+
+    if(titleA < titleB) {
+      return -1;
+    } else if(titleA > titleB) {
+      return 1;
+    }
+    return 0;
+  });
 
   return updateObject<PageState, PageStateProps>(state, {
     loading: false,

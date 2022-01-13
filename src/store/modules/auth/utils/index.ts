@@ -100,6 +100,15 @@ export interface AuthStateProps {
   errorToggle?: boolean;
 }
 
+export type ClearAuthStateType = 'loading'
+  | 'user'
+  | 'signUpSuccess'
+  | 'signUpState'
+  | 'error'
+  | 'waitingCount'
+  | 'errorToggle'
+;
+
 export const initFetchState = {
   loading: true,
   error: null,
@@ -110,6 +119,8 @@ export const initFetchState = {
 /**
  * actions
  */
+export const CLEAR_AUTH_STATE = "auth/CLEAR_AUTH_STATE" as const;
+
 export const CHECK_EMAIL_USED         = "auth/CHECK_EMAIL_USED" as const;
 export const CHECK_EMAIL_USED_SUCCESS = "auth/CHECK_EMAIL_USED_SUCCESS" as const;
 export const CHECK_EMAIL_USED_ERROR   = "auth/CHECK_EMAIL_USED_ERROR" as const;
@@ -143,6 +154,7 @@ export const RESET_AUTH = "auth/RESET_AUTH" as const;
 
 export const ERROR_AUTH = 'auth/ERROR_AUTH' as const;
 
+export const clearAuthState          = actions.clearAuthState;
 export const checkEmailUsed          = actions.checkEmailUsed;
 export const checkEmailUsedSuccess   = actions.checkEmailUsedSuccess;
 export const checkEmailUsedError     = actions.checkEmailUsedError;
@@ -166,8 +178,8 @@ export const reissueTokenError       = actions.reissueTokenError;
 export const resetError              = actions.resetError;
 export const resetAuth               = actions.resetAuth;
 
-export type AuthActions = 
-  ReturnType<typeof signUpUser>
+export type AuthActions = ReturnType<typeof clearAuthState>
+  | ReturnType<typeof signUpUser>
   | ReturnType<typeof signUpUserSuccess>
   | ReturnType<typeof signUpUserError>
   | ReturnType<typeof signInUser>

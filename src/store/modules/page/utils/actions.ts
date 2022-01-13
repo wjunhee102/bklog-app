@@ -26,7 +26,8 @@ import {
   DELETE_PAGE_ERROR,
   DELETE_PAGE_SUCCESS,
   ClearPageStateType,
-  CLEAR_PAGE_STATE
+  CLEAR_PAGE_STATE,
+  ReqDeletePage
 } from ".";
 import { UserProfile } from "../../auth/utils";
 
@@ -36,7 +37,7 @@ function resetPage() {
   }
 }
 
-function clearPageState(key: ClearPageStateType) {
+function clearPageState(...key: ClearPageStateType[]) {
   return {
     type: CLEAR_PAGE_STATE,
     payload: key
@@ -170,7 +171,7 @@ function updatePageInfoError(error: ApiErrorType) {
   }
 }
 
-function deletePage(data: ReqUpdatePageInfo) {
+function deletePage(data: ReqDeletePage) {
   return {
     type: DELETE_PAGE,
     payload: data
