@@ -7,11 +7,13 @@ import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
 import BlockUtilsMenu from "../../common/block-utils-menu";
 
+export interface BaseProps {
+  selected: boolean;
+  setSelect: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 interface BaseBlockZoneProps extends BlockProps {
-  children: (
-    selected: boolean, 
-    setSelect: React.Dispatch<React.SetStateAction<boolean>>
-  ) => React.ReactNode;
+  children: (props: BaseProps) => React.ReactNode;
   parentInfo?: ParentInfoType | undefined;
 }
 
@@ -93,7 +95,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
           
         </div>
 
-        { children(selected, setSelect) }
+        { children({selected, setSelect}) }
 
       </div>
       

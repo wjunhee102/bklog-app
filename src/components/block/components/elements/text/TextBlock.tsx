@@ -15,19 +15,18 @@ const TextBlock: React.FC<BlockProps> = ({
       parentInfo={parentInfo}
     >
       {
-        (selected, setSelect) => {
+        (props) => {
           return (
             <TextBlockEle 
               blockData={blockData} 
               useBlockReducer={useBlockReducer} 
-              selected={selected}
-              setSelect={setSelect}
+              zoneProps={props}
             />
           );
         }
       }
     </BaseBlockZone>
-  )
+  );
 }
 
 export default TextBlock;

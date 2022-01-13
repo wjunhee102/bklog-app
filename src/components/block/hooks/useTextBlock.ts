@@ -3,8 +3,9 @@ import { BlockData } from "../types";
 import { UseBlockType } from "./useBlock";
 import { contentsElement, copyInClipboard, createClipboardContentsText, createContentsElement } from '../utils';
 import { getSelectionStart,getSelectionEnd, setSelectionRange } from '../utils/selectionText';
+import { BaseProps } from "../components/zone/base/BaseBlockZone";
 
-function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selected: boolean) {
+function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   const [ editable, setEditable ]       = useState<boolean>(true);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
 
@@ -30,6 +31,10 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
     onDeleteTextBlock,
     onClearStateItem
   } = useBlockReducer;
+
+  const {
+    selected
+  } = zoneProps;
 
   const createMarkup = useMemo(()=> {
     const htmlElement = blockData.contents[0]?

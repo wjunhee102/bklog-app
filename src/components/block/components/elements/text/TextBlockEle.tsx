@@ -3,17 +3,16 @@ import useTextBlock from '../../../hooks/useTextBlock';
 import { BlockProps } from '../../Block';
 import TextBlockActionMenuBar from './elements/action-menubar';
 import ContentEditableEle from '../../common/ContentEditableEle';
+import { BaseProps } from '../../zone/base/BaseBlockZone';
 
 interface TextBlockEleProps extends BlockProps {
-  selected: boolean;
-  setSelect: React.Dispatch<React.SetStateAction<boolean>>;
+  zoneProps: BaseProps;
 }
 
 const TextBlockEle: React.FC<TextBlockEleProps> = ({ 
   blockData, 
   useBlockReducer, 
-  selected,
-  setSelect
+  zoneProps
 }) => {
 
   const {
@@ -32,7 +31,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     reBlockFocus,
     editable,
     setEditable
-  } = useTextBlock(blockData, useBlockReducer, selected);
+  } = useTextBlock(blockData, useBlockReducer, zoneProps);
 
   return (
     <div 
