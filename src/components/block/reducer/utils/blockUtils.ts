@@ -621,8 +621,16 @@ function switchBlockList(
  * @param restoreData 
  */
 function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockUtils {
-  const tempData: TempDataType = {}
+  const tempData: TempDataType = {};
   const modifyData: ModifyData[] = [];
+
+  if(!restoreData.delete && !restoreData.create && !restoreData.update) {
+    return {
+      blockList: blocks,
+      tempData: undefined,
+      modifyData
+    }
+  }
 
   let preBlockList = blocks.concat();
 

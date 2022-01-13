@@ -1,6 +1,6 @@
 import { initialBlockState } from ".";
 import { ActionHandlers, updateObject } from "../../../store/utils";
-import { BlockData, BlockDataProps, ModifyBlockData } from "../types";
+import { BlockData, BlockDataProps, ModifyBlockData, ModifyPageInfoType } from "../types";
 import { 
   BlockState, 
   createBlockData,
@@ -80,7 +80,11 @@ import {
   clearStateItem,
   CLEAR_STATE_ITEM,
   editPageInfo,
-  EDIT_PAGE_INFO
+  EDIT_PAGE_INFO,
+  commitPage,
+  StagedPage,
+  COMMIT_PAGE,
+  PageInfo
 } from "./utils";
 
 function initBlockStateHandler(
@@ -96,6 +100,17 @@ function initBlockStateHandler(
       isFetch: modifyData[0]? true : false
     })
   );
+}
+
+function initPageTitleHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof initPageTitle>
+): BlockState {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    pageInfo: {
+      title: payload
+    }
+  });
 }
 
 function resetBlockHandler(
@@ -119,7 +134,7 @@ function changeEditingIdHandler(
     });
   } else {
 
-    if(payload > 0) {
+    if(payload >= 0) {
       return updateObject<BlockState, BlockStateProps>(state, {
         editingBlockId: state.blockList[payload]? state.blockList[payload].id : null
       });
@@ -141,6 +156,28 @@ function editBlockHandler(
   });
 }
 
+function editPageTitleHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof editPageTitle>
+): BlockState { 
+  const stagePage: StagedPage | null = state.stagePage? 
+    updateObject<StagedPage, StagedPage>(state.stagePage, { title: payload })
+    : { title: payload };
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    stagePage
+  });
+}
+
+function editPageInfoHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof editPageInfo>
+): BlockState {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    stagePage: payload
+  });
+}
+
 // 원래 isFetch true
 function commitBlockHandler(
   state: BlockState,
@@ -157,6 +194,27 @@ function commitBlockHandler(
     stageBlock: [],
     modifyData: updateModifyData(state.modifyData, modifyData),
     tempBack: tempDataPush(state.tempBack, tempData),
+    isFetch: false
+  });
+}
+
+function commitPageHandler(
+  state: BlockState,
+  action: ReturnType<typeof commitPage>
+): BlockState {
+  if(!state.stagePage) return state;
+
+  const pageInfo: PageInfo = state.pageInfo;
+
+  const modifyPageInfo: ModifyPageInfoType | null = state.modifyPageInfo? 
+    updateObject<ModifyPageInfoType, StagedPage>(state.modifyPageInfo, state.stagePage)
+    : state.stagePage;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    stagePage: null,
+    pageInfo: updateObject<PageInfo, StagedPage>(pageInfo, state.stagePage),
+    modifyPageInfo,
+    tempBack: tempDataPush(state.tempBack, { pageInfo }),
     isFetch: false
   });
 }
@@ -596,30 +654,6 @@ function setNextBlockInfoHandler(
   });
 }
 
-function initPageTitleHandler(
-  state: BlockState,
-  { payload }: ReturnType<typeof initPageTitle>
-): BlockState {
-  return updateObject<BlockState, BlockStateProps>(state, {
-    titleBlock: createPageTitleBlockData(payload)
-  });
-}
-
-function editPageTitleHandler(
-  state: BlockState,
-  { payload }: ReturnType<typeof editPageTitle>
-): BlockState {
-  if(!state.titleBlock) return state;
-  const pageTitle: string = state.titleBlock.contents;
-
-  return updateObject<BlockState, BlockStateProps>(state, {
-    titleBlock: updateObject<BlockData, BlockDataProps<string, string>>(state.titleBlock, {
-      contents: payload
-    }),
-    tempBack: tempDataPush(state.tempBack, { pageTitle })
-  });
-}
-
 function clearStateItemHandler(
   state: BlockState,
   { payload }: ReturnType<typeof clearStateItem>
@@ -631,21 +665,15 @@ function clearStateItemHandler(
   }
 }
 
-function editPageInfoHandler(
-  state: BlockState,
-  { payload }: ReturnType<typeof editPageInfo>
-): BlockState {
-  return updateObject<BlockState, BlockStateProps>(state, {
-    stagePage: payload
-  });
-}
-
 const blockHandlers: ActionHandlers<BlockState> = {
   [INIT_BLOCK_STATE]       : initBlockStateHandler,
+  [INIT_PAGE_TITLE]        : initPageTitleHandler,
   [RESET_BLOCK]            : resetBlockHandler,
   [CHANGE_EDITING_ID]      : changeEditingIdHandler,
   [EDIT_BLOCK]             : editBlockHandler,
+  [EDIT_PAGE_TITLE]        : editPageTitleHandler,
   [COMMIT_BLOCK]           : commitBlockHandler,
+  [COMMIT_PAGE]            : commitPageHandler,
   [CHANGE_BLOCK_CONTENTS]  : changeBlockContentsHandler,
   [ADD_BLOCK]              : addBlockHandler,
   [ADD_TEXT_BLOCK]         : addTextBlockHandler,
@@ -665,8 +693,6 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [UPDATE_BLOCK]           : updateBlockHandler,
   [CLEAR_NEXTBLOCKINFO]    : clearNextBlockInfoHandler,
   [SET_NEXTBLOCKINFO]      : setNextBlockInfoHandler,
-  [INIT_PAGE_TITLE]        : initPageTitleHandler,
-  [EDIT_PAGE_TITLE]        : editPageTitleHandler,
   [CLEAR_STATE_ITEM]       : clearStateItemHandler,
   [EDIT_PAGE_INFO]         : editPageInfoHandler
 };

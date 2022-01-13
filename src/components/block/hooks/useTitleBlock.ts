@@ -1,14 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BlockData } from "../types";
 import { UseBlockType } from "./useBlock";
-import { contentsElement, copyInClipboard, createClipboardContentsText, createContentsElement } from '../utils';
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../utils/selectionText';
 import { createBlockData, parseHtmlContents, sliceTextContents } from "../reducer/utils";
-import { useIdleTimer } from "react-idle-timer";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   const [ editable, setEditable] = useState<boolean>(true);
-  const [ stage, setStage ] = useState<string>(blockData.contents);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
 
@@ -24,7 +21,8 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     onEditPageInfo,
     onAddTextBlock,
     onAddBlock,
-    onCommitBlock,
+    onEditPageTitle,
+    onCommitPage,
     onClearNextBlockInfo
   } = useBlockReducer;
 
@@ -68,10 +66,11 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
       case " ":
         setCursorEnd(0);
         onEditPageInfo({ title: e.target.innerText });
+        onCommitPage();
         break;
       
       default:
-        setStage(e.target.innerText);
+        onEditPageTitle(e.target.innerText);
     }
 
   }, [blockData, cursorEnd, cursorStart]);
@@ -93,9 +92,9 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
 
       console.log(front);
       
-      setStage(front[0]? front[0][0] : "");
-      e.target.innerText = front[0]? front[0][0] : "";
 
+      e.target.innerText = front[0]? front[0][0] : "";
+      onEditPageTitle(e.target.innerText);
       onAddBlock([newBlock], "1", false, newBlock.id);
     }
   }
@@ -126,11 +125,8 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     if(e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
       setCursorStart(0);
       setCursorEnd(0);
+      onCommitPage();
       onChangeEditingId();
-      if(stage) {
-        onEditPageInfo({ title: stage });
-        setStage(null);
-      }
     }
   }, []);
 
@@ -141,16 +137,6 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   const isFocus = () => {
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
   }
-
-  const handleOnIdle = useCallback(() => {
-    if(stage) onEditPageInfo({ title: stage });
-  }, [stage, onEditPageInfo]);
-
-  const { getLastActiveTime } = useIdleTimer({
-    timeout: 10 * 60,
-    onIdle: handleOnIdle,
-    debounce: 500
-  })
 
   useEffect(() => {
     const focused = document.activeElement;
