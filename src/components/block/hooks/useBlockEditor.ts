@@ -21,7 +21,8 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
     onResetEditorState,
     onRevertBlock,
     onChangeEditorState,
-    onChangeFetchState
+    onChangeFetchState,
+    onClearStateItem
   } = useBlockReducer;
 
    // elements
@@ -100,7 +101,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
   useEffect(() => {
     if(!updated) {
-      useBlockReducer.onClearStateItem('updatedBlockIdList');
+      onClearStateItem('updatedBlockIdList');
     }
   }, [updated]);
 

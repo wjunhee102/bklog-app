@@ -36,18 +36,14 @@ import {
   changeEditorState,
   setTempClip,
   SET_TEMPCLIP,
-  CLEAR_CLIPBOARD,
   EDITOR_STATE_RESET,
   resetEditorState,
-  clearTempClip,
   commitBlock,
   changeFetchState,
   CHANGE_FETCH_STATE,
   changeStyleType,
   changeBlockStyleType,
   CHANGE_STYLE_TYPE,
-  clearModifyData,
-  CLEAR_MODIFYDATA,
   initBlockState,
   initBlock,
   resetBlock,
@@ -70,7 +66,6 @@ import {
   ADD_TEXT_BLOCK,
   TempDataType,
   initPageTitle,
-  createPageTitleBlockData,
   editPageTitle,
   INIT_PAGE_TITLE,
   EDIT_PAGE_TITLE,
@@ -547,15 +542,6 @@ function setTempClipHandler(
   })
 }
 
-function clearTempClipDataHandler(
-  state: BlockState, 
-  action: ReturnType<typeof clearTempClip>
-): BlockState {
-  return updateObject<BlockState, BlockStateProps>(state, {
-    tempClipData: []
-  });
-}
-
 function editorStateResetHandler(
   state: BlockState, 
   { payload }: ReturnType<typeof resetEditorState>
@@ -610,15 +596,6 @@ function changeBlockTypeHandler(
   }}: ReturnType<typeof changeBlockType>
 ): BlockState {
   return state;
-}
-
-function clearModifyDataHandler(
-  state: BlockState,
-  action: ReturnType<typeof clearModifyData>
-): BlockState {
-  return updateObject<BlockState, BlockStateProps>(state, {
-    modifyData: []
-  });
 }
 
 function updateBlockHandler(
@@ -683,11 +660,9 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CHANGE_EDITOR_STATE]    : changeEditorStateHandler,
   [CHANGE_TARGET_POSITION] : changeTargetPositionHandler,
   [SET_TEMPCLIP]           : setTempClipHandler,
-  [CLEAR_CLIPBOARD]        : clearTempClipDataHandler,
   [EDITOR_STATE_RESET]     : editorStateResetHandler,
   [CHANGE_FETCH_STATE]     : changeFetchStateHandler,
   [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler,
-  [CLEAR_MODIFYDATA]       : clearModifyDataHandler,
   [UPDATE_BLOCK]           : updateBlockHandler,
   [SET_PREBLOCKINFO]       : setPreBlockInfoHandler,
   [CLEAR_STATE_ITEM]       : clearStateItemHandler,

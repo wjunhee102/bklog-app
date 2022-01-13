@@ -166,16 +166,13 @@ export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
 export const REVERT_BLOCK           = 'REVERT_BLOCK' as const;
 export const CHANGE_TEXT_STYLE      = 'CHANGE_TEXT_STYLE' as const;
 export const SET_CLIPBOARD          = 'SET_CLIPBOARD' as const;
-export const CLEAR_CLIPBOARD        = 'CLEAR_CLIPBOARD' as const;
 export const SET_TEMPCLIP           = 'SET_TEMPCLIP' as const;
-export const CLEAR_TEMPCLIP         = 'CLEAR_TEMPCLIP' as const;
 export const CHANGE_EDITOR_STATE    = 'CHANGE_EDITOR_STATE' as const;
 export const CHANGE_TARGET_POSITION = 'CHANGE_TARGET_POSITION' as const;
 export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
 export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
 export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
 export const CHANGE_BLOCK_TYPE      = 'CHANGE_BLOCK_TYPE' as const;
-export const CLEAR_MODIFYDATA       = 'CLEAR_MODIFYDATA' as const;
 export const SET_PREBLOCKINFO       = 'SET_PREBLOCKINFO' as const;
 export const INIT_PAGE_TITLE        = 'INIT_PAGE_TITLE' as const;
 export const EDIT_PAGE_TITLE        = 'EDIT_PAGE_TITLE' as const;
@@ -199,15 +196,12 @@ export type BLOCK_ACTION_TYPES =
   | typeof REVERT_BLOCK
   | typeof CHANGE_TEXT_STYLE
   | typeof SET_CLIPBOARD
-  | typeof CLEAR_CLIPBOARD
   | typeof SET_CLIPBOARD
-  | typeof CLEAR_TEMPCLIP
   | typeof CHANGE_EDITOR_STATE
   | typeof CHANGE_TARGET_POSITION
   | typeof TEST_CLIPBOARD
   | typeof CHANGE_STYLE_TYPE
   | typeof CHANGE_FETCH_STATE
-  | typeof CLEAR_MODIFYDATA
   | typeof SET_PREBLOCKINFO
   | typeof INIT_PAGE_TITLE 
   | typeof EDIT_PAGE_TITLE
@@ -236,16 +230,13 @@ export const changeTextStyle      = actionBlock.changeTextStyle;
 export const revertBlock          = actionBlock.revertBlock;
 export const switchBlock          = actionBlock.switchBlock;
 export const setClipboard         = actionBlock.setClipboard;
-export const clearClipboard       = actionBlock.clearClipboard;
 export const setTempClip          = actionBlock.setTempClip;
-export const clearTempClip        = actionBlock.clearTempClip;
 export const changeEditorState    = actionBlock.chageEditorState;
 export const changeTargetPosition = actionBlock.changeTargetPosition;
 export const resetEditorState     = actionBlock.resetEditorState;
 export const changeFetchState     = actionBlock.changeFetchState;
 export const changeStyleType      = actionBlock.changeStyleType;
 export const changeBlockType      = actionBlock.changeBlockType;
-export const clearModifyData      = actionBlock.clearModifyData;
 export const setPreBlockInfo      = actionBlock.setPreBlockInfo;
 export const initPageTitle        = actionBlock.initPageTitle;
 export const editPageTitle        = actionBlock.editPageTitle;
@@ -269,9 +260,7 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof revertBlock>
   | ReturnType<typeof switchBlock>
   | ReturnType<typeof setClipboard>
-  | ReturnType<typeof clearClipboard>
   | ReturnType<typeof setTempClip>
-  | ReturnType<typeof clearTempClip>
   | ReturnType<typeof changeEditorState>
   | ReturnType<typeof changeTargetPosition>
   | ReturnType<typeof testClipAdd>
@@ -279,7 +268,6 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof changeFetchState>
   | ReturnType<typeof changeStyleType>
   | ReturnType<typeof changeBlockType>
-  | ReturnType<typeof clearModifyData>
   | ReturnType<typeof setPreBlockInfo>
   | ReturnType<typeof initPageTitle>
   | ReturnType<typeof editPageTitle>

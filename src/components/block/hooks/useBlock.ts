@@ -16,11 +16,9 @@ import {
   changeEditorState,
   changeTargetPosition,
   setTempClip,
-  clearClipboard,
   resetEditorState,
   changeStyleType,
   changeFetchState,
-  clearModifyData,
   initBlockState,
   updateBlock,
   changeBlockContents,
@@ -183,10 +181,6 @@ function useBlock() {
     dispatch(setTempClip(index));
   }, [dispatch]);
 
-  const onClearTempClip = useCallback(() => {
-    dispatch(clearClipboard());
-  }, [dispatch]);
-
   const onResetEditorState = useCallback((isCliping: boolean) => {
     dispatch(resetEditorState(isCliping));
   }, [dispatch]);
@@ -197,10 +191,6 @@ function useBlock() {
 
   const onChangeFetchState = useCallback((fetchState?: boolean) => {
     dispatch(changeFetchState(fetchState));
-  }, [dispatch]);
-
-  const onClearModifyData = useCallback(() => {
-    dispatch(clearModifyData());
   }, [dispatch]);
 
   const onUpdateBlock = useCallback((modifyData: ModifyBlockDataType) => {
@@ -266,11 +256,9 @@ function useBlock() {
     onRevertBlock,
     onChangeTargetPosition,
     onSetTempClip,
-    onClearTempClip,
     onResetEditorState,
     onChangeStyleType,
     onChangeFetchState,
-    onClearModifyData,
     onUpdateBlock,
     onSetPreBlockInfo,
     onInitPageTitle,

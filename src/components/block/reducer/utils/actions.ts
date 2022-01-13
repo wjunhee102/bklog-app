@@ -9,8 +9,6 @@ import {
   REVERT_BLOCK, 
   SWITCH_BLOCK, 
   SET_CLIPBOARD,
-  CLEAR_CLIPBOARD,
-  CLEAR_TEMPCLIP,
   SET_TEMPCLIP,
   TEST_CLIPBOARD,
   EDIT_BLOCK,
@@ -20,7 +18,6 @@ import {
   EDITOR_STATE_RESET,
   CHANGE_FETCH_STATE,
   CHANGE_STYLE_TYPE,
-  CLEAR_MODIFYDATA,
   INIT_BLOCK_STATE,
   CHANGE_BLOCK_CONTENTS,
   DELETE_TEXT_BLOCK,
@@ -195,22 +192,10 @@ function setClipboard() {
   }
 }
 
-function clearClipboard() {
-  return {
-    type: CLEAR_CLIPBOARD
-  }
-}
-
 function setTempClip(index: number[]) {
   return  {
     type: SET_TEMPCLIP,
     payload: index
-  }
-}
-
-function clearTempClip() {
-  return {
-    type: CLEAR_TEMPCLIP
   }
 }
 
@@ -274,12 +259,6 @@ function changeBlockType(blockInfo: string | number, type: BlockTypes) {
   }
 }
 
-function clearModifyData() {
-  return {
-    type: CLEAR_MODIFYDATA
-  };
-}
-
 function setPreBlockInfo(preBlockInfo: PreBlockInfo) {
   return {
     type: SET_PREBLOCKINFO,
@@ -332,16 +311,13 @@ const actionBlock = {
   revertBlock,
   switchBlock,
   setClipboard,
-  clearClipboard,
   setTempClip,
-  clearTempClip,
   chageEditorState,
   changeTargetPosition,
   testClipAdd,
   resetEditorState,
   changeFetchState,
   changeStyleType,
-  clearModifyData,
   setPreBlockInfo,
   initPageTitle,
   editPageTitle,

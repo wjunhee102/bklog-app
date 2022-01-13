@@ -39,7 +39,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     onChangeEditorState,
     onChangeTargetPosition,
     onSetTempClip,
-    onClearTempClip
+    onClearStateItem
   } = useBlockReducer;
 
   const [ isHover, setHover ]         = useState<boolean>(false);
@@ -115,7 +115,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
       setDown(false);
       setRight(false);
       setSelect(false);
-      if(!isCliping) onClearTempClip();
+      if(!isCliping) onClearStateItem('tempClipData');
     }
   }, [isGrab]);
 
