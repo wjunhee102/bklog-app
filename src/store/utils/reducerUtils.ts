@@ -81,10 +81,20 @@ function createReducer<State, T extends Action>(
   }
 }
 
+function createClearStatePart<P extends object, T extends P = any>(initialState: T, key: string[]): P {
+  return key.reduce((acc, cur) => {
+    if(initialState.hasOwnProperty(cur)) {
+      acc[cur] = initialState[cur];
+    }
+    return acc;
+  }, {} as P);
+}
+
 const reducerUtils = {
   updateObject,
   createReducer,
-  createAction
+  createAction,
+  createClearStatePart
 }
 
 export default reducerUtils;

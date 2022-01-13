@@ -30,9 +30,10 @@ export type ActionHandlers<T> = {
 }
 
 // reducer utils;
-export const updateObject  = reducerUtils.updateObject;
-export const createReducer = reducerUtils.createReducer;
-export const createAction  = reducerUtils.createAction;
+export const updateObject         = reducerUtils.updateObject;
+export const createReducer        = reducerUtils.createReducer;
+export const createAction         = reducerUtils.createAction;
+export const createClearStatePart = reducerUtils.createClearStatePart;
 
 
 export const ALL_RESET = "common/ALL_RESET" as const; 
