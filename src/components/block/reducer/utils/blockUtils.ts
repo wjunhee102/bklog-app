@@ -237,6 +237,47 @@ function changeBlockStyleType(
 
 /**
  * 
+ * @param blockDataList 
+ * @param blockInfo 
+ * @param type 
+ */
+function changeBlockDataType(
+  blockDataList: BlockData[], 
+  blockInfo: string | number, 
+  type: BlockTypes
+): ResBlockUtils | null {
+  const blockIndex = typeof blockInfo === "number"? 
+    blockInfo 
+    : blockDataList.findIndex(blockFindInfex(blockInfo)); 
+
+  if(!blockDataList[blockIndex]) return null;
+  
+  const blocks = blockDataList.concat();
+  const tempData: TempDataType = { update: [] };
+  const modifyData: ModifyData[] = [];
+
+  tempData.update?.push({
+    blockId: blocks[blockIndex].id,
+    payload: {
+      type: blocks[blockIndex].type
+    }
+  });
+
+  blocks[blockIndex].type = type;
+
+  modifyData.push(setUpdateModifyDataOfBlock(blocks[blockIndex].id, {
+    type
+  }));
+
+  return {
+    blockList: blocks,
+    tempData,
+    modifyData
+  }
+}
+
+/**
+ * 
  * @param blocks 
  * @param index 
  * @param styleType 
@@ -818,6 +859,7 @@ const blockUtils = {
   switchBlockList,
   restoreBlock,
   changeBlockStyleType,
+  changeBlockDataType,
   updateBlockData
 }
 

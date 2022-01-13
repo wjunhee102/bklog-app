@@ -1,7 +1,7 @@
 import React from 'react';
 import { updateObject } from '../../../../../store/utils';
 import { UseBlockType } from '../../../hooks/useBlock';
-import { BlockData, BlockDataProps } from '../../../types';
+import { BlockData, BlockDataProps, BlockTypes } from '../../../types';
 import { Token } from '../../../utils/token';
 import BlockUtilsMenuArticle from './BlockUtilsMenuArticle';
 
@@ -21,7 +21,7 @@ const BlockUtilsMenu: React.FC<BlockUtilsMenuProps> = ({
   const {
     onDeleteBlock,
     onAddBlock,
-    onChangeStyleType
+    onChangeBlockType
   } = useBlockReducer;
 
   const handleDelete = () => {
@@ -38,8 +38,8 @@ const BlockUtilsMenu: React.FC<BlockUtilsMenuProps> = ({
     setToggle(false);
   }
 
-  const handleTurnInto = (value: string) => {
-    onChangeStyleType(blockData.id, value);
+  const handleTurnInto = (value: BlockTypes) => {
+    onChangeBlockType(blockData.id, value);
     setToggle(false);
   }
 

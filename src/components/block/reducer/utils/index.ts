@@ -311,6 +311,7 @@ export const switchBlockList       = blockUtils.switchBlockList;
 export const restoreBlock          = blockUtils.restoreBlock;
 export const changeBlockStyleType  = blockUtils.changeBlockStyleType;
 export const updateBlockData       = blockUtils.updateBlockData;
+export const changeBlockDataType   = blockUtils.changeBlockDataType;
 
 // side utils 
 export const tempDataPush               = sideStoreUtils.tempDataPush;

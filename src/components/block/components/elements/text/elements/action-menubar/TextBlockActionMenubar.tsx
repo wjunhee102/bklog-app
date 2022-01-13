@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { UseBlockType } from '../../../../../hooks/useBlock';
-import { ContentType, OrderType } from '../../../../../types';
+import { BlockData, BlockTypes, ContentType, OrderType } from '../../../../../types';
 import { findTextStyle } from '../../../../../utils';
 import ColorActionMenu from './color-action-menu/ColorActionMenu';
 import BlockStyleActionMenu from './block-action-menu/BlockStyleActionMenu';
@@ -8,6 +8,7 @@ import TextStyleToggleMenu from './text-style-toggle-menu/TextStyleToggleMenu';
 import BlockMenuBar from '../../../../common/menubar';
 import './TextBlockActionMenubar.scss';
 import classNames from 'classnames';
+import BlockTypeActionMenu from './block-action-menu/BlockTypeActionMenu';
 
 const FONT_SIZE_TABLE = {
   "bk-h1": 24,
@@ -25,13 +26,11 @@ const FONT_SIZE_TABLE = {
    }
  }
 
-export type MenuName = "not" | "color" | "blockStyleType";
+export type MenuName = "not" | "color" | "blockStyleType" | "blockType";
 
 interface TextBlockActionMenuBarProps {
   show: boolean;
-  blockIndex: number;
-  styleType: string;
-  contents: any;
+  blockData: BlockData;
   startPosition: number;
   endPosition: number;
   reBlockFocus: any;
@@ -40,9 +39,12 @@ interface TextBlockActionMenuBarProps {
 
 const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
   show,
-  blockIndex,
-  styleType,
-  contents,
+  blockData: {
+    index,
+    styleType,
+    type,
+    contents
+  },
   startPosition,
   endPosition,
   reBlockFocus,
@@ -51,7 +53,8 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
   const {
     onChangeTextStyle,
     onCommitBlock,
-    onChangeStyleType
+    onChangeStyleType,
+    onChangeBlockType
   } = useBlockReducer;
 
   const [ currentMenuName, setCurrentMenuName ] = useState<MenuName>("not");
@@ -59,7 +62,7 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
   const onStyleChange = (contentType: ContentType, toggle: OrderType) => {
     onCommitBlock();
     onChangeTextStyle(
-      blockIndex, 
+      index, 
       contentType,
       startPosition, 
       endPosition,
@@ -70,7 +73,12 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
   }
 
   const changeTextType = (value: string) => () => {
-    onChangeStyleType(blockIndex, value);
+    onChangeStyleType(index, value);
+    setCurrentMenuName("not");
+  }
+
+  const changeBlockType = (value: BlockTypes) => () => {
+    onChangeBlockType(index, value);
     setCurrentMenuName("not");
   }
 
@@ -96,6 +104,12 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
       style={{left: `${startPosition * setLeftPosition(styleType)}px`}}
     >
       <BlockMenuBar bgColor="blur-bg">
+        <BlockTypeActionMenu 
+          type={type}
+          handleClick={changeBlockType}
+          toggle={setToggle("blockType")}
+          onClick={changeCurrentMenuName("blockType")}
+        />
         <BlockStyleActionMenu
           styleType={styleType}
           handleClick={changeTextType}

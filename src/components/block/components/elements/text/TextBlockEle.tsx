@@ -57,9 +57,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
         styleToggle?
         <TextBlockActionMenuBar 
           show={styleToggle}
-          blockIndex={blockData.index}
-          styleType={blockData.styleType}
-          contents={blockData.contents}
+          blockData={blockData}
           startPosition={cursorStart}
           endPosition={cursorEnd}
           reBlockFocus={reBlockFocus}

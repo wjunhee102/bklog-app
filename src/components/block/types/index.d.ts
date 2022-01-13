@@ -11,6 +11,7 @@ export type UUID = ReturnType<typeof Token.getUUID>
  */
 
 export type BlockTypes = "text" 
+  | "todo"
   | "title"
   | "numbered" 
   | "bulleted" 

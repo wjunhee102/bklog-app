@@ -1,40 +1,26 @@
 import React from 'react';
+import { BlockTypes } from '../../../types';
 import { ButtonProps } from './types';
 
-const BlockTurnIntoBtnList: ButtonProps[] = [
+const BlockTurnIntoBtnList: ButtonProps<BlockTypes>[] = [
   {
-    title: "본문",
-    value: "bk-p",
+    title: "텍스트",
+    value: "text",
     IconComponent: <img src="/img/text.png" alt=""/>
   },
   {
-    title: "제목",
-    value: "bk-h1",
-    IconComponent: <img src="/img/header1.png" alt=""/>
-  },
-  {
-    title: "머리말",
-    value: "bk-h2",
-    IconComponent: <img src="/img/header1.png" alt=""/>
-  },
-  {
-    title: "부 머리말",
-    value: "bk-h3",
-    IconComponent: <img src="/img/header1.png" alt=""/>
-  },
-  {
     title: "체크리스트",
-    value: "bk-todo",
+    value: "todo",
     IconComponent: <img src="/img/to-do.png" alt=""/> 
   },
   {
     title: "구분점 목록",
-    value: "bk-bulleted",
+    value: "bulleted",
     IconComponent: <img src="/img/bulleted-list.png" alt=""/>
   },
   {
     title: "번호 목록",
-    value: "bk-numbered",
+    value: "numbered",
     IconComponent: <img src="/img/numbered-list.png" alt=""/>
   }
 ]

@@ -15,6 +15,7 @@ export interface BlockProps {
   parentInfo?: ParentInfoType;
 }
 
+// BlockTable에 없는 type일시 삭제되도록 설정해야함.
 const BlockTable = {
   ["text"]: (props: BlockProps) => <TextBlock {...props} />,
   ["title"]: (props: BlockProps) => <TitleBlock {...props} />
@@ -28,7 +29,7 @@ const Block: React.FC<BlockProps> = ({
   if(BlockTable.hasOwnProperty(blockData.type)) {
     return BlockTable[blockData.type]({blockData, useBlockReducer, parentInfo});
   } else {
-    return null
+    return BlockTable["text"]({blockData, useBlockReducer, parentInfo});
   }
 }
 

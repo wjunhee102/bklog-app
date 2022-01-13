@@ -80,7 +80,9 @@ import {
   PageInfo,
   SET_PREBLOCKINFO,
   setPreBlockInfo,
-  changeBlockType
+  changeBlockType,
+  changeBlockDataType,
+  CHANGE_BLOCK_TYPE
 } from "./utils";
 
 function initBlockStateHandler(
@@ -595,7 +597,22 @@ function changeBlockTypeHandler(
     blockInfo, type
   }}: ReturnType<typeof changeBlockType>
 ): BlockState {
-  return state;
+  const result = changeBlockDataType(state.blockList, blockInfo, type);
+
+  if(!result) {
+    return state;
+  } else {
+    const { blockList, modifyData, tempData } = result;
+    
+    tempData.editingBlockId = state.editingBlockId;
+
+    return updateObject<BlockState, BlockStateProps>(state, {
+      blockList,
+      isFetch: true,
+      tempBack: tempDataPush(state.tempBack, tempData),
+      modifyData: updateModifyData(state.modifyData, modifyData)
+    })
+  }
 }
 
 function updateBlockHandler(
@@ -663,6 +680,7 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [EDITOR_STATE_RESET]     : editorStateResetHandler,
   [CHANGE_FETCH_STATE]     : changeFetchStateHandler,
   [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler,
+  [CHANGE_BLOCK_TYPE]      : changeBlockTypeHandler,
   [UPDATE_BLOCK]           : updateBlockHandler,
   [SET_PREBLOCKINFO]       : setPreBlockInfoHandler,
   [CLEAR_STATE_ITEM]       : clearStateItemHandler,
