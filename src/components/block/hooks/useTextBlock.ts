@@ -5,7 +5,7 @@ import { contentsElement, copyInClipboard, createClipboardContentsText, createCo
 import { getSelectionStart,getSelectionEnd, setSelectionRange } from '../utils/selectionText';
 
 function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selected: boolean) {
-  const [ editable, setEditable]        = useState<boolean>(true);
+  const [ editable, setEditable ]       = useState<boolean>(true);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
@@ -15,11 +15,13 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
     cursorEnd,
     setCursorStart,
     setCursorEnd,
-    isGrab,
-    isHoldingDown,
-    isCliping,
-    preBlockInfo,
-    editingBlockId,
+    state: {
+      isGrab,
+      isHoldingDown,
+      isCliping,
+      preBlockInfo,
+      editingBlockId,
+    },    
     onChangeEditingId,
     onEditBlock,
     onAddTextBlock,

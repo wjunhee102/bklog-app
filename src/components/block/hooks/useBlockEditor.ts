@@ -5,15 +5,17 @@ import { UseBlockType } from './useBlock';
 function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false) {
 
   const {
-    state,
+    state: {
+      blockList,
+      stageBlock,
+      stagePage,
+      isGrab,
+      isCliping,
+      tempClipData,
+      editingBlockId,
+    },
     titleBlock,
-    stageBlock,
-    stagePage,
-    isGrab,
-    isCliping,
-    tempClipData,
     initBlock,
-    editingBlockId,
     setCursorStart,
     setCursorEnd,
     onCommitBlock,
@@ -113,7 +115,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
   }, [editingBlockId]);
 
   return {
-    state,
+    blockList,
     initBlock,
     titleBlock,
     tempClipData,

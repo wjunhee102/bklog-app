@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer, useRef } from 'react';
-import { ModifyBlockDataType, ModifyPageInfoType } from '../types';
+import { BlockTypes, ModifyBlockDataType } from '../types';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
   SetBlockDataList, 
@@ -35,7 +35,8 @@ import {
   commitPage,
   createPageTitleBlockData,
   PreBlockInfo,
-  setPreBlockInfo
+  setPreBlockInfo,
+  changeBlockType
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -62,37 +63,9 @@ function useBlock() {
 
   const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
-  const title: string | null = useMemo(() => state.pageInfo.title, [state.pageInfo.title]);
-
   const titleBlock: BlockData | null = useMemo(() => state.pageInfo.title? createPageTitleBlockData(state.pageInfo.title) : null, [state.pageInfo.title]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
-
-  const editingBlockId: string | null = useMemo(() => state.editingBlockId, [state.editingBlockId]);
-
-  const isGrab: boolean = useMemo(() => state.isGrab, [state.isGrab]);
-
-  const isCliping: boolean = useMemo(() => state.isCliping, [state.isCliping]);
-  
-  const isHoldingDown: boolean = useMemo(() => state.isHoldingDown, [state.isHoldingDown]);
-
-  const isFetch: boolean = useMemo(() => state.isFetch, [state.isFetch]);
-
-  const stageBlock: StagedBlock[] = useMemo(() => state.stageBlock, [state.stageBlock]);
-
-  const stagePage: StagedPage | null = useMemo(() => state.stagePage, [state.stagePage]);
-
-  const updatedBlockIdList: string[] = useMemo(() => state.updatedBlockIdList, [state.updatedBlockIdList]);
-
-  const tempClipData: number[] = useMemo(() => state.tempClipData, [state.tempClipData]);
-
-  const targetPosition: string | null = useMemo(() => state.targetPosition, [state.targetPosition]);
-
-  const modifyData: ModifyData[] = useMemo(() => state.modifyData, [state.modifyData]);
-
-  const modifyPageInfo: ModifyPageInfoType | null = useMemo(() => state.modifyPageInfo, [state.modifyPageInfo]);
-
-  const preBlockInfo: PreBlockInfo = useMemo(() => state.preBlockInfo, [state.preBlockInfo]);
 
   // dispatch
   const onInitBlockState = useCallback((rawBlockData: RawBlockData[]) => {
@@ -189,6 +162,10 @@ function useBlock() {
     dispatch(changeStyleType(blockInfo, styleType));
   }, [dispatch]);
 
+  const onChangeBlockType = useCallback((blockInfo: string | number, type: BlockTypes) => {
+    dispatch(changeBlockType(blockInfo, type));
+  }, [dispatch]);
+
   const onChangeFetchState = useCallback((fetchState?: boolean) => {
     dispatch(changeFetchState(fetchState));
   }, [dispatch]);
@@ -224,21 +201,7 @@ function useBlock() {
     setCursorEnd,
     state, 
     initBlock,
-    title,
     titleBlock,
-    editingBlockId,
-    isGrab,
-    isHoldingDown,
-    isCliping,
-    isFetch,
-    updatedBlockIdList,
-    stageBlock,
-    stagePage,
-    tempClipData,
-    targetPosition,
-    modifyData,
-    modifyPageInfo,
-    preBlockInfo,
     onEditBlock,
     blockLength,
     onInitBlockState,
@@ -258,6 +221,7 @@ function useBlock() {
     onSetTempClip,
     onResetEditorState,
     onChangeStyleType,
+    onChangeBlockType,
     onChangeFetchState,
     onUpdateBlock,
     onSetPreBlockInfo,

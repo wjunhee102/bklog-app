@@ -5,7 +5,7 @@ import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../utils/
 import { createBlockData, parseHtmlContents, sliceTextContents } from "../reducer/utils";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
-  const [ editable, setEditable] = useState<boolean>(true);
+  const [ editable, setEditable ] = useState<boolean>(true);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
 
@@ -14,12 +14,13 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     cursorEnd,
     setCursorStart,
     setCursorEnd,
-    isGrab,
-    preBlockInfo,
-    editingBlockId,
+    state: {
+      isGrab,
+      preBlockInfo,
+      editingBlockId,
+    },
     onChangeEditingId,
     onEditPageInfo,
-    onAddTextBlock,
     onAddBlock,
     onEditPageTitle,
     onCommitPage,

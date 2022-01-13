@@ -27,13 +27,15 @@ function calculartionPosition(
 
 function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, parentInfo?: ParentInfoType) {
   const {
-    state,
+    state: {
+      blockList,
+      isCliping,
+      isGrab,
+      updatedBlockIdList,
+      tempClipData,
+    },
     initBlock,
     onSwitchBlock,
-    isCliping,
-    isGrab,
-    updatedBlockIdList,
-    tempClipData,
     onAddBlock,
     onChangeEditingId,
     onChangeEditorState,
@@ -77,7 +79,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
   }, []);
 
   const handleSelectMouseUp = useCallback((container?: boolean) => () => {
-    if(tempClipData[0] !== undefined) onSwitchBlock(tempClipData.map(index => state.blockList[index].id), container);
+    if(tempClipData[0] !== undefined) onSwitchBlock(tempClipData.map(index => blockList[index].id), container);
   }, [tempClipData, isGrab]);
 
   const handleGrabMouseDown = useCallback(() => {

@@ -113,7 +113,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
       }
       <div className={classNames(
         "block-select-area",
-        { selected:  useBlockReducer.isGrab }
+        { selected:  useBlockReducer.state.isGrab }
       )}>
 
         <div className={classNames(
