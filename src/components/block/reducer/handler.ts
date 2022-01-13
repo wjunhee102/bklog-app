@@ -1,8 +1,10 @@
 import { initialBlockState } from ".";
-import { ActionHandlers, updateObject } from "../../../store/utils";
-import { BlockData, BlockDataProps, ModifyBlockData, ModifyPageInfoType } from "../types";
+import { BlockData,  ModifyBlockData, ModifyPageInfoType } from "../types";
 import { 
   BlockState, 
+  ActionHandlers, 
+  updateObject,
+  createClearStatePart, 
   createBlockData,
   updateBlockContents, 
   updateModifyData, 
@@ -62,10 +64,6 @@ import {
   deleteTextBlock,
   DELETE_TEXT_BLOCK,
   removeTextBlockInList,
-  clearNextBlockInfo,
-  setNextBlockInfo,
-  CLEAR_NEXTBLOCKINFO,
-  SET_NEXTBLOCKINFO,
   addTextBlock,
   sliceTextContents,
   parseHtmlContents,
@@ -84,7 +82,10 @@ import {
   commitPage,
   StagedPage,
   COMMIT_PAGE,
-  PageInfo
+  PageInfo,
+  SET_PREBLOCKINFO,
+  setPreBlockInfo,
+  changeBlockType
 } from "./utils";
 
 function initBlockStateHandler(
@@ -124,27 +125,23 @@ function changeEditingIdHandler(
   state: BlockState, 
   { payload }: ReturnType<typeof changeEditingId>
 ): BlockState {
-  if(typeof payload === "string") {
-    return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: payload
-    });
-  } else if(payload === undefined) {
-    return updateObject<BlockState, BlockStateProps>(state, {
-      editingBlockId: null
-    });
-  } else {
+  let editingBlockId: string | null;
 
+  if(typeof payload === "string") {
+      editingBlockId = payload;
+  } else if(typeof payload === "number") {
     if(payload >= 0) {
-      return updateObject<BlockState, BlockStateProps>(state, {
-        editingBlockId: state.blockList[payload]? state.blockList[payload].id : null
-      });
+      editingBlockId = state.blockList[payload]? state.blockList[payload].id : null;
     } else {
-      return updateObject<BlockState, BlockStateProps>(state, {
-        editingBlockId: "title"
-      });
+      editingBlockId = "title";
     }
-    
+  } else {
+    editingBlockId = null;
   }
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    editingBlockId
+  })
 }
 
 function editBlockHandler(
@@ -342,11 +339,15 @@ function deleteBlockHandler(
 
   tempData.editingBlockId = state.editingBlockId;
 
-  const editingBlockId: string | null = nextEditInfo !== undefined? 
-    typeof nextEditInfo === "string"? 
-    nextEditInfo 
-    : blockList[nextEditInfo].id
-    : null;
+  let editingBlockId: string | null;
+
+  if(typeof nextEditInfo === "string") {
+    editingBlockId = nextEditInfo;
+  } else if(typeof nextEditInfo === "number") {
+    editingBlockId = blockList[nextEditInfo]? blockList[nextEditInfo].id : "title"
+  } else {
+    editingBlockId = null;
+  }
 
   const removeBlockIdList = removedBlockList.map(block => block.id);
 
@@ -393,7 +394,7 @@ function deleteTextBlockHandler(
     return updateObject<BlockState, BlockStateProps>(state, {
       blockList,
       editingBlockId,
-      nextBlockInfo: {
+      preBlockInfo: {
         type: "text",
         payload: ["delete", textLength]
       },
@@ -602,6 +603,15 @@ function changeStyleTypeHandler(
   }
 }
 
+function changeBlockTypeHandler(
+  state: BlockState,
+  { payload: {
+    blockInfo, type
+  }}: ReturnType<typeof changeBlockType>
+): BlockState {
+  return state;
+}
+
 function clearModifyDataHandler(
   state: BlockState,
   action: ReturnType<typeof clearModifyData>
@@ -636,21 +646,13 @@ function updateBlockHandler(
   });
 }
 
-function clearNextBlockInfoHandler(
-  state: BlockState,
-  action: ReturnType<typeof clearNextBlockInfo>
-): BlockState {
-  return updateObject<BlockState, BlockStateProps>(state, {
-    nextBlockInfo: null
-  });
-}
 
-function setNextBlockInfoHandler(
+function setPreBlockInfoHandler(
   state: BlockState,
-  { payload }: ReturnType<typeof setNextBlockInfo>
+  { payload }: ReturnType<typeof setPreBlockInfo>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    nextBlockInfo: payload
+    preBlockInfo: payload
   });
 }
 
@@ -658,11 +660,7 @@ function clearStateItemHandler(
   state: BlockState,
   { payload }: ReturnType<typeof clearStateItem>
 ): BlockState {
-  if(initialBlockState.hasOwnProperty(payload)) {
-    return updateObject<BlockState, BlockStateProps>(state, { [payload]: initialBlockState[payload] }) 
-  } else {
-    return state;
-  }
+  return updateObject<BlockState, BlockStateProps>(state, createClearStatePart<BlockStateProps>(initialBlockState, payload));
 }
 
 const blockHandlers: ActionHandlers<BlockState> = {
@@ -691,8 +689,7 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CHANGE_STYLE_TYPE]      : changeStyleTypeHandler,
   [CLEAR_MODIFYDATA]       : clearModifyDataHandler,
   [UPDATE_BLOCK]           : updateBlockHandler,
-  [CLEAR_NEXTBLOCKINFO]    : clearNextBlockInfoHandler,
-  [SET_NEXTBLOCKINFO]      : setNextBlockInfoHandler,
+  [SET_PREBLOCKINFO]       : setPreBlockInfoHandler,
   [CLEAR_STATE_ITEM]       : clearStateItemHandler,
   [EDIT_PAGE_INFO]         : editPageInfoHandler
 };

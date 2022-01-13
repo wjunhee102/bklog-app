@@ -7,6 +7,17 @@ import { Token } from '../utils/token';
 export type UUID = ReturnType<typeof Token.getUUID>
 
 /**
+ * block types
+ */
+
+export type BlockTypes = "text" 
+  | "title"
+  | "numbered" 
+  | "bulleted" 
+  | "container"
+; 
+
+/**
  * text block types
  */
 export type ContentType = ["b"] 
@@ -19,10 +30,13 @@ export type ContentType = ["b"]
 export type TextContents = [string] | [string, ContentType[]];
 
 
+/**
+ * block data
+ */
 export interface RawBlockData<T = any, P = any> {
   position: string; // 1,  1-1,  1-2-1
   id: string;
-  type: string;
+  type: BlockTypes;
   styleType: string;
   styles: T;
   contents: P;
@@ -36,7 +50,7 @@ export interface BlockData<T = any, P = any> extends RawBlockData<T, P> {
 export interface RawBlockDataProps<T = any, P = any> {
   position?: string; // 1,  1-1,  1-2-1
   id?: string;
-  type?: string;
+  type?: BlockTypes;
   styleType?: string;
   styles?: T;
   contents?: P;

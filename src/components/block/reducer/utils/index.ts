@@ -3,7 +3,12 @@ import actionBlock from "./actions";
 import blockUtils from "./blockUtils";
 import converter from "./converter";
 import orderingBlockUtils from "./ordering";
+import reducerUtils from "./reducerUtils";
 import sideStoreUtils from "./sideUtils";
+
+export type ActionHandlers<T> = {
+  [P: string]: (state: T, action: any) => T;
+}
 
 /**
  * block - state
@@ -22,6 +27,7 @@ export type StateAryType = 'blockList'
   | 'tempClipData'
   | 'clipBoard'
   | 'modifyPageInfo'
+  | 'preBlockInfo'
 ;
 
 export type StateBolType = 'isFetch' | EditorStateType;
@@ -73,7 +79,7 @@ export interface TempData<T = any> {
 
 export interface TempDataType {
   editingBlockId?: string;
-  nextBlockInfo?: NextBlockInfo;
+  preBlockInfo?: PreBlockInfo;
   pageInfo?: PageInfo;
   create?: TempData<BlockData>[];
   update?: TempData[];
@@ -86,12 +92,12 @@ export interface ResBlockUtils {
   tempData: TempDataType | undefined;
 }
 
-export interface NextTextBlockInfo {
+export interface PreTextBlockInfo {
   type: "text",
   payload: [string, any];
 }
 
-export type NextBlockInfo = NextTextBlockInfo | { type: string, payload: any } | null;
+export type PreBlockInfo = PreTextBlockInfo | { type: string, payload: any } | null;
 
 export type PageInfo = {
   title: string | null;
@@ -107,7 +113,7 @@ export interface BlockState {
   pageInfo: PageInfo;
   blockList: BlockData[];
   editingBlockId: string | null;
-  nextBlockInfo: NextBlockInfo | null;
+  preBlockInfo: PreBlockInfo | null;
   stageBlock: StagedBlock[];
   stagePage: StagedPage | null;
   updatedBlockIdList: string[];
@@ -129,7 +135,7 @@ export interface BlockStateProps {
   pageInfo?: { title: string | null};
   blockList?: BlockData[];
   editingBlockId?: string | null;
-  nextBlockInfo?: NextBlockInfo;
+  preBlockInfo?: PreBlockInfo;
   stageBlock?: StagedBlock[];
   stagePage?: StagedPage | null;
   updatedBlockIdList?: string[];
@@ -168,9 +174,9 @@ export const CHANGE_TARGET_POSITION = 'CHANGE_TARGET_POSITION' as const;
 export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
 export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
 export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
+export const CHANGE_BLOCK_TYPE      = 'CHANGE_BLOCK_TYPE' as const;
 export const CLEAR_MODIFYDATA       = 'CLEAR_MODIFYDATA' as const;
-export const CLEAR_NEXTBLOCKINFO    = 'CLEAR_NEXTBLOCKINFO' as const;
-export const SET_NEXTBLOCKINFO      = 'CLEAR_NEXTBLOCKINFO' as const;
+export const SET_PREBLOCKINFO       = 'SET_PREBLOCKINFO' as const;
 export const INIT_PAGE_TITLE        = 'INIT_PAGE_TITLE' as const;
 export const EDIT_PAGE_TITLE        = 'EDIT_PAGE_TITLE' as const;
 export const CLEAR_STATE_ITEM       = 'CLEAR_STATE_ITEM' as const;
@@ -202,14 +208,13 @@ export type BLOCK_ACTION_TYPES =
   | typeof CHANGE_STYLE_TYPE
   | typeof CHANGE_FETCH_STATE
   | typeof CLEAR_MODIFYDATA
-  | typeof SET_NEXTBLOCKINFO
-  | typeof CLEAR_NEXTBLOCKINFO
-  | typeof SET_NEXTBLOCKINFO 
+  | typeof SET_PREBLOCKINFO
   | typeof INIT_PAGE_TITLE 
   | typeof EDIT_PAGE_TITLE
   | typeof CLEAR_STATE_ITEM
   | typeof EDIT_PAGE_INFO
   | typeof COMMIT_PAGE
+  | typeof CHANGE_BLOCK_TYPE
 ;
 
 /**
@@ -239,9 +244,9 @@ export const changeTargetPosition = actionBlock.changeTargetPosition;
 export const resetEditorState     = actionBlock.resetEditorState;
 export const changeFetchState     = actionBlock.changeFetchState;
 export const changeStyleType      = actionBlock.changeStyleType;
+export const changeBlockType      = actionBlock.changeBlockType;
 export const clearModifyData      = actionBlock.clearModifyData;
-export const clearNextBlockInfo   = actionBlock.clearNextBlockInfo;
-export const setNextBlockInfo     = actionBlock.setNextBlockInfo;
+export const setPreBlockInfo      = actionBlock.setPreBlockInfo;
 export const initPageTitle        = actionBlock.initPageTitle;
 export const editPageTitle        = actionBlock.editPageTitle;
 export const clearStateItem       = actionBlock.clearStateItem;
@@ -273,15 +278,20 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof resetEditorState>
   | ReturnType<typeof changeFetchState>
   | ReturnType<typeof changeStyleType>
+  | ReturnType<typeof changeBlockType>
   | ReturnType<typeof clearModifyData>
-  | ReturnType<typeof clearNextBlockInfo>
-  | ReturnType<typeof setNextBlockInfo>
+  | ReturnType<typeof setPreBlockInfo>
   | ReturnType<typeof initPageTitle>
   | ReturnType<typeof editPageTitle>
   | ReturnType<typeof clearStateItem>
   | ReturnType<typeof editPageInfo>
   | ReturnType<typeof commitPage>
 ;
+
+//reducer
+export const createReducer        = reducerUtils.createReducer;
+export const updateObject         = reducerUtils.updateObject;
+export const createClearStatePart = reducerUtils.createClearStatePart;
 
 //converter
 export const addContentsStyle        = converter.addContentsStyle;

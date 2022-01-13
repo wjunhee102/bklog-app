@@ -24,9 +24,6 @@ import {
   INIT_BLOCK_STATE,
   CHANGE_BLOCK_CONTENTS,
   DELETE_TEXT_BLOCK,
-  CLEAR_NEXTBLOCKINFO,
-  NextBlockInfo,
-  SET_NEXTBLOCKINFO,
   ADD_TEXT_BLOCK,
   INIT_PAGE_TITLE,
   EDIT_PAGE_TITLE,
@@ -34,9 +31,13 @@ import {
   ClearStateType,
   CLEAR_STATE_ITEM,
   StagedPage,
-  EDIT_PAGE_INFO
+  EDIT_PAGE_INFO,
+  COMMIT_PAGE,
+  PreBlockInfo,
+  SET_PREBLOCKINFO,
+  CHANGE_BLOCK_TYPE
 } from ".";
-import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType } from "../../types";
+import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType, BlockTypes } from "../../types";
 
 function initBlockState(rawBlockData: RawBlockData[]) {
   return {
@@ -68,7 +69,7 @@ function addTextBlock(
   innerHTML: string,
   cursorStart: number,
   cursorEnd: number,
-  type?: string,
+  type?: BlockTypes,
   styleType?: string
 ) {
   return {
@@ -105,6 +106,12 @@ function editBlock(blockId: string, blockIndex: number, contents: string) {
 function commitBlock() {
   return {
     type: COMMIT_BLOCK
+  }
+}
+
+function commitPage() {
+  return {
+    type: COMMIT_PAGE
   }
 }
 
@@ -257,22 +264,26 @@ function changeStyleType(blockInfo: string | number, styleType: string) {
   }
 }
 
+function changeBlockType(blockInfo: string | number, type: BlockTypes) {
+  return {
+    type: CHANGE_BLOCK_TYPE,
+    payload: {
+      blockInfo,
+      type
+    }
+  }
+}
+
 function clearModifyData() {
   return {
     type: CLEAR_MODIFYDATA
   };
 }
 
-function clearNextBlockInfo() {
+function setPreBlockInfo(preBlockInfo: PreBlockInfo) {
   return {
-    type: CLEAR_NEXTBLOCKINFO
-  };
-}
-
-function setNextBlockInfo(nextBlockInfo: NextBlockInfo) {
-  return {
-    type: SET_NEXTBLOCKINFO,
-    payload: nextBlockInfo
+    type: SET_PREBLOCKINFO,
+    payload: preBlockInfo
   };
 }
 
@@ -290,7 +301,7 @@ function editPageTitle(title: string) {
   }
 }
 
-function clearStateItem(key: ClearStateType) {
+function clearStateItem(...key: ClearStateType[]) {
   return {
     type: CLEAR_STATE_ITEM,
     payload: key
@@ -312,6 +323,7 @@ const actionBlock = {
   changeEditingId,
   editBlock,
   commitBlock,
+  commitPage,
   changeBlockContents,
   deleteBlock,
   deleteTextBlock,
@@ -330,12 +342,12 @@ const actionBlock = {
   changeFetchState,
   changeStyleType,
   clearModifyData,
-  clearNextBlockInfo,
-  setNextBlockInfo,
+  setPreBlockInfo,
   initPageTitle,
   editPageTitle,
   clearStateItem,
-  editPageInfo
+  editPageInfo,
+  changeBlockType
 }
 
 export default actionBlock;

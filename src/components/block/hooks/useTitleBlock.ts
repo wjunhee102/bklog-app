@@ -15,7 +15,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     setCursorStart,
     setCursorEnd,
     isGrab,
-    nextBlockInfo,
+    preBlockInfo,
     editingBlockId,
     onChangeEditingId,
     onEditPageInfo,
@@ -23,7 +23,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     onAddBlock,
     onEditPageTitle,
     onCommitPage,
-    onClearNextBlockInfo
+    onClearStateItem
   } = useBlockReducer;
 
    // keyboard methods text
@@ -152,13 +152,13 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
       if(blockContentsRef.current) {
         handleFocus(blockContentsRef.current);
 
-        if(nextBlockInfo) {
-          if(nextBlockInfo.type === "text") {
-            if(nextBlockInfo.payload[0] === "delete") {
-              const length = blockContentsRef.current.innerText.length - nextBlockInfo.payload[1];
+        if(preBlockInfo) {
+          if(preBlockInfo.type === "text") {
+            if(preBlockInfo.payload[0] === "delete") {
+              const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
               setSelectionRange(blockContentsRef.current, length, length);
             }
-            onClearNextBlockInfo();
+            onClearStateItem("preBlockInfo");
           }
         }
 

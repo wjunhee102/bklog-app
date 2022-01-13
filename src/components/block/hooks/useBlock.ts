@@ -25,9 +25,6 @@ import {
   updateBlock,
   changeBlockContents,
   deleteTextBlock,
-  clearNextBlockInfo,
-  setNextBlockInfo,
-  NextBlockInfo,
   addTextBlock,
   StagedBlock,
   editPageTitle,
@@ -38,7 +35,9 @@ import {
   StagedPage,
   editPageInfo,
   commitPage,
-  createPageTitleBlockData
+  createPageTitleBlockData,
+  PreBlockInfo,
+  setPreBlockInfo
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -95,7 +94,7 @@ function useBlock() {
 
   const modifyPageInfo: ModifyPageInfoType | null = useMemo(() => state.modifyPageInfo, [state.modifyPageInfo]);
 
-  const nextBlockInfo: NextBlockInfo = useMemo(() => state.nextBlockInfo, [state.nextBlockInfo]);
+  const preBlockInfo: PreBlockInfo = useMemo(() => state.preBlockInfo, [state.preBlockInfo]);
 
   // dispatch
   const onInitBlockState = useCallback((rawBlockData: RawBlockData[]) => {
@@ -208,12 +207,8 @@ function useBlock() {
     dispatch(updateBlock(modifyData));
   }, [dispatch]);
 
-  const onClearNextBlockInfo = useCallback(() => {
-    dispatch(clearNextBlockInfo());
-  }, [dispatch]);
-
-  const onSetNextBlockInfo = useCallback((nextBlockInfo: NextBlockInfo) => {
-    dispatch(setNextBlockInfo(nextBlockInfo));
+  const onSetPreBlockInfo = useCallback((preBlockInfo: PreBlockInfo) => {
+    dispatch(setPreBlockInfo(preBlockInfo));
   }, [dispatch]);
 
   const onInitPageTitle = useCallback((title: string) => {
@@ -224,8 +219,8 @@ function useBlock() {
     dispatch(editPageTitle(title));
   }, [dispatch]);
 
-  const onClearStateItem = useCallback((key: ClearStateType) => {
-    dispatch(clearStateItem(key));
+  const onClearStateItem = useCallback((...key: ClearStateType[]) => {
+    dispatch(clearStateItem(...key));
   }, [dispatch]);
 
   const onEditPageInfo = useCallback((stagedPage: StagedPage | null) => {
@@ -253,7 +248,7 @@ function useBlock() {
     targetPosition,
     modifyData,
     modifyPageInfo,
-    nextBlockInfo,
+    preBlockInfo,
     onEditBlock,
     blockLength,
     onInitBlockState,
@@ -277,8 +272,7 @@ function useBlock() {
     onChangeFetchState,
     onClearModifyData,
     onUpdateBlock,
-    onClearNextBlockInfo,
-    onSetNextBlockInfo,
+    onSetPreBlockInfo,
     onInitPageTitle,
     onEditPageTitle,
     onClearStateItem,

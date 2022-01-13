@@ -1,6 +1,5 @@
-import { createReducer } from "../../../store/utils";
 import blockHandlers from "./handler";
-import { BlockActions, BlockState } from "./utils";
+import { BlockActions, BlockState, createReducer } from "./utils";
 
 export const initialBlockState: BlockState = {
   isFetch: false,
@@ -9,13 +8,16 @@ export const initialBlockState: BlockState = {
   isHoldingDown: false,
   isCliping: false,
   targetPosition: null,
-  titleBlock: null,
+  pageInfo: {
+    title: null
+  },
   blockList: [],
   editingBlockId: null,
-  nextBlockInfo: null,
+  preBlockInfo: null,
   stageBlock: [],
   stagePage: null,
   modifyData: [],
+  modifyPageInfo: null,
   updatedBlockIdList: [],
   tempBack: [],
   tempFront: [],

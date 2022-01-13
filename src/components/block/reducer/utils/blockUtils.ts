@@ -1,7 +1,6 @@
-import { BlockData, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
-import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData } from '.';
+import { BlockData, BlockTypes, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
+import { updateObject, StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData } from '.';
 import { Token } from '../../utils/token';
-import { updateObject } from '../../../../store/utils';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));
@@ -10,7 +9,7 @@ function copyToNewObjectArray<T = any>(array: T[]): T[] {
 interface BlockDataProps<T = TextContents[]> {
   position: string;
   id?: string;
-  type?: string;
+  type?: BlockTypes;
   styleType?: string;
   parentId?: string;
   styles?: any;
@@ -442,6 +441,13 @@ function removeBlockInList(
   }
 }
 
+const TextContentsTypeList = [
+  "text",
+  "todo",
+  "bulleted",
+  "numbered"
+];
+
 /**
  * 
  * @param preBlocks 
@@ -450,7 +456,7 @@ function removeBlockInList(
  * @param innerHTML 
  */
 function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex, innerHTML: string): ResBlockUtils | null {
-  if(preBlocks[preIndex].type !== "text") return null;
+  if(!TextContentsTypeList.includes(preBlocks[preIndex].type)) return null;
 
   const preBlockList = preBlocks.concat();
   const contents: TextContents[] = parseHtmlContents(innerHTML);

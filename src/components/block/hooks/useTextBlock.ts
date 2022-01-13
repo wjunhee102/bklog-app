@@ -18,7 +18,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
     isGrab,
     isHoldingDown,
     isCliping,
-    nextBlockInfo,
+    preBlockInfo,
     editingBlockId,
     onChangeEditingId,
     onEditBlock,
@@ -26,7 +26,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
     onCommitBlock,
     onDeleteBlock,
     onDeleteTextBlock,
-    onClearNextBlockInfo
+    onClearStateItem
   } = useBlockReducer;
 
   const createMarkup = useMemo(()=> {
@@ -114,7 +114,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
 
       if(cursorStartPoint === 0 && cursorEndPoint === 0) {
         if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
-          const nextEditIndex = blockData.index > 0? blockData.index - 1 : undefined;
+          const nextEditIndex = blockData.index - 1;
           onDeleteBlock([blockData], nextEditIndex);
         } else if(blockData.index !== 0) {
           onDeleteTextBlock(blockData.index, e.target.innerHTML, e.target.innerText.length);
@@ -197,13 +197,13 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, selec
       if(blockContentsRef.current) {
         handleFocus(blockContentsRef.current);
 
-        if(nextBlockInfo) {
-          if(nextBlockInfo.type === "text") {
-            if(nextBlockInfo.payload[0] === "delete") {
-              const length = blockContentsRef.current.innerText.length - nextBlockInfo.payload[1];
+        if(preBlockInfo) {
+          if(preBlockInfo.type === "text") {
+            if(preBlockInfo.payload[0] === "delete") {
+              const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
               setSelectionRange(blockContentsRef.current, length, length);
             }
-            onClearNextBlockInfo();
+            onClearStateItem("preBlockInfo");
           }
         }
 
