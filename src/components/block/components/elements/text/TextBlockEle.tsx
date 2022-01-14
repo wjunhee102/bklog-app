@@ -47,7 +47,6 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
         onKeyPress={handleKeyPress}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
-        onMouseDown={isFocus}
         onMouseUp={handleMouseUp}
         onFocus={isFocus}
         placeholder="입력해주세요..."

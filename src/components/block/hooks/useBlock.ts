@@ -36,7 +36,9 @@ import {
   createPageTitleBlockData,
   PreBlockInfo,
   setPreBlockInfo,
-  changeBlockType
+  changeBlockType,
+  addTitleBlock,
+  deleteTitleBlock
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -112,7 +114,15 @@ function useBlock() {
     cursorEnd: number
   ) => {
     dispatch(addTextBlock(index, innerHTML, cursorStart, cursorEnd));
-  }, [dispatch])
+  }, [dispatch]);
+
+  const onAddTitleBlock = useCallback((
+    text: string,
+    cursorStart: number,
+    cursorEnd: number
+  ) => {
+    dispatch(addTitleBlock(text, cursorStart, cursorEnd));
+  }, [dispatch]);
 
   const onDeleteBlock = useCallback((
     removedBlockList: BlockData[],
@@ -123,6 +133,10 @@ function useBlock() {
 
   const onDeleteTextBlock = useCallback((index: number, innerHTML: string, textLength: number) => {
     dispatch(deleteTextBlock(index, innerHTML, textLength));
+  }, [dispatch]);
+
+  const onDeleleTitleBlock = useCallback((innerText: string) => {
+    dispatch(deleteTitleBlock(innerText));
   }, [dispatch]);
 
   const onChangeTextStyle = useCallback((
@@ -212,8 +226,10 @@ function useBlock() {
     onChangeBlockContents,
     onAddBlock,
     onAddTextBlock,
+    onAddTitleBlock,
     onDeleteBlock,
     onDeleteTextBlock,
+    onDeleleTitleBlock,
     onChangeTextStyle,
     onSwitchBlock,
     onRevertBlock,

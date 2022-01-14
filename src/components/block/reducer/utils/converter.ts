@@ -800,6 +800,15 @@ function sliceTextContents(
   return [frontTexts, backTexts];
 }
 
+function sliceText(text: string, startPoint: number, endPoint: number): [string, string] {
+  if(!text || text === "") return ["", ""];
+
+  let front = text.slice(0, startPoint);
+  let end = text.slice(endPoint, text.length);
+
+  return [front, end];
+}
+
 function mergeTextContents(
   toBeMergedContents: TextContents[],
   targetContents: TextContents[]
@@ -830,6 +839,7 @@ const converter = {
   deleteContentsStyle,
   changeStyleTextContents,
   sliceTextContents,
+  sliceText,
   mergeTextContents
 }
 

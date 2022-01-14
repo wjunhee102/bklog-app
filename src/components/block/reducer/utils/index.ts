@@ -10,6 +10,13 @@ export type ActionHandlers<T> = {
   [P: string]: (state: T, action: any) => T;
 }
 
+export const TextContentsTypeList = [
+  "text",
+  "todo",
+  "bulleted",
+  "numbered"
+];
+
 /**
  * block - state
  */
@@ -155,12 +162,14 @@ export const RESET_BLOCK            = 'RESET_BLOCK' as const;
 export const CHANGE_EDITING_ID      = 'CHANGE_EDITING_ID' as const;
 export const ADD_BLOCK              = 'ADD_BLOCK' as const;
 export const ADD_TEXT_BLOCK         = 'ADD_TEXT_BLOCK' as const;
+export const ADD_TITLE_BLOCK        = 'ADD_TITLE_BLOCK' as const;
 export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
 export const COMMIT_BLOCK           = 'COMMIT_BLOCK' as const;
 export const COMMIT_PAGE            = 'COMMIT_PAGE' as const;
 export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
 export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
 export const DELETE_TEXT_BLOCK      = 'DELETE_TEXT_BLOCK' as const;
+export const DELETE_TITLE_BLOCK     = 'DELETE_TITLE_BLOCK' as const;
 export const UPDATE_BLOCK           = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
 export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
 export const REVERT_BLOCK           = 'REVERT_BLOCK' as const;
@@ -186,11 +195,13 @@ export type BLOCK_ACTION_TYPES =
   | typeof RESET_BLOCK 
   | typeof ADD_BLOCK
   | typeof ADD_TEXT_BLOCK
+  | typeof ADD_TITLE_BLOCK
   | typeof EDIT_BLOCK
   | typeof COMMIT_BLOCK
   | typeof CHANGE_BLOCK_CONTENTS
   | typeof DELETE_BLOCK
   | typeof DELETE_TEXT_BLOCK
+  | typeof DELETE_TITLE_BLOCK
   | typeof UPDATE_BLOCK
   | typeof SWITCH_BLOCK
   | typeof REVERT_BLOCK
@@ -218,6 +229,7 @@ export const initBlockState       = actionBlock.initBlockState;
 export const resetBlock           = actionBlock.resetBlock;
 export const addBlock             = actionBlock.addBlock;
 export const addTextBlock         = actionBlock.addTextBlock;
+export const addTitleBlock        = actionBlock.addTitleBlock;
 export const changeEditingId      = actionBlock.changeEditingId;
 export const editBlock            = actionBlock.editBlock;
 export const commitBlock          = actionBlock.commitBlock;
@@ -225,6 +237,7 @@ export const commitPage           = actionBlock.commitPage;
 export const changeBlockContents  = actionBlock.changeBlockContents;
 export const deleteBlock          = actionBlock.deleteBlock;
 export const deleteTextBlock      = actionBlock.deleteTextBlock;
+export const deleteTitleBlock     = actionBlock.deleteTitleBlock;
 export const updateBlock          = actionBlock.updateBlock;
 export const changeTextStyle      = actionBlock.changeTextStyle;
 export const revertBlock          = actionBlock.revertBlock;
@@ -249,12 +262,14 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof resetBlock>
   | ReturnType<typeof addBlock>
   | ReturnType<typeof addTextBlock>
+  | ReturnType<typeof addTitleBlock>
   | ReturnType<typeof changeEditingId>
   | ReturnType<typeof editBlock>
   | ReturnType<typeof commitBlock>
   | ReturnType<typeof changeBlockContents>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof deleteTextBlock>
+  | ReturnType<typeof deleteTitleBlock>
   | ReturnType<typeof updateBlock>
   | ReturnType<typeof changeTextStyle>
   | ReturnType<typeof revertBlock>
@@ -287,6 +302,7 @@ export const changeStyleTextContents = converter.changeStyleTextContents;
 export const deleteContentsStyle     = converter.deleteContentsStyle;
 export const parseHtmlContents       = converter.parseHtmlContents;
 export const sliceTextContents       = converter.sliceTextContents;
+export const sliceText               = converter.sliceText;
 export const mergeTextContents       = converter.mergeTextContents;
 
 // block order utils;

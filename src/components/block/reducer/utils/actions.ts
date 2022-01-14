@@ -32,7 +32,9 @@ import {
   COMMIT_PAGE,
   PreBlockInfo,
   SET_PREBLOCKINFO,
-  CHANGE_BLOCK_TYPE
+  CHANGE_BLOCK_TYPE,
+  ADD_TITLE_BLOCK,
+  DELETE_TITLE_BLOCK
 } from ".";
 import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType, BlockTypes } from "../../types";
 
@@ -78,6 +80,21 @@ function addTextBlock(
       cursorEnd,
       type,
       styleType
+    }
+  }
+}
+
+function addTitleBlock(
+  text: string,
+  cursorStart: number,
+  cursorEnd: number
+) { 
+  return {
+    type: ADD_TITLE_BLOCK,
+    payload: {
+      text,
+      cursorStart,
+      cursorEnd
     }
   }
 }
@@ -141,6 +158,13 @@ function deleteTextBlock(index: number, innerHTML: string, textLength: number) {
       textLength
     }
   };
+}
+
+function deleteTitleBlock(innerText: string) {
+  return {
+    type: DELETE_TITLE_BLOCK,
+    payload: innerText
+  }
 }
 
 function updateBlock(modifyData: ModifyBlockDataType) {
@@ -299,6 +323,7 @@ const actionBlock = {
   resetBlock,
   addBlock,
   addTextBlock,
+  addTitleBlock,
   changeEditingId,
   editBlock,
   commitBlock,
@@ -306,6 +331,7 @@ const actionBlock = {
   changeBlockContents,
   deleteBlock,
   deleteTextBlock,
+  deleteTitleBlock,
   updateBlock,
   changeTextStyle,
   revertBlock,

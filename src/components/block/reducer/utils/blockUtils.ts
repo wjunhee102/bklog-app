@@ -1,5 +1,5 @@
 import { BlockData, BlockTypes, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
-import { updateObject, StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData } from '.';
+import { updateObject, StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData, TextContentsTypeList } from '.';
 import { Token } from '../../utils/token';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
@@ -361,7 +361,6 @@ function addBlockInList(
       ...resetToTargetPosition(addBlockList, targetPosition)
     );
   } else {
-    console.log(index, blockList[index]);
     newBlockList.splice(
       index, 
       1, 
@@ -482,13 +481,6 @@ function removeBlockInList(
   }
 }
 
-const TextContentsTypeList = [
-  "text",
-  "todo",
-  "bulleted",
-  "numbered"
-];
-
 /**
  * 
  * @param preBlocks 
@@ -499,10 +491,10 @@ const TextContentsTypeList = [
 function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex, innerHTML: string): ResBlockUtils | null {
   if(!TextContentsTypeList.includes(preBlocks[preIndex].type)) return null;
 
-  const preBlockList = preBlocks.concat();
+  const preBlockList = preBlocks.concat().map(block => updateObject(block));
   const contents: TextContents[] = parseHtmlContents(innerHTML);
   const blockId = preBlockList[preIndex].id;
-  const preContents = preBlockList[preIndex].contents.concat();
+  const preContents = preBlockList[preIndex].contents.concat().map(co => co.concat());
   const newContents = mergeTextContents(preBlockList[preIndex].contents, contents);
 
   preBlockList[preIndex].contents = newContents;
@@ -531,7 +523,7 @@ function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex, 
       contents: newContents
     }));
   }
-  
+
   return {
     blockList,
     tempData,
@@ -670,11 +662,11 @@ function switchBlockList(
 function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockUtils {
   const tempData: TempDataType = {};
   const modifyData: ModifyData[] = [];
-
+  
   if(!restoreData.delete && !restoreData.create && !restoreData.update) {
     return {
       blockList: blocks,
-      tempData: undefined,
+      tempData: {},
       modifyData
     }
   }

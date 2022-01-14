@@ -29,6 +29,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     onCommitBlock,
     onDeleteBlock,
     onDeleteTextBlock,
+    onDeleleTitleBlock,
     onClearStateItem
   } = useBlockReducer;
 
@@ -50,11 +51,8 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
 
   // keyboard methods text
   const handleKeyUp = useCallback((e:any) => {
-    if(e.ctrlKey) return;
+    if(e.ctrlKey && e.key === "Meta") return;
 
-    setCursorStart(getSelectionStart(e.target));
-    setCursorEnd(getSelectionEnd(e.target));
-    
     switch(e.key) {
 
       case "Enter":
@@ -92,10 +90,20 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
         onCommitBlock();
         break;
+
+      case "Backspace": 
+        if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
+          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+        } 
+
+        break;
       
       default:
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
     }
+
+    setCursorStart(getSelectionStart(e.target));
+    setCursorEnd(getSelectionEnd(e.target));
 
   }, [blockData, cursorEnd, cursorStart]);
 
@@ -125,6 +133,8 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
           onDeleteBlock([blockData], nextEditIndex);
         } else if(blockData.index !== 0) {
           onDeleteTextBlock(blockData.index, e.target.innerHTML, e.target.innerText.length);
+        } else {
+          onDeleleTitleBlock(e.target.innerText);
         }
         
       }

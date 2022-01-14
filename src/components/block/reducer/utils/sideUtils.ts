@@ -1,4 +1,4 @@
-import { updateObject, TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps, PageInfo } from ".";
+import { updateObject, TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps, PageInfo, removeTextBlockInList } from ".";
 import { BlockData, RawBlockData, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, ModifyBlockDataType, BlockDataProps, ParamCreateModifyBlock, ParamModifyBlock, ParamDeleteModity } from "../../types";
 
 function tempDataPush(
@@ -98,9 +98,17 @@ function pushModifyDataList(modifyDataList: ModifyData[], newModifyDataList: Mod
         if(command === CREATE) {
           modifyDataList.splice(index, 1);
         } else {
-          console.log("command", modifyDataList[index])
           modifyDataList[index].command = DELETE;
         }
+
+      } else if(modifyData.command === CREATE){
+        modifyData.payload.index = undefined;
+
+        modifyDataList[index].command = CREATE;
+        modifyDataList[index].payload = updateObject(createBlockData(modifyData.payload), {
+          index: undefined,
+          parentId: undefined
+        });
 
       } else {
         if(modifyData.payload) modifyDataList[index].payload = payload? Object.assign({}, payload, modifyData.payload) : modifyData.payload;
@@ -258,16 +266,21 @@ function revertBlockState(
   if(!front && state.tempBack[0]) {
     const tempBack = state.tempBack.concat();
     const lastTempBack = tempBack.pop();
+
+    if(!lastTempBack.create && !lastTempBack.delete && !lastTempBack.update && !lastTempBack.pageInfo) {
+      return state;
+    }
+
     const editingBlockId = lastTempBack.editingBlockId? lastTempBack.editingBlockId : null;
     const { blockList, tempData, modifyData } = restoreBlock(state.blockList, lastTempBack);
-
+  
     let pageInfo: PageInfo | null = null;
     let lastPageInfo = state.pageInfo;
 
     if(lastTempBack.pageInfo) {
       pageInfo = lastTempBack.pageInfo;
     }
-    
+
     tempData.editingBlockId = state.editingBlockId;
     tempData.pageInfo = pageInfo? lastPageInfo : undefined;
 
@@ -285,6 +298,11 @@ function revertBlockState(
   } else if(state.tempFront[0]) {
     const tempFront = state.tempFront.concat();
     const lastTempFront = tempFront.pop();
+
+    if(!lastTempFront.create && !lastTempFront.delete && !lastTempFront.update && !lastTempFront.pageInfo) {
+      return state;
+    }
+
     const editingBlockId = lastTempFront.editingBlockId? lastTempFront.editingBlockId : null;
     const { blockList, tempData, modifyData } = restoreBlock(state.blockList, lastTempFront);
 

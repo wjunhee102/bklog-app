@@ -21,7 +21,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     },
     onChangeEditingId,
     onEditPageInfo,
-    onAddBlock,
+    onAddTitleBlock,
     onEditPageTitle,
     onCommitPage,
     onClearStateItem
@@ -29,10 +29,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
 
    // keyboard methods text
    const handleKeyUp = useCallback((e:any) => {
-    if(e.ctrlKey) return;
-
-    setCursorStart(getSelectionStart(e.target));
-    setCursorEnd(getSelectionEnd(e.target));
+    if(e.ctrlKey && e.key === "Meta") return;
     
     switch(e.key) {
 
@@ -66,37 +63,34 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
 
       case " ":
         setCursorEnd(0);
-        onEditPageInfo({ title: e.target.innerText });
+        onEditPageTitle(e.target.innerText);
         onCommitPage();
+        break;
+
+      case "Backspace": 
+        if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
+          onEditPageTitle(e.target.innerText);
+        } 
+
         break;
       
       default:
         onEditPageTitle(e.target.innerText);
     }
 
+    setCursorStart(getSelectionStart(e.target));
+    setCursorEnd(getSelectionEnd(e.target));
+
   }, [blockData, cursorEnd, cursorStart]);
 
   const handleKeyPress = (e: any) => {
     if(e.key === "Enter") {
       e.preventDefault();
-
-      const [ front, back ] = sliceTextContents(parseHtmlContents(e.target.innerText), cursorStart, cursorEnd);
-
-      console.log(front, back, cursorStart, cursorEnd);
-
-      const newBlock = createBlockData({
-        position: "1",
-        type: "text",
-        styleType: "bk-p",
-        contents: back
-      });
-
-      console.log(front);
-      
-
-      e.target.innerText = front[0]? front[0][0] : "";
-      onEditPageTitle(e.target.innerText);
-      onAddBlock([newBlock], "1", false, newBlock.id);
+      onAddTitleBlock(
+        e.target.innerText,
+        getSelectionStart(e.target),
+        getSelectionEnd(e.target)
+      );
     }
   }
 
@@ -136,6 +130,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   }, []);
 
   const isFocus = () => {
+    moveEndPoint(blockContentsRef.current);
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
   }
 
@@ -157,6 +152,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
           if(preBlockInfo.type === "text") {
             if(preBlockInfo.payload[0] === "delete") {
               const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
+              console.log(blockContentsRef.current.innerText.length, preBlockInfo.payload,length);
               setSelectionRange(blockContentsRef.current, length, length);
             }
             onClearStateItem("preBlockInfo");

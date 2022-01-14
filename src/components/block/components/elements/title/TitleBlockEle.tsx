@@ -30,7 +30,6 @@ const TitleBlockEle: React.FC<BlockProps> = ({
         contents={blockData.contents}
         onKeyUp={handleKeyUp}
         onKeyPress={handleKeyPress}
-        onMouseDown={isFocus}
         onMouseUp={handleMouseUp}
         onFocus={isFocus}
         placeholder="무제"

@@ -21,6 +21,7 @@ import {
   revertBlock,
   COMMIT_BLOCK, 
   ADD_BLOCK, 
+  ADD_TITLE_BLOCK,
   DELETE_BLOCK,
   SWITCH_BLOCK,
   CHANGE_TEXT_STYLE,
@@ -82,7 +83,12 @@ import {
   setPreBlockInfo,
   changeBlockType,
   changeBlockDataType,
-  CHANGE_BLOCK_TYPE
+  CHANGE_BLOCK_TYPE,
+  addTitleBlock,
+  sliceText,
+  deleteTitleBlock,
+  TextContentsTypeList,
+  DELETE_TITLE_BLOCK
 } from "./utils";
 
 function initBlockStateHandler(
@@ -322,6 +328,45 @@ function addTextBlockHandler(
   });
 }
 
+function addTitleBlockHandler(
+  state: BlockState,
+  { 
+    payload: {
+      text, cursorStart, cursorEnd
+  }}: ReturnType<typeof addTitleBlock>
+): BlockState {
+  const [ front, end ] = sliceText(text, cursorStart, cursorEnd);
+
+  const title: string = front;
+
+  const newBlock = createBlockData({
+    position: "1",
+    type: "text",
+    styleType: "bk-p",
+    contents: [[end]]
+  })
+
+  const { blockList, tempData, modifyData } = addBlockInList(state.blockList, [newBlock], "1", false);
+
+  tempData.editingBlockId = "title";
+  tempData.pageInfo = state.pageInfo;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    pageInfo: updateObject<PageInfo, PageInfo>(state.pageInfo, {
+      title
+    }),
+    stagePage: null,
+    editingBlockId: newBlock.id,
+    tempBack: tempDataPush(state.tempBack, tempData),
+    modifyData: updateModifyData(state.modifyData, modifyData),
+    modifyPageInfo: {
+      title
+    },
+    isFetch: false
+  })
+}
+
 function deleteBlockHandler(
   state: BlockState,
   { payload: { removedBlockList, nextEditInfo } }: ReturnType<typeof deleteBlock>
@@ -372,27 +417,27 @@ function deleteTextBlockHandler(
     return state;
   }
 
-  const toBeDeletedBlock: BlockData = updateObject<BlockData, ModifyBlockData>(state.blockList[index], {});
+  const toBeDeletedBlock: BlockData = updateObject<BlockData>(state.blockList[index]);
   const editingBlockId: string = index? state.blockList[index - 1].id : state.blockList[0].id;
+
+  const stageBlock = state.stageBlock[0]?  
+      state.stageBlock.filter(data => data.id !== toBeDeletedBlock.id) 
+      : [];
 
   if(innerHTML) {
     if(index === 0) return state;
 
-    const result = removeTextBlockInList(state.blockList, index, index - 1, innerHTML);
+    const result = removeTextBlockInList(state.blockList.concat(), index, index - 1, innerHTML);
     
     if(!result) return state;
 
     const { blockList, tempData, modifyData } = result;
 
-    const stageBlock = state.stageBlock[0]?  
-      state.stageBlock.filter(data => data.id !== toBeDeletedBlock.id) 
-      : [];
-
     return updateObject<BlockState, BlockStateProps>(state, {
       blockList,
       editingBlockId,
       preBlockInfo: {
-        type: "text",
+        type: toBeDeletedBlock.type,
         payload: ["delete", textLength]
       },
       tempBack: tempDataPush(state.tempBack, tempData),
@@ -402,7 +447,7 @@ function deleteTextBlockHandler(
       isFetch: false
     });
 
-  } else if(!innerHTML) {
+  } else {
 
     const { 
       blockList,  
@@ -413,15 +458,72 @@ function deleteTextBlockHandler(
     return updateObject<BlockState, BlockStateProps>(state, {
       blockList,
       editingBlockId,
+      stageBlock,
       tempBack: tempDataPush(state.tempBack, tempData),
       tempFront: [],
       modifyData: updateModifyData(state.modifyData, modifyData),
       isFetch: false
     });
 
-  } else {
+  }
+}
+
+function deleteTitleBlockHandler(
+  state: BlockState,
+  { payload }: ReturnType<typeof deleteTitleBlock>
+): BlockState {
+  if(!state.blockList[1]) {
     return state;
   }
+
+  const toBeDeletedBlock: BlockData = updateObject(state.blockList[0]);
+  const stageBlock = state.stageBlock[0]?  
+      state.stageBlock.filter(data => data.id !== toBeDeletedBlock.id) 
+      : [];
+  
+  let pageInfo = state.pageInfo;
+  let modifyPageInfo = state.modifyPageInfo;
+  let preBlockInfo = state.preBlockInfo;
+
+  const { 
+    blockList,  
+    tempData,
+    modifyData
+  } = removeBlockInList(state.blockList.concat(), [state.blockList[0]]);
+
+  tempData.editingBlockId = toBeDeletedBlock.id;
+
+  if(payload) {
+    if(!TextContentsTypeList.includes(toBeDeletedBlock.type)) return state;
+    tempData.pageInfo = state.pageInfo;
+
+    pageInfo = updateObject<PageInfo, PageInfo>(state.pageInfo, {
+      title: `${state.pageInfo.title? state.pageInfo.title : ""}${payload}`
+    });
+
+    modifyPageInfo = state.modifyPageInfo? 
+      updateObject<ModifyPageInfoType, PageInfo>(state.modifyPageInfo, pageInfo) 
+      : pageInfo;
+
+    preBlockInfo = {
+      type: toBeDeletedBlock.type,
+      payload: ["delete", payload.length]
+    }
+  }
+  console.log(tempData);
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    editingBlockId: "title",
+    pageInfo,
+    stageBlock,
+    preBlockInfo,
+    stagePage: null,
+    tempBack: tempDataPush(state.tempBack, tempData),
+    tempFront: [],
+    modifyData: updateModifyData(state.modifyData, modifyData),
+    modifyPageInfo,
+    isFetch: false
+  });
 }
 
 function changeTextStyleHandler(
@@ -669,8 +771,10 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [CHANGE_BLOCK_CONTENTS]  : changeBlockContentsHandler,
   [ADD_BLOCK]              : addBlockHandler,
   [ADD_TEXT_BLOCK]         : addTextBlockHandler,
+  [ADD_TITLE_BLOCK]        : addTitleBlockHandler,
   [DELETE_BLOCK]           : deleteBlockHandler,
   [DELETE_TEXT_BLOCK]      : deleteTextBlockHandler,
+  [DELETE_TITLE_BLOCK]     : deleteTitleBlockHandler,
   [CHANGE_TEXT_STYLE]      : changeTextStyleHandler,
   [SWITCH_BLOCK]           : switchBlockHandler,
   [REVERT_BLOCK]           : revertBlockHandler,
