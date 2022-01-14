@@ -564,6 +564,9 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
   if(index === 0) return null;
 
   const containerBlockList = removedBlockList.filter((block => block.type === "container"));
+  const positionTempData = targetBlockList.map(block => setUpdateModifyDataOfBlock(block.id, {
+    position: block.position
+  }));
   const tempData: TempDataType = {
     create: [],
     update: []
@@ -596,6 +599,19 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
   if(result.tempData.update) {
     tempData.update?.push(...result.tempData.update);
   }
+
+  if(tempData.update) {
+    for(const { blockId, payload } of positionTempData) {
+      const index: number = tempData.update.findIndex(data => data.blockId === blockId);
+
+      if(index !== -1) {
+        tempData.update[index].payload = payload;
+      }
+    }
+  } else {
+    tempData.update = positionTempData;
+  }
+
   modifyData.push(...result.modifyData);
 
   return {
@@ -640,11 +656,11 @@ function switchBlockList(
   const result = changeBlockPosition(blockList, blockIdList, position);
   
   if(!result) return null;
-
+  
   if(result.tempData.update) {
     tempData.update = result.tempData.update;
   }
-
+  console.log("result", result);
   modifyData = modifyData.concat(result.modifyData);
   
   return {
@@ -678,19 +694,19 @@ function restoreBlock(blocks: BlockData[], restoreData: TempDataType): ResBlockU
 
     for(const data of restoreData.update) {
       const index = preBlockList.findIndex(blockFindInfex(data.blockId));
+      if(index !== -1) {
+        const payload: ModifyBlockData = {};
 
-      const payload: ModifyBlockData = {};
-
-      for(const [key, value] of Object.entries(preBlockList[index])) {
-        if(data.payload[key]) {
-          payload[key as keyof ModifyBlockData] = value;
+        for(const [key, value] of Object.entries(preBlockList[index])) {
+          if(data.payload[key]) {
+            payload[key as keyof ModifyBlockData] = value;
+          }
         }
+
+        tempData.update.push(createTempData<ModifyBlockData>(preBlockList[index].id, payload));
+        modifyData.push(setUpdateModifyDataOfBlock(preBlockList[index].id, data.payload));
+        preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
       }
-
-      tempData.update.push(createTempData<ModifyBlockData>(preBlockList[index].id, payload));
-      modifyData.push(setUpdateModifyDataOfBlock(preBlockList[index].id, data.payload));
-      preBlockList[index] = Object.assign({}, preBlockList[index], data.payload);
-
     }
   }
 

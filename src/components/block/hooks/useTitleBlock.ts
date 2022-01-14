@@ -152,7 +152,6 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
           if(preBlockInfo.type === "text") {
             if(preBlockInfo.payload[0] === "delete") {
               const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
-              console.log(blockContentsRef.current.innerText.length, preBlockInfo.payload,length);
               setSelectionRange(blockContentsRef.current, length, length);
             }
             onClearStateItem("preBlockInfo");
