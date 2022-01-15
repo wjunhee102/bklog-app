@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NotFoundPage from '../NotFoundPage';
-import BkPageSwitchComponent from './components/BkPageSwitchComponent';
+import BkPageContainer from './components/BkPageContainer';
 import { UseBkPageTypes } from './hooks/useBkPage';
 
 interface BklogPageRoutesProps {
@@ -13,8 +13,8 @@ const BkPageRoutes: React.FC<BklogPageRoutesProps> = ({
 }) => {
   return (
     <Routes>
-      <Route path="penname/:userInfo/*" element={<BkPageSwitchComponent type="penname" bkPageHooks={bkPageHooks} />} />
-      <Route path="id/:userInfo/*" element={<BkPageSwitchComponent type="id" bkPageHooks={bkPageHooks} />} />
+      <Route path="penname/:userInfo/*" element={<BkPageContainer type="penname" bkPageHooks={bkPageHooks} />} />
+      <Route path="id/:userInfo/*" element={<BkPageContainer type="id" bkPageHooks={bkPageHooks} />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

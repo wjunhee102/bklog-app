@@ -1,0 +1,21 @@
+.bk-page {
+  @apply w-screen h-screen relative overflow-hidden;
+
+  .bk-page-container {
+    @apply flex w-full h-full relative;
+
+    .left-area {
+      @apply relative w-auto h-full;
+    }
+
+    .right-area {
+      @apply relative w-full h-full;
+    }
+  }
+
+  .bk-page-overlay {
+    @apply w-full h-full absolute pointer-events-none;
+
+    z-index: 99;
+  }
+}

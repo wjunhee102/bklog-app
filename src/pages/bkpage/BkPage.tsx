@@ -4,6 +4,7 @@ import ErrorPopup from '../../components/base/popup/ErrorPopup';
 import useBkPageLogic from './hooks/useBkPageLogic';
 import BkPageRoutes from './BkPageRoutes';
 import useBkPage from './hooks/useBkPage';
+import './BkPage.scss';
 
 const BkPage: React.FC = () => {
 
@@ -16,9 +17,12 @@ const BkPage: React.FC = () => {
   } = useBkPageLogic(bkPageHooks);
 
   return (
-    <div className={classNames("bk-page", "h-auto")}>
+    <div className="bk-page">
       <BkPageRoutes bkPageHooks={bkPageHooks} />
-      <ErrorPopup message={errMessage} callback={handleCallback} toggle={errorToggle} />
+
+      <div className="bk-page-overlay">
+        <ErrorPopup message={errMessage} callback={handleCallback} toggle={errorToggle} />
+      </div>
     </div>
   );
 }
