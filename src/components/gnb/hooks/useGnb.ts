@@ -9,17 +9,11 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
   const navigate = useNavigate();
 
   const {
-    pageToggle,
-    onChangeToggle,
     loading,
     user,
     onSignOutUser,
     onAllReset
   } = useConnectStore;
-
-  const handleClickToggle = useCallback(() => {
-    onChangeToggle();
-  }, [onChangeToggle]);
 
   const handleClickUserMenu = useCallback(() => {
     setOnUserMenu(!onUserMenu);
@@ -39,26 +33,11 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
     navigate(to);
   }, [navigate]);
 
-  useEffect(() => {
-    console.log(user, loading, "gnb");
-  }, [user, loading]);
-
-  // useEffect(() => {
-  //   console.log(history);
-  //   const unblock = history.block('정말 떠나실건가요?');
-    
-  //   return () => {
-  //     unblock();
-  //   }
-  // }, [history]);
-
   return {
     onUserMenu,
     user,
     loading,
-    pageToggle,
     handleNavigate,
-    handleClickToggle,
     handleClickUserMenu,
     handleClickToggleFalse,
     handleClickSignOut

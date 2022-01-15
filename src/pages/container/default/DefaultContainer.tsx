@@ -6,7 +6,7 @@ import './DefaultContainer.scss';
 const DefaultContainer: React.FC = () => {
   return (
     <div className="default-page-container">
-      <Gnb />
+      <Gnb className="fixed" />
       <Outlet />
     </div>
   );

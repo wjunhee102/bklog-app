@@ -7,54 +7,34 @@ import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
 import { UseGnbConnectStoreType } from './hooks/useGnbConnectStore';
 import useGnb from './hooks/useGnb';
-// import useGnb from './hooks/useGnb';
+import './Gnb.scss';
 
 interface GnbComponentProps {
   useConnectStore: UseGnbConnectStoreType;
+  className?: string;
 }
 
 const GnbComponent: React.FC<GnbComponentProps> = ({
-  useConnectStore
+  useConnectStore,
+  className
 }) => {
 
   const {
     onUserMenu,
     user,
     loading,
-    pageToggle,
-    handleClickToggle,
     handleClickUserMenu,
     handleClickToggleFalse,
     handleClickSignOut,
     handleNavigate
   } = useGnb(useConnectStore);
 
-  // const {
-  //   onUserMenu,
-  //   user,
-  //   loading,
-  //   pageToggle,
-  //   handleClickToggle,
-  //   handleClickUserMenu,
-  //   handleClickToggleFalse,
-  //   handleClickSignOut,
-  //   handleNavigate
-  // } = useGnb(useConnectStore);
-
   return (
-    <nav className="bg-white dark:bg-black absolute left-0 top-0 z-10 shadow w-full">
+    <nav className={`gnb ${className? className : ""}`}>
       <div className="w-full pr-4 pl-1">
         <div className="flex items-center justify-between h-14">
         <div className="hidden md:block">
           <div className="flex items-center space-x-4">
-          <div className="flex-shrink-0">
-            <button 
-              className={classNames("w-12 h-12 text-xl rounded", {"text-white bg-purple-500 shadow": pageToggle}, {"text-gray-500 hover:text-purple-500": !pageToggle})}
-              onClick={handleClickToggle}
-            >
-              <FontAwesomeIcon icon={faBars} />
-            </button>
-          </div>
 
             <div className="ml-0 relative">
               <div>
@@ -75,9 +55,9 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
                       <div className="hidden md:block">
                         <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
             
-                          {/* <button 
+                          <button 
                             className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                            onClick={() => {handleNavigate("/auth/sign-in"); console.log(history)}}
+                            onClick={() => {handleNavigate("/auth/sign-in")}}
                           >
                             Sign in
                           </button>
@@ -87,10 +67,7 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
                             onClick={() => handleNavigate("/auth/sign-up")}
                           >
                             Sign up
-                          </button> */}
-
-                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-in">Sign In</Link>
-                          <Link className="hover:bg-purple-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium" to="/auth/sign-up">Sign up</Link>
+                          </button>
             
                         </div>
                       </div>
