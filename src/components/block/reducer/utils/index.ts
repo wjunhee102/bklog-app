@@ -313,6 +313,7 @@ export const setBlockList  = orderingBlockUtils.setBlockList;
 
 // block utils
 export const copyToNewObjectArray  = blockUtils.copyToNewObjectArray;
+export const createRawBlockData    = blockUtils.createRawBlockData;
 export const createBlockData       = blockUtils.createBlockData;
 export const resetToTargetPosition = blockUtils.resetToTargetPosition;
 export const reissueBlockId        = blockUtils.reissueBlockId;

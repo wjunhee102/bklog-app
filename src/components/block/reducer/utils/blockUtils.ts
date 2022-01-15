@@ -1,4 +1,4 @@
-import { BlockData, BlockTypes, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, TextContents } from '../../types';
+import { BlockData, BlockTypes, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, RawBlockData, TextContents } from '../../types';
 import { updateObject, StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData, TextContentsTypeList } from '.';
 import { Token } from '../../utils/token';
 
@@ -7,6 +7,7 @@ function copyToNewObjectArray<T = any>(array: T[]): T[] {
 }
 
 interface BlockDataProps<T = TextContents[]> {
+  index?: number; 
   position: string;
   id?: string;
   type?: BlockTypes;
@@ -14,6 +15,24 @@ interface BlockDataProps<T = TextContents[]> {
   parentId?: string;
   styles?: any;
   contents?: T
+}
+
+function createRawBlockData<T = TextContents[]>({
+  id,
+  position,
+  type,
+  styleType,
+  styles,
+  contents
+}): RawBlockData {
+  return {
+    position,
+    id: id? id : Token.getUUID(),
+    type: type? type : "text",
+    styleType: styleType? styleType : "bk-p",
+    contents: contents? contents : [],
+    styles: styles? styles : {}
+  }
 }
 
 function createBlockData<T = TextContents[]>({ 
@@ -25,7 +44,7 @@ function createBlockData<T = TextContents[]>({
   contents,
   id
 }: BlockDataProps<T>): BlockData {
-  return  {
+  return {
     index: 0,
     position,
     id: id? id : Token.getUUID(),
@@ -34,7 +53,7 @@ function createBlockData<T = TextContents[]>({
     parentId: parentId? parentId : "null",
     contents: contents? contents : [],
     styles: styles? styles : {}
-  };
+  }
 }
 
 function blockFindInfex(id: string) {
@@ -854,6 +873,7 @@ function updateBlockData(blocks: BlockData[], updatedData: ModifyBlockDataType) 
 
 const blockUtils = {
   copyToNewObjectArray,
+  createRawBlockData,
   createBlockData,
   resetToTargetPosition,
   reissueBlockId,

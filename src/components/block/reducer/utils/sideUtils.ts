@@ -1,4 +1,4 @@
-import { updateObject, TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps, PageInfo, removeTextBlockInList } from ".";
+import { updateObject, TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps, PageInfo, removeTextBlockInList, createRawBlockData } from ".";
 import { BlockData, RawBlockData, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, ModifyBlockDataType, BlockDataProps, ParamCreateModifyBlock, ParamModifyBlock, ParamDeleteModity } from "../../types";
 
 function tempDataPush(
@@ -67,10 +67,7 @@ function createModifyData<T = any>(
 }
 
 function setCreateModifyDataOfBlock(block: BlockData): ModifyData {
-  return createModifyData<RawBlockData>(CREATE, "block", block.id, updateObject(block, {
-    index: undefined,
-    parentId: undefined
-  }));
+  return createModifyData<RawBlockData>(CREATE, "block", block.id, createRawBlockData(block));
 }
 
 function setDeleteModifyDataOfBlock(blockId: string): ModifyData {
@@ -78,7 +75,10 @@ function setDeleteModifyDataOfBlock(blockId: string): ModifyData {
 }
 
 function setUpdateModifyDataOfBlock(blockId: string, payload: ModifyBlockData) {
-  return createModifyData<ModifyBlockData>(UPDATE, "block", blockId, payload);
+  return createModifyData<ModifyBlockData>(UPDATE, "block", blockId, updateObject(payload, {
+    index: undefined,
+    parentId: undefined
+  }));
 }
 
 function pushModifyDataList(modifyDataList: ModifyData[], newModifyDataList: ModifyData[]) {
@@ -102,13 +102,9 @@ function pushModifyDataList(modifyDataList: ModifyData[], newModifyDataList: Mod
         }
 
       } else if(modifyData.command === CREATE){
-        modifyData.payload.index = undefined;
 
         modifyDataList[index].command = CREATE;
-        modifyDataList[index].payload = updateObject(createBlockData(modifyData.payload), {
-          index: undefined,
-          parentId: undefined
-        });
+        modifyDataList[index].payload = createRawBlockData(modifyData.payload);
 
       } else {
         if(modifyData.payload) modifyDataList[index].payload = payload? Object.assign({}, payload, modifyData.payload) : modifyData.payload;
