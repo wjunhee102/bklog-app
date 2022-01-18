@@ -200,9 +200,9 @@ function specialCharacters(
   };
 }
 
-function parseHtmlContents(text:string):TextContents[] {
+function parseHtmlContents(text:string): TextContents[] {
 
-  const newContents: any[] = [];
+  const newContents: TextContents[] = [];
   const textLength: number = text.length;
 
   let saveToggle:boolean = true;

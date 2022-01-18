@@ -3,6 +3,7 @@ import {
   equalsArray, 
 } from '../reducer/utils/converter';
 import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
+import textBlockUtils from './textBlockUtils';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -18,7 +19,7 @@ const BACKGROUND_C      = "background-color:" as const;
 
 export const arrayUtils = { equalsArray };
 
-export function contentsElement(rawContents: any) {
+export function contentsElement(rawContents: TextContents): string {
   let text: string;
   let className:string | null = null;
   let styles:string | null = null;
@@ -65,8 +66,8 @@ export function contentsElement(rawContents: any) {
   return text;
 }
 
-export function createContentsElement(accumulator: string, rawContents: any, currentIndex: number):string {
-  return currentIndex === 1?  contentsElement(accumulator) + contentsElement(rawContents) : accumulator + contentsElement(rawContents);
+export function createContentsElement(accumulator: string, rawContents: TextContents): string {
+  return accumulator + contentsElement(rawContents);
 }
 
 export function createContentsText(accumulator: string, rawContents: any, currentIndex: number): string {
@@ -147,7 +148,12 @@ export function createBlockList(contentsList: string[]) {
   });
 }
 
-// export function pasteText(text: string): string | RawBlockData[] {
-//   const contents = divideText(text);
-//   return typeof contents !== "string"? createBlockList(contents) : contents;
-// }
+export interface KeyboardActionTable {
+  [P: string]: (e: React.KeyboardEvent<any>) => void;
+  defaultAction: (e: React.KeyboardEvent<any>) => void;
+  startAction?: (e: React.KeyboardEvent<any>) => boolean;
+  finallyAction?: (e: React.KeyboardEvent<any>) => void;
+}
+
+export const keyboardActionHandler = textBlockUtils.keyboardActionHandler;
+export const setCursorPoint        = textBlockUtils.setCursorPoint;
