@@ -34,13 +34,12 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
    // callback 
    const handleMouseDown = useCallback((e: React.MouseEvent) => {
-     console.log(`client(${e.clientX}, ${e.clientY}), page(${e.pageX}, ${e.pageY}), screen(${e.screenX}, ${e.screenY}) movement(${e.movementX}, ${e.movementY}) scroll(${window.scrollY})`, e)
-     dragRef.current?.setAttribute("style", `transform: translate(${e.screenX - 40}px, ${e.screenY - 70}px)`);
+     dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 30}px)`);
    }, [dragRef]);
  
    const handleMouseMove = useCallback((e: React.MouseEvent) => {
      if(isGrab) {
-       dragRef.current?.setAttribute("style", `transform: translate(${e.pageX - 40}px, ${e.pageY - 70}px)`);
+       dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 30}px)`);
      }
    }, [isGrab, dragRef]);
  

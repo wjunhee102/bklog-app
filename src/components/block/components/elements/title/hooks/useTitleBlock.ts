@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BlockData } from "../types";
-import { UseBlockType } from "./useBlock";
-import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../utils/selectionText';
-import { createBlockData, parseHtmlContents, sliceTextContents } from "../reducer/utils";
+import { BlockData } from "../../../../types";
+import { UseBlockType } from "../../../../hooks/useBlock";
+import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
+import useElementFocus from "../../../../hooks/useElementFocus";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   const [ editable, setEditable ] = useState<boolean>(true);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
+
+  const { handleElementFocus } = useElementFocus(blockContentsRef.current);
 
   const {
     cursorStart,
@@ -125,10 +127,6 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     }
   }, []);
 
-  const handleFocus = useCallback((element: any) => {
-    element.focus();
-  }, []);
-
   const isFocus = () => {
     moveEndPoint(blockContentsRef.current);
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
@@ -146,7 +144,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   useEffect(() => {
     if(editingBlockId === blockData.id) {
       if(blockContentsRef.current) {
-        handleFocus(blockContentsRef.current);
+        handleElementFocus();
 
         if(preBlockInfo) {
           if(preBlockInfo.type === "text") {
@@ -168,8 +166,8 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
 
   useEffect(() => {
     if(editingBlockId === blockData.id) {
-      if(blockContentsRef) {
-        handleFocus(blockContentsRef.current);
+      if(blockContentsRef.current) {
+        handleElementFocus();
         setSelectionRange(blockContentsRef.current, 0, 0);
       }
     }
@@ -179,7 +177,6 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     blockContentsRef,
     handleKeyUp,
     handleKeyPress,
-    handleFocus,
     handleBlur,
     handleMouseUp,
     isFocus,

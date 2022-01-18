@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripVertical, faPlus } from '@fortawesome/free-solid-svg-icons';
-import useBlockBase from "../../../hooks/useBlockBase";
+import useBlockBase from "./hooks/useBlockBase";
 import { BlockProps, ParentInfoType } from "../../Block";
 import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
@@ -117,28 +117,30 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
         "block-select-area",
         { selected:  useBlockReducer.state.isGrab }
       )}>
+        <div className="select-area-container">
 
-        <div className={classNames(
-          "area",
-          "rigth-drop-area",
-          { on: false }
-        )}>
-          <div className="box"></div>
-        </div>
+          <div className={classNames(
+            "area",
+            "rigth-drop-area",
+            { on: false }
+          )}>
+            <div className="box"></div>
+          </div>
 
-        <div 
-          className={classNames(
-            "area", 
-            "down-drop-area",
-            { on: down }
-          )}
-          onMouseEnter={handleSelectMouseEnter(downPosition, setDown)}
-          onMouseLeave={handleSelectMouseLeave(setDown)}
-          onMouseUp={handleSelectMouseUp()}
-        >
-          <div className="box"></div>
+          <div 
+            className={classNames(
+              "area", 
+              "down-drop-area",
+              { on: down }
+            )}
+            onMouseEnter={handleSelectMouseEnter(downPosition, setDown)}
+            onMouseLeave={handleSelectMouseLeave(setDown)}
+            onMouseUp={handleSelectMouseUp()}
+          >
+            <div className="box"></div>
+          </div>
+
         </div>
-        
       </div>
     </div>
   )

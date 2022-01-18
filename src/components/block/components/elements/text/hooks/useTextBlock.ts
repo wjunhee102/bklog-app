@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BlockData } from "../types";
-import { UseBlockType } from "./useBlock";
-import { contentsElement, copyInClipboard, createClipboardContentsText, createContentsElement } from '../utils';
-import { getSelectionStart,getSelectionEnd, setSelectionRange } from '../utils/selectionText';
-import { BaseProps } from "../components/zone/base/BaseBlockZone";
+import { BlockData } from "../../../../types";
+import { UseBlockType } from "../../../../hooks/useBlock";
+import { contentsElement, createContentsElement } from '../../../../utils';
+import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
+import { BaseProps } from "../../../zone/base/BaseBlockZone";
+import useElementFocus from "../../../../hooks/useElementFocus";
 
 function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   const [ editable, setEditable ]       = useState<boolean>(true);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
+
+  const { handleElementFocus } = useElementFocus<HTMLDivElement>(blockContentsRef.current);
 
   const {
     cursorStart,
@@ -60,29 +63,9 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         break;
 
       case "ArrowUp": 
-      // cursor가 앞으로 튐
-        e.preventDefault();
-        setCursorStart(0);
-        setCursorEnd(0);
-        setSelectionRange(e.target, 0, 0);
-
-        if(cursorStart === 0 && cursorEnd === 0) {
-          onChangeEditingId(blockData.index - 1);
-        } 
-        
         break;
 
       case "ArrowDown":
-        e.preventDefault();
-        const contentsLength = e.target.innerText.length;
-        setCursorStart(contentsLength);
-        setCursorEnd(contentsLength);
-        setSelectionRange(e.target, contentsLength, contentsLength);
-
-        if((cursorEnd && cursorStart) === e.target.innerText.length) {
-          onChangeEditingId(blockData.index + 1);
-        }
-        
         break;
 
       case " ":
@@ -120,24 +103,50 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
   }
 
   const handleKeyDown = (e: any) => {
-    if (e.key === "Backspace") {
-      const cursorStartPoint = getSelectionStart(e.target);
-      const cursorEndPoint   = getSelectionEnd(e.target);
-      
-      setCursorStart(cursorStartPoint);
-      setCursorEnd(cursorEndPoint);
-
-      if(cursorStartPoint === 0 && cursorEndPoint === 0) {
-        if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
-          const nextEditIndex = blockData.index - 1;
-          onDeleteBlock([blockData], nextEditIndex);
-        } else if(blockData.index !== 0) {
-          onDeleteTextBlock(blockData.index, e.target.innerHTML, e.target.innerText.length);
-        } else {
-          onDeleleTitleBlock(e.target.innerText);
-        }
+    switch(e.key) {
+      case "Backspace":
+        const cursorStartPoint = getSelectionStart(e.target);
+        const cursorEndPoint   = getSelectionEnd(e.target);
         
-      }
+        setCursorStart(cursorStartPoint);
+        setCursorEnd(cursorEndPoint);
+  
+        if(cursorStartPoint === 0 && cursorEndPoint === 0) {
+          if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
+            const nextEditIndex = blockData.index - 1;
+            onDeleteBlock([blockData], nextEditIndex);
+          } else if(blockData.index !== 0) {
+            onDeleteTextBlock(blockData.index, e.target.innerHTML, e.target.innerText.length);
+          } else {
+            onDeleleTitleBlock(e.target.innerText);
+          }
+          
+        }
+      break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        setCursorStart(0);
+        setCursorEnd(0);
+        setSelectionRange(e.target, 0, 0);
+
+        if(cursorStart === 0 && cursorEnd === 0) {
+          onChangeEditingId(blockData.index - 1);
+        } 
+        
+      break;
+
+      case "ArrowDown":
+        e.preventDefault();
+        const contentsLength = e.target.innerText.length;
+        setCursorStart(contentsLength);
+        setCursorEnd(contentsLength);
+        setSelectionRange(e.target, contentsLength, contentsLength);
+
+        if((cursorEnd && cursorStart) === e.target.innerText.length) {
+          onChangeEditingId(blockData.index + 1);
+        }
+      break;
 
     }
   }
@@ -182,10 +191,6 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     }
   }, []);
 
-  const handleFocus = useCallback((element: any) => {
-    element.focus();
-  }, []);
-
   const isFocus = () => {
     if(!styleToggle) {
       moveEndPoint(blockContentsRef.current);
@@ -194,10 +199,6 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     } 
 
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
-  }
-
-  const reBlockFocus = () => {
-    handleFocus(blockContentsRef.current);
   }
 
   useEffect(() => {
@@ -212,7 +213,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
   useEffect(() => {
     if(editingBlockId === blockData.id) {
       if(blockContentsRef.current) {
-        handleFocus(blockContentsRef.current);
+        handleElementFocus();
 
         if(preBlockInfo) {
           if(preBlockInfo.type === "text") {
@@ -249,7 +250,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
   useEffect(() => {
     if(editingBlockId === blockData.id) {
       if(blockContentsRef) {
-        handleFocus(blockContentsRef.current);
+        handleElementFocus();
         setSelectionRange(blockContentsRef.current, 0, 0);
       }
     }
@@ -272,7 +273,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     handleMouseUp,
     handleBlur,
     isFocus,
-    reBlockFocus,
+    handleElementFocus,
     editable,
     setEditable
   };

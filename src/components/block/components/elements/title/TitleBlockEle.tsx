@@ -1,5 +1,5 @@
 import React from 'react';
-import useTitleBlock from '../../../hooks/useTitleBlock';
+import useTitleBlock from './hooks/useTitleBlock';
 import { BlockProps } from '../../Block';
 import ContentEditableEle from '../../common/ContentEditableEle';
 

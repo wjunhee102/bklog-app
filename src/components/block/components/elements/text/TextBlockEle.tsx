@@ -1,5 +1,5 @@
 import React from 'react';
-import useTextBlock from '../../../hooks/useTextBlock';
+import useTextBlock from './hooks/useTextBlock';
 import { BlockProps } from '../../Block';
 import TextBlockActionMenuBar from './elements/action-menubar';
 import ContentEditableEle from '../../common/ContentEditableEle';
@@ -28,7 +28,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     handleMouseUp,
     handleBlur,
     isFocus,
-    reBlockFocus,
+    handleElementFocus,
     editable,
     setEditable
   } = useTextBlock(blockData, useBlockReducer, zoneProps);
@@ -58,7 +58,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
           blockData={blockData}
           startPosition={cursorStart}
           endPosition={cursorEnd}
-          reBlockFocus={reBlockFocus}
+          reBlockFocus={handleElementFocus}
           useBlockReducer={useBlockReducer}
         /> : null
       }
