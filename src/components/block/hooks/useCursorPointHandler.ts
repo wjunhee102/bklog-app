@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { checkInstanceOfHTMLElement } from "../utils";
 import { getSelectionEnd, getSelectionStart, setSelectionRange } from "../utils/selectionText";
 
@@ -18,23 +18,29 @@ function useCursorPointHandler<T extends HTMLElement = HTMLDivElement>({
   cursorEnd
 }: UseMoveCurSorPointProps<T>) {
 
-  const handleSetCursorPoint = useCallback(() => {
-    if(checkInstanceOfHTMLElement(element)) {
-      const getStartPosition = getSelectionStart(element);
-      const getEndPosition = getSelectionEnd(element);
-      setCursorStart(getStartPosition);
-      setCursorEnd(getEndPosition);
+  const cursorHandlers = useMemo(() => ({
+    handleSetCursorPoint: () => {
+      if(checkInstanceOfHTMLElement(element)) {
+        const getStartPosition = getSelectionStart(element);
+        const getEndPosition = getSelectionEnd(element);
+        setCursorStart(getStartPosition);
+        setCursorEnd(getEndPosition);
+      }
+    },
+    handleMoveToWantPoint: (start: number, end: number) => {
+      if(checkInstanceOfHTMLElement(element)) {
+        setSelectionRange(element, start, end);
+      }
+    },
+    handleMoveToEndPoint: () => {
+      if(checkInstanceOfHTMLElement(element)) {
+        const length = element.innerText.length;
+        setSelectionRange(element, length, length);
+        setCursorStart(length);
+        setCursorEnd(length);
+      }
     }
-  }, [element]);
-
-  const handleMoveToEndPoint = useCallback(() => {
-    if(checkInstanceOfHTMLElement(element)) {
-      const length = element.innerText.length;
-      setSelectionRange(element, length, length);
-      setCursorStart(length);
-      setCursorEnd(length);
-    }
-  }, [element]);
+  }), [element]);
 
   const handleRefreshCursorPoint = useCallback(() => {
     if(checkInstanceOfHTMLElement(element)) {
@@ -43,8 +49,7 @@ function useCursorPointHandler<T extends HTMLElement = HTMLDivElement>({
   }, [element, cursorStart, cursorEnd]);
 
   return {
-    handleSetCursorPoint,
-    handleMoveToEndPoint,
+    ...cursorHandlers,
     handleRefreshCursorPoint
   }
 }

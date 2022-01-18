@@ -3,14 +3,11 @@ import { BlockData } from "../../../../types";
 import { UseBlockType } from "../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
 import useElementFocus from "../../../../hooks/useElementFocus";
+import useMoveCursorPoint from "../../../../hooks/useCursorPointHandler";
+import useKeyboardActionHandler from "../../../../hooks/useKeyboardActionHandler";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
-  const [ editable, setEditable ] = useState<boolean>(true);
-
-  const blockContentsRef = useRef<HTMLDivElement>(null);
-
-  const { handleElementFocus } = useElementFocus(blockContentsRef.current);
-
+  
   const {
     cursorStart,
     cursorEnd,
@@ -22,100 +19,91 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
       editingBlockId,
     },
     onChangeEditingId,
-    onEditPageInfo,
     onAddTitleBlock,
     onEditPageTitle,
     onCommitPage,
     onClearStateItem
   } = useBlockReducer;
 
-   // keyboard methods text
-   const handleKeyUp = useCallback((e:any) => {
-    if(e.ctrlKey && e.key === "Meta") return;
-    
-    switch(e.key) {
+  const [ editable, setEditable ] = useState<boolean>(true);
 
-      case "Enter":
+  const blockContentsRef = useRef<HTMLDivElement>(null);
+
+  const { 
+    handleFocus, 
+    handleElementFocus 
+  } = useElementFocus(blockContentsRef.current);
+
+  const {
+    handleKeyUp,
+    handleKeyPress
+  } = useKeyboardActionHandler({
+    keyUp: {
+      startAction: (e: any) => {
+        if(e.ctrlKey && e.key === "Meta") return true;
+      },
+      defaultAction: (e: any) => {
+        onEditPageTitle(e.target.innerText);
+      },
+      finallyAction: (e: any) => {
+        setCursorStart(getSelectionStart(e.target));
+        setCursorEnd(getSelectionEnd(e.target));
+      },
+      ["Enter"]: (e: any) => {
         e.preventDefault();
-        break;
-
-      case "ArrowUp": 
-      // cursor가 앞으로 튐
+      },
+      ["ArrowUp"]: (e: any) => {
         e.preventDefault();
         setCursorStart(0);
         setCursorEnd(0);
         setSelectionRange(e.target, 0, 0);
-        
-        break;
-
-      case "ArrowDown":
+      },
+      ["ArrowDown"]: (e: any) => {
         e.preventDefault();
         const contentsLength = e.target.innerText.length;
         setCursorStart(contentsLength);
         setCursorEnd(contentsLength);
         setSelectionRange(e.target, contentsLength, contentsLength);
-
-        if((cursorEnd && cursorStart) === e.target.innerText.length) {
-          setCursorStart(0);
-          setCursorEnd(0);
-          onChangeEditingId(0);
-        }
-        
-        break;
-
-      case " ":
-        setCursorEnd(0);
-        onEditPageTitle(e.target.innerText);
-        onCommitPage();
-        break;
-
-      case "Backspace": 
+      },
+      ["Backspace"]: (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
           onEditPageTitle(e.target.innerText);
         } 
-
-        break;
-      
-      default:
+      },
+      [" "]: (e: any) => {
+        setCursorEnd(0);
         onEditPageTitle(e.target.innerText);
+        onCommitPage();
+      }
+    },
+    keyPress: {
+      defaultAction: (e: any) => {
+      },
+      ["Enter"]: (e: any) => {
+        e.preventDefault();
+        onAddTitleBlock(
+          e.target.innerText,
+          getSelectionStart(e.target),
+          getSelectionEnd(e.target)
+        );
+      }
     }
+  }, [blockData, cursorStart, cursorEnd]);
 
-    setCursorStart(getSelectionStart(e.target));
-    setCursorEnd(getSelectionEnd(e.target));
-
-  }, [blockData, cursorEnd, cursorStart]);
-
-  const handleKeyPress = (e: any) => {
-    if(e.key === "Enter") {
-      e.preventDefault();
-      onAddTitleBlock(
-        e.target.innerText,
-        getSelectionStart(e.target),
-        getSelectionEnd(e.target)
-      );
-    }
-  }
-
-  const moveEndPoint = useCallback((ele: any) => {
-    const length = ele.innerText.length;
-    setCursorStart(length);
-    setCursorEnd(length);
-    setSelectionRange(ele, length, length);
-  }, []);
-
-  const refreshPoint = useCallback((
-    ele:any, 
-    cursorStart: number, 
-    cursorEnd?: number | null
-    ) => {
-    setSelectionRange(ele, cursorStart, cursorEnd? cursorEnd : cursorStart);
-  }, []);
+  const {
+    handleSetCursorPoint,
+    handleMoveToEndPoint,
+    handleRefreshCursorPoint
+  } = useMoveCursorPoint({
+    element: blockContentsRef.current,
+    setCursorStart,
+    setCursorEnd,
+    cursorStart,
+    cursorEnd
+  });
 
   const handleMouseUp = () => {
-    const getStartPosition = getSelectionStart(blockContentsRef.current);
-    const getEndPosition = getSelectionEnd(blockContentsRef.current);
-    setCursorStart(getStartPosition);
-    setCursorEnd(getEndPosition);
+    handleSetCursorPoint();
   };
 
   const handleBlur = useCallback((e: any) => {
@@ -128,7 +116,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   }, []);
 
   const isFocus = () => {
-    moveEndPoint(blockContentsRef.current);
+    handleMoveToEndPoint();
     if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
   }
 
@@ -136,7 +124,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     const focused = document.activeElement;
     
     if((cursorStart | cursorEnd) && blockContentsRef && focused === blockContentsRef.current) {
-      refreshPoint(blockContentsRef.current, cursorStart, cursorEnd);
+      handleRefreshCursorPoint();
     }
 
   }, [blockData.contents]);
@@ -165,13 +153,8 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   }, [isGrab]);
 
   useEffect(() => {
-    if(editingBlockId === blockData.id) {
-      if(blockContentsRef.current) {
-        handleElementFocus();
-        setSelectionRange(blockContentsRef.current, 0, 0);
-      }
-    }
-  }, [blockContentsRef]);
+    if(editingBlockId === blockData.id) handleFocus(blockContentsRef.current);
+  }, []);
 
   return {
     blockContentsRef,
@@ -180,7 +163,6 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
     handleBlur,
     handleMouseUp,
     isFocus,
-    moveEndPoint,
     editable
   }
 }

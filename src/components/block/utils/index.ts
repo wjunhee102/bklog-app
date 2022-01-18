@@ -148,9 +148,13 @@ export function createBlockList(contentsList: string[]) {
   });
 }
 
+export function checkInstanceOfHTMLElement<T = HTMLElement>(element: T) {
+  return element instanceof HTMLElement;
+}
+
 export interface KeyboardActionTable {
   [P: string]: (e: React.KeyboardEvent<any>) => void;
-  defaultAction: (e: React.KeyboardEvent<any>) => void;
+  defaultAction?: (e: React.KeyboardEvent<any>) => void;
   startAction?: (e: React.KeyboardEvent<any>) => boolean;
   finallyAction?: (e: React.KeyboardEvent<any>) => void;
 }

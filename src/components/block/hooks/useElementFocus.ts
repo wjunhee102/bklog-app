@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
-function handleFocus<T = HTMLElement>(element: T | null) {
+function handleFocus<T extends HTMLElement = HTMLDivElement>(element: T | null) {
   if(element instanceof HTMLElement) {
     element.focus();
   }
 }
 
-function useElementFocus<T = HTMLElement>(element: T) {
+function useElementFocus<T extends HTMLElement = HTMLDivElement>(element: T) {
 
   const handleElementFocus = useCallback(() => {
     handleFocus(element);
