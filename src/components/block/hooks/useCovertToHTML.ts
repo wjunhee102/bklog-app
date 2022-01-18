@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { TextContents } from "../types";
 import { createContentsElement } from "../utils";
 
-function useCreateMarkup(contents: TextContents[] | string) {
+function useConvertToHTML(contents: TextContents[] | string) {
   return useMemo(() => {
     let htmlElement: string;
 
@@ -18,4 +18,4 @@ function useCreateMarkup(contents: TextContents[] | string) {
   }, [contents]);
 }
 
-export default useCreateMarkup;
+export default useConvertToHTML;
