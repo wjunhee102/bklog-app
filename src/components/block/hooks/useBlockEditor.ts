@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { UseBlockType } from './useBlock';
+import useKeyboardActionHandler from './useKeyboardActionHandler';
 
 function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false) {
 
@@ -55,36 +56,33 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
    const handleMouseLeave = useCallback(() => {
      onResetEditorState(false);
    }, [onResetEditorState]);
- 
-   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-      onChangeEditorState('isPress', true);
 
-     if((e.metaKey || e.ctrlKey)) {
-       if(!stageBlock[0]) {
-         switch(e.key) {
-           case "z":
-             e.preventDefault();
-             onRevertBlock();
-           break;
-     
-           case "y":
-             e.preventDefault();
-             onRevertBlock(true);
-           break;
-     
-           default: 
-         }
-       } 
- 
-       if(tempClipData[0]) {
- 
-       }
-     }
-   }, [onRevertBlock, stageBlock, tempClipData]);
+   const handleKeyDown = useKeyboardActionHandler({
+       startAction: (e: any) => {
+        onChangeEditorState('isPress', true);
 
-  const handleKeyUp = useCallback((e: React.KeyboardEvent) => {
-    onChangeEditorState('isPress', false);
-  }, [onChangeEditorState])
+        if((e.metaKey || e.ctrlKey) && !stageBlock[0]) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      ["z"]: (e: any) => {
+        e.preventDefault();
+        onRevertBlock();
+      },
+      ["y"]: (e: any) =>  {
+        e.preventDefault();
+        onRevertBlock(true);
+      }
+   }, [stageBlock, tempClipData]);
+
+  const handleKeyUp = useKeyboardActionHandler({
+    startAction: (e: any) => {
+      onChangeEditorState('isPress', false);
+      return true;
+    }
+  }, []);
 
    // idle
    const handleOnIdle = useCallback(() => {

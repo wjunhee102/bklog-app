@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BlockData } from "../../../../types";
 import { UseBlockType } from "../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
@@ -6,7 +6,7 @@ import { BaseProps } from "../../../zone/base/BaseBlockZone";
 import useElementFocus from "../../../../hooks/useElementFocus";
 import useMoveCursorPoint from "../../../../hooks/useCursorPointHandler";
 import useConvertToHTML from "../../../../hooks/useCovertToHTML";
-import useKeyboardActionHandler from "../../../../hooks/useKeyboardActionHandler";
+import useKeyboardActionHandlerAll from "../../../../hooks/useKeyboardActionHandlerAll";
 
 function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   
@@ -52,7 +52,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     handleKeyDown,
     handleKeyPress,
     handleKeyUp
-  } = useKeyboardActionHandler({
+  } = useKeyboardActionHandlerAll({
     keyUp: {
       startAction: (e: any) => {
         if(e.ctrlKey && e.key === "Meta") return true;

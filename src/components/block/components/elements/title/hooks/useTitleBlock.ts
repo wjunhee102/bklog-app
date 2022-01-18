@@ -4,7 +4,7 @@ import { UseBlockType } from "../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
 import useElementFocus from "../../../../hooks/useElementFocus";
 import useMoveCursorPoint from "../../../../hooks/useCursorPointHandler";
-import useKeyboardActionHandler from "../../../../hooks/useKeyboardActionHandler";
+import useKeyboardActionHandlerAll from "../../../../hooks/useKeyboardActionHandlerAll";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   
@@ -37,7 +37,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   const {
     handleKeyUp,
     handleKeyPress
-  } = useKeyboardActionHandler({
+  } = useKeyboardActionHandlerAll({
     keyUp: {
       startAction: (e: any) => {
         if(e.ctrlKey && e.key === "Meta") return true;
