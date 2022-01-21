@@ -3,6 +3,7 @@ import { UseBlockType } from "../../hooks/useBlock";
 import { BlockData } from "../../types";
 import TextBlock from "./elements/text";
 import TitleBlock from "./elements/title";
+import './Block.scss';
 
 export type ParentInfoType = {
   type: string;

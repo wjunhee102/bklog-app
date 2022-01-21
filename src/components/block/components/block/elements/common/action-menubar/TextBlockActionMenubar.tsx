@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { UseBlockType } from '../../../../../../hooks/useBlock';
-import { BlockData, BlockTypes, ContentType, OrderType } from '../../../../../../types';
-import { findTextStyle } from '../../../../../../utils';
+import { UseBlockType } from '../../../../../hooks/useBlock';
+import { BlockData, BlockTypes, ContentType, OrderType } from '../../../../../types';
+import { findTextStyle } from '../../../../../utils';
 import ColorActionMenu from './color-action-menu/ColorActionMenu';
 import BlockStyleActionMenu from './block-action-menu/BlockStyleActionMenu';
 import TextStyleToggleMenu from './text-style-toggle-menu/TextStyleToggleMenu';
-import BlockMenuBar from '../../../../../common/menubar';
+import BlockMenuBar from '../../../../common/menubar';
 import './TextBlockActionMenubar.scss';
 import classNames from 'classnames';
 import BlockTypeActionMenu from './block-action-menu/BlockTypeActionMenu';

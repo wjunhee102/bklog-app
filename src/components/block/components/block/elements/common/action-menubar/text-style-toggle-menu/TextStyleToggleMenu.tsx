@@ -1,6 +1,6 @@
 import React from 'react';
-import { ContentType, OrderType } from '../../../../../../../types';
-import { arrayFindIndex } from '../../../../../../../utils';
+import { ContentType, OrderType } from '../../../../../../types';
+import { arrayFindIndex } from '../../../../../../utils';
 import ActionMenuBox from '../common/ActionMenuBox';
 import TextStyleToggle from './TextStyleToggle';
 
