@@ -5,7 +5,8 @@ import useBlockBase from "./hooks/useBlockBase";
 import { BlockProps, ParentInfoType } from "../../Block";
 import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
-import BlockUtilsMenu from "../../common/block-utils-menu";
+import BlockUtilsMenu from "../../../common/block-utils-menu";
+import './BaseBlockZone.scss';
 
 export interface BaseProps {
   selected: boolean;
@@ -53,12 +54,12 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     >
       {/*block-utils */}
       <div 
-        className="contents-area"
+        className="contents-area block-contents-area"
         onMouseOver={handleContentsHover}
         onMouseLeave={handleContentsMouseLeave}
       >
 
-        <div className="block-utils">
+        <div className="block-utils-menubar">
 
           <div className="block-add-button-box">
 
@@ -110,8 +111,8 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
 
       {
         /**
-         * block-cover
-         */
+          * block-cover
+        */
       }
       <div className={classNames(
         "block-select-area",
@@ -121,7 +122,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
 
           <div className={classNames(
             "area",
-            "rigth-drop-area",
+            "right-drop-area",
             { on: false }
           )}>
             <div className="box"></div>

@@ -42,7 +42,7 @@ const ContentEditableEle = React.forwardRef<HTMLDivElement, ContentEditableEle>(
   
   return (
     <div 
-      className={`bk-contentEditable ${className? className : ""}`}
+      className={`bk-contentEditable bk-text-contents ${className? className : ""}`}
       ref={ref}
       onKeyUp={onKeyUp}
       onKeyPress={onKeyPress}

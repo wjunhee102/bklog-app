@@ -2,7 +2,7 @@ import React from 'react';
 import useTextBlock from './hooks/useTextBlock';
 import { BlockProps } from '../../Block';
 import TextBlockActionMenuBar from './elements/action-menubar';
-import ContentEditableEle from '../../common/ContentEditableEle';
+import ContentEditableEle from '../../../common/ContentEditableEle';
 import { BaseProps } from '../../zone/base/BaseBlockZone';
 
 interface TextBlockEleProps extends BlockProps {
@@ -29,13 +29,12 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     handleBlur,
     isFocus,
     handleElementFocus,
-    editable,
-    setEditable
+    editable
   } = useTextBlock(blockData, useBlockReducer, zoneProps);
 
   return (
     <div 
-      className="text-block"
+      className="text-block block"
       onBlur={handleBlur}
     > 
       <ContentEditableEle

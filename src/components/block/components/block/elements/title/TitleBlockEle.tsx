@@ -1,7 +1,7 @@
 import React from 'react';
 import useTitleBlock from './hooks/useTitleBlock';
 import { BlockProps } from '../../Block';
-import ContentEditableEle from '../../common/ContentEditableEle';
+import ContentEditableEle from '../../../common/ContentEditableEle';
 
 const TitleBlockEle: React.FC<BlockProps> = ({
   blockData,
@@ -20,7 +20,7 @@ const TitleBlockEle: React.FC<BlockProps> = ({
 
   return (
     <div
-      className="title-block"
+      className="title-block block"
       onBlur={handleBlur}
     >
       <ContentEditableEle 

@@ -1,0 +1,233 @@
+.block-zone {
+  position: relative;
+  width: 100%;
+  padding: 3px 2px;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+
+&.selected {
+  opacity: 0.2;
+}
+
+  .block-contents-area {
+    position: relative;
+    padding-left: 44px;
+    padding-right: 10px;
+    box-sizing: border-box;
+
+    .block-utils-menubar {
+      position: absolute;
+      height: 24px;
+      left: 0px;
+      top: calc(50% - 12px);
+      justify-content: space-between;
+      font-size: 14px;
+      color: rgba(55, 53, 47, 0.3);
+      font-weight: 300;
+      z-index: 20;
+      display: none;
+
+      .block-add-button-box {
+
+        .block-add-button {
+          width: 24px;
+          height: 24px;
+          text-align: center;
+          line-height: 24px;
+          border-radius: 3px;
+
+          &:hover {
+            background-color: rgba(187, 187, 187, 0.315);
+          }
+        }
+
+      }
+
+      .block-type-change-button-box {
+        position: relative;
+
+        .block-type-change-button {
+          width: 20px;
+          height: 24px;
+          text-align: center;
+          line-height: 24px;
+          border-radius: 3px;
+
+          &:hover {
+            background-color: rgba(187, 187, 187, 0.315);
+          }
+        }
+
+      }
+
+    }
+
+  &:hover {
+    .block-utils-menubar {
+      display: flex;
+    }
+  }
+
+    .block {
+
+    &.text-block, &.title-block {
+      position: relative;
+      max-width: 1488px;
+      width: 100%;
+      height: auto;
+      margin-top: 1px;
+      margin-bottom: 1px;
+      box-sizing: border-box;
+      opacity: 1;
+      transition: all 0.3s ease-in-out;
+    }
+
+      .bk-text-contents {
+        font-size: inherit;
+        line-height: 1.2;
+        height: auto;
+        color : inherit;
+        width: 100%;
+        word-break: break-all;
+        white-space: normal;
+        box-sizing: border-box;
+
+      &[contenteditable=true] {
+        position: relative;
+        &:focus {
+          outline: none;
+        }
+
+        &:empty:hover:before {
+          color: rgba(255, 255, 255, 0.3);
+          content: attr(placeholder);
+          display: block; /* For Firefox */
+          font-size: 1em;
+        }
+
+      }
+
+      &.bk-title {
+        font: {
+          size: 2.25em;
+          weight: 600;
+        }
+      }
+      
+      &.bk-h1 {
+        font: {
+          size: 2em;
+          weight: 500;
+        }
+      }
+      
+      &.bk-h2 {
+        font: {
+          size: 1.75em;
+          weight: 500;
+        } 
+      }
+      
+      &.bk-h3 {
+        font: {
+          size: 1.5em;
+          weight: 500;
+        } 
+      }
+      
+      &.bk-h4 {
+        font: {
+          size: 1.25em;
+          weight: 500;
+        } 
+      }
+      
+      &.bk-p {
+        font-size: 1em;
+        line-height: 1.5;
+      }
+
+        a {
+          cursor: pointer;
+        }
+
+      }
+
+      .bk-style-toggles {
+        display: block;
+
+        .bk-textStyleToggle {
+          width: 20px;
+        }
+
+        .bk-colorStyleToggle {
+          width: 50px;
+        }
+      }
+
+      .bk-textStyleToggle.del{
+        background-color: rgb(36, 142, 230);
+        color: rgb(224, 196, 36);
+      }
+
+    }
+
+  }
+
+  .block-select-area {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 0px;
+    box-sizing: border-box;
+    padding-left: 44px;
+
+  &.selected {
+    z-index: 15;
+  }
+
+    .select-area-container {
+      position: relative;
+      width: 100%;
+
+      .area {
+        position: absolute;
+        z-index: 18;
+        box-sizing: content-box;
+
+      &.right-drop-area {
+
+      }
+
+      &.down-drop-area {
+        width: 100%;
+        left: 0px;
+        bottom: 0px;
+        height: 5px;
+  
+      &.on {
+        padding: 4px 0;
+        bottom: -4px;
+      }
+
+      }
+
+        .box {
+          width: 100%;
+          height: 100%;
+        }
+
+      }
+
+      .on {
+        .box {
+          background-color: rgba(163, 203, 255, 0.5);
+        }
+      }
+
+    }
+
+  }
+
+}

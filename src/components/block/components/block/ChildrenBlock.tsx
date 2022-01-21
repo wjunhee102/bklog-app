@@ -1,6 +1,6 @@
 import React from "react";
-import { UseBlockType } from "../hooks/useBlock";
-import { BlockData } from "../types";
+import { UseBlockType } from "../../hooks/useBlock";
+import { BlockData } from "../../types";
 import Block, { ParentInfoType } from "./Block";
 
 interface ChildrenBlockProps {

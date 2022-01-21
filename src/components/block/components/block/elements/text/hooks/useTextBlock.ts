@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BlockData } from "../../../../types";
-import { UseBlockType } from "../../../../hooks/useBlock";
-import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
+import { BlockData } from "../../../../../types";
+import { UseBlockType } from "../../../../../hooks/useBlock";
+import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
-import useElementFocus from "../../../../hooks/useElementFocus";
-import useMoveCursorPoint from "../../../../hooks/useCursorPointHandler";
-import useConvertToHTML from "../../../../hooks/useCovertToHTML";
-import useKeyboardActionHandlerAll from "../../../../hooks/useKeyboardActionHandlerAll";
+import useElementFocus from "../../../../../hooks/useElementFocus";
+import useMoveCursorPoint from "../../../../../hooks/useCursorPointHandler";
+import useConvertToHTML from "../../../../../hooks/useCovertToHTML";
+import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
 
 function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   

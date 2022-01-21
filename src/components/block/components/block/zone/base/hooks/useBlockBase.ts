@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ParentInfoType } from "../../../Block";
-import { createBlockData } from "../../../../reducer/utils";
-import { BlockData } from "../../../../types";
-import { UseBlockType } from "../../../../hooks/useBlock";
+import { createBlockData } from "../../../../../reducer/utils";
+import { BlockData } from "../../../../../types";
+import { UseBlockType } from "../../../../../hooks/useBlock";
 
 const convertArg = (arg: any[]): string => {
   if(arg.length === 1) return `${arg[0]}`;

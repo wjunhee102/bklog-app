@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BlockData } from "../../../../types";
-import { UseBlockType } from "../../../../hooks/useBlock";
-import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../utils/selectionText';
-import useElementFocus from "../../../../hooks/useElementFocus";
-import useMoveCursorPoint from "../../../../hooks/useCursorPointHandler";
-import useKeyboardActionHandlerAll from "../../../../hooks/useKeyboardActionHandlerAll";
+import { BlockData } from "../../../../../types";
+import { UseBlockType } from "../../../../../hooks/useBlock";
+import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
+import useElementFocus from "../../../../../hooks/useElementFocus";
+import useMoveCursorPoint from "../../../../../hooks/useCursorPointHandler";
+import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
 
 function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   
