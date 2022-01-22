@@ -65,7 +65,7 @@ function useBlock() {
 
   const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
-  const titleBlock: BlockData | null = useMemo(() => state.pageInfo.title? createPageTitleBlockData(state.pageInfo.title) : null, [state.pageInfo.title]);
+  const titleBlock: BlockData | null = useMemo(() => createPageTitleBlockData(state.pageInfo.title? state.pageInfo.title : ""), [state.pageInfo.title]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 

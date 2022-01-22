@@ -1,6 +1,6 @@
 .block {
 
-  &.text-block, &.title-block {
+  &.text-block, &.title-block, &.numbered-block, &.bulleted-block {
     position: relative;
     max-width: 1488px;
     width: 100%;

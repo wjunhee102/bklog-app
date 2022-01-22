@@ -10,12 +10,21 @@ export type UUID = ReturnType<typeof Token.getUUID>
  * block types
  */
 
-export type BlockTypes = "text" 
-  | "todo"
-  | "title"
-  | "numbered" 
-  | "bulleted" 
-  | "container"
+export const BLOCK_TEXT          = "text" as const;
+export const BLOCK_TODO          = "todo" as const;
+export const BLOCK_SELECTED_TODO = "selected-todo" as const;
+export const BLOCK_TITLE         = "title" as const;
+export const BLOCK_NUMBERED      = "numbered" as const;
+export const BLOCK_BULLETED      = "bulleted" as const;
+export const BLOCK_CONTAINER     = "container" as const;
+
+export type BlockTypes = typeof BLOCK_TEXT
+  | typeof BLOCK_TODO
+  | typeof BLOCK_SELECTED_TODO
+  | typeof BLOCK_TITLE
+  | typeof BLOCK_BULLETED
+  | typeof BLOCK_NUMBERED
+  | typeof BLOCK_CONTAINER
 ; 
 
 /**
@@ -115,7 +124,7 @@ export interface ModifyPageInfoType {
 
 export interface ModifyBklogDataType {
   modifyPageInfo?: ModifyPageInfoType;
-  modifyBlockData?: ModifyBlockType;
+  modifyBlockData?: ModifyBlockDataType;
 }
 
 export interface ModifyBlockData<T = any, P = any> {

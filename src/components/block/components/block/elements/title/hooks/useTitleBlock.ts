@@ -49,37 +49,39 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
         setCursorStart(getSelectionStart(e.target));
         setCursorEnd(getSelectionEnd(e.target));
       },
-      ["Enter"]: (e: any) => {
+      "Enter": (e: any) => {
         e.preventDefault();
       },
-      ["ArrowUp"]: (e: any) => {
+      "ArrowUp": (e: any) => {
         e.preventDefault();
         setCursorStart(0);
         setCursorEnd(0);
         setSelectionRange(e.target, 0, 0);
       },
-      ["ArrowDown"]: (e: any) => {
+      "ArrowDown": (e: any) => {
         e.preventDefault();
         const contentsLength = e.target.innerText.length;
         setCursorStart(contentsLength);
         setCursorEnd(contentsLength);
         setSelectionRange(e.target, contentsLength, contentsLength);
+
+        if((cursorEnd && cursorStart) === e.target.innerText.length) {
+          onChangeEditingId(0);
+        }
       },
-      ["Backspace"]: (e: any) =>{
+      "Backspace": (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
           onEditPageTitle(e.target.innerText);
         } 
       },
-      [" "]: (e: any) => {
+      " ": (e: any) => {
         setCursorEnd(0);
         onEditPageTitle(e.target.innerText);
         onCommitPage();
       }
     },
     keyPress: {
-      defaultAction: (e: any) => {
-      },
-      ["Enter"]: (e: any) => {
+      "Enter": (e: any) => {
         e.preventDefault();
         onAddTitleBlock(
           e.target.innerText,

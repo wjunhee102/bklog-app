@@ -64,26 +64,26 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         setCursorStart(getSelectionStart(e.target));
         setCursorEnd(getSelectionEnd(e.target));
       },
-      ["Enter"]: (e: any) => {
+      "Enter": (e: any) => {
         e.preventDefault();
       },
-      ["ArrowUp"]: (e: any) => {
+      "ArrowUp": (e: any) => {
       },
-      ["ArrowDown"]: (e: any) => {
+      "ArrowDown": (e: any) => {
       },
-      ["Backspace"]: (e: any) =>{
+      "Backspace": (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
           onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
         } 
       },
-      [" "]: (e: any) => {
+      " ": (e: any) => {
         setCursorEnd(0);
         onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
         onCommitBlock();
       }
     },
     keyPress: {
-      ["Enter"]: (e: any) => {
+      "Enter": (e: any) => {
         if(e.key === "Enter") {
           e.preventDefault();
           onAddTextBlock(
@@ -96,7 +96,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
       }
     },
     keyDown: {
-      ["Backspace"]: (e: any) => {
+      "Backspace": (e: any) => {
         const cursorStartPoint = getSelectionStart(e.target);
         const cursorEndPoint   = getSelectionEnd(e.target);
         
@@ -115,7 +115,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
           
         }
       },
-      ["ArrowUp"]: (e: any) => {
+      "ArrowUp": (e: any) => {
         e.preventDefault();
         setCursorStart(0);
         setCursorEnd(0);
@@ -125,7 +125,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
           onChangeEditingId(blockData.index - 1);
         } 
       },
-      ["ArrowDown"]: (e: any) => {
+      "ArrowDown": (e: any) => {
         e.preventDefault();
         const contentsLength = e.target.innerText.length;
         setCursorStart(contentsLength);
