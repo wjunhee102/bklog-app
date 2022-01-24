@@ -12,7 +12,7 @@
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "gh-pages": "^3.1.0",
-    "node-sass": "^4.0.0",
+    "node-sass": "^6.0.0",
     "qs": "^6.10.1",
     "react": "^17.0.2",
     "react-cookie": "^4.0.3",
