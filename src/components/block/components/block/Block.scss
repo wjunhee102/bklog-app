@@ -18,8 +18,7 @@
     height: auto;
     color : inherit;
     width: 100%;
-    word-break: break-all;
-    white-space: normal;
+    white-space: pre-wrap;
     box-sizing: border-box;
 
   &[contenteditable=true] {
