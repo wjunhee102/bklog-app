@@ -2,6 +2,7 @@ import { useRef, useCallback, useEffect } from "react";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { updateObject } from "../../../../../reducer/utils";
 import { BlockData } from "../../../../../types";
+import { getBodyInfo } from "../../../../../utils";
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
 
 function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
@@ -26,7 +27,11 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
     if(!firstPointRef.current) return;
     e.preventDefault();
 
-    const width: number = widthRef.current + (e.clientX - firstPointRef.current)/30;
+    let reducedAreaRatio = 50 - ((getBodyInfo().width/100) >> 0); 
+    
+    if(reducedAreaRatio <= 10) reducedAreaRatio = 10;
+
+    const width: number = widthRef.current + (e.clientX - firstPointRef.current)/reducedAreaRatio;
 
     if(width < 100) {
       widthRef.current = 100;
@@ -35,7 +40,7 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
     } else {
       widthRef.current = width;
     }
-
+  
     imageBlockContainer.current.style.width = `${widthRef.current}px`;
   }, [firstPointRef]);
 
