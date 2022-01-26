@@ -304,7 +304,7 @@ function parseHtmlContents(text:string): TextContents[] {
   
           break;
         
-        // chrome 번역기 동작시 font 태그가 주입될때 오작동 방지
+        // chrome 번역기 동작시 font 태그가 삽입될때 오작동 방지
         case FONT:
           if(!saveToggle) {
             if(text[i - 1] === "<") {
@@ -452,19 +452,6 @@ export function equalsArray(aryA: any[], aryB: any[]): boolean {
 
   return targetBList.length? false : true;
 }
-
-// export function arrayFindIndex2(array: any[], factor: any): number {
-//   const JSONFactor = JSON.stringify(factor[0]);
-//   console.log(JSONFactor, factor);
-
-//   for(let i = 0; i < array.length; i++) {
-//     const JSONArray = JSON.stringify(array[i][0]);
-//     if(JSONArray === JSONFactor) {
-//       return i;
-//     }
-//   }
-//   return -1;
-// }
 
 export function arrayFindIndex(array: any[], factor: any[]): number {
   for(let i = 0; i < array.length; i++) {
