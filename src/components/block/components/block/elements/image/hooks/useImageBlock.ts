@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { updateObject } from "../../../../../reducer/utils";
 import { BlockData } from "../../../../../types";
@@ -9,14 +9,17 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
   const {
     onEditBlock
   } = useBlockReducer;
+  
+  const [ direction, setDirection ] = useState<boolean>(false);
 
   const imageBlockContainer = useRef<HTMLDivElement>(null);
   const widthRef = useRef<number>(0);
   const firstPointRef = useRef<number>(0);
   
-  const handleResizeOn = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleResizeOn = useCallback((directionValue: boolean) => (e: React.MouseEvent<HTMLDivElement>) => {
     
     firstPointRef.current = e.clientX;
+    setDirection(directionValue);
 
     if(!widthRef.current) {
       widthRef.current = imageBlockContainer.current.clientWidth;
@@ -31,8 +34,9 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
     
     if(reducedAreaRatio <= 10) reducedAreaRatio = 10;
 
-    const width: number = widthRef.current + (e.clientX - firstPointRef.current)/reducedAreaRatio;
-
+    const movingDistance = direction? e.clientX - firstPointRef.current : firstPointRef.current - e.clientX;
+    const width: number = widthRef.current + movingDistance/reducedAreaRatio;
+ 
     if(width < 100) {
       widthRef.current = 100;
     } else if(width > 900) {  
@@ -42,7 +46,7 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
     }
   
     imageBlockContainer.current.style.width = `${widthRef.current}px`;
-  }, [firstPointRef]);
+  }, [firstPointRef, direction]);
 
 
   const handleResizeOff = useCallback((e) => {

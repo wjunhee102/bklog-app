@@ -43,14 +43,14 @@ const ImageBlockEle: React.FC<ImageBlockEleProps> = ({
         <div className="image-block-overlay">
           <div 
             className="image-block-resizebar leftbar"
-            onMouseDown={handleResizeOn}
+            onMouseDown={handleResizeOn(false)}
           >
             <div className="vertical-bar"></div>
           </div>
 
           <div 
             className="image-block-resizebar rightbar"
-            onMouseDown={handleResizeOn}
+            onMouseDown={handleResizeOn(true)}
           >
             <div className="vertical-bar"></div>
           </div>
