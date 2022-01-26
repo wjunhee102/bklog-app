@@ -46,9 +46,6 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
 
     widthRef.current = widthRef.current >> 0;
 
-    /*
-      reducer edit
-    */
     onEditBlock(
       blockData.index, { 
         styles: updateObject(blockData.styles, { width: widthRef.current })
