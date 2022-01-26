@@ -54,11 +54,11 @@ function useBlock() {
   const cursor = useRef<CursorType>({ start: 0, end: 0 });
 
   const setCursorStart = useCallback((point: number) => { 
-    cursor.current.start = point 
+    cursor.current.start = point; 
   }, [cursor.current]);
 
   const setCursorEnd = useCallback((point: number) => { 
-    cursor.current.end = point 
+    cursor.current.end = point; 
   }, [cursor.current]);
 
   // state
