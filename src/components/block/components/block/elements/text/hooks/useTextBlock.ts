@@ -23,9 +23,9 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
       editingBlockId,
     },    
     onChangeEditingId,
-    onEditBlock,
+    onEditTextBlock,
     onAddTextBlock,
-    onCommitBlock,
+    onCommitTextBlock,
     onDeleteBlock,
     onDeleteTextBlock,
     onDeleleTitleBlock,
@@ -58,7 +58,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         if(e.ctrlKey && e.key === "Meta") return true;
       },
       defaultAction: (e: any) => {
-        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+        onEditTextBlock(blockData.id, blockData.index, e.target.innerHTML);
       },
       finallyAction: (e: any) => {
         setCursorStart(getSelectionStart(e.target));
@@ -73,13 +73,13 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
       },
       "Backspace": (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
-          onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
+          onEditTextBlock(blockData.id, blockData.index, e.target.innerHTML);
         } 
       },
       " ": (e: any) => {
         setCursorEnd(0);
-        onEditBlock(blockData.id, blockData.index, e.target.innerHTML);
-        onCommitBlock();
+        onEditTextBlock(blockData.id, blockData.index, e.target.innerHTML);
+        onCommitTextBlock();
       }
     },
     keyPress: {
@@ -169,7 +169,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     if(e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
       setCursorStart(0);
       setCursorEnd(0);
-      onCommitBlock();
+      onCommitTextBlock();
       onChangeEditingId();
     }
   }, []);

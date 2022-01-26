@@ -19,7 +19,7 @@ import {
   switchBlockList,
   BlockStateProps,
   revertBlock,
-  COMMIT_BLOCK, 
+  COMMIT_TEXT_BLOCK, 
   ADD_BLOCK, 
   ADD_TITLE_BLOCK,
   DELETE_BLOCK,
@@ -27,10 +27,10 @@ import {
   CHANGE_TEXT_STYLE,
   REVERT_BLOCK,
   CHANGE_EDITOR_STATE,
-  EDIT_BLOCK,
+  EDIT_TEXT_BLOCK,
   CHANGE_TARGET_POSITION,
   addToStage,
-  editBlock,
+  editTextBlock,
   changeTargetPosition,
   changeEditingId,
   CHANGE_EDITING_ID,
@@ -39,7 +39,7 @@ import {
   SET_TEMPCLIP,
   EDITOR_STATE_RESET,
   resetEditorState,
-  commitBlock,
+  commitTextBlock,
   changeFetchState,
   CHANGE_FETCH_STATE,
   changeStyleType,
@@ -88,7 +88,10 @@ import {
   sliceText,
   deleteTitleBlock,
   TextContentsTypeList,
-  DELETE_TITLE_BLOCK
+  DELETE_TITLE_BLOCK,
+  editBlock,
+  updateBlockDataProps,
+  EDIT_BLOCK
 } from "./utils";
 
 function initBlockStateHandler(
@@ -147,9 +150,9 @@ function changeEditingIdHandler(
   })
 }
 
-function editBlockHandler(
+function editTextBlockHandler(
   state: BlockState, 
-  { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editBlock>
+  { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editTextBlock>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
     stageBlock: addToStage(state.stageBlock, blockId, blockIndex, contents)
@@ -169,6 +172,28 @@ function editPageTitleHandler(
   });
 }
 
+function editBlockHandler(
+  state: BlockState,
+  { payload: {
+    blockInfo, blockDataProps
+  } }: ReturnType<typeof editBlock>
+): BlockState {
+  const result = updateBlockDataProps(state.blockList, blockInfo, blockDataProps);
+
+  if(!result) return state;
+
+  const { blockList, modifyData, tempData } = result;
+
+  tempData.editingBlockId = state.editingBlockId;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    isFetch: true,
+    tempBack: tempDataPush(state.tempBack, tempData),
+    modifyData: updateModifyData(state.modifyData, modifyData)
+  });
+}
+
 function editPageInfoHandler(
   state: BlockState,
   { payload }: ReturnType<typeof editPageInfo>
@@ -179,9 +204,9 @@ function editPageInfoHandler(
 }
 
 // 원래 isFetch true
-function commitBlockHandler(
+function commitTextBlockHandler(
   state: BlockState,
-  action: ReturnType<typeof commitBlock>
+  action: ReturnType<typeof commitTextBlock>
 ): BlockState {
   if(!state.stageBlock[0]) return state;
 
@@ -677,21 +702,20 @@ function changeStyleTypeHandler(
 ): BlockState {
   const result = changeBlockStyleType(state.blockList, blockInfo, styleType);
 
-  if(!result) {
-    return state;
-  } else {
-    const { blockList, modifyData, tempData } = result;
-    
-    tempData.editingBlockId = state.editingBlockId;
+  if(!result) return state;
 
-    return updateObject<BlockState, BlockStateProps>(state, {
-      blockList,
-      isFetch: true,
-      tempBack: tempDataPush(state.tempBack, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData)
-    })
-  }
+  const { blockList, modifyData, tempData } = result;
+  
+  tempData.editingBlockId = state.editingBlockId;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    isFetch: true,
+    tempBack: tempDataPush(state.tempBack, tempData),
+    modifyData: updateModifyData(state.modifyData, modifyData)
+  });
 }
+
 
 function changeBlockTypeHandler(
   state: BlockState,
@@ -765,8 +789,9 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [RESET_BLOCK]            : resetBlockHandler,
   [CHANGE_EDITING_ID]      : changeEditingIdHandler,
   [EDIT_BLOCK]             : editBlockHandler,
+  [EDIT_TEXT_BLOCK]        : editTextBlockHandler,
   [EDIT_PAGE_TITLE]        : editPageTitleHandler,
-  [COMMIT_BLOCK]           : commitBlockHandler,
+  [COMMIT_TEXT_BLOCK]      : commitTextBlockHandler,
   [COMMIT_PAGE]            : commitPageHandler,
   [CHANGE_BLOCK_CONTENTS]  : changeBlockContentsHandler,
   [ADD_BLOCK]              : addBlockHandler,

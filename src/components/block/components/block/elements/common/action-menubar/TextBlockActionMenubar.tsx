@@ -52,7 +52,7 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
 }) => {
   const {
     onChangeTextStyle,
-    onCommitBlock,
+    onCommitTextBlock,
     onChangeStyleType,
     onChangeBlockType
   } = useBlockReducer;
@@ -60,7 +60,7 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
   const [ currentMenuName, setCurrentMenuName ] = useState<MenuName>("not");
 
   const onStyleChange = (contentType: ContentType, toggle: OrderType) => {
-    onCommitBlock();
+    onCommitTextBlock();
     onChangeTextStyle(
       index, 
       contentType,

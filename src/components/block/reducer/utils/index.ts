@@ -164,7 +164,8 @@ export const ADD_BLOCK              = 'ADD_BLOCK' as const;
 export const ADD_TEXT_BLOCK         = 'ADD_TEXT_BLOCK' as const;
 export const ADD_TITLE_BLOCK        = 'ADD_TITLE_BLOCK' as const;
 export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
-export const COMMIT_BLOCK           = 'COMMIT_BLOCK' as const;
+export const EDIT_TEXT_BLOCK        = 'EDIT_TEXT_BLOCK' as const;
+export const COMMIT_TEXT_BLOCK      = 'COMMIT_TEXT_BLOCK' as const;
 export const COMMIT_PAGE            = 'COMMIT_PAGE' as const;
 export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
 export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
@@ -197,7 +198,8 @@ export type BLOCK_ACTION_TYPES =
   | typeof ADD_TEXT_BLOCK
   | typeof ADD_TITLE_BLOCK
   | typeof EDIT_BLOCK
-  | typeof COMMIT_BLOCK
+  | typeof EDIT_TEXT_BLOCK
+  | typeof COMMIT_TEXT_BLOCK
   | typeof CHANGE_BLOCK_CONTENTS
   | typeof DELETE_BLOCK
   | typeof DELETE_TEXT_BLOCK
@@ -232,7 +234,8 @@ export const addTextBlock         = actionBlock.addTextBlock;
 export const addTitleBlock        = actionBlock.addTitleBlock;
 export const changeEditingId      = actionBlock.changeEditingId;
 export const editBlock            = actionBlock.editBlock;
-export const commitBlock          = actionBlock.commitBlock;
+export const editTextBlock        = actionBlock.editTextBlock;
+export const commitTextBlock      = actionBlock.commitTextBlock;
 export const commitPage           = actionBlock.commitPage;
 export const changeBlockContents  = actionBlock.changeBlockContents;
 export const deleteBlock          = actionBlock.deleteBlock;
@@ -265,7 +268,8 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof addTitleBlock>
   | ReturnType<typeof changeEditingId>
   | ReturnType<typeof editBlock>
-  | ReturnType<typeof commitBlock>
+  | ReturnType<typeof editTextBlock>
+  | ReturnType<typeof commitTextBlock>
   | ReturnType<typeof changeBlockContents>
   | ReturnType<typeof deleteBlock>
   | ReturnType<typeof deleteTextBlock>
@@ -318,6 +322,7 @@ export const createBlockData       = blockUtils.createBlockData;
 export const resetToTargetPosition = blockUtils.resetToTargetPosition;
 export const reissueBlockId        = blockUtils.reissueBlockId;
 export const updateBlockContents   = blockUtils.updateBlockContents;
+export const updateBlockDataProps  = blockUtils.updateBlockDataProps;
 export const changeBlockTextStyle  = blockUtils.changeBlockTextStyle;
 export const addToStage            = blockUtils.addToStage;
 export const addBlockInList        = blockUtils.addBlockInList;

@@ -6,7 +6,6 @@ import { BlockProps, ParentInfoType } from "../../Block";
 import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
 import BlockUtilsMenu from "../../../common/block-utils-menu";
-import './BaseBlockZone.scss';
 
 export interface BaseProps {
   selected: boolean;

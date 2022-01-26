@@ -1,3 +1,7 @@
+@import '../components/block/Block.scss';
+@import '../components/block/zone/base/BaseBlockZone.scss';
+@import '../components//block//elements/image/ImageBlock.scss';
+
 @keyframes initBlock {
   0% {
     background-color: transparent;
@@ -13,27 +17,50 @@
 }
 
 .blur-bg {
-  @apply bg-opacity-70 bg-white;
   backdrop-filter: saturate(180%) blur(10px);
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .block-editor {
-  @apply items-center w-full text-gray-700 h-full;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: rgb(51, 65, 85);
+  overflow: visible;
 
-  .drag-elements {
-    position: absolute;
-    opacity: 1;
+  .block-overlay {
+    position: fixed;
+    width: 0px;
+    height: 0px;
     left: 0px;
     top: 0px;
-    cursor: grab;
-    // width: 100%;
-    // height: 30px;
-    // // background-color: rgba(255, 255, 255, 1);
-    // background-color: #f0f;
-    // z-index: 20;
+  
+    .block-overlay-container {
+      background-color: transparent;
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      left: 0px;
+      top: 0px;
+      z-index: 999;
+      pointer-events: none;
 
-    &.hidden {
-      display: none;
+      .drag-elements {
+        position: absolute;
+        opacity: 1;
+        left: 0px;
+        top: 0px;
+        cursor: grab;
+        // width: 100%;
+        // height: 30px;
+        // // background-color: rgba(255, 255, 255, 1);
+        // background-color: #f0f;
+        // z-index: 20;
+    
+        &.hidden {
+          display: none;
+        }
+      }
     }
   }
 
@@ -49,277 +76,70 @@
 }
 
 .block-container-outer {
-  @apply w-full h-full;
+  @apply bg-white dark:bg-gray-800 w-full h-full overflow-auto box-border py-14; 
+
+  .cover {
+    width: 100%;
+    height: 25vh;
+    overflow: hidden;
+    position: relative;
+
+    img {
+      position: absolute;
+      left: 0px;
+      top: -10vh;
+      width: 100%;
+      height: auto;
+    }
+  }
 }
 
 .block-container {
-  @apply bg-white pt-8 m-auto h-auto w-auto relative;
+  @apply bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100;
 
+  width: 100%;
+  height: auto;
   max-width: 1500px;
-  width: auto;
-  margin-left: -44px;
-  flex-shrink: 0;
-  flex-grow: 1;
-  max-width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
   font-size: 16px;
   line-height: 1.5;
-  // padding-left: calc(96px + env(safe-area-inset-left));
-  // padding-right: calc(96px + env(safe-area-inset-right));
-  padding-bottom: 30vh;
   margin: 0 auto;
-  box-sizing: content-box;
+  box-sizing: border-box;
 
-  &.not-drag {
+&.not-drag {
 
-    * {
+  * {
+    // -ms-user-select: none; 
+    // -moz-user-select: -moz-none; 
+    // -khtml-user-select: none; 
+    // user-select: none;
+    
+    cursor: grab;
+    &::selection {
+      background-color: transparent;
+    }
+  }
+
+
+  .block-zone {
+    div {
       // -ms-user-select: none; 
       // -moz-user-select: -moz-none; 
       // -khtml-user-select: none; 
       // user-select: none;
-      
-      cursor: grab;
-      &::selection {
-        background-color: transparent;
-      }
     }
-
-
-    .block-zone {
-      div {
-        // -ms-user-select: none; 
-        // -moz-user-select: -moz-none; 
-        // -khtml-user-select: none; 
-        // user-select: none;
-      }
-    }
-
-    // user-select: auto;
-
-  }
-}
-
-.cover {
-  height: 25vh;
-  background-color: lightcoral;
-}
-
-.block-zone {
-  position: relative;
-  padding: 3px 2px;
-  opacity: 1;
-  transition: all 0.3s ease-in-out;
-
-  .contents-area {
-    position: relative;
-
-    .block-utils {
-      position: absolute;
-      height: 24px;
-      left: 0px;
-      top: calc(50% - 12px);
-      justify-content: space-between;
-      font-size: 14px;
-      color: rgba(55, 53, 47, 0.3);
-      font-weight: 300;
-      z-index: 20;
-      display: none;
-
-      .block-add-button {
-        width: 24px;
-        height: 24px;
-        text-align: center;
-        line-height: 24px;
-        border-radius: 3px;
-      }
-      
-      .block-add-button:hover {
-        background-color: rgba(187, 187, 187, 0.315);
-      }
-
-      .block-type-change-button-box {
-        @apply relative;
-
-        .block-type-change-button {
-          width: 20px;
-          height: 24px;
-          text-align: center;
-          line-height: 24px;
-          border-radius: 3px;
-        }
-        
-        .block-type-change-button:hover {
-          background-color: rgba(187, 187, 187, 0.315);
-        }
-
-      }
-
-    }
-
-    &:hover {
-      .block-utils {
-        display: flex;
-      }
-    }
-
   }
 
-  .block-select-area {
-    position: absolute;
-    left: 44px;
-    bottom: 0px;
+  // user-select: auto;
+
+}
+
+  .block-title-box {
     width: 100%;
-    height: 0px;
-
-    &.selected {
-      z-index: 15;
-      // height: 100%;
-      // background-color: rgba(163, 203, 255, 0.24);
-    }
-
-    .area {
-      position: absolute;
-      z-index: 18;
-      box-sizing: content-box;
-
-      .box {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    .on {
-      .box {
-        background-color: rgba(163, 203, 255, 0.5);
-      }
-    }
-
-    .right-drop-area {
-
-    }
-
-    .down-drop-area {
-      width: 100%;
-      left: 0px;
-      bottom: 0px;
-      height: 5px;
-
-      &.on {
-        padding: 4px 0;
-        bottom: -4px;
-      }
-    }
-  }
-
-  &.selected {
-    opacity: 0.2;
-  }
-}
-
-.block-zone {
-  .contents-area {
-    .text-block, .title-block {
-      position: relative;
-      // max-width: 1488px;
-      width: 100%;
-      height: auto;
-      margin-top: 1px;
-      margin-bottom: 1px;
-      padding-left: 44px;
-      opacity: 1;
-      transition: all 0.3s ease-in-out;
-
-      .bk-contentEditable {
-        font-size: inherit;
-        line-height: 1.2;
-        color : inherit;
-        width: 1024px;
-        word-wrap:break-word;
-        white-space: pre-wrap;
-        box-sizing: border-box;
-
-        &[contenteditable=true] {
-
-          &:focus {
-            outline: none;
-          }
-        }
-
-        &[contenteditable=true]:empty:hover:before{
-          color: rgba(255, 255, 255, 0.3);
-          content: attr(placeholder);
-          display: block; /* For Firefox */
-          font-size: 1em;
-        }
-
-        &.bk-title {
-          font: {
-            size: 2.25em;
-            weight: 600;
-          }
-        }
-      
-        &.bk-h1 {
-          font: {
-            size: 2em;
-            weight: 500;
-          }
-        }
-        
-        &.bk-h2 {
-          font: {
-            size: 1.75em;
-            weight: 500;
-          } 
-        }
-        
-        &.bk-h3 {
-          font: {
-            size: 1.5em;
-            weight: 500;
-          } 
-        }
-        
-        &.bk-h4 {
-          font: {
-            size: 1.25em;
-            weight: 500;
-          } 
-        }
-        
-        &.bk-p {
-          font-size: 1em;
-          line-height: 1.5;
-        }
-  
-        a {
-          cursor: pointer;
-        }
-
-        span {
-          box-sizing: border-box;
-          display: inline-block;
-        }
-      } 
-
-      .bk-style-toggles {
-        display: block;
-
-        .bk-textStyleToggle {
-          width: 20px;
-        }
-
-        .bk-colorStyleToggle {
-          width: 50px;
-        }
-      }
-
-      .bk-textStyleToggle.del{
-        background-color: rgb(36, 142, 230);
-        color: rgb(224, 196, 36);
-      }
-    }
+    height: auto;
+    padding: 20px 0px;
+    margin: 30px 0px;
   }
 }

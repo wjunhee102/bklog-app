@@ -2,7 +2,6 @@ import React from "react";
 import { UseBlockType } from "../../hooks/useBlock";
 import { BlockData } from "../../types";
 import BlockTable from './BlockTable';
-import './Block.scss';
 
 export type ParentInfoType = {
   type: string;

@@ -19,7 +19,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
     initBlock,
     setCursorStart,
     setCursorEnd,
-    onCommitBlock,
+    onCommitTextBlock,
     onCommitPage,
     onResetEditorState,
     onRevertBlock,
@@ -86,11 +86,11 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
    // idle
    const handleOnIdle = useCallback(() => {
-    if(stageBlock[0]) onCommitBlock();
+    if(stageBlock[0]) onCommitTextBlock();
     if(stagePage) onCommitPage();
     onResetEditorState(true);
     onChangeFetchState(true);
-  }, [stageBlock, stagePage, onCommitBlock, onCommitPage]);
+  }, [stageBlock, stagePage, onCommitTextBlock, onCommitPage]);
 
   const { getLastActiveTime } = useIdleTimer({
     timeout: 10 * 60 * 1,

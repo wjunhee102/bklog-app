@@ -18,12 +18,12 @@ const buttonList: ButtonProps[] = [
   {
     title: "머리말",
     value: "bk-h2",
-    IconComponent: <img src="/img/header1.png" alt=""/>
+    IconComponent: <img src="/img/header2.png" alt=""/>
   },
   {
     title: "부 머리말",
     value: "bk-h3",
-    IconComponent: <img src="/img/header1.png" alt=""/>
+    IconComponent: <img src="/img/header3.png" alt=""/>
   }
 ]
 

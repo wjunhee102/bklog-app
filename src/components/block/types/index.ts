@@ -17,6 +17,7 @@ export const BLOCK_TITLE         = "title" as const;
 export const BLOCK_NUMBERED      = "numbered" as const;
 export const BLOCK_BULLETED      = "bulleted" as const;
 export const BLOCK_CONTAINER     = "container" as const;
+export const BLOCK_IMAGE         = "image" as const;
 
 export type BlockTypes = typeof BLOCK_TEXT
   | typeof BLOCK_TODO
@@ -25,6 +26,7 @@ export type BlockTypes = typeof BLOCK_TEXT
   | typeof BLOCK_BULLETED
   | typeof BLOCK_NUMBERED
   | typeof BLOCK_CONTAINER
+  | typeof BLOCK_IMAGE
 ; 
 
 /**
@@ -38,6 +40,18 @@ export type ContentType = ["b"]
   | ["bc", string];
 
 export type TextContents = [string] | [string, ContentType[]];
+
+
+/**
+ * image block types
+ */
+export type ImageStyles = {
+  width: string;
+}
+
+export type ImageContents = {
+  url: string;
+}
 
 
 /**

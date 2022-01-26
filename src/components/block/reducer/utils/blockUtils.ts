@@ -8,7 +8,7 @@ function copyToNewObjectArray<T = any>(array: T[]): T[] {
 
 interface BlockDataProps<T = TextContents[]> {
   index?: number; 
-  position: string;
+  position?: string;
   id?: string;
   type?: BlockTypes;
   styleType?: string;
@@ -230,25 +230,69 @@ function changeBlockStyleType(
 
   if(!blockDataList[blockIndex]) return null;
   
-  const blocks = blockDataList.concat();
+  const copiedBlockDataList = copyToNewObjectArray(blockDataList);
   const tempData: TempDataType = { update: [] };
   const modifyData: ModifyData[] = [];
 
   tempData.update?.push({
-    blockId: blocks[blockIndex].id,
+    blockId: copiedBlockDataList[blockIndex].id,
     payload: {
-      styleType: blocks[blockIndex].styleType
+      styleType: copiedBlockDataList[blockIndex].styleType
     }
   });
 
-  blocks[blockIndex].styleType = styleType;
+  copiedBlockDataList[blockIndex].styleType = styleType;
 
-  modifyData.push(setUpdateModifyDataOfBlock(blocks[blockIndex].id, {
+  modifyData.push(setUpdateModifyDataOfBlock(copiedBlockDataList[blockIndex].id, {
     styleType
   }));
 
   return {
-    blockList: blocks,
+    blockList: copiedBlockDataList,
+    tempData,
+    modifyData
+  }
+}
+
+/**
+ * 
+ * @param blockDataList 
+ * @param blockInfo 
+ * @param blockDataProps 
+ * @returns 
+ */
+function updateBlockDataProps(
+  blockDataList: BlockData[],
+  blockInfo: string | number,
+  blockDataProps: BlockDataProps
+): ResBlockUtils | null {
+  const blockIndex = typeof blockInfo === "number"? 
+    blockInfo 
+    : blockDataList.findIndex(blockFindInfex(blockInfo)); 
+
+  if(!blockDataList[blockIndex]) return null;
+
+  const copiedBlockDataList = copyToNewObjectArray(blockDataList);
+  const tempData: TempDataType = { update: [] };
+  const modifyData: ModifyData[] = [];
+
+  let preBlockDataProps: BlockDataProps<any> = {}; 
+
+  for(const key in blockDataProps) {
+    preBlockDataProps[key] = blockDataList[blockIndex][key];
+  }
+
+  tempData.update?.push({
+    blockId: blockDataList[blockIndex].id,
+    payload: preBlockDataProps
+  });
+
+  copiedBlockDataList[blockIndex] = updateObject(blockDataList[blockIndex], blockDataProps);
+
+  modifyData.push(setUpdateModifyDataOfBlock(copiedBlockDataList[blockIndex].id, blockDataProps));
+
+  return {
+    blockList: copiedBlockDataList,
     tempData,
     modifyData
   }
@@ -271,25 +315,25 @@ function changeBlockDataType(
 
   if(!blockDataList[blockIndex]) return null;
   
-  const blocks = blockDataList.concat();
+  const copiedBlockDataList =  copyToNewObjectArray(blockDataList);
   const tempData: TempDataType = { update: [] };
   const modifyData: ModifyData[] = [];
 
   tempData.update?.push({
-    blockId: blocks[blockIndex].id,
+    blockId: copiedBlockDataList[blockIndex].id,
     payload: {
-      type: blocks[blockIndex].type
+      type: copiedBlockDataList[blockIndex].type
     }
   });
 
-  blocks[blockIndex].type = type;
+  copiedBlockDataList[blockIndex].type = type;
 
-  modifyData.push(setUpdateModifyDataOfBlock(blocks[blockIndex].id, {
+  modifyData.push(setUpdateModifyDataOfBlock(copiedBlockDataList[blockIndex].id, {
     type
   }));
 
   return {
-    blockList: blocks,
+    blockList: copiedBlockDataList,
     tempData,
     modifyData
   }
@@ -879,6 +923,7 @@ const blockUtils = {
   reissueBlockId,
   addToStage,
   updateBlockContents,
+  updateBlockDataProps,
   changeBlockTextStyle,
   addBlockInList,
   removeBlockInList,

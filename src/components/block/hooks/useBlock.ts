@@ -1,17 +1,17 @@
 import { useCallback, useMemo, useReducer, useRef } from 'react';
-import { BlockTypes, ModifyBlockDataType } from '../types';
+import { BlockDataProps, BlockTypes, ModifyBlockDataType } from '../types';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
   SetBlockDataList, 
   setBlockList, 
   addBlock, 
-  commitBlock, 
+  commitTextBlock, 
   deleteBlock, 
   changeTextStyle, 
   OrderType, 
   switchBlock, 
   revertBlock, 
-  editBlock, 
+  editTextBlock, 
   changeEditingId,
   changeEditorState,
   changeTargetPosition,
@@ -38,7 +38,8 @@ import {
   setPreBlockInfo,
   changeBlockType,
   addTitleBlock,
-  deleteTitleBlock
+  deleteTitleBlock,
+  editBlock
 } from '../reducer/utils';
 import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
 
@@ -82,12 +83,16 @@ function useBlock() {
     dispatch(changeEditingId(nextEditInfo));
   }, [dispatch]);
 
-  const onEditBlock = useCallback((blockId: string, blockIndex: number, contents: string) => {
-    dispatch(editBlock(blockId, blockIndex, contents));
+  const onEditBlock = useCallback((blockInfo: string | number, blockDataProps: BlockDataProps) => {
+    dispatch(editBlock(blockInfo, blockDataProps));
   }, [dispatch]);
 
-  const onCommitBlock = useCallback(() => {
-    dispatch(commitBlock());
+  const onEditTextBlock = useCallback((blockId: string, blockIndex: number, contents: string) => {
+    dispatch(editTextBlock(blockId, blockIndex, contents));
+  }, [dispatch]);
+
+  const onCommitTextBlock = useCallback(() => {
+    dispatch(commitTextBlock());
   }, [dispatch]);
 
   const onCommitPage  = useCallback(() => {
@@ -216,12 +221,13 @@ function useBlock() {
     state, 
     initBlock,
     titleBlock,
-    onEditBlock,
     blockLength,
+    onEditBlock,
+    onEditTextBlock,
     onInitBlockState,
     onChangeEditorState,
     onChangeEditingId,
-    onCommitBlock,
+    onCommitTextBlock,
     onCommitPage,
     onChangeBlockContents,
     onAddBlock,
@@ -245,7 +251,7 @@ function useBlock() {
     onEditPageTitle,
     onClearStateItem,
     onEditPageInfo
-  };
+  }
 }
 
 export type UseBlockType = ReturnType<typeof useBlock>;

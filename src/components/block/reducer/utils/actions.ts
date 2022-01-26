@@ -2,7 +2,7 @@ import {
   OrderType,
   RESET_BLOCK, 
   ADD_BLOCK, 
-  COMMIT_BLOCK, 
+  COMMIT_TEXT_BLOCK, 
   DELETE_BLOCK, 
   UPDATE_BLOCK, 
   CHANGE_TEXT_STYLE, 
@@ -11,7 +11,7 @@ import {
   SET_CLIPBOARD,
   SET_TEMPCLIP,
   TEST_CLIPBOARD,
-  EDIT_BLOCK,
+  EDIT_TEXT_BLOCK,
   CHANGE_EDITING_ID,
   CHANGE_EDITOR_STATE,
   CHANGE_TARGET_POSITION,
@@ -34,9 +34,10 @@ import {
   SET_PREBLOCKINFO,
   CHANGE_BLOCK_TYPE,
   ADD_TITLE_BLOCK,
-  DELETE_TITLE_BLOCK
+  DELETE_TITLE_BLOCK,
+  EDIT_BLOCK
 } from ".";
-import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType, BlockTypes } from "../../types";
+import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType, BlockTypes, BlockDataProps } from "../../types";
 
 function initBlockState(rawBlockData: RawBlockData[]) {
   return {
@@ -106,9 +107,19 @@ function changeEditingId(nextEditInfo?: string | number) {
   }
 }
 
-function editBlock(blockId: string, blockIndex: number, contents: string) {
+function editBlock(blockInfo: string | number, blockDataProps: BlockDataProps) {
   return {
     type: EDIT_BLOCK,
+    payload: {
+      blockInfo,    
+      blockDataProps
+    }
+  }
+}
+
+function editTextBlock(blockId: string, blockIndex: number, contents: string) {
+  return {
+    type: EDIT_TEXT_BLOCK,
     payload: {
       blockId,
       blockIndex,
@@ -117,9 +128,9 @@ function editBlock(blockId: string, blockIndex: number, contents: string) {
   }
 }
 
-function commitBlock() {
+function commitTextBlock() {
   return {
-    type: COMMIT_BLOCK
+    type: COMMIT_TEXT_BLOCK
   }
 }
 
@@ -326,7 +337,8 @@ const actionBlock = {
   addTitleBlock,
   changeEditingId,
   editBlock,
-  commitBlock,
+  editTextBlock,
+  commitTextBlock,
   commitPage,
   changeBlockContents,
   deleteBlock,

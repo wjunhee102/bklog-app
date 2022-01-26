@@ -4,6 +4,7 @@ import {
 } from '../reducer/utils/converter';
 import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
 import textBlockUtils from './textBlockUtils';
+import animateUtils from './animateUtils';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -161,3 +162,5 @@ export interface KeyboardActionTable {
 
 export const keyboardActionHandler = textBlockUtils.keyboardActionHandler;
 export const setCursorPoint        = textBlockUtils.setCursorPoint;
+
+export const animateElement = animateUtils.animateElement;
