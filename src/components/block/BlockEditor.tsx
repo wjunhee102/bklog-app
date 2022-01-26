@@ -13,9 +13,10 @@ const valueNotConnectStoreHook: ReturnConnectStoreHook = {
 
 interface BlockEditorProps {
   connectStoreHook?: (useBlockReducer: UseBlockType) => ReturnConnectStoreHook;
+  className?: string;
 }
 
-const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
+const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook, className }) => {
   const useBlockReducer = useBlock();
 
   const { updated } = connectStoreHook? connectStoreHook(useBlockReducer) : valueNotConnectStoreHook; 
@@ -40,7 +41,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook }) => {
 
   return (
     <div 
-      className="block-editor notranslate"
+      className={`block-editor notranslate ${className? className : ""}`}
       ref={editorRef}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}

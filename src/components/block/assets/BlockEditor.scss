@@ -75,8 +75,14 @@
   }
 }
 
+.bk-y14 {
+  .block-container-outer {
+    @apply py-14;
+  }
+}
+
 .block-container-outer {
-  @apply bg-white dark:bg-gray-800 w-full h-full overflow-auto box-border py-14; 
+  @apply bg-white dark:bg-gray-800 w-full h-full overflow-auto box-border; 
 
   .cover {
     width: 100%;
