@@ -51,11 +51,11 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
  
    const handleMouseUp = useCallback(() => {
      onResetEditorState(false);
-   }, [editorRef, onResetEditorState]);
+   }, []);
  
    const handleMouseLeave = useCallback(() => {
      onResetEditorState(false);
-   }, [onResetEditorState]);
+   }, []);
 
    const handleKeyDown = useKeyboardActionHandler({
        startAction: (e: any) => {
@@ -78,7 +78,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
    }, [stageBlock, tempClipData]);
 
   const handleKeyUp = useKeyboardActionHandler({
-    startAction: (e: any) => {
+    startAction: () => {
       onChangeEditorState('isPress', false);
       return true;
     }

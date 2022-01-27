@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer, useRef } from 'react';
+import { useCallback, useMemo, useReducer, useRef, useState } from 'react';
 import { BlockDataProps, BlockTypes, ModifyBlockDataType } from '../types';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
@@ -24,7 +24,6 @@ import {
   changeBlockContents,
   deleteTextBlock,
   addTextBlock,
-  StagedBlock,
   editPageTitle,
   initPageTitle,
   EditorStateType,
@@ -41,7 +40,7 @@ import {
   deleteTitleBlock,
   editBlock
 } from '../reducer/utils';
-import { BlockData, ContentType, ModifyData, RawBlockData } from '../types';
+import { BlockData, ContentType, RawBlockData } from '../types';
 
 interface CursorType {
   start: number;
@@ -51,6 +50,7 @@ interface CursorType {
 // state 값을 전부 useReducer로 통합할 것.
 function useBlock() {
 
+  // ref
   const cursor = useRef<CursorType>({ start: 0, end: 0 });
 
   const setCursorStart = useCallback((point: number) => { 
@@ -62,6 +62,9 @@ function useBlock() {
   }, [cursor.current]);
 
   // state
+  const [ currentDropDirection, setDropDirection ] = useState<string | null>(null);
+
+  // store
   const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
 
   const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
@@ -218,6 +221,8 @@ function useBlock() {
     cursorEnd: cursor.current.end,
     setCursorStart,
     setCursorEnd,
+    currentDropDirection,
+    setDropDirection,
     state, 
     initBlock,
     titleBlock,

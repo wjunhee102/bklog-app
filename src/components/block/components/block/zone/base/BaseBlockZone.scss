@@ -87,7 +87,7 @@
       position: relative;
       width: 100%;
 
-      .area {
+      .drop-area {
         position: absolute;
         z-index: 18;
         box-sizing: content-box;
@@ -109,7 +109,7 @@
 
       }
 
-        .box {
+        .drop-area-box {
           width: 100%;
           height: 100%;
         }
@@ -117,7 +117,7 @@
       }
 
       .on {
-        .box {
+        .drop-area-box {
           background-color: rgba(163, 203, 255, 0.5);
         }
       }
