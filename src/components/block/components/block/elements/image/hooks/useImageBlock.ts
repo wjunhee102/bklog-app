@@ -2,7 +2,7 @@ import { useRef, useCallback, useEffect, useState } from "react";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { updateObject } from "../../../../../reducer/utils";
 import { BlockData } from "../../../../../types";
-import { getBodyInfo } from "../../../../../utils";
+import getBodyInfo from "../../../../../utils/windowUtils";
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
 
 function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
