@@ -1,5 +1,6 @@
-import { updateObject, TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps, PageInfo, removeTextBlockInList, createRawBlockData } from ".";
+import { TempData, StagedBlock, TempDataType, TempSet, createBlockData, BlockState, restoreBlock, BlockStateProps, PageInfo, removeTextBlockInList, createRawBlockData } from ".";
 import { BlockData, RawBlockData, ModifyData, ModifyCommand, ModifySet, ModifyBlockData, ModifyBlockDataType, BlockDataProps, ParamCreateModifyBlock, ParamModifyBlock, ParamDeleteModity } from "../../types";
+import { updateObject } from "../../utils";
 
 function tempDataPush(
   tempStore: TempDataType[], 

@@ -3,8 +3,8 @@ import { equalsArray } from '../reducer/utils/converter';
 import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
 import textBlockUtils from './textBlockUtils';
 import animateUtils from './animateUtils';
-import windowUtils from './windowUtils';
 import unicodeUtils from './unicodeUtils';
+import objectUtils from './objectUtils';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -160,17 +160,21 @@ export interface KeyboardActionTable {
   finallyAction?: (e: React.KeyboardEvent<any>) => void;
 }
 
-// textBlockUtils
+// textBlock utils
 export const keyboardActionHandler = textBlockUtils.keyboardActionHandler;
 export const setCursorPoint        = textBlockUtils.setCursorPoint;
 
-// animateUtils
+// animate utils
 export const animateElement = animateUtils.animateElement;
 
-// unicodeUtils
+// unicode utils
 export const charToUnicode     = unicodeUtils.charToUnicode;
 export const stringToUnicode16 = unicodeUtils.stringToUnicode16;
 export const stringToUnicode10 = unicodeUtils.stringToUnicode10;
 export const unicode16ToChar   = unicodeUtils.unicode16ToChar;
 export const unicode10ToChar   = unicodeUtils.unicode10ToChar;
 export const unicodeHexTochar  = unicodeUtils.unicodeHexTochar;
+
+// object utils
+export const updateObject   = objectUtils.updateObject;
+export const modifyAnObject = objectUtils.modifyAnObject;

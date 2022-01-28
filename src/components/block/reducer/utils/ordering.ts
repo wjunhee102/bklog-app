@@ -1,5 +1,6 @@
-import { updateObject, copyToNewObjectArray, createTempData, ResBlockUtils, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
+import { copyToNewObjectArray, createTempData, ResBlockUtils, SetBlockDataList, setUpdateModifyDataOfBlock, TempDataType } from ".";
 import { BlockData, RawBlockData } from "../../types";
+import { updateObject } from "../../utils";
 
 // const parseString = (text: string): string[] => {
 //   return text.split(/-/);

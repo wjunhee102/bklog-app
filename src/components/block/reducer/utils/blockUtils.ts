@@ -1,6 +1,7 @@
 import { BlockData, BlockTypes, ContentType, ModifyBlockData, ModifyBlockDataType, ModifyCommand, ModifyData, ModifySet, RawBlockData, TextContents } from '../../types';
-import { updateObject, StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData, TextContentsTypeList } from '.';
+import { StagedBlock, sortBlock, setCreateModifyDataOfBlock, setUpdateModifyDataOfBlock, TempDataType, TempSet, TempData, setDeleteModifyDataOfBlock, orderingBlock, createTempData, OrderType, parseHtmlContents, changeStyleTextContents, ResBlockUtils, mergeTextContents, createModifyData, TextContentsTypeList } from '.';
 import { Token } from '../../utils/token';
+import { updateObject } from '../../utils';
 
 function copyToNewObjectArray<T = any>(array: T[]): T[] {
   return array.map((object: T) => Object.assign({}, object));

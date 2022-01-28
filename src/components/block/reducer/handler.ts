@@ -1,9 +1,9 @@
 import { initialBlockState } from ".";
-import { BlockData,  ModifyBlockData, ModifyPageInfoType } from "../types";
+import { BlockData, ModifyPageInfoType } from "../types";
+import { modifyAnObject, updateObject } from "../utils";
 import { 
   BlockState, 
   ActionHandlers, 
-  updateObject,
   createClearStatePart, 
   createBlockData,
   updateBlockContents, 
@@ -91,7 +91,10 @@ import {
   DELETE_TITLE_BLOCK,
   editBlock,
   updateBlockDataProps,
-  EDIT_BLOCK
+  EDIT_BLOCK,
+  editBlockSideInfo,
+  BlockSideInfoGroup,
+  EDIT_BLOCK_SIDE_INFO
 } from "./utils";
 
 function initBlockStateHandler(
@@ -783,6 +786,18 @@ function clearStateItemHandler(
   return updateObject<BlockState, BlockStateProps>(state, createClearStatePart<BlockStateProps>(initialBlockState, payload));
 }
 
+function editBlockSideInfoHandler(
+  state: BlockState,
+  { payload: {
+    blockId,
+    info
+  } }: ReturnType<typeof editBlockSideInfo>
+): BlockState {
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockSideInfoGroup: modifyAnObject(state.blockSideInfoGroup, { [blockId]: info })
+  });
+}
+
 const blockHandlers: ActionHandlers<BlockState> = {
   [INIT_BLOCK_STATE]       : initBlockStateHandler,
   [INIT_PAGE_TITLE]        : initPageTitleHandler,
@@ -813,7 +828,8 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [UPDATE_BLOCK]           : updateBlockHandler,
   [SET_PREBLOCKINFO]       : setPreBlockInfoHandler,
   [CLEAR_STATE_ITEM]       : clearStateItemHandler,
-  [EDIT_PAGE_INFO]         : editPageInfoHandler
+  [EDIT_PAGE_INFO]         : editPageInfoHandler,
+  [EDIT_BLOCK_SIDE_INFO]   : editBlockSideInfoHandler
 };
 
 export default blockHandlers;

@@ -9,10 +9,6 @@ function createClearStatePart<P extends object, T extends P = any>(initialState:
   }, {} as P);
 }
 
-function updateObject<T = any, P = any>(oldObject: T, ...newValues: P[]): T {
-  return Object.assign({}, oldObject, ...newValues);
-};
-
 type Action = {
   type: string;
 }
@@ -33,6 +29,5 @@ function createReducer<State, T extends Action>(
 
 export default {
   createClearStatePart,
-  updateObject,
   createReducer
 }
