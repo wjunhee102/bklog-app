@@ -1,13 +1,13 @@
 import { resetToTargetPosition } from "./reducer/utils";
 import { BlockData } from "./types";
 
-const TEST_CASE_1: BlockData[] = [
+const TEST_BLOCK_1: BlockData[] = [
   {
     position: "1",
     index: 1,
     parentId: "root",
     id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -26,7 +26,7 @@ const TEST_CASE_1: BlockData[] = [
     index: 2,
     parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     id: "d5cc2725-97ec-494b-bc80-c163f96379e62",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -45,7 +45,7 @@ const TEST_CASE_1: BlockData[] = [
     index: 3,
     parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     id: "d5cc2725-97ec-494b-bc80-c16f496379e63",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -64,7 +64,7 @@ const TEST_CASE_1: BlockData[] = [
     index: 4,
     parentId: "d5cc2725-97ec-494b-bc80-c16f496379e63",
     id: "d5cc2725-97ec-494b-bc80-c162f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -79,13 +79,13 @@ const TEST_CASE_1: BlockData[] = [
     ]
   }
 ];
-const TEST_CASE_2: BlockData[] = [
+const TEST_BLOCK_2: BlockData[] = [
   {
     position: "1-1-1",
     index: 1,
     parentId: "root",
     id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -104,7 +104,7 @@ const TEST_CASE_2: BlockData[] = [
     index: 2,
     parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     id: "d5cc2725-97ec-494b-bc80-c163f96379e62",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -123,7 +123,7 @@ const TEST_CASE_2: BlockData[] = [
     index: 3,
     parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     id: "d5cc2725-97ec-494b-bc80-c16f496379e63",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -142,7 +142,7 @@ const TEST_CASE_2: BlockData[] = [
     index: 4,
     parentId: "d5cc2725-97ec-494b-bc80-c16f96379e62",
     id: "d5cc2725-97ec-494b-bc80-c162f96379e64",
-    type: "block",
+    type: "text",
     styleType: "bk-h1",
     styles: {
       color: "black",
@@ -193,9 +193,12 @@ const TEST_CASE_2: BlockData[] = [
 // }
 
 test('resetToTargetPosition', () => {
-  const test = resetToTargetPosition(TEST_CASE_2, "4-1").map(block => block.position).join("");
-  const test1 = ["4-1", "4-1-1", "4-1-1", "4-1"].join("");
-  const test2 = ["4-1", "4-1-1", "4-1-1", "4-1-1-1"].join("");
-  expect(test).toEqual(test1);
-  expect(test).toEqual(test2);
+  const test1 = resetToTargetPosition(TEST_BLOCK_1, "4-1").map(block => block.position).join("");
+  const test2 = resetToTargetPosition(TEST_BLOCK_2, "4-1").map(block => block.position).join("");
+  
+  const TEST_CASE_1 = ["4-1", "4-1-1", "4-1-1", "4-1-1-1"].join("");
+  const TEST_CASE_2 = ["4-1", "4-1-1", "4-1-1", "4-1"].join("");
+  
+  expect(test1).toEqual(TEST_CASE_1);
+  expect(test2).toEqual(TEST_CASE_2);
 })
