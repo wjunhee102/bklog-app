@@ -35,9 +35,11 @@ import {
   CHANGE_BLOCK_TYPE,
   ADD_TITLE_BLOCK,
   DELETE_TITLE_BLOCK,
-  EDIT_BLOCK
+  EDIT_BLOCK,
+  EDIT_BLOCK_SIDE_INFO,
+  BlockSideInfo
 } from ".";
-import { UUID, BlockData, ContentType, RawBlockData, ModifyBlockData, ModifyBlockDataType, BlockTypes, BlockDataProps } from "../../types";
+import { BlockData, ContentType, RawBlockData, ModifyBlockDataType, BlockTypes, BlockDataProps } from "../../types";
 
 function initBlockState(rawBlockData: RawBlockData[]) {
   return {
@@ -329,6 +331,23 @@ function editPageInfo(stagedPage: StagedPage | null) {
   }
 }
 
+// function createAction<T, P extends (...args: any) => any>(type: T) {
+//   return (payload: P): { type: T, payload: P } => ({
+//     type,
+//     payload
+//   });
+// }
+
+function editBlockSideInfo(blockId: string, info?: BlockSideInfo) {
+  return {
+    type: EDIT_BLOCK_SIDE_INFO,
+    payload: {
+      blockId,
+      info
+    }
+  }
+}
+
 const actionBlock = {
   initBlockState,
   resetBlock,
@@ -361,7 +380,8 @@ const actionBlock = {
   editPageTitle,
   clearStateItem,
   editPageInfo,
-  changeBlockType
+  changeBlockType,
+  editBlockSideInfo
 }
 
 export default actionBlock;

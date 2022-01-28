@@ -110,6 +110,15 @@ export type PageInfo = {
   title: string | null;
 }
 
+export interface ImageBlockSideInfo {
+  order: number;
+}
+
+export type BlockSideInfo = ImageBlockSideInfo;
+export interface BlockSideInfoGroup {
+  [P: string]: BlockSideInfo;
+}
+
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
@@ -119,6 +128,7 @@ export interface BlockState {
   targetPosition: string | null;
   pageInfo: PageInfo;
   blockList: BlockData[];
+  blockSideInfoGroup: BlockSideInfoGroup | null;
   editingBlockId: string | null;
   preBlockInfo: PreBlockInfo | null;
   stageBlock: StagedBlock[];
@@ -141,6 +151,7 @@ export interface BlockStateProps {
   targetPosition?: string | null;
   pageInfo?: { title: string | null};
   blockList?: BlockData[];
+  blockSideInfoGroup?: BlockSideInfoGroup | null;
   editingBlockId?: string | null;
   preBlockInfo?: PreBlockInfo;
   stageBlock?: StagedBlock[];
@@ -188,6 +199,7 @@ export const INIT_PAGE_TITLE        = 'INIT_PAGE_TITLE' as const;
 export const EDIT_PAGE_TITLE        = 'EDIT_PAGE_TITLE' as const;
 export const CLEAR_STATE_ITEM       = 'CLEAR_STATE_ITEM' as const;
 export const EDIT_PAGE_INFO         = 'EDIT_PAGE_INFO' as const;
+export const EDIT_BLOCK_SIDE_INFO   = 'EDIT_BLOCK_SIDE_INFO' as const;
 
 export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
 
@@ -222,6 +234,7 @@ export type BLOCK_ACTION_TYPES =
   | typeof EDIT_PAGE_INFO
   | typeof COMMIT_PAGE
   | typeof CHANGE_BLOCK_TYPE
+  | typeof EDIT_BLOCK_SIDE_INFO
 ;
 
 /**
@@ -258,6 +271,7 @@ export const initPageTitle        = actionBlock.initPageTitle;
 export const editPageTitle        = actionBlock.editPageTitle;
 export const clearStateItem       = actionBlock.clearStateItem;
 export const editPageInfo         = actionBlock.editPageInfo;
+export const editBlockSideInfo    = actionBlock.editBlockSideInfo;
 
 export const testClipAdd     = actionBlock.testClipAdd;
 
@@ -293,11 +307,11 @@ export type BlockActions = ReturnType<typeof initBlockState>
   | ReturnType<typeof clearStateItem>
   | ReturnType<typeof editPageInfo>
   | ReturnType<typeof commitPage>
+  | ReturnType<typeof editBlockSideInfo>
 ;
 
 //reducer
 export const createReducer        = reducerUtils.createReducer;
-export const updateObject         = reducerUtils.updateObject;
 export const createClearStatePart = reducerUtils.createClearStatePart;
 
 //converter

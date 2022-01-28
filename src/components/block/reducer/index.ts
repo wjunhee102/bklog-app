@@ -12,6 +12,7 @@ export const initialBlockState: BlockState = {
     title: null
   },
   blockList: [],
+  blockSideInfoGroup: null,
   editingBlockId: null,
   preBlockInfo: null,
   stageBlock: [],
