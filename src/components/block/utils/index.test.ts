@@ -4,7 +4,8 @@ import {
   stringToUnicode10,
   unicode16ToChar,
   unicode10ToChar,
-  unicodeHexTochar
+  unicodeHexTochar,
+  modifyAnObject
 } from ".";
 
 test('char to unicode',  () => {
@@ -33,3 +34,16 @@ test('unicode 10 to char', () => {
 test('unicode Hex to char', () => {
   expect(unicodeHexTochar("1f")).toEqual("1");
 })
+
+test('modify at object', () => {
+  const object = modifyAnObject({
+    infoHas: "1",
+    infoNull: "2"
+  }, {
+    "infoHas": "10",
+    "infoNull": undefined
+  });
+  
+  expect(object.infoHas).toEqual("10");
+  expect(object.hasOwnProperty("infoNull")).toEqual(false);
+});
