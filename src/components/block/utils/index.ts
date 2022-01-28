@@ -1,11 +1,10 @@
-import { TextContents, ContentType, RawBlockData } from '../types';
-import { 
-  equalsArray, 
-} from '../reducer/utils/converter';
+import { TextContents, ContentType } from '../types';
+import { equalsArray } from '../reducer/utils/converter';
 import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
 import textBlockUtils from './textBlockUtils';
 import animateUtils from './animateUtils';
 import windowUtils from './windowUtils';
+import unicodeUtils from './unicodeUtils';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -161,9 +160,17 @@ export interface KeyboardActionTable {
   finallyAction?: (e: React.KeyboardEvent<any>) => void;
 }
 
+// textBlockUtils
 export const keyboardActionHandler = textBlockUtils.keyboardActionHandler;
 export const setCursorPoint        = textBlockUtils.setCursorPoint;
 
+// animateUtils
 export const animateElement = animateUtils.animateElement;
 
-export const getBodyInfo = windowUtils;
+// unicodeUtils
+export const charToUnicode     = unicodeUtils.charToUnicode;
+export const stringToUnicode16 = unicodeUtils.stringToUnicode16;
+export const stringToUnicode10 = unicodeUtils.stringToUnicode10;
+export const unicode16ToChar   = unicodeUtils.unicode16ToChar;
+export const unicode10ToChar   = unicodeUtils.unicode10ToChar;
+export const unicodeHexTochar  = unicodeUtils.unicodeHexTochar;
