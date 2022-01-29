@@ -12,7 +12,9 @@ import {
   checkEmailUsed,
   checkPenNameUsed,
   resetError,
-  resetAuth
+  resetAuth,
+  clearAuthState,
+  ClearAuthStateType
 } from '../store/modules/auth/utils';
 import { RootState } from '../store/modules';
 import authApiUtils from '../store/modules/auth/utils/apiUtils';
@@ -22,6 +24,10 @@ export const useConnectAuthStore = (): AuthState => useSelector((state: RootStat
 function useAuthActions(state: AuthState) {
   
   const dispatch = useDispatch();
+
+  const onClearAuthState = useCallback((...key: ClearAuthStateType[]) => {
+    dispatch(clearAuthState(...key));
+  }, [dispatch]);
 
   const onCheckEmailUsed = useCallback((email: string) => {
     dispatch(checkEmailUsed(email));
@@ -81,6 +87,7 @@ function useAuthActions(state: AuthState) {
 
   return {
     authState: state,
+    onClearAuthState,
     onCheckEmailUsed,
     onCheckPenNameUsed,
     onSignUpUser,

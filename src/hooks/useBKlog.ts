@@ -11,8 +11,8 @@ function useBklogActions(bklogState: BklogState) {
   
   const dispatch = useDispatch();
 
-  const onClearBklogState = useCallback((key: ClearBklogStateType) => {
-    dispatch(clearBklogState(key));
+  const onClearBklogState = useCallback((...key: ClearBklogStateType[]) => {
+    dispatch(clearBklogState(...key));
   }, [dispatch]);
 
   const onGetPage = useCallback((pageId: string) => {
