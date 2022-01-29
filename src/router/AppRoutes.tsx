@@ -13,10 +13,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/" element={<DefaultContainer />}>
         <Route path="/" element={<Redirect to="/home" />} />
         <Route path="home" element={<HomePage />} />
-        <Route path="bklog/*" element={<BkPage />} />
         <Route path="auth/*" element={<AuthPage />} />  
         <Route path="*" element={<NotFoundPage />} />
       </Route>
+      <Route path="bklog/*" element={<BkPage />} />
     </Routes>
   );
 }
