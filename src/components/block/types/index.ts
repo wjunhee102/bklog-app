@@ -41,15 +41,23 @@ export type ContentType = ["b"]
 
 export type TextContents = [string] | [string, ContentType[]];
 
+/**
+ * NumberedTextStyles block types
+ */
+export interface NumberedTextStyles {
+  shape: string;
+  index: number;
+}
+
 
 /**
  * image block types
  */
-export type ImageStyles = {
+export interface ImageStyles {
   width: string;
 }
 
-export type ImageContents = {
+export interface ImageContents {
   url: string;
 }
 

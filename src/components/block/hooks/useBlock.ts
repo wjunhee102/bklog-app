@@ -38,7 +38,8 @@ import {
   changeBlockType,
   addTitleBlock,
   deleteTitleBlock,
-  editBlock
+  editBlock,
+  editBlockSideInfo
 } from '../reducer/utils';
 import { BlockData, ContentType, RawBlockData } from '../types';
 
@@ -216,6 +217,10 @@ function useBlock() {
     dispatch(editPageInfo(stagedPage));
   }, [dispatch]);
 
+  const onEditBlockSideInfo = useCallback((blockId: string, info?: any) => {
+    dispatch(editBlockSideInfo(blockId, info));
+  }, [dispatch]);
+
   return { 
     cursorStart: cursor.current.start,
     cursorEnd: cursor.current.end,
@@ -255,7 +260,8 @@ function useBlock() {
     onInitPageTitle,
     onEditPageTitle,
     onClearStateItem,
-    onEditPageInfo
+    onEditPageInfo,
+    onEditBlockSideInfo
   }
 }
 

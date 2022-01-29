@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useEffect } from 'react';
 import classNames from "classnames";
-import DropAreaComponent from './DropAreaComponent';
-import { BlockProps, ParentInfoType } from '../../Block';
+import DropAreaComponent from './elements/DropAreaComponent';
+import { BlockProps, ParentInfoType } from '../../../Block';
 
 function createDropDirection(id: string, direction: string) {
   return `${direction}-${id}`;

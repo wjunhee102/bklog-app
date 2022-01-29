@@ -110,11 +110,11 @@ export type PageInfo = {
   title: string | null;
 }
 
-export interface ImageBlockSideInfo {
+export interface NumberedBlockSideInfo {
   order: number;
 }
 
-export type BlockSideInfo = ImageBlockSideInfo;
+export type BlockSideInfo = NumberedBlockSideInfo;
 export interface BlockSideInfoGroup {
   [P: string]: BlockSideInfo;
 }

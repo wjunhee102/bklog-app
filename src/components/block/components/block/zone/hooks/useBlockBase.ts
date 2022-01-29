@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ParentInfoType } from "../../../Block";
-import { BlockData } from "../../../../../types";
-import { UseBlockType } from "../../../../../hooks/useBlock";
+import { ParentInfoType } from "../../Block";
+import { BlockData } from "../../../../types";
+import { UseBlockType } from "../../../../hooks/useBlock";
 
 function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, parentInfo?: ParentInfoType) {
   

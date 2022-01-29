@@ -1,10 +1,10 @@
 import React from "react";
-import useBlockBase from "./hooks/useBlockBase";
+import useBlockBase from "../hooks/useBlockBase";
 import { BlockProps, ParentInfoType } from "../../Block";
 import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
 import BlockContentsArea from "../common/BlockContentsArea";
-import BlockSelectArea from "../common/BlockSelectArea";
+import BlockSelectArea from "../common/block-select-area";
 
 export interface BaseProps {
   selected: boolean;
@@ -36,6 +36,7 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
         { updated }
       )}
     >
+      
       <BlockContentsArea
         blockData={blockData}
         useBlockReducer={useBlockReducer}
