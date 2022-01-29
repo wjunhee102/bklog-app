@@ -1,0 +1,93 @@
+.editor-block-container {
+  @apply border-b border-gray-200 dark:border-gray-700 flex-none h-auto;
+
+
+  .editor-info {
+    @apply flex w-full h-auto justify-start overflow-hidden box-border font-medium capitalize;
+    padding: 5px 0px;
+    height: 50px;
+  }
+}
+
+.test-editor-block {
+  @apply rounded-3xl relative overflow-hidden flex;
+
+  height: 100px;
+  margin: 14px 20px;
+  background-color: #ebdbfd;
+
+  .user-image {
+    @apply box-border;
+
+    width: 80px;
+    height: 90px;
+    padding: 20px 15px;
+
+    .user-svg {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  .user-text {
+    padding-top: 20px;
+
+    .user-penname {
+      padding: 5px 0px 1px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-bio {
+      font-weight: 500;
+      font-size: 12px;
+    }
+  }
+}
+
+.test2-editor-block {
+  @apply rounded-3xl relative overflow-hidden;
+
+  height: 140px;
+  margin: 14px 15px;
+  background-color: #ebdbfd;
+
+  .editor-block-top {
+    @apply flex w-full h-auto;
+
+    .user-image {
+      @apply box-border flex-none;
+  
+      width: 110px;
+      height: 95px;
+      padding: 10px 10px 5px 20px;
+  
+      .user-svg {
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    .user-penname {
+      text-align: left;
+      width: 100%;
+      height: 95px;
+      line-height: 95px;
+      font-weight: 600;
+    }
+  }
+
+  .editor-block-bottom {
+    .user-bio {
+      @apply tracking-widest;
+      
+      height: 45px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 0px 20px;
+      white-space: pre-wrap;
+    }
+  }
+
+}

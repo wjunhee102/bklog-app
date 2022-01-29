@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import useAuth from "../../../hooks/useAuth";
 import usePage from "../../../hooks/usePage";
 import useSocket from "../../../hooks/useSocket";
+import { UseBkPageTypes } from "../../../pages/bkpage/hooks/useBkPage";
 import { Page } from "../../../store/modules/page/utils";
 import { SOCKET_URL } from "../../../utils/api-utils";
 
@@ -25,11 +26,14 @@ function setPageListTable(acc: PageListTable, cur: Page) {
   return acc;
 }
 
-function useSidebar() {
+function useSidebar({
+  useAuthHooks,
+  usePageHooks
+}: UseBkPageTypes) {
 
   const {
     authState
-  } = useAuth();
+  } = useAuthHooks;
 
   const { 
     pageState,
@@ -37,7 +41,7 @@ function useSidebar() {
     onUpdatePage,
     onClearPageState,
     onDeletePage
-  } = usePage();
+  } = usePageHooks;
 
   const pageListTable: PageListTable | null = useMemo(() => {
     return pageState.pageList && pageState.pageEditor? 

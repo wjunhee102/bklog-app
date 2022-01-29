@@ -1,12 +1,20 @@
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import Profile from './component/profile';
 import PageList from './component/page-list';
-import './sidebar.scss';
 import CreatePageButton from './component/CreatePageButton';
 import useSidebar from './hooks/useSidebar';
+import './sidebar.scss';
+import { UseBkPageTypes } from '../../pages/bkpage/hooks/useBkPage';
+import EditorBlock from './component/editor-block';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  bkPageHooks: UseBkPageTypes;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({
+  bkPageHooks
+}) => {
 
   const {
     pageState,
@@ -15,22 +23,18 @@ const Sidebar: React.FC = () => {
     handleClick,
     onDeletePage,
     onUpdatePage,
-  } = useSidebar();
+  } = useSidebar(bkPageHooks);
 
   return (
     <div className={
       classNames(
-        "sidebar gnb-box",
+        "sidebar-container",
         {"off": !pageState.toggle}
       )}
     >
-      <div className="h-full">
-        <nav className={`h-full bg-white relative flex flex-col`}>
-          <Profile />
-          {/* <PageList
-            pageEditor={pageState.pageEditor}
-            pageList={pageState.pageList}
-          /> */}
+      <div className="sidebar-contents-area">
+        <nav className="sidebar">
+          <EditorBlock bkPageHooks={bkPageHooks} />
           {
             pageListTable?
             <PageList 

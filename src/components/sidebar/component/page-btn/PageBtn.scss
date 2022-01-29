@@ -1,14 +1,18 @@
 .page-btn-box {
-  @apply box-border py-1 px-4 flex;
+  @apply box-border flex;
 
   width: 100%;
   min-height: 27px;
 
   .page-title-btn-box {
-    @apply w-full overflow-hidden;
+    @apply w-full overflow-hidden flex;
+
+    .sidebar-icon {
+      padding-top: 2px;
+    }
 
     .page-title-box {
-      @apply w-full flex-auto text-gray-700 font-medium;
+      @apply w-full flex-auto text-gray-800 dark:text-gray-100 font-medium;
   
       .page-title {
         @apply truncate block w-full;
@@ -21,7 +25,10 @@
   }
 
   .page-title-menu-box {
-    @apply flex-none hidden;
+    @apply flex-none;
+
+    padding: 9px 10px 9px;
+    height: 40px;
   }
 
   &:hover {

@@ -1,20 +1,40 @@
 
 
-.sidebar {
-  @apply fixed h-full flex-none;
-
-  width: 240px;
+.sidebar-container {
+  @apply relative h-full flex-none dark:bg-gray-900 text-gray-700 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700 box-border;
+  
+  background-color: rgb(251, 251, 251);
   transform: translateX(0%) scaleX(1);
   animation-name: slideOn;
   animation-duration: 0.7s;
   animation-timing-function: cubic-bezier(0.23, 1, 0.320, 1);
+  overflow: hidden;
 
-  &.off {
-    position: absolute;
-    transform: translateX(-100%);
-    animation-name: slideOff;
-    animation-duration: 1s;
+&.off {
+  position: absolute;
+  transform: translateX(-100%);
+  animation-name: slideOff;
+  animation-duration: 1s;
+  width: 50px;
+  overflow: hidden;
+}
+
+  .sidebar-contents-area {
+    @apply h-full;
+    width: 220px;
+
+    .sidebar {
+      @apply flex flex-col justify-between w-full h-full relative;
+
+
+      .create-page-button {
+        @apply w-full border-t border-gray-200 dark:border-gray-700;
+    
+        height: 50px;
+      }
+    }
   }
+
 }
 
 @keyframes slideOn {
@@ -43,4 +63,38 @@
   to {
     transform: translateX(-100%);
   }
+}
+
+.sidebar-list-box {
+  @apply flex w-full h-auto justify-start;
+}
+
+.sidebar-icon-box {
+  @apply flex-none;
+  width: 50px;
+  height: 40px;
+  padding: 6px 11px;
+  
+
+  .sidebar-icon {
+    @apply w-8 h-8 rounded-lg text-center;
+
+    svg, .sidebar-svg {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      padding: 0px;
+    }
+
+  }
+  
+}
+
+.sidebar-text-box {
+  padding: 10px 0px 9px 0px;
+}
+
+.sidebar-contents-box {
+  @apply w-full flex-1 h-full pl-2;
+  line-height: 40px;
 }

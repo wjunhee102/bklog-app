@@ -2,10 +2,14 @@
   @apply relative h-full pl-3 box-border;
 
   .page-title-menu-btn {
-    @apply bg-transparent rounded block box-border;
+    @apply bg-transparent rounded block box-border text-center;
 
-    height: 21px;
-    width: 21px;
+    height: 28px;
+    width: 28px;
+
+    svg {
+      display: inline-block;
+    }
 
     &:hover {
       @apply bg-gray-200;
@@ -18,7 +22,7 @@
     width: 160px;
     height: auto;
     padding: 5px;
-    left: 14px;
+    right: 14px;
     top: 0px;
     z-index: 30;
 

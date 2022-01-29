@@ -46,7 +46,6 @@ const PageBtn: React.FC<PageBtnProps> = ({
     <div className="page-btn-box">
 
       <PageTitleBtn
-
         editToggle={editToggle} 
         penName={penName}
         page={page}

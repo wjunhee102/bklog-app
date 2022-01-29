@@ -9,7 +9,9 @@ import usePage from '../../../../hooks/usePage';
 function Profile() {
 
   const {
-    pageEditor
+    pageState: {
+      pageEditor
+    }
   } = usePage();
 
   return (
