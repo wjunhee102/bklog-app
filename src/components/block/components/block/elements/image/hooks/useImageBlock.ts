@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import { UseBlockType } from "../../../../../hooks/useBlock";
-import { updateObject } from "../../../../../reducer/utils";
 import { BlockData } from "../../../../../types";
+import { updateObject } from "../../../../../utils";
 import getBodyInfo from "../../../../../utils/windowUtils";
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
 

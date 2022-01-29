@@ -6,6 +6,7 @@ import BlockTable from './BlockTable';
 export type ParentInfoType = {
   type: string;
   selected: boolean;
+  tagTypeIdx?: number;
 };
 
 export interface BlockProps {
