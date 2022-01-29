@@ -21,9 +21,9 @@ function useSetPage(type: GetPageListReqType, userInfo: string) {
   const handleCreatePage = useCallback(() => {
     if(user) {
       if(type === "penname") {
-        if(user.penName === userInfo) onCreatePage(user.id, "무제", 5);
+        if(user.penName === userInfo) onCreatePage("무제", 1);
       } else {
-        if(user.id === userInfo) onCreatePage(user.id, "무제", 5);
+        if(user.id === userInfo) onCreatePage("무제", 1);
       }
     }
   }, [user, type, userInfo]);

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { changePageTitle, changeToggle, clearPageState, ClearPageStateType, createPage, getPageList, GetPageListQuery, GetPageListReqType, getUserProfile, ReqUpdatePageInfo, updatePageInfo } from '../store/modules/page/utils';
+import { changePageTitle, changeToggle, clearPageState, ClearPageStateType, createPage, deletePage, getPageList, GetPageListQuery, GetPageListReqType, getUserProfile, ReqUpdatePageInfo, updatePageInfo } from '../store/modules/page/utils';
 import { PageState } from '../store/modules/page/utils';
 import { RootState } from '../store/modules';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,7 +8,6 @@ import { UserProfile } from '../store/modules/auth/utils';
 export const useConnectPageStore = (): PageState => useSelector((state: RootState) => state.page);
 
 function usePageActions(state: PageState) {
-  const pageEditor: UserProfile = useMemo(() => state.pageEditor, [state]);
 
   const pageToggle: boolean = useMemo(() => state.toggle, [state]);
 
@@ -38,17 +37,20 @@ function usePageActions(state: PageState) {
     dispatch(createPage(title, disclosureScope));
   }, [dispatch]);
 
+  const onDeletePage = useCallback((pageId: string) => {
+    dispatch(deletePage({ pageId }));
+  }, [dispatch]);
+
   const onUpdatePage = useCallback((data: ReqUpdatePageInfo) => {
     dispatch(updatePageInfo(data));
   }, [dispatch]);
 
-  const onClearPageState = useCallback((key: ClearPageStateType) => {
-    dispatch(clearPageState(key));
+  const onClearPageState = useCallback((...key: ClearPageStateType[]) => {
+    dispatch(clearPageState(...key));
   }, [dispatch]);
 
   return {
     pageState: state,
-    pageEditor,
     pageToggle,
     onResetPage,
     onChangeToggle,
@@ -56,6 +58,7 @@ function usePageActions(state: PageState) {
     onGetUserProfile,
     onGetPageList,
     onCreatePage,
+    onDeletePage,
     onUpdatePage,
     onClearPageState
   }
