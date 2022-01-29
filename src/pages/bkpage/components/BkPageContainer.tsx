@@ -24,12 +24,12 @@ const BkPageContainer: React.FC<BkPageContainerProps> = ({
   return (
     <div className="bk-page-container">
 
-      <div className="left-area">
-        <Sibebar />
+      <div className="bk-left-area">
+        <Sibebar bkPageHooks={bkPageHooks} />
       </div>
       
-      <div className="right-area">
-        <Gnb className="relative" />
+      <div className="bk-right-area">
+        <Gnb className="absolute" />
         <Routes>
           <Route path="/" element={<BkDashBoard bkPageHooks={bkPageHooks} />} />
           <Route path=":pageId" element={<BklogContainer bkPageHooks={bkPageHooks} />} />

@@ -1,11 +1,11 @@
 import React from 'react';
-import classNames from 'classnames';
 import BlockEditor from '../../components/block';
 import useConnectBklogStore from '../../hooks/useConnectBklogStore';
 import LoadingWindow from '../../components/common/loading-window';
 import NotFoundPage from '../../pages/NotFoundPage';
 import { UseBkPageTypes } from '../../pages/bkpage/hooks/useBkPage';
 import useBkContainer from './hooks/useBkContainer';
+import './BklogContainer.scss';
 
 interface BklogContainerProps {
   bkPageHooks: UseBkPageTypes;
@@ -17,25 +17,21 @@ const BklogContainer: React.FC<BklogContainerProps> = ({
   const { pageInfo, isLoading } = useBkContainer(bkPageHooks);
 
   return (
-    <div className={classNames(
-      "flex-auto w-full h-full"
-    )}>
+    <div className="bklog-container">
       {
-        //  cover 분리
         pageInfo? 
           <>
-          <div className="cover"></div>
           <BlockEditor 
             connectStoreHook={useConnectBklogStore} 
+            className="bk-y14"
           />
           </>
           : isLoading? 
           <LoadingWindow />
           : <NotFoundPage />
       }
-      
     </div>    
-  )
+  );
 }
 
 export default BklogContainer;

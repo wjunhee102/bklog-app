@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import ErrorPopup from '../../components/base/popup/ErrorPopup';
 import useBkPageLogic from './hooks/useBkPageLogic';
 import BkPageRoutes from './BkPageRoutes';
