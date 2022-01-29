@@ -176,16 +176,16 @@ const test = {
 const Portfolio: React.FC = () => {
   const [ count, setCount ] = useState<number>(0);
 
-  useEffect(() => {
-    if(count < 12) {
-      const timer = setTimeout(() => {
-        setCount(count + 1);
-        console.log(count);
-      }, 1000);
+  // useEffect(() => {
+  //   if(count < 12) {
+  //     const timer = setTimeout(() => {
+  //       setCount(count + 1);
+  //       console.log(count);
+  //     }, 1000);
     
-    return () => clearTimeout(timer);
-    }
-  }, [count]);
+  //   return () => clearTimeout(timer);
+  //   }
+  // }, [count]);
 
   return (
     <main className="portfolio h-screen">
@@ -203,7 +203,6 @@ const Portfolio: React.FC = () => {
       {
         INFO_DATA.map((data, idx) => <InfoComponent key={idx} {...data} />)
       } */}
-      <div className="cover"></div>
       <BlockEditor connectStoreHook={useConnectEditor} />
 
     </main>

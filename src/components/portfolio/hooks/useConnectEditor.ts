@@ -42,6 +42,57 @@ const initialBlockList: RawBlockData[] = [
     contents: [
       ["문서", [["b"], ["fc", "rgb(73, 203, 255)"], ["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
     ]
+  },
+  {
+    position: "3-1",
+    id: "d5cc272597ec494bbc80c16f96379261",
+    type: "text",
+    styleType: "bk-h4",
+    styles: {
+      color: "black",
+      backgroudColor: "white"
+    },
+    contents: [
+      ["문서", [["b"], ["fc", "rgb(0, 203, 255)"], ["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
+    ]
+  },
+  {
+    position: "3-2",
+    id: "d5cc2725d7ec494bbc80c16f96379261",
+    type: "text",
+    styleType: "bk-h4",
+    styles: {
+      color: "black",
+      backgroudColor: "white"
+    },
+    contents: [
+      ["문서", [["b"], ["fc", "rgb(73, 103, 255)"], ["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
+    ]
+  },
+  {
+    position: "4",
+    id: "d5cc2725d7esc494bbc80c16f96379261",
+    type: "text",
+    styleType: "bk-h4",
+    styles: {
+      color: "black",
+      backgroudColor: "white"
+    },
+    contents: [
+      ["문서", [["b"], ["fc", "rgb(73, 103, 255)"], ["a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"]]]
+    ]
+  },
+  {
+    position: "5",
+    id: "d5cc2725d7ec494bbc80c13d6f96379261",
+    type: "image",
+    styleType: "none",
+    styles: {
+      width: "150px"
+    },
+    contents: {
+      url: "/img/smile.png"
+    }
   }
 ]
 
