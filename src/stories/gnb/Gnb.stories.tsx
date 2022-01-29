@@ -5,6 +5,7 @@ import GnbComponent from '../../components/gnb/GnbComponent';
 import FullSizeContainer from '../common/FullScreenContainer';
 import { UserInfo } from '../../store/modules/auth/utils';
 import { UseGnbConnectStoreType } from '../../components/gnb/hooks/useGnbConnectStore';
+import { BrowserRouter } from 'react-router-dom';
 
 export default {
   title: 'Gnb/gnb',
@@ -16,8 +17,6 @@ const dummyUseConnectStore = (
   loading: boolean, 
   user: UserInfo 
 ) => ({
-  pageToggle: toggle,
-  onChangeToggle: (toogle1?: boolean) => console.log(toogle1),
   loading,
   user,
   onSignOutUser: () => {}

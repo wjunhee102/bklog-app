@@ -7,7 +7,7 @@ function useSocket(url: string) {
   useEffect(() => {
     if(!currentSocket) {
       setCurrentSocket(io(url));
-    }
+    } 
   }, []);
 
   return currentSocket;

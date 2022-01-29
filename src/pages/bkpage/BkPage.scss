@@ -1,14 +1,14 @@
 .bk-page {
-  @apply w-screen h-screen relative overflow-hidden;
+  @apply w-screen h-screen relative overflow-hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-100;
 
   .bk-page-container {
     @apply flex w-full h-full relative;
 
-    .left-area {
+    .bk-left-area {
       @apply relative w-auto h-full;
     }
 
-    .right-area {
+    .bk-right-area {
       @apply relative w-full h-full;
     }
   }

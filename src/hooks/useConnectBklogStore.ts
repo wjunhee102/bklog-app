@@ -43,42 +43,43 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   const {
     state,
-    title,
-    stagePage,
+    onInitBlockState,
+    onUpdateBlock,
+    onInitPageTitle,
+    onClearStateItem
+  } = useBlockReducer;
+
+  const {
+    pageInfo: {
+      title
+    },
     editingBlockId,
     isFetch,
     modifyData,
     modifyPageInfo,
-    onInitBlockState,
-    onClearModifyData,
-    onUpdateBlock,
-    onInitPageTitle,
-    onEditPageInfo,
-    onEditPageTitle,
-    onClearStateItem
-  } = useBlockReducer;
+  } = state;
 
-  const pageTitle: string | null = useMemo(() => bklogState.pageInfo? bklogState.pageInfo.title : null, [bklogState.pageInfo]);
+  const pageTitle: string | null = bklogState.pageInfo? bklogState.pageInfo.title : null;
 
-  const isKeyPress: boolean = useMemo(() => state.isPress, [state.isPress]);
+  const isKeyPress: boolean = state.isPress;
 
-  const isFetching: boolean = useMemo(() => bklogState.isFetching, [bklogState.isFetching]);
+  const isFetching: boolean = bklogState.isFetching;
 
-  const isUpdated: boolean = useMemo(() => bklogState.isUpdated, [bklogState.isUpdated]);
+  const isUpdated: boolean = bklogState.isUpdated;
 
-  const isUpdating: boolean = useMemo(() =>  bklogState.isUpdating, [bklogState.isUpdating]);
+  const isUpdating: boolean = bklogState.isUpdating;
 
-  const isRefresh: boolean = useMemo(() => bklogState.isRefresh, [bklogState.isRefresh]);
+  const isRefresh: boolean = bklogState.isRefresh;
 
-  const pageId: string | null = useMemo(() => bklogState.pageInfo? bklogState.pageInfo.id : null, [bklogState.pageInfo]);
+  const pageId: string | null = bklogState.pageInfo? bklogState.pageInfo.id : null;
 
-  const editingPenName: string | null = useMemo(() => user? user.penName : "unknown", [user]);
+  const editingPenName: string | null = user? user.penName : "unknown";
 
-  const pushModifyBlockData: ModifyBlockDataType | null = useMemo(() => bklogState.pushModifyBlockData, [bklogState.pushModifyBlockData]);
+  const pushModifyBlockData: ModifyBlockDataType | null = bklogState.pushModifyBlockData;
 
-  const pushModifyPageInfo: ModifyPageInfoType | null = useMemo(() => bklogState.pushModifyPageInfo, [bklogState.pushModifyPageInfo]);
+  const pushModifyPageInfo: ModifyPageInfoType | null = bklogState.pushModifyPageInfo;
 
-  const currentVersion: string | null = useMemo(() => bklogState.version, [bklogState.version]);
+  const currentVersion: string | null =  bklogState.version;
 
   const eventSocket = useCallback(() => {
     if(socket) {
@@ -142,8 +143,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     if(isUpdated && socket) {
       socket.emit("updated", [bklogState.pageInfo.id, currentVersion]);
       onChangeUpdatedState();
-      onClearModifyData();
-      onClearStateItem("modifyPageInfo")
+      onClearStateItem("modifyData", "modifyPageInfo");
     } 
   }, [isUpdated]);
 
@@ -221,7 +221,6 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
    // 일단 서버에서 충돌 막을 방법을 찾아야 할 듯.
   useEffect(() => {
-    console.log(pushModifyPageInfo);
     if(!updatingId && !isFetching && socket && (pushModifyBlockData || pushModifyPageInfo)) {
       onUpdateBklog();
       socket.emit("update");

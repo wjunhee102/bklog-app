@@ -104,7 +104,6 @@ function updateBklogErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof updateBklogError>
 ): BklogState {
-  console.log(payload);
   if(payload.type === "Bklog" && (payload.code === "001" || payload.code === "005")) {
 
     if(payload.code === "001") {
@@ -144,9 +143,6 @@ function updateVersionSuccessHandler(
   state: BklogState,
   { payload: { id, data: { modifyPageInfo, modifyBlockData } } }: ReturnType<typeof updateVersionSuccess>
 ): BklogState {
-  console.log(modifyPageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, modifyPageInfo) 
-  : state.pageInfo);
-
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,
     pageInfo: modifyPageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, modifyPageInfo) 
@@ -160,7 +156,6 @@ function updateVersionErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof updateVersionError>
 ): BklogState {
-  console.log(payload);
   if(payload.type === "Bklog" && payload.code === "004") {
     return updateObject<BklogState, BklogStateProps>(state, {
       isLoading: true,
