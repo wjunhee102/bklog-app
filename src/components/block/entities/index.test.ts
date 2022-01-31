@@ -1,7 +1,7 @@
-import { Block } from "./Block";
-import { NumberedBlock } from "./text/NumberedBlock";
-import { TextBlock } from "./text/TextBlock";
-import { BlockData, TextBlockData } from "./type";
+import { Block } from "./block/Block";
+import { NumberedBlock } from "./block/text/NumberedBlock";
+import { TextBlock } from "./block/text/TextBlock";
+import { BlockData, TextBlockData } from "./block/type";
 
 const TEXT_BLOCK = {
   position: "1",

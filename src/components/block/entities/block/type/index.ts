@@ -1,6 +1,9 @@
-import { BlockContentsContainer, BlockStylesContainer, BlockTypeContainer } from "./types/container";
-import { BlockContentsImage, BlockStylesImage, BlockTypeImage } from "./types/image";
-import { BlockContentsText, BlockStylesText, BlockTypeText } from "./types/text";
+import { ImageBlock } from "../image/ImageBlock";
+import { NumberedBlock } from "../text/NumberedBlock";
+import { TextBlock } from "../text/TextBlock";
+import { BlockContentsContainer, BlockStylesContainer, BlockTypeContainer, BLOCK_CONTAINER } from "./types/container";
+import { BlockContentsImage, BlockStylesImage, BlockTypeImage, BLOCK_IMAGE } from "./types/image";
+import { BlockContentsText, BlockStylesText, BlockTypeText, BLOCK_BULLETED, BLOCK_NUMBERED, BLOCK_TEXT } from "./types/text";
 import { BlockContentsTitle, BlockStylesTitle, BlockTypeTitle } from "./types/title";
 
 // type
@@ -96,3 +99,5 @@ export type BlockProps = TitleBlockProps
   | ImageBlockProps;
 
 
+// Blocks;
+export type Blocks = TextBlock<any> | NumberedBlock | ImageBlock;
