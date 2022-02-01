@@ -1,4 +1,4 @@
-import { Block } from "../Block";
+import { Block } from "../abstract/Block";
 import { BlockFrame } from "../abstract/BlockFrame";
 import { BlockDataInitProps, TextBlockData, TextBlockProps, TextGenericType } from "../type";
 import { createContentsElement } from "../../../utils";
@@ -12,8 +12,8 @@ export class TextBlock<TMeta = null> extends Block<TextGenericType, TMeta> imple
     }
   }
 
-  constructor(props: BlockDataInitProps<TextGenericType>) {
-    super(props, null);
+  constructor(props: BlockDataInitProps<TextGenericType>, meta?: TMeta) {
+    super(props, meta? meta : null);
   }
 
   get getHtmlContents() {

@@ -1,13 +1,11 @@
-import { BlockDataInitProps, TextBlockProps, TextGenericType } from "../type";
+import { BlockDataInitProps, TextBlockData, TextBlockProps, TextGenericType } from "../type";
 import { TextBlock } from "./TextBlock";
 
 export class NumberedBlock extends TextBlock<{ order: number }> {
 
   constructor(props: BlockDataInitProps<TextGenericType>) {
-    super(props);
-    
+    super(props, { order: 0 });
     this.setType("numbered");
-    this.setOrder(0);
   }
 
   public setOrder(order: number) {
@@ -19,7 +17,7 @@ export class NumberedBlock extends TextBlock<{ order: number }> {
   regeneration(props: TextBlockProps) {
     const preBlockDataProps: TextBlockProps = this.updateBlockData(props);
 
-    const newBlock = new NumberedBlock(this.getBlockData as NumberedBlock);
+    const newBlock = new NumberedBlock(this.getBlockData as TextBlockData);
     newBlock.setOrder(this.meta.order);
 
     return {

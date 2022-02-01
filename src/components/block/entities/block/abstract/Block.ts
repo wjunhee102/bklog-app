@@ -4,8 +4,9 @@ import {
   BlockDataProps, 
   BlockGenericTypes, 
   BlockDataInitProps,
-} from "./type";
-import { createBlockDataHandler } from "./utils";
+} from "../type";
+import { createBlockDataHandler } from "../utils";
+
 export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMeta = any> {
   private _index: number = 0;
   private _parentId: string = "null";
@@ -28,7 +29,7 @@ export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMe
 
   constructor(props: BlockDataInitProps<T>, meta: TMeta) {
     this.init(props);
-    this.setMeta(meta);
+    this.setMeta(meta)
   }
 
   private init({
@@ -83,7 +84,7 @@ export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMe
     return this._contents;
   }
 
-  get meta(): TMeta | null {
+  get meta(): TMeta {
     return this._meta;
   }
 
@@ -149,14 +150,14 @@ export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMe
   }
   
   public updateBlockData(props: BlockDataProps<T>): BlockDataProps<T> {
-    let preBlockDataProps: BlockDataProps<T>;
+    if(Object.keys(props).length < 0) throw new Error("props null");
+
+    let preBlockDataProps: BlockDataProps<T> = {};
 
     for(const key in props) {
       preBlockDataProps[key] = this[`_${key}`];
       this[`_${key}`] = props[key];
     }
-
-    if(!preBlockDataProps) throw new Error(`${this.id} updateBlockData not props`);
 
     return preBlockDataProps;
   }

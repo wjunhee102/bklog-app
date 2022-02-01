@@ -1,4 +1,4 @@
-import { Block } from "../Block";
+import { Block } from "../abstract/Block";
 import { BlockDataInitProps,  BlockDataProps, Blocks, ImageBlockData, ImageBlockProps, ImageGenericType } from "../type";
 import { BlockFrame } from "../abstract/BlockFrame";
 

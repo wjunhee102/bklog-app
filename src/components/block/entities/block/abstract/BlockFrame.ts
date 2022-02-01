@@ -1,4 +1,3 @@
-import { Block } from "../Block";
 import { BlockDataProps, BlockGenericTypes, Blocks } from "../type";
 
 export abstract class BlockFrame<T extends BlockGenericTypes> {
