@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import useBklog from "../../../hooks/useBklog";
-import usePage from "../../../hooks/usePage";;
+import usePage from "../../../hooks/usePage";
 
 interface PageTitleMenuListStateType {
   type: "pageTitleMenu";

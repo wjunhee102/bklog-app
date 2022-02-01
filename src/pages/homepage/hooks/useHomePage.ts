@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-import useAuth from "../../../hooks/useAuth";
-import useBKlog from "../../../hooks/useBklog";
 import usePage from "../../../hooks/usePage";
 import useStoreReset from "../../../hooks/useStoreReset";
 
