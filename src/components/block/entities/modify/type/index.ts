@@ -22,25 +22,7 @@ export const SET_PAGE    = "page" as const;
 export type ModifySet = typeof SET_BLOCK 
   | typeof SET_COMMENT 
   | typeof SET_PAGE; 
-
-
-export interface ParamModifyUpdate<T> {
-  id: string;
-  set: ModifySet;
-  payload: any;
-}
-export interface ParamModifyCreate {
-  id: string;
-  set: typeof SET_BLOCK;
-  payload: RawBlockData<any> | BlockData;
-}
-
-export interface ParamModifyDelete<T> {
-  id: string;
-  set: typeof SET_COMMENT;
-  payload: any;
-}
-
+  
 export interface PageInfoProps {
   createdDate?: Date;
   updatedDate?: Date;
@@ -64,20 +46,56 @@ interface ModifyGenericType<T extends ModifyALLCommand, Y extends ModifySet, P e
   payload: P;
 }
 
-export type ModifyBlockGenericType<T extends BlockGenericTypes> = ModifyGenericType<ModifyALLCommand, typeof SET_BLOCK, RawBlockDataProps<T> | BlockData>;
+// block
+
+export type CreateModifyBlockGenericType<T extends BlockGenericTypes = BlockGenericTypes> = ModifyGenericType<typeof COMMAND_CREATE, typeof SET_BLOCK, RawBlockData<T>>;
+
+export type UpdateModifyBlockGenericType<T extends BlockGenericTypes = BlockGenericTypes> = ModifyGenericType<typeof COMMAND_UPDATE, typeof SET_BLOCK, RawBlockDataProps<T>>;
+
+export type DeleteModifyBlockGenericType = ModifyGenericType<typeof COMMAND_DELETE, typeof SET_BLOCK, null>;
+
+export type ModifyBlockGenericType<T extends BlockGenericTypes = BlockGenericTypes> = CreateModifyBlockGenericType<T> | UpdateModifyBlockGenericType<T> | DeleteModifyBlockGenericType;
+
+// page
 
 export type ModifyPageGenericType = ModifyGenericType<ModifyUpdateCommand, typeof SET_PAGE, PageInfoProps>;
 
+// types
+
 export type ModifyGenericTypes = ModifyBlockGenericType<any> | ModifyPageGenericType;
 
-export interface ModifyData<T extends ModifyGenericTypes> {
-  command: T["command"];
+
+// RawModifyData 
+export interface RawModifyData<T extends ModifyGenericTypes = ModifyGenericTypes> {
   id: string;
   set: T["set"];
   payload: T["payload"];
 }
 
-export interface ModifyBlockDataProps<T extends BlockGenericTypes> {
+export type CreateRawModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> = RawModifyData<CreateModifyBlockGenericType<T>>;
+
+export type UpdateRawModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> = RawModifyData<UpdateModifyBlockGenericType<T>>;
+
+export type DeleteRawModifyBlockData = RawModifyData<DeleteModifyBlockGenericType>;
+
+export type RawModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> = CreateRawModifyBlockData<T> | UpdateRawModifyBlockData<T> | DeleteRawModifyBlockData;
+
+// ModifyData
+export interface ModifyData<T extends ModifyGenericTypes> extends RawModifyData<T> {
+  command: T["command"];
+}
+
+export interface UpdateModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> {
+  id: string;
+  command: typeof COMMAND_UPDATE;
+  payload: RawBlockDataProps<T>;
+}
+
+export interface DeleteModifyBlockData {
+  id: string;
+}
+
+export interface ModifyBlockDataProps<T extends BlockGenericTypes = BlockGenericTypes> {
   id: string;
   command: ModifyBlockGenericType<T>["command"];
   payload: ModifyBlockGenericType<T>["payload"];

@@ -5,6 +5,7 @@ export class ModifyDataToken<T extends ModifyGenericTypes> {
   private _command: T["command"] = "update";
   private _set: T["set"] = "block";
   private _payload: T["payload"] = null;
+  private _timestamp: number = 0;
   
   constructor(props: ModifyData<T>) {
     this.init(props);
@@ -15,6 +16,7 @@ export class ModifyDataToken<T extends ModifyGenericTypes> {
     this._command = command;
     this._set = set;
     this._payload = payload;
+    this._timestamp = new Date().getDate();
   }
 
   get id(): string {
@@ -31,6 +33,10 @@ export class ModifyDataToken<T extends ModifyGenericTypes> {
 
   get payload(): T["payload"] {
     return this._payload;
+  }
+
+  get timestamp(): number {
+    return this._timestamp;
   }
 
   public setCommand(command: T["command"]) {
