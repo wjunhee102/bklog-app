@@ -1,4 +1,5 @@
 import { ImageBlock } from "../image/ImageBlock";
+import { BaseTextBlock } from "../text/BaseTextBlock";
 import { NumberedBlock } from "../text/NumberedBlock";
 import { TextBlock } from "../text/TextBlock";
 import { BlockContentsContainer, BlockStylesContainer, BlockTypeContainer, BLOCK_CONTAINER } from "./types/container";
@@ -29,12 +30,12 @@ export type TitleGenericType     = BlockGenericType<BlockTypeTitle, BlockStylesT
 export type ContainerGenericType = BlockGenericType<BlockTypeContainer, BlockStylesContainer, BlockContentsContainer>;
 export type ImageGenericType     = BlockGenericType<BlockTypeImage, BlockStylesImage, BlockContentsImage>;
 
-export type BlockGenericTypes = TextGenericType 
+export type UnionBlockGenericType = TextGenericType 
   | TitleGenericType 
   | ContainerGenericType 
   | ImageGenericType;
 
-export interface RawBlockData<T extends BlockGenericTypes> {
+export interface RawBlockData<T extends UnionBlockGenericType> {
   position: string;
   id: string;
   type: T['type'];
@@ -48,56 +49,52 @@ export interface FrameBlockData {
   parentId: string;
 }
 
+// blockData
+export type BlockData<T extends UnionBlockGenericType> = RawBlockData<T> & FrameBlockData;
+
 // blockDataProps
-export interface RawBlockDataProps<T extends BlockGenericTypes> {
-  position?: string;
-  id?: string;
-  type?: T['type'];
-  styleType?: string;
-  styles?: T['styles'];
-  contents?: T['contents'];
+export type RawBlockDataProps<T extends UnionBlockGenericType> = {
+  [Property in keyof RawBlockData<T>]?: RawBlockData<T>[Property];
 }
 
-export interface FrameBlockDataProps {
-  index?: number;
-  parentId?: string;
+export type FrameBlockDataProps = {
+  [Property in keyof FrameBlockData]?: FrameBlockData[Property];  
 }
 
-export type BlockDataInitProps<T extends BlockGenericTypes> = RawBlockData<T> & FrameBlockDataProps; 
-export type BlockDataProps<T extends BlockGenericTypes>     = RawBlockDataProps<T> & FrameBlockDataProps;
+export type BlockDataInitProps<T extends UnionBlockGenericType> = RawBlockData<T> & FrameBlockDataProps; 
+export type BlockDataProps<T extends UnionBlockGenericType>     = RawBlockDataProps<T> & FrameBlockDataProps;
 
 // title
-export type TitleRawBlockData = RawBlockData<TitleGenericType>;
-export type TitleBlockData    = FrameBlockData & TitleRawBlockData;
-export type TitleBlockProps   = BlockDataProps<TitleGenericType>;
+export type TitleRawBlockData   = RawBlockData<TitleGenericType>;
+export type TitleBlockData      = BlockData<TitleGenericType>;
+export type TitleBlockDataProps = BlockDataProps<TitleGenericType>;
 
 // text
-export type TextRawBlockData = RawBlockData<TextGenericType>;
-export type TextBlockData    = FrameBlockData & TextRawBlockData;
-export type TextBlockProps   = BlockDataProps<TextGenericType>;
+export type TextRawBlockData   = RawBlockData<TextGenericType>;
+export type TextBlockData      = BlockData<TextGenericType>;
+export type TextBlockDataProps = BlockDataProps<TextGenericType>;
 
 // container
-export type ContainerRawBlockData = RawBlockData<ContainerGenericType>;
-export type ContainerBlockData    = FrameBlockData & ContainerRawBlockData;
-export type ContainerBlockProps   = BlockDataProps<ContainerGenericType>;
+export type ContainerRawBlockData   = RawBlockData<ContainerGenericType>;
+export type ContainerBlockData      = BlockData<ContainerGenericType>;
+export type ContainerBlockDataProps = BlockDataProps<ContainerGenericType>;
 
 // image 
-export type ImageRawBlockData = RawBlockData<ImageGenericType>;
-export type ImageBlockData    = FrameBlockData & ImageRawBlockData;
-export type ImageBlockProps   = BlockDataProps<ImageGenericType>;
+export type ImageRawBlockData   = RawBlockData<ImageGenericType>;
+export type ImageBlockData      = BlockData<ImageGenericType>;
+export type ImageBlockDataProps = BlockDataProps<ImageGenericType>;
 
-
-// blockData
-export type BlockData = TitleBlockData 
+export type UnionBlockData = TitleBlockData 
   | TextBlockData 
   | ContainerBlockData
   | ImageBlockData;
 
-export type BlockProps = TitleBlockProps
-  | TextBlockProps
-  | ContainerBlockProps
-  | ImageBlockProps;
+export type UnionBlockDataProp = TitleBlockDataProps
+  | TextBlockDataProps
+  | ContainerBlockDataProps
+  | ImageBlockDataProps;
 
 
 // Blocks;
-export type Blocks = TextBlock<any> | NumberedBlock | ImageBlock;
+export type UnionBlock = BaseTextBlock<unknown> | TextBlock | NumberedBlock | ImageBlock;
+

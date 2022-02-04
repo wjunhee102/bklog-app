@@ -2,34 +2,33 @@ import {
   BlockData, 
   RawBlockData, 
   BlockDataProps, 
-  BlockGenericTypes, 
+  UnionBlockGenericType, 
   BlockDataInitProps,
+  FrameBlockData
 } from "../type";
 import { createBlockDataHandler } from "../utils";
 
-export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMeta = any> {
-  private _index: number = 0;
-  private _parentId: string = "null";
-  private _position: string = "0";
-  private _id: string = "none";
-  private _type: T['type'] = "text";
-  private _styleType: string = "none";
-  private _styles: T['styles'] = null;
-  private _contents: T['contents'] = [];
-  // mount된 후 정보를 담는 property
-  private _meta: TMeta;
+export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericType, Meta = unknown> {
+  private _id: RawBlockData<T>['id']                 = "none";
+  protected _index: FrameBlockData['index']          = 0;
+  protected _parentId: FrameBlockData['parentId']    = "null";
+  protected _position: RawBlockData<T>['position']   = "0";
+  protected _type:    RawBlockData<T>['type']        = "text";
+  protected _styleType: RawBlockData<T>['styleType'] = "none";
+  protected _styles: RawBlockData<T>['styles']       = null;
+  protected _contents: RawBlockData<T>['contents']   = [];
 
-  static createBlockData<T extends BlockGenericTypes>(type: T["type"], props: BlockDataProps<T>): BlockData | null {
+  static createBlockData<T extends UnionBlockGenericType>(type: T["type"], props: BlockDataProps<T>): BlockData<T> {
     if(createBlockDataHandler.hasOwnProperty(type)) {
-      return createBlockDataHandler[type as T["type"]](props as never);
+      return createBlockDataHandler[type as T['type']](props as never);
     } 
 
-    return null;
+    throw new Error("not block type");
   }
 
-  constructor(props: BlockDataInitProps<T>, meta: TMeta) {
+  constructor(props: BlockDataInitProps<T>, protected _meta: Meta) {
     this.init(props);
-    this.setMeta(meta)
+    this._meta = _meta;
   }
 
   private init({
@@ -84,7 +83,7 @@ export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMe
     return this._contents;
   }
 
-  get meta(): TMeta {
+  get meta(): Meta {
     return this._meta;
   }
 
@@ -100,7 +99,7 @@ export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMe
     }
   }
 
-  get getBlockData(): BlockData {
+  get getBlockData(): BlockData<T> {
     return {
       index: this._index,
       parentId: this._parentId,
@@ -112,53 +111,16 @@ export abstract class Block<T extends BlockGenericTypes = BlockGenericTypes, TMe
       styles: this._styles
     }
   }
-
-  public setIndex(index: number) {
-    this._index = index;
-    
-    return this;
-  }
-
-  public setParentId(parentId: string) {
-    this._parentId = parentId;
-
-    return this;
-  }
-
-  public setPosition(position: string) {
-    this._position = position;
-
-    return this;
-  }
-
-  public setType(type: T["type"]) {
-    this._type = type;
-
-    return this;
-  }
-
-  public setStyleType(styleType: string) {
-    this._styleType = styleType;
-
-    return this;
-  }
-
-  public setMeta(meta: TMeta) {
-    this._meta = meta;
-
-    return this;
-  }
   
-  public updateBlockData(props: BlockDataProps<T>): BlockDataProps<T> {
+  protected updateBlockData(props: BlockDataProps<T>): [ BlockData<T>, BlockDataProps<T> ]{
     if(Object.keys(props).length < 0) throw new Error("props null");
 
-    let preBlockDataProps: BlockDataProps<T> = {};
+    const preBlockDataPropsList: Array<BlockDataProps<T>> = [];
 
     for(const key in props) {
-      preBlockDataProps[key] = this[`_${key}`];
-      this[`_${key}`] = props[key];
+      preBlockDataPropsList.push({[`${key}`]: this[`_${key as keyof BlockData<T>}`]} as BlockDataProps<T>);
     }
 
-    return preBlockDataProps;
+    return [ Object.assign(this.getBlockData, props) as BlockData<T> , Object.assign({}, ...preBlockDataPropsList) as BlockDataProps<T> ];
   }
 }
