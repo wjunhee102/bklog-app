@@ -1,4 +1,4 @@
-import { ContainerBlockData, ContainerBlockProps, ImageBlockData, ImageBlockProps, TextBlockData, TextBlockProps, TitleBlockData } from "../type";
+import { ContainerBlockData, ContainerBlockDataProps, ImageBlockData, ImageBlockDataProps, TextBlockData, TextBlockDataProps, TitleBlockData } from "../type";
 import { BLOCK_CONTAINER } from "../type/types/container";
 import { BLOCK_IMAGE } from "../type/types/image";
 import { BLOCK_BULLETED, BLOCK_NUMBERED, BLOCK_TEXT, BLOCK_TODO } from "../type/types/text";
@@ -7,7 +7,7 @@ import { Token } from "./token";
 
 function createTextBlockData({
   id, index, parentId, position, type, styleType, styles, contents
-}: TextBlockProps): TextBlockData {
+}: TextBlockDataProps): TextBlockData {
   return {
     id: id? id : Token.getUUID(),
     index: index? index : 0,
@@ -39,7 +39,7 @@ function createTitleBlockData({
 
 function createContainerBlockData({
   id, index, parentId, position, type, styleType, styles, contents
-}: ContainerBlockProps): ContainerBlockData {
+}: ContainerBlockDataProps): ContainerBlockData {
   return {
     id: id? id : Token.getUUID(),
     index: index? index : 0,
@@ -54,7 +54,7 @@ function createContainerBlockData({
 
 function createImageBlockData({
   id, index, parentId, position, type, styleType, styles, contents
-}: ImageBlockProps): ImageBlockData {
+}: ImageBlockDataProps): ImageBlockData {
   return {
     id: id? id : Token.getUUID(),
     index: index? index : 0,
