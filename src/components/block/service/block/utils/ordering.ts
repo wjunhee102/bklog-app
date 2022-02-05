@@ -1,146 +1,137 @@
-export const test = 0;
-// export function sortBlock<T extends RawBlockData = any>(blockDataList: T[]): T[] {
-//   return blockDataList.concat().sort((a, b) => {
-//     if(a.position === b.position) {
-//       return 0
-//     }
-//     const ary1 = a.position.split(/-/);
-//     const ary2 = b.position.split(/-/);
+import { ResBlockService } from ".";
+import { RawBlockData, UnionBlock, UnionBlockGenericType, UnionRawBlockData } from "../../../entities/block/type";
+import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
+import { RawBlockDataProps } from "../../../types";
+import { ModifyBlockService } from "../../modify/block/ModifyBlockService";
 
-//     let length = 0;
-//     while(ary1[length] && ary2[length]) {
-//       const aNum = Number(ary1[length]);
-//       const bNum = Number(ary2[length]);
+function sortBlock(blockList: Array<UnionBlock>) {
+  return blockList.concat().sort((a, b) => {
+    if(a.position === b.position) {
+      return 0
+    }
 
-//       if(aNum > bNum) {
-//         return 1;
-//       } else if(aNum < bNum) {
-//         return -1;
-//       }
+    const aPosition = a.position.split(/-/);
+    const bPosition = b.position.split(/-/);
 
-//       length++;
-//     }
+    let length = 0;
+    while(aPosition[length] && bPosition[length]) {
+      const aNum = Number(aPosition[length]);
+      const bNum = Number(bPosition[length]);
 
-//     if(!ary1[length] && !ary2[length]) {
-//       return 0;
-//     } else {
-//       return ary1[length]? 1 : -1;
-//     }
-//   });
-// }
+      if(aNum > bNum) {
+        return 1;
+      } else if(aNum < bNum) {
+        return -1;
+      }
 
-// export function orderingBlock(blockDataList: BlockData[] | RawBlockData[]): ResBlockUtils {
-//   const preBlockDataList = copyToNewObjectArray(blockDataList);
-//   const newBlockDataList: BlockData[] = [];
-//   const tempData: TempDataType = { update: [] };
-//   const modifyData: any[] = [];
+      length++;
+    }
 
-//   let preBlockListlength = preBlockDataList.length - 1;
+    if(!aPosition[length] && !bPosition[length]) {
+      return 0;
+    } else {
+      return aPosition[length]? 1 : -1;
+    }
+  });
+}
 
-//   if(preBlockListlength === -1) {
-//     return {
-//       blockList: [],
-//       modifyData,
-//       tempData
-//     }
-//   }
+function orderingBlock(blockList: Array<UnionBlock>): ResBlockService {
+  if(!blockList[0]) return { blockList: [] }
+  
+  const newBlockList: Array<UnionBlock> = [];
+  const modifyBlockTokenList: Array<ModifyBlockToken> = [];
+  const historyBlockTokenList: Array<ModifyBlockToken> = [];
+  const stackId: string[] = [];
 
-//   const stackId: string[] = [];
-//   let stackIdLength = 0;
-//   let index = 1;
-//   let currentPosition = [1];
-//   let currentPositionLength = 0;
+  let blockListLength = blockList.length - 1;
+  let index = 1;
+  let stackIdLength = 0;
+  let currentPosition = [1];
+  let currentPositionLength = 0;
+  
+  const firstBlock = blockList[0];
 
-//   stackId.push(preBlockDataList[0].id);
+  stackId.push(firstBlock.id);
 
-//   newBlockDataList.push(Object.assign({}, preBlockDataList[0], {
-//     index: 0,
-//     parentId: "root",
-//     position: "1"
-//   }));
+  const preProps = firstBlock.updateBlockData<UnionBlockGenericType>({
+    index: 0,
+    parentId: "root",
+    position: "1"
+  });
 
-//   if(preBlockDataList[0].position !== "1") {
+  newBlockList.push(firstBlock);
 
-//     tempData.update?.push(createTempData(preBlockDataList[0].id, {
-//       position: preBlockDataList[0].position
-//     }));
+  if(preProps.position !== "1") {
+    modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(firstBlock.id, {
+      position: "1"
+    })));
+    historyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(firstBlock.id, preProps)));
+  }
 
-//     modifyData.push(
-//       setUpdateModifyDataOfBlock(preBlockDataList[0].id, {
-//         position: "1"
-//       })
-//     );
+  while(index <= blockListLength) {
+    const block = blockList[index];
 
-//   }
+    let length = block.position.split(/-/).length - 1;
 
-//   preBlockDataList.shift();
-
-//   while(preBlockListlength) {
-//     let block = preBlockDataList.shift();
-    
-//     if(!block) {
-//       console.log("not block", preBlockDataList, blockDataList);
-//       return {
-//         blockList: [],
-//         modifyData,
-//         tempData
-//       };
-//     }
-    
-//     let length = block.position.split(/-/).length - 1;
-
-//     if(currentPositionLength === length) {
+    if(currentPositionLength === length) {
       
-//       stackId[stackIdLength] = block.id;
-//       currentPosition[currentPositionLength]++;
+      stackId[stackIdLength] = block.id;
+      currentPosition[currentPositionLength]++;
 
-//     } else if(currentPositionLength < length){
+    } else if(currentPositionLength < length){
 
-//       stackId.push(block.id);
-//       stackIdLength++;
-//       currentPosition.push(1);
-//       currentPositionLength++;
+      stackId.push(block.id);
+      stackIdLength++;
+      currentPosition.push(1);
+      currentPositionLength++;
 
-//     } else {
+    } else {
 
-//       for(let i = 0; i <= currentPositionLength - length; i++) {
-//         currentPosition.pop();
-//         currentPositionLength--;
-//         stackId.pop();
-//         stackIdLength--;
-//       } 
+      for(let i = 0; i <= currentPositionLength - length; i++) {
+        currentPosition.pop();
+        currentPositionLength--;
+        stackId.pop();
+        stackIdLength--;
+      } 
 
-//       currentPosition[currentPositionLength]++;
-//       stackId[stackIdLength] = block.id;
-//     }
+      currentPosition[currentPositionLength]++;
+      stackId[stackIdLength] = block.id;
+    }
 
-//     let position = currentPosition.join("-");
+    let position = currentPosition.join("-");
 
-//     if(position !== block.position) {
+    if(position !== block.position) {
 
-//       tempData.update?.push(createTempData(block.id, {
-//         position: block.position
-//       }));
+      historyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, {
+        position: block.position
+      })));
 
-//       modifyData.push(setUpdateModifyDataOfBlock(block.id, {
-//         position
-//       }));
+      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, {
+        position
+      })));
       
-//     }
-    
-//     newBlockDataList.push(Object.assign({}, block, {
-//       index,
-//       parentId: !stackIdLength? "root" : stackId[stackIdLength - 1],
-//       position
-//     }));
+    }
 
-//     preBlockListlength--;
-//     index++;
-//   }
+    block.updateBlockData({
+      index,
+      parentId: !stackIdLength? "root": stackId[stackIdLength - 1],
+      position
+    });
 
-//   return {
-//     blockList: newBlockDataList,
-//     tempData,
-//     modifyData
-//   };
-// }
+    newBlockList.push(block);
+
+    index++;
+
+  }
+
+  return {
+    blockList: newBlockList,
+    modifyBlockTokenList: modifyBlockTokenList[0]? modifyBlockTokenList : undefined,
+    historyBlockTokenList: historyBlockTokenList[0]? historyBlockTokenList : undefined
+  };
+}
+
+export default {
+  sortBlock,
+  orderingBlock
+}

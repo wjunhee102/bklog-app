@@ -19,6 +19,12 @@ export type TextContentStyleType = ["b"]
 
 export type TextContentType = [string] | [string, TextContentStyleType[]];
 
+// meta
+export type NumberedBlockMeta = {
+  order: number;
+}
+
 export type BlockTypeText     = typeof BLOCK_TEXT | typeof BLOCK_NUMBERED | typeof BLOCK_BULLETED | typeof BLOCK_TODO;
 export type BlockStylesText   = TodoStylesType | null;
 export type BlockContentsText = TextContentType[];
+export type BlockMetaText     = null | NumberedBlockMeta;

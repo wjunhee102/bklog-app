@@ -1,3 +1,3 @@
-import createBlockData from "./createBlockData";
+import create from "./createBlock";
 
-export const createBlockDataHandler = createBlockData;
+export const createBlockDataTable = create.createBlockDataTable;

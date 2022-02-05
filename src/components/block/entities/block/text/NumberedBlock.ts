@@ -1,10 +1,11 @@
-import { BlockDataInitProps, TextBlockData, TextBlockDataProps, TextGenericType } from "../type";
+import { BlockDataInitProps, TextBlockDataProps, TextGenericType } from "../type";
+import { NumberedBlockMeta } from "../type/types/text";
 import { BaseTextBlock } from "./BaseTextBlock";
 
-export class NumberedBlock extends BaseTextBlock<{ order: number }> {
+export class NumberedBlock extends BaseTextBlock<NumberedBlockMeta> {
 
-  constructor(props: BlockDataInitProps<TextGenericType>) {
-    super(props, { order: 0 });
+  constructor(props: BlockDataInitProps<TextGenericType>, meta: NumberedBlockMeta = { order: 0 }) {
+    super(props, meta);
     this._type = "numbered";
   }
 
@@ -14,23 +15,12 @@ export class NumberedBlock extends BaseTextBlock<{ order: number }> {
     return this;
   }
 
-  // regeneration(props: TextBlockProps) {
-  //   const preBlockDataProps: TextBlockProps = this.updateBlockData(props);
-
-  //   const newBlock = new NumberedBlock(this.getBlockData as TextBlockData);
-  //   newBlock.setOrder(this.meta.order);
-
-  //   return {
-  //     newBlock,
-  //     preBlockDataProps
-  //   }
-  // }
-
-  regeneration(props: TextBlockDataProps): [ NumberedBlock, TextBlockDataProps ] {
-    const [ blockData, preBlockDataProps ] = this.updateBlockData(props);
-    const newBlock = new NumberedBlock(blockData);
-    newBlock.setOrder(this.meta.order);
+  public regeneration(props: TextBlockDataProps): [ NumberedBlock, TextBlockDataProps ] {
+    const preBlockDataProps = this.updateBlockData(props);
+    const newBlock = new NumberedBlock(this.getBlockData);
+    newBlock._meta = this.meta;
 
     return [ newBlock, preBlockDataProps ];
   }
+  
 }

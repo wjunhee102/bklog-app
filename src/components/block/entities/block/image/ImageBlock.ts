@@ -1,22 +1,22 @@
 import { Block } from "../abstract/Block";
-import { BlockDataInitProps, ImageBlockData, ImageBlockDataProps, ImageGenericType } from "../type";
+import { BlockDataInitProps, ImageBlockData, ImageBlockDataProps, ImageGenericType, ImageRawBlockData } from "../type";
 import { BlockFrame } from "../abstract/BlockFrame";
 
-export class ImageBlock extends Block<ImageGenericType> implements BlockFrame<ImageGenericType> {
+export class ImageBlock extends Block<ImageGenericType, null> implements BlockFrame<ImageGenericType> {
 
   static get createBlockData() {
-    return (props: ImageBlockDataProps | ImageBlockData) => {
+    return (props: ImageBlockDataProps | ImageBlockData | ImageRawBlockData) => {
       return Block.createBlockData<ImageGenericType>("image", props);
     }
   }
 
-  constructor(props: BlockDataInitProps<ImageGenericType>) {
-    super(props, null);
+  constructor(props: BlockDataInitProps<ImageGenericType>, meta = null) {
+    super(props, meta);
   }
 
-  regeneration(props: ImageBlockDataProps): [ ImageBlock, ImageBlockDataProps ] {
-    const [ blockData, preBlockDataProps ] = this.updateBlockData(props);
-    const newImageBlock: ImageBlock = new ImageBlock(blockData);
+  public regeneration(props: ImageBlockDataProps): [ ImageBlock, ImageBlockDataProps ] {
+    const preBlockDataProps = this.updateBlockData(props);
+    const newImageBlock: ImageBlock = new ImageBlock(this.getBlockData);
 
     return [ newImageBlock, preBlockDataProps ];
   }

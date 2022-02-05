@@ -71,7 +71,7 @@ function createImageBlockData({
   }
 }
 
-export default {
+const createBlockDataTable = {
   [BLOCK_TEXT]      : createTextBlockData,
   [BLOCK_BULLETED]  : createTextBlockData,
   [BLOCK_NUMBERED]  : createTextBlockData,
@@ -79,4 +79,8 @@ export default {
   [BLOCK_TITLE]     : createTitleBlockData,
   [BLOCK_CONTAINER] : createContainerBlockData,
   [BLOCK_IMAGE]     : createImageBlockData
+}
+
+export default {
+  createBlockDataTable
 }

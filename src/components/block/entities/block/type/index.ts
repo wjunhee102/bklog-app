@@ -2,9 +2,9 @@ import { ImageBlock } from "../image/ImageBlock";
 import { BaseTextBlock } from "../text/BaseTextBlock";
 import { NumberedBlock } from "../text/NumberedBlock";
 import { TextBlock } from "../text/TextBlock";
-import { BlockContentsContainer, BlockStylesContainer, BlockTypeContainer, BLOCK_CONTAINER } from "./types/container";
-import { BlockContentsImage, BlockStylesImage, BlockTypeImage, BLOCK_IMAGE } from "./types/image";
-import { BlockContentsText, BlockStylesText, BlockTypeText, BLOCK_BULLETED, BLOCK_NUMBERED, BLOCK_TEXT } from "./types/text";
+import { BlockContentsContainer, BlockStylesContainer, BlockTypeContainer } from "./types/container";
+import { BlockContentsImage, BlockStylesImage, BlockTypeImage } from "./types/image";
+import { BlockContentsText, BlockMetaText, BlockStylesText, BlockTypeText } from "./types/text";
 import { BlockContentsTitle, BlockStylesTitle, BlockTypeTitle } from "./types/title";
 
 // type
@@ -84,17 +84,25 @@ export type ImageRawBlockData   = RawBlockData<ImageGenericType>;
 export type ImageBlockData      = BlockData<ImageGenericType>;
 export type ImageBlockDataProps = BlockDataProps<ImageGenericType>;
 
+// Union
+export type UnionRawBlockData = TitleRawBlockData
+  | TextRawBlockData
+  | ContainerRawBlockData
+  | ImageRawBlockData;
+
 export type UnionBlockData = TitleBlockData 
   | TextBlockData 
   | ContainerBlockData
   | ImageBlockData;
 
-export type UnionBlockDataProp = TitleBlockDataProps
+export type UnionBlockDataProps = TitleBlockDataProps
   | TextBlockDataProps
   | ContainerBlockDataProps
   | ImageBlockDataProps;
 
+export type UnionMeta = null | BlockMetaText;
 
 // Blocks;
-export type UnionBlock = BaseTextBlock<unknown> | TextBlock | NumberedBlock | ImageBlock;
+export type UnionBlock = BaseTextBlock<BlockMetaText> | TextBlock | NumberedBlock | ImageBlock;
 
+export type UnionInstanceBlock = typeof BaseTextBlock | typeof TextBlock | typeof NumberedBlock | typeof ImageBlock;

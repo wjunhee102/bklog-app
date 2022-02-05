@@ -4,31 +4,36 @@ import {
   BlockDataProps, 
   UnionBlockGenericType, 
   BlockDataInitProps,
-  FrameBlockData
+  UnionBlock,
+  UnionMeta,
+  UnionBlockData,
+  UnionRawBlockData,
+  RawBlockDataProps
 } from "../type";
-import { createBlockDataHandler } from "../utils";
+import { createBlockDataTable } from "../utils";
 
-export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericType, Meta = unknown> {
-  private _id: RawBlockData<T>['id']                 = "none";
-  protected _index: FrameBlockData['index']          = 0;
-  protected _parentId: FrameBlockData['parentId']    = "null";
-  protected _position: RawBlockData<T>['position']   = "0";
-  protected _type:    RawBlockData<T>['type']        = "text";
-  protected _styleType: RawBlockData<T>['styleType'] = "none";
-  protected _styles: RawBlockData<T>['styles']       = null;
-  protected _contents: RawBlockData<T>['contents']   = [];
+export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericType, Meta extends UnionMeta = null> {
 
-  static createBlockData<T extends UnionBlockGenericType>(type: T["type"], props: BlockDataProps<T>): BlockData<T> {
-    if(createBlockDataHandler.hasOwnProperty(type)) {
-      return createBlockDataHandler[type as T['type']](props as never);
+  private   _id:        BlockData<T>['id']        = "none";
+
+  protected _index:     BlockData<T>['index']     = 0;
+  protected _parentId:  BlockData<T>['parentId']  = "null";
+  protected _position:  BlockData<T>['position']  = "0";
+  protected _type:      BlockData<T>['type']      = "text";
+  protected _styleType: BlockData<T>['styleType'] = "none";
+  protected _styles:    BlockData<T>['styles']    = null;
+  protected _contents:  BlockData<T>['contents']  = [];
+
+  static createBlockData<T extends UnionBlockGenericType>(type: T["type"], props: BlockDataProps<T>): BlockData<T> | null {
+    if(createBlockDataTable.hasOwnProperty(type)) {
+      return createBlockDataTable[type as T['type']](props as never);
     } 
 
-    throw new Error("not block type");
+    return null;
   }
 
-  constructor(props: BlockDataInitProps<T>, protected _meta: Meta) {
+  constructor(props: BlockDataInitProps<T> | BlockData<T>, protected _meta: Meta) {
     this.init(props);
-    this._meta = _meta;
   }
 
   private init({
@@ -40,7 +45,7 @@ export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericT
     styleType,
     styles,
     contents
-  }: BlockDataInitProps<T>) {
+  }: BlockDataInitProps<T> | BlockData<T>) {
     this._index = index? index : 0;
     this._parentId = parentId? parentId : "null",
     this._position = position,
@@ -111,16 +116,23 @@ export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericT
       styles: this._styles
     }
   }
-  
-  protected updateBlockData(props: BlockDataProps<T>): [ BlockData<T>, BlockDataProps<T> ]{
-    if(Object.keys(props).length < 0) throw new Error("props null");
 
-    const preBlockDataPropsList: Array<BlockDataProps<T>> = [];
+  public updateBlockData<G extends UnionBlockGenericType = T>(props: BlockDataProps<G>): RawBlockDataProps<G> {
+    const keyList = Object.keys(props) as Array<keyof BlockDataProps<T>>;
+    
+    if(keyList.length < 0) throw new Error("props null");
 
-    for(const key in props) {
-      preBlockDataPropsList.push({[`${key}`]: this[`_${key as keyof BlockData<T>}`]} as BlockDataProps<T>);
+    const preBlockDataProps: BlockDataProps<T> = {};
+
+    for(const key of keyList) {
+      preBlockDataProps[key] = this[`_${key}`] as any;
+      this[`_${key}`] = props[key] as never;
     }
 
-    return [ Object.assign(this.getBlockData, props) as BlockData<T> , Object.assign({}, ...preBlockDataPropsList) as BlockDataProps<T> ];
+    preBlockDataProps.index = undefined;
+    preBlockDataProps.parentId = undefined;
+
+    return preBlockDataProps;
   }
+
 }

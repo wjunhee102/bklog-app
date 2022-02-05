@@ -1,9 +1,9 @@
-import { BlockDataProps, BlockGenericTypes, Blocks } from "../type";
+import { BlockDataProps, UnionBlockGenericType, UnionBlock } from "../type";
 
-export abstract class BlockFrame<T extends BlockGenericTypes> {
+export abstract class BlockFrame<T extends UnionBlockGenericType> {
 
   public abstract regeneration: (props: BlockDataProps<T>) => [
-    newBlock: Blocks,
+    newBlock: UnionBlock,
     preBlockDataProps: BlockDataProps<T>
   ]
 
