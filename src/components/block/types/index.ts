@@ -79,18 +79,12 @@ export interface BlockData<T = any, P = any> extends RawBlockData<T, P> {
   parentId: string;
 }
 
-export interface RawBlockDataProps<T = any, P = any> {
-  position?: string; // 1,  1-1,  1-2-1
-  id?: string;
-  type?: BlockTypes;
-  styleType?: string;
-  styles?: T;
-  contents?: P;
+export type RawBlockDataProps<T = any, P = any> = {
+  [Property in keyof RawBlockData<T, P>]?: RawBlockData<T, P>[Property];
 }
 
-export interface BlockDataProps<T = any, P = any> extends RawBlockDataProps<T, P> {
-  index?: number;
-  parentId?: string;
+export type BlockDataProps<T = any, P = any> = {
+  [Property in keyof BlockData<T, P>]?: BlockData<T, P>[Property];
 }
 
 export type OrderType = "add" | "del" | "color" | "link";

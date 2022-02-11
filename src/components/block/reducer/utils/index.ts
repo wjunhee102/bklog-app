@@ -65,10 +65,10 @@ export interface ChangeEditorStateProps {
   isCliping?: boolean;
 }
 
-export interface BlockStateProps {
-  blockList?: BlockData[];
-  modifyData?: ModifyData[];
-}
+// export interface BlockStateProps {
+//   blockList?: BlockData[];
+//   modifyData?: ModifyData[];
+// }
 
 export interface SetBlockDataList {
   [type: string]: BlockData[];
@@ -85,7 +85,7 @@ export interface TempData<T = any> {
 }
 
 export interface TempDataType {
-  editingBlockId?: string;
+  editingBlockId?: string | null;
   preBlockInfo?: PreBlockInfo;
   pageInfo?: PageInfo;
   create?: TempData<BlockData>[];
@@ -142,27 +142,8 @@ export interface BlockState {
   clipBoard: BlockData[];
 }
 
-export interface BlockStateProps {
-  isFetch?: boolean;
-  isGrab?: boolean;
-  isPress?: boolean;
-  isHoldingDown?: boolean;
-  isCliping?: boolean;
-  targetPosition?: string | null;
-  pageInfo?: { title: string | null};
-  blockList?: BlockData[];
-  blockSideInfoGroup?: BlockSideInfoGroup | null;
-  editingBlockId?: string | null;
-  preBlockInfo?: PreBlockInfo;
-  stageBlock?: StagedBlock[];
-  stagePage?: StagedPage | null;
-  updatedBlockIdList?: string[];
-  modifyData?: ModifyData[];
-  modifyPageInfo?: ModifyPageInfoType | null;
-  tempFront?: TempDataType[];
-  tempBack?: TempDataType[];
-  tempClipData?: number[];
-  clipBoard?: BlockData[];
+export type BlockStateProps = {
+  [Property in keyof BlockState]?: BlockState[Property];
 }
 
 /**

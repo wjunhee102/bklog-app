@@ -10,3 +10,4 @@ export type ContainerContents = any;
 export type BlockTypeContainer     = typeof BLOCK_CONTAINER;
 export type BlockStylesContainer   = ContainerStyles;
 export type BlockContentsContainer = ContainerContents;
+export type BlockMetaContainer     = null;

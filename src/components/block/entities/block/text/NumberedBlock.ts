@@ -16,8 +16,8 @@ export class NumberedBlock extends BaseTextBlock<NumberedBlockMeta> {
   }
 
   public regeneration(props: TextBlockDataProps): [ NumberedBlock, TextBlockDataProps ] {
-    const preBlockDataProps = this.updateBlockData(props);
-    const newBlock = new NumberedBlock(this.getBlockData);
+    const [ blockData, preBlockDataProps ] = this.updateBlockData<TextGenericType>(props);
+    const newBlock = new NumberedBlock(blockData);
     newBlock._meta = this.meta;
 
     return [ newBlock, preBlockDataProps ];

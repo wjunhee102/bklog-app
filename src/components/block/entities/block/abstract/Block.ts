@@ -93,7 +93,7 @@ export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericT
   }
 
 
-  get getRawBlockData(): RawBlockData<T> {
+  public getRawBlockData(): RawBlockData<T> {
     return {
       position: this._position,
       id: this._id,
@@ -104,7 +104,7 @@ export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericT
     }
   }
 
-  get getBlockData(): BlockData<T> {
+  public getBlockData(): BlockData<T> {
     return {
       index: this._index,
       parentId: this._parentId,
@@ -117,20 +117,42 @@ export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericT
     }
   }
 
-  public updateBlockData<G extends UnionBlockGenericType = T>(props: BlockDataProps<G>): RawBlockDataProps<G> {
+  public updateBlockData<G extends UnionBlockGenericType = UnionBlockGenericType>(props: BlockDataProps<G>): [ BlockData<G>, RawBlockDataProps<G> ] {
     const keyList = Object.keys(props) as Array<keyof BlockDataProps<T>>;
-    
-    if(keyList.length < 0) throw new Error("props null");
-
     const preBlockDataProps: BlockDataProps<T> = {};
 
-    for(const key of keyList) {
-      preBlockDataProps[key] = this[`_${key}`] as any;
-      this[`_${key}`] = props[key] as never;
+    if(keyList.length > 0) {
+
+      for(const key of keyList) {
+        if(props[key]) {
+          Object.assign(preBlockDataProps, {
+            [key]: this[`_${key}`]
+          });
+        }
+      }
+
     }
 
-    preBlockDataProps.index = undefined;
-    preBlockDataProps.parentId = undefined;
+    return [ 
+      Object.assign({}, this.getBlockData(), props), 
+      Object.assign(preBlockDataProps) 
+    ];
+  }
+
+  public updateBlock<G extends UnionBlockGenericType = UnionBlockGenericType>(props: BlockDataProps<G>): BlockDataProps<G> {
+    const keyList = Object.keys(props) as Array<keyof BlockDataProps<T>>;
+    const preBlockDataProps: BlockDataProps<T> = {};
+
+    if(keyList.length > 0) {
+
+      for(const key of keyList) {
+        if(props[key]) {
+          preBlockDataProps[key] = this[`_${key}`] as never;
+          this[`_${key}`] = props[key] as never;
+        }
+      }
+
+    };
 
     return preBlockDataProps;
   }

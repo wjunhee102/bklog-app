@@ -15,8 +15,8 @@ export class ImageBlock extends Block<ImageGenericType, null> implements BlockFr
   }
 
   public regeneration(props: ImageBlockDataProps): [ ImageBlock, ImageBlockDataProps ] {
-    const preBlockDataProps = this.updateBlockData(props);
-    const newImageBlock: ImageBlock = new ImageBlock(this.getBlockData);
+    const [ blockData, preBlockDataProps ] = this.updateBlockData<ImageGenericType>(props);
+    const newImageBlock: ImageBlock = new ImageBlock(blockData);
 
     return [ newImageBlock, preBlockDataProps ];
   }

@@ -47,7 +47,7 @@ function createBlockData<T = TextContents[]>({
 }: BlockDataProps<T>): BlockData {
   return {
     index: 0,
-    position,
+    position: position? position : "0",
     id: id? id : Token.getUUID(),
     type: type? type : "text",
     styleType: styleType? styleType : "bk-p",
@@ -552,7 +552,7 @@ function removeBlockInList(
  * @param preIndex 
  * @param innerHTML 
  */
-function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex, innerHTML: string): ResBlockUtils | null {
+function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex: number, innerHTML: string): ResBlockUtils | null {
   if(!TextContentsTypeList.includes(preBlocks[preIndex].type)) return null;
 
   const preBlockList = preBlocks.concat().map(block => updateObject(block));
@@ -564,6 +564,14 @@ function removeTextBlockInList(preBlocks: BlockData[], index: number, preIndex, 
   preBlockList[preIndex].contents = newContents;
 
   const { blockList, tempData, modifyData } = removeBlockInList(preBlockList, [preBlockList[index]]);
+
+  if(!tempData || !tempData.update) {
+    return {
+      blockList: preBlocks,
+      tempData: {},
+      modifyData: []
+    }
+  }
 
   const tempIndex = tempData.update.findIndex(data => data.blockId === blockId);
   const modifyIndex = modifyData.findIndex(data => data.blockId === blockId);
@@ -627,7 +635,7 @@ function changeBlockPosition(blocks: BlockData[], idList: string[], targetPositi
 
   if(index === 0) return null;
 
-  const containerBlockList = removedBlockList.filter((block => block.type === "container"));
+  const containerBlockList = removedBlockList.filter(block => block.type === "container");
   const positionTempData = targetBlockList.map(block => setUpdateModifyDataOfBlock(block.id, {
     position: block.position
   }));

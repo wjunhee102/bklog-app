@@ -1,14 +1,16 @@
-import { ModifyDataTokens } from "../../../entities/modify/type";
-import { ModifyDataTokenServices } from "../type";
+import { UnionModifyDataToken } from "../../../entities/modify/type";
+import { ModifyDataTokenServices, UnionModifyData } from "../type";
 
-export abstract class ModifyTokenService<T extends ModifyDataTokens = ModifyDataTokens> {
+export abstract class ModifyTokenService<T extends UnionModifyDataToken = UnionModifyDataToken> {
 
-  public abstract push: (...newTokenList: T[]) => this;
+  public abstract push: (...newTokenList: Array<T>) => this;
 
   public abstract merge: () => this;
 
-  public abstract getData: () => ModifyDataTokens[];
+  public abstract getTokenList: () => Array<UnionModifyDataToken>;
 
-  public abstract regeneration: () => ModifyDataTokenServices;
+  public abstract getData: () => UnionModifyData | null;
+
+  // public abstract regeneration: () => ModifyDataTokenServices;
 
 }

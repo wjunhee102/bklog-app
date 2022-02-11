@@ -6,14 +6,17 @@ import { BLOCK_CONTAINER } from "../../../entities/block/type/types/container";
 import { BLOCK_IMAGE } from "../../../entities/block/type/types/image";
 import { BLOCK_BULLETED, BLOCK_NUMBERED, BLOCK_TEXT, BLOCK_TODO } from "../../../entities/block/type/types/text";
 import { BLOCK_TITLE } from "../../../entities/block/type/types/title";
+import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
+import checkBlock from "./checkBlock";
 import create from "./create";
 import ordering from "./ordering";
+import update from "./update";
 
 export interface ResBlockService {
   blockList: Array<UnionBlock>;
   modifyBlockTokenList?: Array<ModifyBlockToken>;
-  historyBlockTokenList?: Array<ModifyBlockToken>;
+  historyBlockTokenList?: Array<HistoryBlockToken>;
 }
 
 export const BlockInstancesTable = {
@@ -28,5 +31,14 @@ export const BlockInstancesTable = {
 
 export const createBlock = create.createBlock;
 
-export const sortBlock     = ordering.sortBlock;
-export const orderingBlock = ordering.orderingBlock;
+export const sortBlock             = ordering.sortBlock;
+export const orderingBlock         = ordering.orderingBlock;
+export const resetToTargetPosition = ordering.resetToTargetPosition;
+export const setPosition           = ordering.setPosition;
+
+export const updateBlockListStagedProperty = update.updateBlockListStagedProperty;
+export const insertBlockList               = update.insertBlockList;
+export const removeBlockList               = update.removeBlockList;
+
+export const checkInstanceOfBlock     = checkBlock.checkInstanceOfBlock;
+export const checkInstanceOfBlockList = checkBlock.checkInstanceOfBlockList;

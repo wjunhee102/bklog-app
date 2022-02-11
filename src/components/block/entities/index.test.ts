@@ -1,7 +1,11 @@
-import { Block } from "./block/Block";
+import { checkInstanceOfBlockList } from "../service/block/utils";
+import { ModifyBlockService } from "../service/modify/block/ModifyBlockService";
+import { Block } from "./block/abstract/Block";
 import { NumberedBlock } from "./block/text/NumberedBlock";
 import { TextBlock } from "./block/text/TextBlock";
-import { BlockData, TextBlockData } from "./block/type";
+import { UnionBlockData, TextBlockData, TextGenericType, UnionBlock } from "./block/type";
+import { ModifyBlockToken } from "./modify/block/ModifyBlockToken";
+import { ModifyDataToken } from "./modify/ModifyDataToken";
 
 const TEXT_BLOCK = {
   position: "1",
@@ -20,7 +24,7 @@ const TEXT_BLOCK = {
   ]
 }
 
-const TEST_BLOCK_1: Array<BlockData> = [
+const TEST_BLOCK_1: Array<UnionBlockData> = [
   {
     position: "1",
     index: 1,
@@ -86,7 +90,7 @@ const TEST_BLOCK_1: Array<BlockData> = [
     ]
   }
 ];
-const TEST_BLOCK_2: BlockData[] = [
+const TEST_BLOCK_2: UnionBlockData[] = [
   {
     position: "1-1-1",
     index: 1,
@@ -159,16 +163,12 @@ test('create Block', () => {
   const test1 = new TextBlock(TEXT_BLOCK as TextBlockData);
   const test2 = new NumberedBlock(TEST_BLOCK_1[1] as TextBlockData);
 
-  console.log(test1, test2.getTextContents);
-
-  console.log(test1.getTextContents, test1.getHtmlContents);
-
-  expect(test1.getBlockData.id).toEqual(TEXT_BLOCK.id);
+  expect(test1.getBlockData().id).toEqual(TEXT_BLOCK.id);
   expect(test2).toBeInstanceOf(Block);
 })
 
-function createBlockList(blockDataList: BlockData[]) {
-  let blockList: Block<any>[] = [];
+function createBlockList(blockDataList: UnionBlockData[]) {
+  let blockList: UnionBlock[] = [];
 
   for(const blockData of blockDataList) {
     
@@ -189,29 +189,38 @@ function createBlockList(blockDataList: BlockData[]) {
   return blockList;
 }
 
-function checkInstanceOfBlock(blockList: Block<any>[]): boolean {
-
-  for(const block of blockList) {
-
-    switch(block.type) {
-      case "text":
-        if(block instanceof TextBlock === false) return false;
-      
-        break;
-
-      case "numbered":
-        if(block instanceof NumberedBlock === false) return false;
-      
-        break;
-    }
-  
-  }
-
-  return true;
-}
 
 test('create Block List',  () => {
   const blockList = createBlockList(TEST_BLOCK_2);
+  expect(checkInstanceOfBlockList(blockList)).toEqual(true);
+})
 
-  expect(checkInstanceOfBlock(blockList)).toEqual(true);
+test('findIndex', () => {
+  const test: string[] = [];
+  const test2 = "1";
+
+  expect(test.findIndex(t => t === test2)).toEqual(-1);
+});
+
+test('create ModifyDataToken', () => {
+  const data = Block.createBlockData<TextGenericType>("text", { index: 1 });
+  
+  if(!data) return false;
+
+  const test = ModifyBlockService.setCreateModifyData(data);
+  
+  const token = new ModifyBlockToken(test);
+
+  expect(token).toBeInstanceOf(ModifyDataToken);
+});
+
+test('update Block', () => {
+  const data = Block.createBlockData<TextGenericType>('numbered', { index: 1});
+  if(!data) return false;
+
+  const numberedBlock = new NumberedBlock(data);
+  numberedBlock.setOrder(5);
+
+  expect(numberedBlock.regeneration({ index: 4 })[0].index).toEqual(4);
+
 })

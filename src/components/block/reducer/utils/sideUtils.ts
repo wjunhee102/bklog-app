@@ -164,7 +164,7 @@ const modifyDataReducer = (acc: ModifyBlockDataType, cur: ModifyData) => {
 }
 
 function convertModifyBlockData(modifyDataList: ModifyData[] | null) {
-  if(!modifyDataList[0] || !modifyDataList) return null;
+  if(!modifyDataList || !modifyDataList[0]) return null;
 
   const acc: ModifyBlockDataType = {
     create: [],

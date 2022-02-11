@@ -3,8 +3,8 @@ import { ModifyTokenService } from "../abstract/ModifyTokenService";
 import { ModifyDataTokenServices } from "../type";
 import { pushModifyDataToken } from "../utils";
 
-export class ModifyPageService implements ModifyTokenService {
-  private _tokenList: ModifyPageDataToken[];
+export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken> {
+  private _tokenList: ModifyPageDataToken[] = [];
 
   private init(tokenList: ModifyPageDataToken[]) {
     this._tokenList = tokenList;

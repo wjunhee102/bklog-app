@@ -1,5 +1,6 @@
-import { BlockData, BlockGenericTypes, RawBlockData, RawBlockDataProps, TextGenericType } from "../../block/type";
-import { ModifyBlockDataToken } from "../block/ModifyBlockData";
+import { UnionBlockGenericType, RawBlockData, RawBlockDataProps, BlockData, BlockDataProps } from "../../block/type";
+import { HistoryBlockToken } from "../block/HistoryBlockToken";
+import { ModifyBlockToken } from "../block/ModifyBlockToken";
 import { ModifyPageDataToken } from "../page/ ModifyPageDataToken";
 
 // command
@@ -22,23 +23,28 @@ export const SET_PAGE    = "page" as const;
 export type ModifySet = typeof SET_BLOCK 
   | typeof SET_COMMENT 
   | typeof SET_PAGE; 
-  
-export interface PageInfoProps {
-  createdDate?: Date;
-  updatedDate?: Date;
-  id?: string;
-  title?: string;
-  coverImage?: string;
-  coverColor?: string;
-  lastAccessDate?: Date;
-  views?: number;
-  disclosureScope?: number;
-  version?: string;
-  profileId?: string;
-  editable?: boolean;
+
+
+export interface PageInfo {
+  createdDate: Date;
+  updatedDate: Date;
+  id: string;
+  title: string;
+  coverImage: string;
+  coverColor: string;
+  lastAccessDate: Date;
+  views: number;
+  disclosureScope: number;
+  version: string;
+  profileId: string;
+  editable: boolean;
+}  
+
+export type PageInfoProps = {
+  [Property in keyof PageInfo]?: PageInfo[Property];
 }
 
-type ModifyPayload = RawBlockDataProps<any> | PageInfoProps;
+type ModifyPayload = RawBlockDataProps<UnionBlockGenericType> | PageInfoProps;
 
 interface ModifyGenericType<T extends ModifyALLCommand, Y extends ModifySet, P extends ModifyPayload> {
   command: T;
@@ -46,15 +52,29 @@ interface ModifyGenericType<T extends ModifyALLCommand, Y extends ModifySet, P e
   payload: P;
 }
 
-// block
+/*
+* block
+*/
 
-export type CreateModifyBlockGenericType<T extends BlockGenericTypes = BlockGenericTypes> = ModifyGenericType<typeof COMMAND_CREATE, typeof SET_BLOCK, RawBlockData<T>>;
+// modify
+export type CreateModifyBlockGenericType<T extends UnionBlockGenericType = UnionBlockGenericType> = ModifyGenericType<typeof COMMAND_CREATE, typeof SET_BLOCK, RawBlockData<T>>;
 
-export type UpdateModifyBlockGenericType<T extends BlockGenericTypes = BlockGenericTypes> = ModifyGenericType<typeof COMMAND_UPDATE, typeof SET_BLOCK, RawBlockDataProps<T>>;
+export type UpdateModifyBlockGenericType<T extends UnionBlockGenericType = UnionBlockGenericType> = ModifyGenericType<typeof COMMAND_UPDATE, typeof SET_BLOCK, RawBlockDataProps<T>>;
 
-export type DeleteModifyBlockGenericType = ModifyGenericType<typeof COMMAND_DELETE, typeof SET_BLOCK, null>;
+export type DeleteModifyBlockGenericType = ModifyGenericType<typeof COMMAND_DELETE, typeof SET_BLOCK, RawBlockDataProps<UnionBlockGenericType>>;
 
-export type ModifyBlockGenericType<T extends BlockGenericTypes = BlockGenericTypes> = CreateModifyBlockGenericType<T> | UpdateModifyBlockGenericType<T> | DeleteModifyBlockGenericType;
+export type ModifyBlockGenericType<T extends UnionBlockGenericType = UnionBlockGenericType> = CreateModifyBlockGenericType<T> | UpdateModifyBlockGenericType<T> | DeleteModifyBlockGenericType;
+
+// history
+export type CreateHistoryBlockGenericType<T extends UnionBlockGenericType = UnionBlockGenericType> = ModifyGenericType<typeof COMMAND_CREATE, typeof SET_BLOCK, BlockData<T>>;
+
+export type UpdateHistoryBlockGenericType<T extends UnionBlockGenericType = UnionBlockGenericType> = ModifyGenericType<typeof COMMAND_UPDATE, typeof SET_BLOCK, BlockDataProps<T>>;
+
+export type DeleteHistoryBlockGenericType = ModifyGenericType<typeof COMMAND_DELETE, typeof SET_BLOCK, RawBlockDataProps<UnionBlockGenericType>>;
+
+export type HistoryBlockGenericType<T extends UnionBlockGenericType = UnionBlockGenericType> = CreateHistoryBlockGenericType<T> | UpdateHistoryBlockGenericType<T> | DeleteHistoryBlockGenericType;
+
+/**/
 
 // page
 
@@ -62,30 +82,45 @@ export type ModifyPageGenericType = ModifyGenericType<ModifyUpdateCommand, typeo
 
 // types
 
-export type ModifyGenericTypes = ModifyBlockGenericType<any> | ModifyPageGenericType;
+export type UnionModifyGenericType = ModifyBlockGenericType<UnionBlockGenericType> 
+  | HistoryBlockGenericType<UnionBlockGenericType> 
+  | ModifyPageGenericType;
 
 
-// RawModifyData 
-export interface RawModifyData<T extends ModifyGenericTypes = ModifyGenericTypes> {
+/*
+* RawModifyData 
+*/ 
+export interface RawModifyData<T extends UnionModifyGenericType = UnionModifyGenericType> {
   id: string;
   set: T["set"];
   payload: T["payload"];
 }
 
-export type CreateRawModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> = RawModifyData<CreateModifyBlockGenericType<T>>;
+// block
+export type CreateRawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<CreateModifyBlockGenericType<T>>;
 
-export type UpdateRawModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> = RawModifyData<UpdateModifyBlockGenericType<T>>;
+export type UpdateRawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<UpdateModifyBlockGenericType<T>>;
 
 export type DeleteRawModifyBlockData = RawModifyData<DeleteModifyBlockGenericType>;
 
-export type RawModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> = CreateRawModifyBlockData<T> | UpdateRawModifyBlockData<T> | DeleteRawModifyBlockData;
+export type RawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = CreateRawModifyBlockData<T> | UpdateRawModifyBlockData<T> | DeleteRawModifyBlockData;
+
+export type CreateRawHistoryBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<CreateHistoryBlockGenericType<T>>;
+
+export type UpdateRawHistoryBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<UpdateHistoryBlockGenericType<T>>;
+
+export type DeleteRawHistoryBlockData = RawModifyData<DeleteHistoryBlockGenericType>;
+
+export type RawHistoryBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = CreateRawHistoryBlockData<T> | UpdateRawHistoryBlockData<T> | DeleteRawHistoryBlockData; 
+
+export type UnionRawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyBlockData<T> | RawHistoryBlockData<T>;
 
 // ModifyData
-export interface ModifyData<T extends ModifyGenericTypes> extends RawModifyData<T> {
+export interface ModifyData<T extends UnionModifyGenericType> extends RawModifyData<T> {
   command: T["command"];
 }
 
-export interface UpdateModifyBlockData<T extends BlockGenericTypes = BlockGenericTypes> {
+export interface UpdateModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> {
   id: string;
   command: typeof COMMAND_UPDATE;
   payload: RawBlockDataProps<T>;
@@ -95,15 +130,24 @@ export interface DeleteModifyBlockData {
   id: string;
 }
 
-export interface ModifyBlockDataProps<T extends BlockGenericTypes = BlockGenericTypes> {
+export interface ModifyBlockDataProps<T extends UnionBlockGenericType = UnionBlockGenericType> {
   id: string;
-  command: ModifyBlockGenericType<T>["command"];
-  payload: ModifyBlockGenericType<T>["payload"];
+  command: ModifyBlockGenericType<T>['command'];
+  payload: ModifyBlockGenericType<T>['payload'];
+}
+
+export interface HistoryBlockDataProps<T extends UnionBlockGenericType = UnionBlockGenericType> {
+  id: string;
+  command: HistoryBlockGenericType<T>['command'];
+  payload: HistoryBlockGenericType<T>['payload'];
 }
 
 export interface ModifyPageDataProps {
   id: string;
-  payload: ModifyPageGenericType["payload"];
+  payload: ModifyPageGenericType['payload'];
 }
 
-export type ModifyDataTokens = ModifyPageDataToken | ModifyBlockDataToken;
+// Union
+export type UnionModifyBlockToken = ModifyBlockToken | HistoryBlockToken;
+
+export type UnionModifyDataToken = ModifyPageDataToken | UnionModifyBlockToken;

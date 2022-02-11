@@ -1,10 +1,10 @@
-import { ModifyData, ModifyGenericTypes } from "./type";
+import { ModifyData, UnionModifyGenericType } from "./type";
 
-export class ModifyDataToken<T extends ModifyGenericTypes> {
+export class ModifyDataToken<T extends UnionModifyGenericType> {
   private _id: string = "";
   private _command: T["command"] = "update";
   private _set: T["set"] = "block";
-  private _payload: T["payload"] = null;
+  private _payload: T["payload"] = {}; 
   private _timestamp: number = 0;
   
   constructor(props: ModifyData<T>) {
@@ -16,7 +16,7 @@ export class ModifyDataToken<T extends ModifyGenericTypes> {
     this._command = command;
     this._set = set;
     this._payload = payload;
-    this._timestamp = new Date().getDate();
+    this._timestamp = new Date().getTime();
   }
 
   get id(): string {
@@ -39,16 +39,26 @@ export class ModifyDataToken<T extends ModifyGenericTypes> {
     return this._timestamp;
   }
 
+  public updateTimestamp() {
+    this._timestamp = new Date().getTime();
+    return this;
+  }
+
   public setCommand(command: T["command"]) {
     this._command = command;
+    this.updateTimestamp();
+    
     return this;
   }
 
   public updatePayload(payload: T["payload"]) {
     this._payload = Object.assign({}, this._payload, payload);
+    this.updateTimestamp();
+
+    return this;
   }
 
-  get getData(): ModifyData<T> {
+  public getData(): ModifyData<T> {
     return {
       id: this._id,
       command: this._command,
