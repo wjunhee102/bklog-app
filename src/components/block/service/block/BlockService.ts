@@ -2,7 +2,7 @@ import { Block } from "../../entities/block/abstract/Block";
 import { ContainerBlock } from "../../entities/block/container/ContainerBlock";
 import { BaseTextBlock } from "../../entities/block/text/BaseTextBlock";
 import { mergeTextContents } from "../../entities/block/text/utils";
-import { BlockDataInitProps, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
+import { BlockDataInitProps, BlockType, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
 import { Token } from "../../entities/block/utils/token";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
@@ -10,7 +10,7 @@ import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { HistoryBlockService } from "../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../modify/block/ModifyBlockService";
 import { HistoryBlockData, ModifyBlockData } from "../modify/type";
-import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, ResBlockService, resetToTargetPosition, updateBlockListStagedProperty, setPosition } from "./utils";
+import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, resetToTargetPosition, updateBlockListStagedProperty, setPosition, changeBlockType } from "./utils";
 
 export class BlockService {
   private modifyBlockTokenList: Array<ModifyBlockToken> = [];
@@ -278,6 +278,22 @@ export class BlockService {
     })));
 
     return this.removeBlockInList([this.blockList[targetIndex]]);
+  }
+
+  public changeBlockType(blockIndex: number, type: BlockType): BlockService {
+    if(blockIndex >= this.blockList.length) return this;
+
+    const result = changeBlockType(type, this.blockList[blockIndex])
+
+    if(!result) return this;
+
+    const { block, modifyBlockToken, historyBlockToken } = result;
+
+    this.blockList[blockIndex] = block;
+    this.modifyBlockTokenList.push(modifyBlockToken);
+    this.historyBlockTokenList.push(historyBlockToken);
+
+    return this;
   }
 
   public changeBlockPosition(targetIdList: Array<string>, targetPosition: string) {

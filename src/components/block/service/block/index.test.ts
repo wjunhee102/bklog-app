@@ -1,8 +1,9 @@
 import { Block } from "../../entities/block/abstract/Block";
+import { NumberedBlock } from "../../entities/block/text/NumberedBlock";
 import { TextBlock } from "../../entities/block/text/TextBlock";
-import { StagedBlockData, TextBlockDataProps, TextGenericType, TextRawBlockData, UnionBlockData, UnionBlockDataProps, UnionRawBlockData } from "../../entities/block/type";
+import { StagedBlockData, TextGenericType, UnionBlockData, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
-import { BlockContentsText } from "../../entities/block/type/types/text";
+import { BLOCK_NUMBERED} from "../../entities/block/type/types/text";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { CreateRawHistoryBlockData, CreateRawModifyBlockData, UpdateRawHistoryBlockData } from "../../entities/modify/type";
@@ -533,7 +534,7 @@ test('update block list', () => {
     modifyBlockTokenList,
     historyBlockTokenList
   } = blockService2.getData();
-  console.log(blockList);
+
   expect(blockList.length).toEqual(TEST_BLOCK_4.length);
   expect(blockList[1].contents[0][0]).toEqual("반갑습니다.");
   expect(blockList[TEST_BLOCK_4.length-1].contents[0][0]).toEqual(block1.contents[0][0]);
@@ -592,5 +593,26 @@ test('restore block list', () => {
   expect(changedPosition).toEqual(initPosition);
   expect(blockContents1).toEqual(blockContents3);
   expect(blockContents2).toEqual("반갑습니다.");
+
+});
+
+test("change block type", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_4);
+
+  if(!blockDataList) return false;
+
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList));
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService.changeBlockType(0, BLOCK_NUMBERED).changeBlockType(0, BLOCK_CONTAINER).getData();
+
+  expect(blockList[0]).toBeInstanceOf(NumberedBlock);
+  expect(modifyBlockTokenList.length).toEqual(1);
+  expect(historyBlockTokenList.length).toEqual(1);
+  expect(modifyBlockTokenList[0].payload.type).toEqual(BLOCK_NUMBERED);
+  expect(historyBlockTokenList[0].payload.type).toEqual(TEST_BLOCK_4[0].type);
 
 });

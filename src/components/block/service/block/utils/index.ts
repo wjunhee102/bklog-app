@@ -39,6 +39,8 @@ export const setPosition           = ordering.setPosition;
 export const updateBlockListStagedProperty = update.updateBlockListStagedProperty;
 export const insertBlockList               = update.insertBlockList;
 export const removeBlockList               = update.removeBlockList;
+export const changeBlockType               = update.changeBlockType;
 
 export const checkInstanceOfBlock     = checkBlock.checkInstanceOfBlock;
 export const checkInstanceOfBlockList = checkBlock.checkInstanceOfBlockList;
+export const checkKindOfBlockType     = checkBlock.checkKindOfBlockType;

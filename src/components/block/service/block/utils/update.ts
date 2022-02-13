@@ -1,10 +1,9 @@
-import { ResBlockService } from ".";
-import { BlockDataProps, StagedBlockData, UnionBlock } from "../../../entities/block/type";
+import { checkKindOfBlockType, createBlock, ResBlockService } from ".";
+import { BlockType, StagedBlockData, UnionBlock } from "../../../entities/block/type";
 import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
 import { HistoryBlockService } from "../../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../../modify/block/ModifyBlockService";
-
 
 function updateBlockListStagedProperty(
   preBlockList: Array<UnionBlock>,
@@ -105,8 +104,38 @@ function removeBlockList(
   }
 }
 
+function changeBlockType(type: BlockType, block: UnionBlock): {
+  block: UnionBlock;
+  modifyBlockToken: ModifyBlockToken;
+  historyBlockToken: HistoryBlockToken;
+} | null {
+  
+  const kindOfType = checkKindOfBlockType(type);
+  let newBlock: UnionBlock | null;
+
+  if(checkKindOfBlockType(block.type) !== kindOfType) return null;
+
+  newBlock = createBlock(Object.assign(block.getBlockData(), {
+    type
+  }));
+
+  if(!newBlock) return null;
+
+  return {
+    block: newBlock,
+    modifyBlockToken: new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, {
+      type
+    })),
+    historyBlockToken: new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(block.id, {
+      type: block.type
+    }))
+  };
+}
+
+
 export default {
   updateBlockListStagedProperty,
   insertBlockList,
-  removeBlockList
+  removeBlockList,
+  changeBlockType
 }
