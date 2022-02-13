@@ -92,7 +92,6 @@ export type UnionModifyGenericType = ModifyBlockGenericType<UnionBlockGenericTyp
 */ 
 export interface RawModifyData<T extends UnionModifyGenericType = UnionModifyGenericType> {
   id: string;
-  set: T["set"];
   payload: T["payload"];
 }
 
@@ -117,6 +116,7 @@ export type UnionRawModifyBlockData<T extends UnionBlockGenericType = UnionBlock
 
 // ModifyData
 export interface ModifyData<T extends UnionModifyGenericType> extends RawModifyData<T> {
+  set: T["set"];
   command: T["command"];
 }
 

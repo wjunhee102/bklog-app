@@ -11,7 +11,6 @@ export class ModifyBlockToken<T extends UnionBlockGenericType = UnionBlockGeneri
   public getRawData(): RawModifyBlockData {
     return {
       id: this.id,
-      set: this.set,
       payload: Object.assign(this.payload, { index: undefined, parentId: undefined })
     }
   }
