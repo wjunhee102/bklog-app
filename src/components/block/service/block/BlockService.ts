@@ -89,7 +89,7 @@ export class BlockService {
       if(targetIdList.includes(block.id)) {
         targetBlockList.push(block.regeneration({})[0]);
       } else {
-        removedBlockList.push(block.regeneration({})[0])
+        removedBlockList.push(block.regeneration({})[0]);
       }
     }
 
@@ -309,13 +309,15 @@ export class BlockService {
       }
     }
 
+    this.blockList = newBlockList;
+
     return this.ordering();
   }
 
   public switchBlockList(
     targetIdList: Array<string>,
     targetPosition: string,
-    container: boolean
+    container: boolean = false
   ): BlockService {
     let position: string = targetPosition;
 
@@ -400,11 +402,13 @@ export class BlockService {
       }
 
     }
+
+    this.blockList = blockList;
     
     return this.sort().ordering();
   }
 
-  public restortBlock(historyBlockData: HistoryBlockData): BlockService {
+  public restoreBlockList(historyBlockData: HistoryBlockData): BlockService {
     let blockList = this.blockList.concat();
 
     if(historyBlockData.update) {
@@ -460,6 +464,8 @@ export class BlockService {
       }
     
     }
+
+    this.blockList = blockList;
 
     return this.sort().ordering();
   }

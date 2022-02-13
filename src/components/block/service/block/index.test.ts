@@ -1,10 +1,14 @@
 import { Block } from "../../entities/block/abstract/Block";
-import { StagedBlockData, TextGenericType, UnionBlockData, UnionRawBlockData } from "../../entities/block/type";
+import { TextBlock } from "../../entities/block/text/TextBlock";
+import { StagedBlockData, TextBlockDataProps, TextGenericType, TextRawBlockData, UnionBlockData, UnionBlockDataProps, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
+import { BlockContentsText } from "../../entities/block/type/types/text";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
+import { CreateRawHistoryBlockData, CreateRawModifyBlockData, UpdateRawHistoryBlockData } from "../../entities/modify/type";
 import { HistoryBlockService } from "../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../modify/block/ModifyBlockService";
+import { HistoryBlockData, ModifyBlockData } from "../modify/type";
 import { BlockService } from "./BlockService";
 
 const TEST_TYPE: typeof BLOCK_CONTAINER = "container2" as typeof BLOCK_CONTAINER;
@@ -13,7 +17,7 @@ const TEXT_BLOCK = {
   position: "1",
   index: 1,
   parentId: "root",
-  id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+  id: "1",
   type: "text",
   styleType: "bk-h1",
   styles: null,
@@ -169,24 +173,10 @@ const TEST_BLOCK_3: Array<UnionBlockData> = [
 ]
 
 // parentId가 없을 경우
-const TEST_BLOCK_4: Array<UnionBlockData> = [
+const TEST_BLOCK_4: Array<UnionRawBlockData> = [
   {
-    position: "2-2",
-    index: 4,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f96379e62",
-    id: "4T2-2",
-    type: "text",
-    styleType: "bk-h1",
-    styles: null,
-    contents: [
-      ["블록 4입니다."]
-    ]
-  },
-  {
-    position: "1-1-1",
-    index: 1,
-    parentId: "root",
-    id: "4T1-1-1",
+    position: "1",
+    id: "4T1",
     type: "text",
     styleType: "bk-h1",
     styles: null,
@@ -195,10 +185,38 @@ const TEST_BLOCK_4: Array<UnionBlockData> = [
     ]
   },
   {
-    position: "1-1-1-2",
-    index: 3,
-    parentId: "",
-    id: "4T1-1-1-2",
+    position: "1-1",
+    id: "4T1-1",
+    type: "text",
+    styleType: "bk-h1",
+    styles: null,
+    contents: [
+      ["블록 1-1입니다."]
+    ]
+  },
+  {
+    position: "1-1-1",
+    id: "4T1-1-1",
+    type: "text",
+    styleType: "bk-h1",
+    styles: null,
+    contents: [
+      ["블록 1-1-1입니다."]
+    ]
+  },
+  {
+    position: "2",
+    id: "4T2",
+    type: "text",
+    styleType: "bk-h1",
+    styles: null,
+    contents: [
+      ["블록 2입니다."]
+    ]
+  },
+  {
+    position: "3",
+    id: "4T3",
     type: "text",
     styleType: "bk-h1",
     styles: null,
@@ -207,15 +225,13 @@ const TEST_BLOCK_4: Array<UnionBlockData> = [
     ]
   },
   {
-    position: "1-1-1-1",
-    index: 2,
-    parentId: "",
-    id: "4T1-1-1-1",
+    position: "4",
+    id: "4T4",
     type: "text",
     styleType: "bk-h1",
     styles: null,
     contents: [
-      ["블록 2입니다."]
+      ["블록 4입니다."]
     ]
   }
 ]
@@ -233,7 +249,7 @@ const TEST_STAGE_1: Array<StagedBlockData<TextGenericType>> = [
   }
 ]
 
-test('create BlockList', () => {
+test("create BlockList", () => {
   const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList([TEST_NOT_BLOCK, ...TEST_BLOCK_1]);
 
   if(!blockDataList) {
@@ -253,7 +269,7 @@ test('create BlockList', () => {
   expect(blockList[3].position).toEqual('1-2-1');
 });
 
-test('sort', () => {
+test("sort", () => {
   const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
   if(!blockDataList) return false;
@@ -267,7 +283,7 @@ test('sort', () => {
   expect(result.join("-")).toEqual("2T1-2T1-1-2T2-2T3");
 });
 
-test('ordering', () => {
+test("ordering", () => {
   const modifyBlockService = new ModifyBlockService([]);
   const historyBlockService = new HistoryBlockService([]);
   const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(TEST_BLOCK_3);
@@ -305,7 +321,7 @@ test('ordering', () => {
 
 });
 
-test('update blockList staged property', () => {
+test("update blockList staged property", () => {
   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_1);
 
   if(!blockDataList) return false;
@@ -347,7 +363,7 @@ test('update blockList staged property', () => {
   expect(H2contents).toEqual(TEST_BLOCK_1[1].contents[0][0]);
 });
 
-test('add block in list', () => {
+test("add block in list", () => {
   const [ blockDataList1 ] = BlockService.createBlockDataList(TEST_BLOCK_2);
   const [ blockDataList2 ] = BlockService.createBlockDataList(TEST_BLOCK_3);
 
@@ -382,17 +398,16 @@ test('add block in list', () => {
     .join(",")).toEqual("3T2-2,3T1-1-1-2,3T1-1-1-1,3T1-1-1");
 });
 
-test('remove block in list', () => {
+test("remove block in list", () => {
   const [ blockDataList1 ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
   if(!blockDataList1) return false;
 
   const blockList1 = BlockService.createBlockList(blockDataList1);
 
-  if(!blockDataList1) return false;
+  if(!blockList1) return false;
 
   const blockService1 = new BlockService(blockList1).sort().ordering().removeBlockInList(["2T1"]);
-  console.log(blockService1.getData().modifyBlockTokenList[1].payload);
 
   expect(blockService1.getBlockList().map(block => block.position).join(",")).toEqual("1,2,3");
   expect(blockService1.getData().modifyBlockTokenList.filter(data => data.command === "delete")[0].id).toEqual("2T1");
@@ -401,15 +416,181 @@ test('remove block in list', () => {
   expect(blockService1.getData().historyBlockTokenList.filter(data => data.command === "update")[0].payload.position).toEqual("1-1");
 });
 
-test('remove text block in list', () => {
+test("remove text block in list", () => {
   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
   if(!blockDataList) return false;
 
-  const blockList = BlockService.createBlockList(blockDataList);
+  const blockList1 = BlockService.createBlockList(blockDataList);
+
+  if(!blockList1) return false;
+
+  const blockService = new BlockService(blockList1).sort().ordering().removeTextBlockInLIst(2, 1, "블록2입니다.");
+  
+  const { blockList, modifyBlockTokenList, historyBlockTokenList } = blockService.getData();
+
+  if(!(modifyBlockTokenList[0] && historyBlockTokenList[0])) return false;
+
+  const m1 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[3].id)[0];
+  const m2 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const h1 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[3].id)[0];
+  const h2 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+
+  expect(blockList.map(block => block.position).join(",")).toEqual("1,1-1,2");
+  expect(blockList[1].contents[0][0]).toEqual("블록 2입니다.블록2입니다.");
+  expect(m1.command).toEqual("delete");
+  expect(m2.payload.contents[0][0]).toEqual("블록 2입니다.블록2입니다.");
+  expect(h1.command).toEqual("create");
+  expect(h2.payload.contents[0][0]).toEqual("블록 2입니다.");
+});
+
+test("change block position", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+
+  if(!blockDataList) return false;
+
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList));
+
+  const { 
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService.sort().ordering().changeBlockPosition(["2T1-1"], "3").getData();
+
+  expect(blockList[TEST_BLOCK_2.length-1].position).toEqual("4");
+  expect(modifyBlockTokenList.filter(data => data.command === "update")[0].payload.position).toEqual("4");
+  expect(historyBlockTokenList.filter(data => data.command === "update")[0].payload.position).toEqual(TEST_BLOCK_2[0].position);
+});
+
+test("switchBlockList", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+
+  if(!blockDataList) return false;
+
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList));
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService.sort().ordering().switchBlockList(["2T1"], "3").getData();
+
+  const m1 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const m2 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[1].id)[0];
+  const h1 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const h2 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[1].id)[0];
+
+  expect(blockList.map(block => block.position).join(",")).toEqual("1,2,3,4");
+  expect(blockList[TEST_BLOCK_2.length-1].id).toEqual(TEST_BLOCK_2[1].id);
+  expect(modifyBlockTokenList.length).toEqual(2);
+  expect(historyBlockTokenList.length).toEqual(2);
+  expect(m1.payload.position).toEqual("1");
+  expect(m2.payload.position).toEqual("4");
+  expect(h1.payload.position).toEqual(TEST_BLOCK_2[0].position);
+  expect(h2.payload.position).toEqual(TEST_BLOCK_2[1].position);
 
 });
 
-test('cahnge block position', () => {
+test('update block list', () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_4);
+
+  if(!blockDataList) return false;
+
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList)).sort().ordering();
+
+  const initPosition = blockService.getBlockList().map(block => block.position).join(',');
+  const blockContents1: string = blockService.getBlockList()[1].contents[0][0];
+  let block1: TextBlock = blockService.getBlockList()[1] as TextBlock;
+  
+  block1 = block1.regeneration({
+    id: "4T5",
+    position: "4",
+    contents: [["블럭 5입니다."]]
+  })[0];
+
+  const modifyBlockData: ModifyBlockData = {
+    create: [
+      new ModifyBlockToken(
+        ModifyBlockService
+        .setCreateModifyData(block1.getBlockData()))
+        .getRawData() as CreateRawModifyBlockData
+    ],
+    update: [
+      {
+        id: "4T1-1",
+        payload: {
+          contents: [["반갑습니다."]]
+        }
+      }
+    ],
+    delete: ["4T4"]
+  }
+
+  const blockService2 = new BlockService(blockService.getBlockList()).updateBlockList(modifyBlockData);
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService2.getData();
+  console.log(blockList);
+  expect(blockList.length).toEqual(TEST_BLOCK_4.length);
+  expect(blockList[1].contents[0][0]).toEqual("반갑습니다.");
+  expect(blockList[TEST_BLOCK_4.length-1].contents[0][0]).toEqual(block1.contents[0][0]);
+  expect(blockList.filter(block => block.position === "4")[0].id).toEqual(block1.id);
+  expect(modifyBlockTokenList.length).toEqual(0);
+  expect(historyBlockTokenList.length).toEqual(3);
+
+});
+
+test('restore block list', () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_4);
+
+  if(!blockDataList) return false;
+
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList)).sort().ordering();
+
+  const initPosition = blockService.getBlockList().map(block => block.position).join(',');
+  const blockContents1: string = blockService.getBlockList()[1].contents[0][0];
+  const block1 = blockService.getBlockList()[1].regeneration({})[0];
+  const block4 = blockService.getBlockList()[5].regeneration({})[0];
+
+  const blockService2 = new BlockService(blockService.getBlockList());
+
+  const { historyBlockTokenList } = blockService2.updateBlockListStagedProperty([{
+    id: "4T1-1",
+    index: 1,
+    contents: [["반갑습니다."]]
+  }]).getData();
+
+  const blockContents2: string = blockService2.getBlockList()[1].contents[0][0];
+
+  const blockContents3: string = blockService2
+    .restoreBlockList({ update: [historyBlockTokenList[0].getRawData() as UpdateRawHistoryBlockData]})
+    .getBlockList()[1].contents[0][0];
+
+  const historyList = blockService2
+  .removeBlockInList([block1.id, block4.id])
+  .getData()
+  .historyBlockTokenList;
+
+  const historyBlockData: HistoryBlockData = {
+    create: historyList
+    .filter(token => token.command === "create")
+    .map(token => token.getRawData() as CreateRawHistoryBlockData),
+    update: historyList
+    .filter(token => token.command === "update")
+    .map(token => token.getRawData() as UpdateRawHistoryBlockData)
+  } 
+
+  const changedPosition = blockService2
+    .restoreBlockList(historyBlockData)
+    .getBlockList()
+    .map(block => block.position)
+    .join(',');
+
+  expect(changedPosition).toEqual(initPosition);
+  expect(blockContents1).toEqual(blockContents3);
+  expect(blockContents2).toEqual("반갑습니다.");
 
 });
