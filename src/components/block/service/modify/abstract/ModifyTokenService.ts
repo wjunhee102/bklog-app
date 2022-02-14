@@ -11,6 +11,4 @@ export abstract class ModifyTokenService<T extends UnionModifyDataToken = UnionM
 
   public abstract getData: () => UnionModifyData | null;
 
-  // public abstract regeneration: () => ModifyDataTokenServices;
-
 }

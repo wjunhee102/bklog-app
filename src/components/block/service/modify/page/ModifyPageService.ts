@@ -1,6 +1,5 @@
 import { ModifyPageDataToken } from "../../../entities/modify/page/ ModifyPageDataToken";
 import { ModifyTokenService } from "../abstract/ModifyTokenService";
-import { ModifyDataTokenServices } from "../type";
 import { pushModifyDataToken } from "../utils";
 
 export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken> {
@@ -31,11 +30,15 @@ export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken
     return this;
   }
 
-  public getData() {
+  public getTokenList() {
     return this._tokenList;
   }
 
   public regeneration() {
     return new ModifyPageService(this._tokenList);
+  }
+
+  public getData() {
+    return {};
   }
 }

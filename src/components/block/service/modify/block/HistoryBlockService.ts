@@ -71,7 +71,7 @@ export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken
   }
 
   public getData() {
-    return convertModifyBlockData<HistoryBlockDataGeneticType>(this._tokenList);
+    return convertModifyBlockData<HistoryBlockDataGeneticType>(this._tokenList, 8);
   }
 
 }

@@ -95,25 +95,6 @@ export interface RawModifyData<T extends UnionModifyGenericType = UnionModifyGen
   payload: T["payload"];
 }
 
-// block
-export type CreateRawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<CreateModifyBlockGenericType<T>>;
-
-export type UpdateRawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<UpdateModifyBlockGenericType<T>>;
-
-export type DeleteRawModifyBlockData = RawModifyData<DeleteModifyBlockGenericType>;
-
-export type RawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = CreateRawModifyBlockData<T> | UpdateRawModifyBlockData<T> | DeleteRawModifyBlockData;
-
-export type CreateRawHistoryBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<CreateHistoryBlockGenericType<T>>;
-
-export type UpdateRawHistoryBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyData<UpdateHistoryBlockGenericType<T>>;
-
-export type DeleteRawHistoryBlockData = RawModifyData<DeleteHistoryBlockGenericType>;
-
-export type RawHistoryBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = CreateRawHistoryBlockData<T> | UpdateRawHistoryBlockData<T> | DeleteRawHistoryBlockData; 
-
-export type UnionRawModifyBlockData<T extends UnionBlockGenericType = UnionBlockGenericType> = RawModifyBlockData<T> | RawHistoryBlockData<T>;
-
 // ModifyData
 export interface ModifyData<T extends UnionModifyGenericType> extends RawModifyData<T> {
   set: T["set"];

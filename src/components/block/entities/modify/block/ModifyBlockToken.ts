@@ -1,6 +1,6 @@
 import { UnionBlockGenericType } from "../../block/type";
 import { ModifyDataToken } from "../ModifyDataToken";
-import { ModifyBlockDataProps, ModifyBlockGenericType, ModifyData, RawModifyBlockData, SET_BLOCK } from "../type";
+import { ModifyBlockDataProps, ModifyBlockGenericType, ModifyData, RawModifyData, SET_BLOCK } from "../type";
 
 export class ModifyBlockToken<T extends UnionBlockGenericType = UnionBlockGenericType> extends ModifyDataToken<ModifyBlockGenericType<T>> {
 
@@ -8,10 +8,15 @@ export class ModifyBlockToken<T extends UnionBlockGenericType = UnionBlockGeneri
     super({ id, set: SET_BLOCK, command, payload });
   }
 
-  public getRawData(): RawModifyBlockData {
+  public getRawData(): RawModifyData<ModifyBlockGenericType<T>> {
+    const payload = Object.assign(this.payload, { index: undefined, parentId: undefined });
+
+    delete payload.index;
+    delete payload.parentId;
+
     return {
       id: this.id,
-      payload: Object.assign(this.payload, { index: undefined, parentId: undefined })
+      payload
     }
   }
 

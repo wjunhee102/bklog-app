@@ -1,8 +1,7 @@
-import { BlockData, BlockDataProps, RawBlockData, RawBlockDataProps, UnionBlockData, UnionBlockDataProps, UnionBlockGenericType, UnionRawBlockData } from "../../../../entities/block/type";
+import { BlockData, BlockDataProps, RawBlockData, RawBlockDataProps, UnionBlockGenericType } from "../../../../entities/block/type";
 import { ModifyBlockToken } from "../../../../entities/modify/block/ModifyBlockToken";
-import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockGenericType, UnionModifyBlockToken, UnionRawModifyBlockData } from "../../../../entities/modify/type";
-import { ModifyBlockDataGeneticType, UnionModifBlockDataGenericType, UnionModifyBlockData } from "../../type";
-import { compareFunction, compareFunctionReverce } from "../../utils";
+import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, UnionModifyBlockToken } from "../../../../entities/modify/type";
+import { ModifyBlockDataGeneticType, UnionModifBlockDataGenericType } from "../../type";
 
 function commandCreateHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: Array<T>, { command, payload }: T, index: number) {  
   if(command === COMMAND_DELETE) {
@@ -83,28 +82,31 @@ export function convertRawBlockData<T extends UnionBlockGenericType>(blockDataPr
   return rawData;
 }
 
-function modifyDataReducer<T extends UnionModifBlockDataGenericType = ModifyBlockDataGeneticType>(acc: T["data"], cur: T["token"]) {
-  switch (cur.command) {
-    case COMMAND_CREATE:
-      acc.create?.push(cur.getRawData() as any);
-      break;
-
-    case COMMAND_UPDATE:
-      acc.update?.push(cur.getRawData() as any);
-      break;
-
-    case COMMAND_DELETE:
-      acc.delete?.push(cur.id);
-      break;
-  }
-
-  return acc;
+function modifyDataReducer(length: number = 6) {
+  return function <T extends UnionModifBlockDataGenericType = ModifyBlockDataGeneticType>(acc: T["data"], cur: T["token"]) {
+    switch (cur.command) {
+      case COMMAND_CREATE:
+        const rawData = cur.getRawData();
+        if(Object.keys(rawData.payload).length === length) acc.create?.push(rawData);
+        break;
+  
+      case COMMAND_UPDATE:
+        acc.update?.push(cur.getRawData());
+        break;
+  
+      case COMMAND_DELETE:
+        acc.delete?.push(cur.id);
+        break;
+    }
+  
+    return acc;
+  } 
 }
 
-export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(rawDataList: Array<T["token"]>): T["data"] | null {
-  if(rawDataList[0]) return null;
+export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(tokenList: Array<T["token"]>, length: number = 6): T["data"] | null {
+  if(!tokenList[0]) return null;
 
-  const modifyBlockData = rawDataList.reduce(modifyDataReducer, {
+  const modifyBlockData = tokenList.reduce(modifyDataReducer(length), {
     create: [],
     update: [],
     delete: []

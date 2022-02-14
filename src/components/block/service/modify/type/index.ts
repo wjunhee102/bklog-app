@@ -1,15 +1,14 @@
-import { UnionBlockGenericType } from "../../../entities/block/type";
 import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
-import { CreateRawHistoryBlockData, CreateRawModifyBlockData, DeleteRawHistoryBlockData, DeleteRawModifyBlockData, PageInfoProps, UpdateRawHistoryBlockData, UpdateRawModifyBlockData } from "../../../entities/modify/type";
+import { PageInfoProps, RawModifyData } from "../../../entities/modify/type";
 import { ModifyBlockService } from "../block/ModifyBlockService";
 import { ModifyPageService } from "../page/ModifyPageService";
 
 export type ModifyDataTokenServices = ModifyPageService | ModifyBlockService;
 
 export interface ModifyBlockData {
-  create?: Array<CreateRawModifyBlockData<UnionBlockGenericType>>;
-  update?: Array<UpdateRawModifyBlockData<UnionBlockGenericType>>;
+  create?: Array<RawModifyData>;
+  update?: Array<RawModifyData>;
   delete?: Array<string>;
 }
 
@@ -19,8 +18,8 @@ export interface ModifyBlockDataGeneticType {
 }
 
 export interface HistoryBlockData {
-  create?: Array<CreateRawHistoryBlockData<UnionBlockGenericType>>;
-  update?: Array<UpdateRawHistoryBlockData<UnionBlockGenericType>>;
+  create?: Array<RawModifyData>;
+  update?: Array<RawModifyData>;
   delete?: Array<string>;
 }
 

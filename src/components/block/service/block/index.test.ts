@@ -3,10 +3,9 @@ import { NumberedBlock } from "../../entities/block/text/NumberedBlock";
 import { TextBlock } from "../../entities/block/text/TextBlock";
 import { StagedBlockData, TextGenericType, UnionBlockData, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
-import { BLOCK_NUMBERED} from "../../entities/block/type/types/text";
+import { BLOCK_BULLETED, BLOCK_NUMBERED, BLOCK_TEXT} from "../../entities/block/type/types/text";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
-import { CreateRawHistoryBlockData, CreateRawModifyBlockData, UpdateRawHistoryBlockData } from "../../entities/modify/type";
 import { HistoryBlockService } from "../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../modify/block/ModifyBlockService";
 import { HistoryBlockData, ModifyBlockData } from "../modify/type";
@@ -514,7 +513,7 @@ test('update block list', () => {
       new ModifyBlockToken(
         ModifyBlockService
         .setCreateModifyData(block1.getBlockData()))
-        .getRawData() as CreateRawModifyBlockData
+        .getRawData()
     ],
     update: [
       {
@@ -567,7 +566,7 @@ test('restore block list', () => {
   const blockContents2: string = blockService2.getBlockList()[1].contents[0][0];
 
   const blockContents3: string = blockService2
-    .restoreBlockList({ update: [historyBlockTokenList[0].getRawData() as UpdateRawHistoryBlockData]})
+    .restoreBlockList({ update: [historyBlockTokenList[0].getRawData()]})
     .getBlockList()[1].contents[0][0];
 
   const historyList = blockService2
@@ -578,10 +577,10 @@ test('restore block list', () => {
   const historyBlockData: HistoryBlockData = {
     create: historyList
     .filter(token => token.command === "create")
-    .map(token => token.getRawData() as CreateRawHistoryBlockData),
+    .map(token => token.getRawData()),
     update: historyList
     .filter(token => token.command === "update")
-    .map(token => token.getRawData() as UpdateRawHistoryBlockData)
+    .map(token => token.getRawData())
   } 
 
   const changedPosition = blockService2
@@ -607,7 +606,14 @@ test("change block type", () => {
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
-  } = blockService.changeBlockType(0, BLOCK_NUMBERED).changeBlockType(0, BLOCK_CONTAINER).getData();
+  } = blockService
+    .changeBlockType(0, BLOCK_NUMBERED)
+    .changeBlockType(0, BLOCK_CONTAINER)
+    .changeBlockType(0, BLOCK_NUMBERED)
+    .changeBlockType(0, BLOCK_TEXT)
+    .changeBlockType(0, BLOCK_BULLETED)
+    .changeBlockType(0, BLOCK_NUMBERED)
+    .getData();
 
   expect(blockList[0]).toBeInstanceOf(NumberedBlock);
   expect(modifyBlockTokenList.length).toEqual(1);
