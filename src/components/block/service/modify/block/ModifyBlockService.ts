@@ -8,7 +8,7 @@ import { compareFunction, compareFunctionReverce } from "../utils";
 import { convertModifyBlockData, convertRawBlockData, pushModifyBlockToken } from "./utils";
 
 export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> {
-  private _tokenList: Array<ModifyBlockToken> = [];
+  private _tokenList: ModifyBlockToken[] = [];
 
   static setCreateModifyData<G extends UnionBlockGenericType = UnionBlockGenericType>(
     blockData: BlockData<G> | RawBlockData<G> | UnionBlockData | UnionRawBlockData
@@ -27,11 +27,11 @@ export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> 
     return ModifyService.createModifyData(blockId, COMMAND_DELETE, SET_BLOCK, {});
   }
 
-  private init(tokenList: Array<ModifyBlockToken>) {
+  private init(tokenList: ModifyBlockToken[]) {
     this._tokenList = tokenList;
   }
 
-  constructor(tokenList: Array<ModifyBlockToken>, merge: boolean = false) {
+  constructor(tokenList: ModifyBlockToken[], merge: boolean = false) {
     this.init(tokenList);
     if(merge) this.merge();
   }
@@ -47,7 +47,7 @@ export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> 
   public merge(reverse: boolean = false) {
     if(!this._tokenList[0]) return this;
 
-    const tokenList = pushModifyBlockToken([] as Array<ModifyBlockToken>, this._tokenList, reverse);
+    const tokenList = pushModifyBlockToken([] as ModifyBlockToken[], this._tokenList, reverse);
     
     if(tokenList[0]) this._tokenList = tokenList;
 
@@ -55,14 +55,14 @@ export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> 
   }
 
 
-  public push(...newTokenList: Array<ModifyBlockToken>) {
+  public push(...newTokenList: ModifyBlockToken[]) {
 
     this._tokenList = pushModifyBlockToken(this._tokenList, newTokenList);
 
     return this;
   }
 
-  public pushReverse(...newTokenList: Array<ModifyBlockToken>) {
+  public pushReverse(...newTokenList: ModifyBlockToken[]) {
     this._tokenList = pushModifyBlockToken(newTokenList, this._tokenList);
 
     return this;

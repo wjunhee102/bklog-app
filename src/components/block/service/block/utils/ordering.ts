@@ -5,7 +5,7 @@ import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToke
 import { HistoryBlockService } from "../../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../../modify/block/ModifyBlockService";
 
-function sortBlock(blockList: Array<UnionBlock>) {
+function sortBlock(blockList: UnionBlock[]) {
   return blockList.sort((a, b) => {
     if(a.position === b.position) {
       return 0
@@ -41,11 +41,11 @@ function sortBlock(blockList: Array<UnionBlock>) {
  * @param blockList 
  * @returns 
  */
-function orderingBlock(blockList: Array<UnionBlock>): ResBlockService {
+function orderingBlock(blockList: UnionBlock[]): ResBlockService {
   if(!blockList[0]) return { blockList }
   
-  const modifyBlockTokenList: Array<ModifyBlockToken> = [];
-  const historyBlockTokenList: Array<HistoryBlockToken> = [];
+  const modifyBlockTokenList: ModifyBlockToken[] = [];
+  const historyBlockTokenList: HistoryBlockToken[] = [];
   const stackId: string[] = [];
 
   let blockListLength = blockList.length;
@@ -137,17 +137,17 @@ function orderingBlock(blockList: Array<UnionBlock>): ResBlockService {
  * @returns 
  */
 function resetToTargetPosition(
-  blockList: Array<UnionBlock>,
+  blockList: UnionBlock[],
   targetPosition: string
-): [ Array<UnionBlock>, Array<HistoryBlockToken> ] {
-  if(!blockList[0]) return [ [] as Array<UnionBlock>, [] as Array<HistoryBlockToken> ];
+): [ UnionBlock[], HistoryBlockToken[] ] {
+  if(!blockList[0]) return [ [] as UnionBlock[], [] as HistoryBlockToken[] ];
 
-  const historyBlockTokenList: Array<HistoryBlockToken> = [];
+  const historyBlockTokenList: HistoryBlockToken[] = [];
 
   const targetPositionAry = targetPosition.split(/-/);
   
   let blockListLength = blockList.length;
-  let stack: Array<[number, string]> = [];
+  let stack: [number, string][] = [];
   let stackLength = 0;
   let currentPosition = targetPositionAry.concat();
 

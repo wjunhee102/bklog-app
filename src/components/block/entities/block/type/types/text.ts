@@ -33,7 +33,7 @@ export type TextContentStyleType = [typeof BOLD]
 | [typeof FONT_COLOR, string] 
 | [typeof BACKGROUND_COLOR, string];
 
-export type TextContentType = [string] | [string, Array<TextContentStyleType>];
+export type TextContentType = [string] | [string, TextContentStyleType[]];
 
 // meta
 export type NumberedBlockMeta = {
@@ -42,7 +42,7 @@ export type NumberedBlockMeta = {
 
 export type BlockTypeText     = typeof BLOCK_TEXT | typeof BLOCK_NUMBERED | typeof BLOCK_BULLETED | typeof BLOCK_TODO;
 export type BlockStylesText   = TodoStylesType | null;
-export type BlockContentsText = Array<TextContentType>;
+export type BlockContentsText = TextContentType[];
 export type BlockMetaText     = null | NumberedBlockMeta;
 
 export type OrderType = 'add' | 'del' | 'color' | 'link';

@@ -4,20 +4,20 @@ import { ModifyTokenService } from "../abstract/ModifyTokenService";
 import { pushModifyDataToken } from "../utils";
 
 export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken> {
-  private _tokenList: Array<ModifyPageDataToken> = [];
+  private _tokenList: ModifyPageDataToken[] = [];
 
-  private init(tokenList: Array<ModifyPageDataToken>) {
+  private init(tokenList: ModifyPageDataToken[]) {
     this._tokenList = tokenList;
   }
 
-  constructor(tokenList: Array<ModifyPageDataToken>) {
+  constructor(tokenList: ModifyPageDataToken[]) {
     this.init(tokenList);
   }
 
   public merge() {
     if(!this._tokenList[0]) return this;
 
-    const tokenList = pushModifyDataToken<ModifyPageDataToken>([] as Array<ModifyPageDataToken>, this._tokenList);
+    const tokenList = pushModifyDataToken<ModifyPageDataToken>([] as ModifyPageDataToken[], this._tokenList);
 
     if(tokenList[0]) this._tokenList = tokenList;
 

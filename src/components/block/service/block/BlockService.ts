@@ -13,15 +13,15 @@ import { HistoryBlockData, ModifyBlockData } from "../modify/type";
 import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, resetToTargetPosition, updateBlockListStagedProperty, setPosition, changeBlockType } from "./utils";
 
 export class BlockService {
-  private modifyBlockTokenList: Array<ModifyBlockToken> = [];
-  private historyBlockTokenList: Array<HistoryBlockToken> = [];
+  private modifyBlockTokenList: ModifyBlockToken[] = [];
+  private historyBlockTokenList: HistoryBlockToken[] = [];
 
   static createBlockDataList(
-    rawBlockDataList: Array<BlockDataInitProps<UnionBlockGenericType>>
-  ): [ Array<UnionBlockData>, Array<ModifyBlockToken> ] {
+    rawBlockDataList: BlockDataInitProps<UnionBlockGenericType>[]
+  ): [ UnionBlockData[], ModifyBlockToken[] ] {
     
-    const blockDataList: Array<UnionBlockData> = [];
-    const modifyBlockTokenList: Array<ModifyBlockToken> = [];
+    const blockDataList: UnionBlockData[] = [];
+    const modifyBlockTokenList: ModifyBlockToken[] = [];
 
     for(const rawBlockData of rawBlockDataList) {
       const blockData = Block.createBlockData(rawBlockData.type, rawBlockData);
@@ -43,9 +43,9 @@ export class BlockService {
   }
 
   static createBlockList(
-    blockDataList: Array<UnionRawBlockData | UnionBlockData>
-  ): Array<UnionBlock> {
-    const blockList: Array<UnionBlock> = [];
+    blockDataList: (UnionRawBlockData | UnionBlockData)[]
+  ): UnionBlock[] {
+    const blockList: UnionBlock[] = [];
     
     for(const blockData of blockDataList) {
       const block = this.createBlock(blockData);
@@ -56,8 +56,8 @@ export class BlockService {
   }
 
   static copyBlockList(
-    blockList: Array<UnionBlock>
-  ): Array<UnionBlock> {
+    blockList: UnionBlock[]
+  ): UnionBlock[] {
     return this.createBlockList(blockList.map(block => Object.assign({}, block.getBlockData(), {
       id: Token.getUUID()
     })));
@@ -68,9 +68,9 @@ export class BlockService {
    * 원본 배열에 반영
    */
   static resetToTargetPosition(
-    blockList: Array<UnionBlock>,
+    blockList: UnionBlock[],
     targetPosition: string
-  ): [ Array<UnionBlock>, Array<HistoryBlockToken> ] {
+  ): [ UnionBlock[], HistoryBlockToken[] ] {
     return resetToTargetPosition(blockList, targetPosition);
   }
 
@@ -79,11 +79,11 @@ export class BlockService {
    * 새 배열 반환
    */
   static divideBlock(
-    blockList: Array<UnionBlock>, 
-    targetIdList: Array<string>
-  ): [ Array<UnionBlock>, Array<UnionBlock> ] {
-    const removedBlockList: Array<UnionBlock> = [];
-    const targetBlockList: Array<UnionBlock> = [];
+    blockList: UnionBlock[], 
+    targetIdList: string[]
+  ): [ UnionBlock[], UnionBlock[] ] {
+    const removedBlockList: UnionBlock[] = [];
+    const targetBlockList: UnionBlock[] = [];
 
     for(const block of blockList) {
       if(targetIdList.includes(block.id)) {
@@ -106,16 +106,16 @@ export class BlockService {
     return setPosition(prePosition, targetPosition);
   }
 
-  constructor(private blockList: Array<UnionBlock>) {} 
+  constructor(private blockList: UnionBlock[]) {} 
 
-  public getBlockList(): Array<UnionBlock> {
+  public getBlockList(): UnionBlock[] {
     return this.blockList;
   }
 
   public getData(): {
-    blockList: Array<UnionBlock>;
-    modifyBlockTokenList: Array<ModifyBlockToken>;
-    historyBlockTokenList: Array<HistoryBlockToken>;
+    blockList: UnionBlock[];
+    modifyBlockTokenList: ModifyBlockToken[];
+    historyBlockTokenList: HistoryBlockToken[];
   } {
     return {
       blockList: this.blockList,
@@ -162,7 +162,7 @@ export class BlockService {
    * 새 배열 반환
    */
   public updateBlockListStagedProperty<T extends UnionBlockGenericType = UnionBlockGenericType>(
-    stageBlockDataList: Array<StagedBlockData<T>>
+    stageBlockDataList: StagedBlockData<T>[]
   ): BlockService {
     const {
       blockList,
@@ -188,7 +188,7 @@ export class BlockService {
    * 새 배열 반환
    */
   public addBlockInList(
-    blockList: Array<UnionBlock>, 
+    blockList: UnionBlock[], 
     targetPosition: string, 
     currentBlockFrontPosition: boolean = true
   ): BlockService {
@@ -218,15 +218,15 @@ export class BlockService {
    * 새 배열 반환
    */
   public removeBlockInList(
-    blockInfo: Array<UnionBlock> | Array<string>
+    blockInfo: UnionBlock[] | string[]
   ): BlockService {
-    const removedBlockList: Array<UnionBlock> = [];
+    const removedBlockList: UnionBlock[] = [];
     
     if(typeof blockInfo[0] !== "string") {
       if(!checkInstanceOfBlock(blockInfo[0])) return this;
-      removedBlockList.push(...blockInfo as Array<UnionBlock>);
+      removedBlockList.push(...blockInfo as UnionBlock[]);
     } else {
-      const removedIdList = [...blockInfo as Array<string>];
+      const removedIdList = [...blockInfo as string[]];
       removedBlockList.push(...this.blockList.filter(block => removedIdList.includes(block.id)));
     }
 
@@ -296,7 +296,7 @@ export class BlockService {
     return this;
   }
 
-  public changeBlockPosition(targetIdList: Array<string>, targetPosition: string) {
+  public changeBlockPosition(targetIdList: string[], targetPosition: string) {
     const [ removedBlockList, targetBlockList ] = BlockService.divideBlock(this.blockList, targetIdList);
     const index = removedBlockList.findIndex(block => block.position === targetPosition) + 1;
 
@@ -331,7 +331,7 @@ export class BlockService {
   }
 
   public switchBlockList(
-    targetIdList: Array<string>,
+    targetIdList: string[],
     targetPosition: string,
     container: boolean = false
   ): BlockService {

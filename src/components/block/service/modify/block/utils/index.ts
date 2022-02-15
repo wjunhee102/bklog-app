@@ -3,7 +3,7 @@ import { ModifyBlockToken } from "../../../../entities/modify/block/ModifyBlockT
 import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, UnionModifyBlockToken } from "../../../../entities/modify/type";
 import { ModifyBlockDataGeneticType, UnionModifBlockDataGenericType } from "../../type";
 
-function commandCreateHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: Array<T>, { command, payload }: T, index: number) {  
+function commandCreateHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: T[], { command, payload }: T, index: number) {  
   if(command === COMMAND_DELETE) {
     modifyDataTokenList.splice(index, 1);
   } else {
@@ -11,7 +11,7 @@ function commandCreateHandler<T extends UnionModifyBlockToken = ModifyBlockToken
   }
 }
 
-function commandUpdateHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: Array<T>, { command , payload }: T, index: number) {
+function commandUpdateHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: T[], { command , payload }: T, index: number) {
   if(command === COMMAND_DELETE) {
     modifyDataTokenList[index].changeCommand(command);
   } else {
@@ -20,7 +20,7 @@ function commandUpdateHandler<T extends UnionModifyBlockToken = ModifyBlockToken
   }
 }
 
-function commandDeleteHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: Array<T>, { command , payload }: T, index: number) {
+function commandDeleteHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: T[], { command , payload }: T, index: number) {
   if(command !== COMMAND_DELETE) {
     modifyDataTokenList[index].updatePayload(payload);
     modifyDataTokenList[index].changeCommand(command);
@@ -34,10 +34,10 @@ const PushModifyHandlers = {
 }
 
 export function pushModifyBlockToken<T extends UnionModifyBlockToken = ModifyBlockToken>(
-  preModifyDataTokenList: Array<T>, 
-  newModifyDataTokenList: Array<T>,
+  preModifyDataTokenList: T[], 
+  newModifyDataTokenList: T[],
   reverse: boolean = false
-): Array<T> {
+): T[] {
   if(!newModifyDataTokenList[0]) return preModifyDataTokenList;
 
   const modifyDataTokenList = preModifyDataTokenList.concat();
@@ -103,7 +103,7 @@ function modifyDataReducer(length: number = 6) {
   } 
 }
 
-export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(tokenList: Array<T["token"]>, length: number = 6): T["data"] | null {
+export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(tokenList: T["token"][], length: number = 6): T["data"] | null {
   if(!tokenList[0]) return null;
 
   const modifyBlockData = tokenList.reduce(modifyDataReducer(length), {

@@ -35,7 +35,7 @@ const TEST_NOT_BLOCK = {
   contents: {}
 }
 
-const TEST_BLOCK_1: Array<UnionRawBlockData> = [
+const TEST_BLOCK_1: UnionRawBlockData[] = [
   {
     position: "1",
     id: "T1",
@@ -78,7 +78,7 @@ const TEST_BLOCK_1: Array<UnionRawBlockData> = [
   }
 ];
 
-const TEST_BLOCK_2: Array<UnionRawBlockData> = [
+const TEST_BLOCK_2: UnionRawBlockData[] = [
   {
     position: "1-1",
     id: "2T1-1",
@@ -121,7 +121,7 @@ const TEST_BLOCK_2: Array<UnionRawBlockData> = [
   }
 ];
 
-const TEST_BLOCK_3: Array<UnionBlockData> = [
+const TEST_BLOCK_3: UnionBlockData[] = [
   {
     position: "2-2",
     index: 4,
@@ -173,7 +173,7 @@ const TEST_BLOCK_3: Array<UnionBlockData> = [
 ]
 
 // parentId가 없을 경우
-const TEST_BLOCK_4: Array<UnionRawBlockData> = [
+const TEST_BLOCK_4: UnionRawBlockData[] = [
   {
     position: "1",
     id: "4T1",
@@ -236,7 +236,7 @@ const TEST_BLOCK_4: Array<UnionRawBlockData> = [
   }
 ]
 
-const TEST_STAGE_1: Array<StagedBlockData<TextGenericType>> = [
+const TEST_STAGE_1: StagedBlockData<TextGenericType>[] = [
   {
     id: "T1",
     index: 0,

@@ -7,7 +7,7 @@ import { ModifyBlockService } from "./block/ModifyBlockService";
 import { ModifyService } from "./ModifyService";
 
 
-const TEST_BLOCK_1: Array<RawBlockData<UnionBlockGenericType>> = [
+const TEST_BLOCK_1: RawBlockData<UnionBlockGenericType>[] = [
   {
     position: "1",
     id: "T-1",
@@ -66,7 +66,7 @@ const TEST_BLOCK_1: Array<RawBlockData<UnionBlockGenericType>> = [
   }
 ];
 
-const TEST_BLOCK_2: Array<RawBlockDataProps<UnionBlockGenericType>> = [
+const TEST_BLOCK_2: RawBlockDataProps<UnionBlockGenericType>[] = [
   {
     position: "1",
     id: "T2-1",

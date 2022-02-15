@@ -6,12 +6,12 @@ import { HistoryBlockService } from "../../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../../modify/block/ModifyBlockService";
 
 function updateBlockListStagedProperty(
-  preBlockList: Array<UnionBlock>,
-  stagedBlockDataList: Array<StagedBlockData>
+  preBlockList: UnionBlock[],
+  stagedBlockDataList: StagedBlockData[]
 ): ResBlockService {
   const blockList = preBlockList.concat();
-  const modifyBlockTokenList: Array<ModifyBlockToken> = [];
-  const historyBlockTokenList: Array<HistoryBlockToken> = [];
+  const modifyBlockTokenList: ModifyBlockToken[] = [];
+  const historyBlockTokenList: HistoryBlockToken[] = [];
 
   for(const { id, index, styleType, styles, contents } of stagedBlockDataList) {
 
@@ -38,12 +38,12 @@ function updateBlockListStagedProperty(
 }
 
 function insertBlockList(
-  currentBlockList: Array<UnionBlock>,
-  newBlockList: Array<UnionBlock>,
+  currentBlockList: UnionBlock[],
+  newBlockList: UnionBlock[],
   targetPosition: string,
   currentBlockFrontPosition: boolean = true
-): Array<UnionBlock> {
-  const blockList: Array<UnionBlock> = currentBlockList.concat();
+): UnionBlock[] {
+  const blockList: UnionBlock[] = currentBlockList.concat();
   const index = blockList.findIndex(block => block.position === targetPosition);
 
   if(currentBlockFrontPosition) {
@@ -56,13 +56,13 @@ function insertBlockList(
 }
 
 function removeBlockList(
-  currentBlockList: Array<UnionBlock>,
-  removedBlockList: Array<UnionBlock>
+  currentBlockList: UnionBlock[],
+  removedBlockList: UnionBlock[]
 ): ResBlockService {
-  const blockList: Array<UnionBlock> = currentBlockList.concat();
-  const removedIdList: Array<string> = removedBlockList.map(block => block.id);
-  const modifyBlockTokenList: Array<ModifyBlockToken> = [];
-  const historyBlockTokenList: Array<HistoryBlockToken> = [
+  const blockList: UnionBlock[] = currentBlockList.concat();
+  const removedIdList: string[] = removedBlockList.map(block => block.id);
+  const modifyBlockTokenList: ModifyBlockToken[] = [];
+  const historyBlockTokenList: HistoryBlockToken[] = [
     ...removedBlockList
     .map(block => 
       new HistoryBlockToken(HistoryBlockService.setCreateModifyData(block.getBlockData()))

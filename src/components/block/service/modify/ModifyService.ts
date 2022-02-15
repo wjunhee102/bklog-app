@@ -6,8 +6,8 @@ import { ModifyPageService } from "./page/ModifyPageService";
 import { ModifyBklogData } from "./type";
 
 interface ModifyServiceProps {
-  modifyBlockTokenList?: Array<ModifyBlockToken>;
-  modifyPageTokenList?: Array<ModifyPageDataToken>;
+  modifyBlockTokenList?: ModifyBlockToken[];
+  modifyPageTokenList?: ModifyPageDataToken[];
 }
 export class ModifyService {
   private modifyBlockService: ModifyBlockService | null = null;

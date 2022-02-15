@@ -8,7 +8,7 @@ import { compareFunction, compareFunctionReverce } from "../utils";
 import { HistoryBlockDataGeneticType } from "../type";
 
 export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken> {
-  private _tokenList: Array<HistoryBlockToken> = [];
+  private _tokenList: HistoryBlockToken[] = [];
 
   static setCreateModifyData<G extends UnionBlockGenericType = UnionBlockGenericType>(
     blockData: BlockData<G> | RawBlockData<G> | UnionBlockData | UnionRawBlockData
@@ -27,11 +27,11 @@ export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken
     return ModifyService.createModifyData(blockId, COMMAND_DELETE, SET_BLOCK, {});
   }
 
-  private init(tokenList: Array<HistoryBlockToken>) {
+  private init(tokenList: HistoryBlockToken[]) {
     this._tokenList = tokenList;
   }
 
-  constructor(tokenList: Array<HistoryBlockToken>, merge: boolean = false) {
+  constructor(tokenList: HistoryBlockToken[], merge: boolean = false) {
     this.init(tokenList);
     if(merge) this.merge();
   }
@@ -47,14 +47,14 @@ export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken
   public merge(reverse: boolean = false) {
     if(!this._tokenList[0]) return this;
 
-    const tokenList = pushModifyBlockToken([] as Array<HistoryBlockToken>, this._tokenList, !reverse);
+    const tokenList = pushModifyBlockToken([] as HistoryBlockToken[], this._tokenList, !reverse);
 
     if(tokenList[0]) this._tokenList = tokenList;
 
     return this;
   }
 
-  public push(...newTokenList: Array<HistoryBlockToken>) {
+  public push(...newTokenList: HistoryBlockToken[]) {
     newTokenList.reverse();
 
     this._tokenList = pushModifyBlockToken(newTokenList, this._tokenList);
@@ -62,7 +62,7 @@ export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken
     return this;
   }
 
-  public pushReverse(...newTokenList: Array<HistoryBlockToken>) {
+  public pushReverse(...newTokenList: HistoryBlockToken[]) {
     this._tokenList = pushModifyBlockToken(this._tokenList, newTokenList, true);
   }
 

@@ -7,9 +7,9 @@ import { ModifyPageService } from "../page/ModifyPageService";
 export type ModifyDataTokenServices = ModifyPageService | ModifyBlockService;
 
 export interface ModifyBlockData {
-  create?: Array<RawModifyData>;
-  update?: Array<RawModifyData>;
-  delete?: Array<string>;
+  create?: RawModifyData[];
+  update?: RawModifyData[];
+  delete?: string[];
 }
 
 export interface ModifyBlockDataGeneticType {
@@ -18,9 +18,9 @@ export interface ModifyBlockDataGeneticType {
 }
 
 export interface HistoryBlockData {
-  create?: Array<RawModifyData>;
-  update?: Array<RawModifyData>;
-  delete?: Array<string>;
+  create?: RawModifyData[];
+  update?: RawModifyData[];
+  delete?: string[];
 }
 
 export interface HistoryBlockDataGeneticType {

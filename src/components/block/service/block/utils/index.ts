@@ -14,9 +14,9 @@ import ordering from "./ordering";
 import update from "./update";
 
 export interface ResBlockService {
-  blockList: Array<UnionBlock>;
-  modifyBlockTokenList?: Array<ModifyBlockToken>;
-  historyBlockTokenList?: Array<HistoryBlockToken>;
+  blockList: UnionBlock[];
+  modifyBlockTokenList?: ModifyBlockToken[];
+  historyBlockTokenList?: HistoryBlockToken[];
 }
 
 export const BlockInstancesTable = {
