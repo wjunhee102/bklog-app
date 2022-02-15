@@ -11,7 +11,7 @@ import usePage from "./usePage";
 import useSocket from "./useSocket";
 
 function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStoreHook {
-  const socket = useSocket(SOCKET_URL);
+  const socket = useSocket(SOCKET_URL? SOCKET_URL : "http://localhost:4500");
 
   const [ newVersion, setVersion ]          = useState<string | null>(null);
   const [ updated, setUpdated ]             = useState<boolean>(false);
@@ -134,7 +134,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   useEffect(() => {
     if(isFetch && !isFetching && !updatingId && !isUpdated && !isKeyPress) {
-      if(modifyData[0]) onAddPushModifyBlockData(convertModifyBlockData(state.modifyData));
+      if(modifyData && modifyData[0]) onAddPushModifyBlockData(convertModifyBlockData(modifyData));
       if(modifyPageInfo) onChangePageInfo(modifyPageInfo);
     }
   }, [modifyData, modifyPageInfo, isFetch, isFetching, updatingId, isKeyPress]);

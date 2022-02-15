@@ -2,7 +2,7 @@ import { Block } from "../../entities/block/abstract/Block";
 import { ContainerBlock } from "../../entities/block/container/ContainerBlock";
 import { BaseTextBlock } from "../../entities/block/text/BaseTextBlock";
 import { mergeTextContents } from "../../entities/block/text/utils";
-import { BlockDataInitProps, BlockType, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
+import { BlockData, BlockDataInitProps, BlockType, RawBlockData, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
 import { Token } from "../../entities/block/utils/token";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
@@ -395,7 +395,7 @@ export class BlockService {
     }
 
     if(modifyBlockData.create) {
-      const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(modifyBlockData.create.map(data => data.payload));
+      const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(modifyBlockData.create.map(data => data.payload as RawBlockData<UnionBlockGenericType>));
 
       if(modifyBlockTokenList) {
         this.modifyBlockTokenList.push(...modifyBlockTokenList);
@@ -455,7 +455,7 @@ export class BlockService {
     }
 
     if(historyBlockData.create) {
-      const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(historyBlockData.create.map(data => data.payload));
+      const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(historyBlockData.create.map(data => data.payload  as BlockData<UnionBlockGenericType>));
     
       if(modifyBlockTokenList) {
         this.modifyBlockTokenList.push(...modifyBlockTokenList);
