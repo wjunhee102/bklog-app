@@ -660,7 +660,7 @@ function deleteContentsStyle(
 
 /**
  * Text contents style 변환 함수
- * return BlockData<TextProps>
+ * return BlockContentsText
  * @param changedTextStyleBlock 
  * @param styleType 
  * @param startPoint 
@@ -668,19 +668,20 @@ function deleteContentsStyle(
  * @param order 
  */
 function changeStyleTextContents(
-  changedTextStyleBlock: TextBlockData, 
+  preContents: BlockContentsText, 
   styleType: TextContentStyleType,
   startPoint: number, 
   endPoint: number,
   order: OrderType
-): TextBlockData {
+): BlockContentsText {
+  const contents = preContents.map(content => content.concat()) as BlockContentsText;
   
   let changedTextContents: BlockContentsText;
 
   switch(order) {
     case "add":
       changedTextContents = addContentsStyle(
-        changedTextStyleBlock.contents,
+        contents,
         startPoint,
         endPoint,
         styleType
@@ -689,7 +690,7 @@ function changeStyleTextContents(
 
     case "del":
       changedTextContents = deleteContentsStyle(
-        changedTextStyleBlock.contents,
+        contents,
         startPoint,
         endPoint,
         styleType
@@ -699,7 +700,7 @@ function changeStyleTextContents(
     case "color":
       changedTextContents = addContentsStyle(
         deleteContentsStyle(
-          changedTextStyleBlock.contents,
+          contents,
           startPoint,
           endPoint,
           styleType
@@ -713,7 +714,7 @@ function changeStyleTextContents(
     case "link":
       changedTextContents = addContentsStyle(
         deleteContentsStyle(
-          changedTextStyleBlock.contents,
+          contents,
           startPoint,
           endPoint,
           styleType
@@ -725,14 +726,10 @@ function changeStyleTextContents(
       break;
 
     default: 
-      changedTextContents = changedTextStyleBlock.contents;
+      changedTextContents = contents;
   }
 
-  return Object.assign({}, 
-    changedTextStyleBlock, {
-      contents: changedTextContents
-    }
-  );
+  return changedTextContents;
 }
 
 function sliceTextContents(

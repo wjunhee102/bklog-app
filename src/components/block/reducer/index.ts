@@ -12,16 +12,16 @@ export const initialBlockState: BlockState = {
     title: null
   },
   blockList: [],
-  blockSideInfoGroup: null,
   editingBlockId: null,
   preBlockInfo: null,
-  stageBlock: [],
-  stagePage: null,
-  modifyData: [],
-  modifyPageInfo: null,
+  stagedTextBlockData: null,
+  stagedBlockDataList: [],
+  stagedPageData: null,
+  modifyBlockTokenList: [],
+  modifyPageTokenList: [],
   updatedBlockIdList: [],
-  tempBack: [],
-  tempFront: [],
+  historyBack: [],
+  historyFront: [],
   tempClipData: [],
   clipBoard: []
 }

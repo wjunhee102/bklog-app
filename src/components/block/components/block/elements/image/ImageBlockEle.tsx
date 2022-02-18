@@ -1,15 +1,16 @@
 import classNames from 'classnames';
 import React from 'react';
-import { BlockProps } from '../../Block';
+import { ImageBlock } from '../../../../entities/block/image/ImageBlock';
+import { BlockComponentProps } from '../../BlockComponent';
 import { BaseProps } from '../../zone/base/BaseBlockZone';
 import useImageBlock from './hooks/useImageBlock';
 
-interface ImageBlockEleProps extends BlockProps {
+interface ImageBlockEleProps extends BlockComponentProps<ImageBlock> {
   zoneProps: BaseProps;
 }
 
 const ImageBlockEle: React.FC<ImageBlockEleProps> = ({
-  blockData,
+  block,
   useBlockReducer,
   zoneProps
 }) => {
@@ -19,7 +20,7 @@ const ImageBlockEle: React.FC<ImageBlockEleProps> = ({
     handleResizeOn,
     handleResize,
     handleResizeOff
-  } = useImageBlock(blockData, useBlockReducer, zoneProps);
+  } = useImageBlock(block, useBlockReducer, zoneProps);
 
   return (
     <div 
@@ -37,7 +38,7 @@ const ImageBlockEle: React.FC<ImageBlockEleProps> = ({
       >
 
         <div className="image-block-contents">
-          <img className="block-img" src={blockData.contents.url} alt="" />
+          <img className="block-img" src={block.contents.url} alt="" />
         </div>
 
         <div className="image-block-overlay">

@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useEffect } from 'react';
 import classNames from "classnames";
 import DropAreaComponent from './elements/DropAreaComponent';
-import { BlockProps, ParentInfoType } from '../../../Block';
+import { BlockComponentProps, ParentInfoType } from '../../../BlockComponent';
 
 function createDropDirection(id: string, direction: string) {
   return `${direction}-${id}`;
@@ -33,14 +33,14 @@ interface DropData {
   direction: string;
 }
 
-interface BlockSelectAreaProps extends BlockProps {
+interface BlockSelectAreaProps extends BlockComponentProps {
   parentInfo?: ParentInfoType;
   selected: boolean;
   setSelect: Dispatch<SetStateAction<boolean>>;
 }
 
 const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
-  blockData, 
+  block, 
   useBlockReducer, 
   parentInfo,
   selected,
@@ -65,14 +65,14 @@ const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
 
   const dropDataList: DropData[] = useMemo(() => [
     {
-      position: calculartionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "next" : "child"),
+      position: calculartionPosition(block.position, parentInfo && parentInfo.type === "container"? "next" : "child"),
       direction: "right"
     },
     {
-      position: calculartionPosition(blockData.position, parentInfo && parentInfo.type === "container"? "child" : "next"),
+      position: calculartionPosition(block.position, parentInfo && parentInfo.type === "container"? "child" : "next"),
       direction: "down"
     }
-  ], [blockData.position]);
+  ], [block.position]);
 
   const handleSelectMouseEnter = useCallback((
     position: string, 
@@ -112,9 +112,9 @@ const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
         dropDataList.map(({ position, direction }, idx) => (
           <DropAreaComponent
             key={idx}
-            on={currentDropDirection === createDropDirection(blockData.id, direction)}
+            on={currentDropDirection === createDropDirection(block.id, direction)}
             dropDirection={direction}
-            onMouseEnter={handleSelectMouseEnter(position, createDropDirection(blockData.id, direction))}
+            onMouseEnter={handleSelectMouseEnter(position, createDropDirection(block.id, direction))}
             onMouseLeave={handleSelectMouseLeave}
             onMouseUp={handleSelectMouseUp()}
           />

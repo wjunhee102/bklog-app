@@ -1,14 +1,14 @@
 import { useCallback, useMemo, useReducer, useRef, useState } from 'react';
-import { BlockDataProps, BlockTypes, ModifyBlockDataType } from '../types';
+import { TitleBlock } from '../entities/block/title/TitleBlock';
+import { BlockType, UnionBlock, UnionBlockDataProps, UnionRawBlockData } from '../entities/block/type';
+import { OrderType, TextContentStyleType } from '../entities/block/type/types/text';
 import blockReducer, { initialBlockState } from '../reducer';
 import { 
-  SetBlockDataList, 
   setBlockList, 
   addBlock, 
   commitTextBlock, 
   deleteBlock, 
   changeTextStyle, 
-  OrderType, 
   switchBlock, 
   revertBlock, 
   editTextBlock, 
@@ -29,7 +29,6 @@ import {
   EditorStateType,
   ClearStateType,
   clearStateItem,
-  StagedPage,
   editPageInfo,
   commitPage,
   createPageTitleBlockData,
@@ -39,9 +38,11 @@ import {
   addTitleBlock,
   deleteTitleBlock,
   editBlock,
-  editBlockSideInfo
+  editBlockSideInfo,
+  SetBlockList,
+  StagedPageData
 } from '../reducer/utils';
-import { BlockData, ContentType, RawBlockData } from '../types';
+import { ModifyBlockData } from '../service/modify/type';
 
 interface CursorType {
   start: number;
@@ -68,14 +69,14 @@ function useBlock() {
   // store
   const [ state, dispatch ] = useReducer(blockReducer, initialBlockState);
 
-  const initBlock: SetBlockDataList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
+  const initBlock: SetBlockList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
-  const titleBlock: BlockData | null = useMemo(() => createPageTitleBlockData(state.pageInfo.title? state.pageInfo.title : ""), [state.pageInfo.title]);
+  const titleBlock: TitleBlock | null = useMemo(() => createPageTitleBlockData(state.pageInfo.title? state.pageInfo.title : ""), [state.pageInfo.title]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 
   // dispatch
-  const onInitBlockState = useCallback((rawBlockData: RawBlockData[]) => {
+  const onInitBlockState = useCallback((rawBlockData: UnionRawBlockData[]) => {
     dispatch(initBlockState(rawBlockData));
   }, [dispatch]);
 
@@ -87,7 +88,7 @@ function useBlock() {
     dispatch(changeEditingId(nextEditInfo));
   }, [dispatch]);
 
-  const onEditBlock = useCallback((blockInfo: string | number, blockDataProps: BlockDataProps) => {
+  const onEditBlock = useCallback((blockInfo: string | number, blockDataProps: UnionBlockDataProps) => {
     dispatch(editBlock(blockInfo, blockDataProps));
   }, [dispatch]);
 
@@ -108,7 +109,7 @@ function useBlock() {
   }, [dispatch]);
 
   const onAddBlock = useCallback((
-    blockList: BlockData[], 
+    blockList: UnionBlock[], 
     targetPosition: string,
     currentBlockPosition: boolean,
     nextEditInfo?: string | number 
@@ -134,7 +135,7 @@ function useBlock() {
   }, [dispatch]);
 
   const onDeleteBlock = useCallback((
-    removedBlockList: BlockData[],
+    removedBlockList: UnionBlock[],
     nextEditInfo?: string | number
   ) => {
     dispatch(deleteBlock(removedBlockList, nextEditInfo));
@@ -150,7 +151,7 @@ function useBlock() {
 
   const onChangeTextStyle = useCallback((
     index: number, 
-    styleType: ContentType, 
+    styleType: TextContentStyleType, 
     startPoint: number,
     endPoint: number,
     order: OrderType
@@ -185,7 +186,7 @@ function useBlock() {
     dispatch(changeStyleType(blockInfo, styleType));
   }, [dispatch]);
 
-  const onChangeBlockType = useCallback((blockInfo: string | number, type: BlockTypes) => {
+  const onChangeBlockType = useCallback((blockInfo: string | number, type: BlockType) => {
     dispatch(changeBlockType(blockInfo, type));
   }, [dispatch]);
 
@@ -193,7 +194,7 @@ function useBlock() {
     dispatch(changeFetchState(fetchState));
   }, [dispatch]);
 
-  const onUpdateBlock = useCallback((modifyData: ModifyBlockDataType) => {
+  const onUpdateBlock = useCallback((modifyData: ModifyBlockData) => {
     dispatch(updateBlock(modifyData));
   }, [dispatch]);
 
@@ -213,7 +214,7 @@ function useBlock() {
     dispatch(clearStateItem(...key));
   }, [dispatch]);
 
-  const onEditPageInfo = useCallback((stagedPage: StagedPage | null) => {
+  const onEditPageInfo = useCallback((stagedPage: StagedPageData | null) => {
     dispatch(editPageInfo(stagedPage));
   }, [dispatch]);
 

@@ -1,6 +1,6 @@
 import { checkInstanceOfHTMLElement } from ".";
 
-function easeOut (progress, startPoint, movingDistance, duration) {
+function easeOut (progress: number, startPoint: number, movingDistance: number, duration: number) {
   return movingDistance * ( -Math.pow( 2, -12 * progress/duration ) + 1 ) + startPoint;
 }
 
@@ -17,21 +17,21 @@ interface AnimateElementProps {
 function createAnimate({
   ele, styleType, unit, startPoint, targetPoint, duration = 1000
 }: AnimateElementProps) {
-  let start = null;
+  let start: number | null = null;
   let movingDistance = targetPoint - startPoint;
 
-  return function animate(timestamp) {
+  return function animate(timestamp: number) {
     if(!start) start = timestamp;
 
     let progress = timestamp - start;
     let point = easeOut(progress, startPoint, movingDistance, duration)
 
-    ele.style[styleType] = `${point}${unit}`;
+    ele.style[styleType as any] = `${point}${unit}` as string;
 
     if(progress < duration) {
       window.requestAnimationFrame(animate);
     } else {
-      ele.style[styleType] = `${targetPoint}${unit}`;
+      ele.style[styleType as any] = `${targetPoint}${unit}`;
       console.log("엔드")
     }
   }
@@ -40,7 +40,7 @@ function createAnimate({
 function animateElement(animateProps: AnimateElementProps,
   moving?: boolean
 ) {
-  if(!checkInstanceOfHTMLElement(animateProps.ele) && !animateProps.ele.style[animateProps.styleType] && moving) return;
+  if(!checkInstanceOfHTMLElement(animateProps.ele) && !animateProps.ele.style[animateProps.styleType as any] && moving) return;
 
   if(moving !== undefined) moving = true;
 

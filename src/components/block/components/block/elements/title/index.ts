@@ -1,3 +1,3 @@
-import TitleBlock from "./TitleBlock";
+import TitleBlockComponent from "./TitleBlockComponent";
 
-export default TitleBlock;
+export default TitleBlockComponent;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentType, OrderType } from '../../../../../../types';
+import { OrderType, TextContentStyleType } from '../../../../../../entities/block/type/types/text';
 import { arrayFindIndex } from '../../../../../../utils';
 import ActionMenuBox from '../common/ActionMenuBox';
 import TextStyleToggle from './TextStyleToggle';
@@ -28,7 +28,7 @@ const toggleList: ToggleProps[] = [
   }
 ]
 
-const addDelToggle = (prop: any, textStyle: ContentType[]): boolean => {
+const addDelToggle = (prop: any, textStyle?: TextContentStyleType[] | null): boolean => {
   if(!textStyle) return false;
   
   return arrayFindIndex( 
@@ -38,8 +38,8 @@ const addDelToggle = (prop: any, textStyle: ContentType[]): boolean => {
 }
 
 interface TextStyleToggleMenuProps {
-  textStyle: ContentType[];
-  onStyleChange: (contentType: ContentType, toggle: OrderType) => void;
+  textStyle?: TextContentStyleType[] | null;
+  onStyleChange: (contentType: TextContentStyleType, toggle: OrderType) => void;
 }
 
 const TextStyleToggleMenu: React.FC<TextStyleToggleMenuProps> = ({
@@ -47,7 +47,7 @@ const TextStyleToggleMenu: React.FC<TextStyleToggleMenuProps> = ({
   onStyleChange
 }) => {
 
-  const handleClick = (contentType: ContentType) => (toggle: boolean) => () => {
+  const handleClick = (contentType: TextContentStyleType) => (toggle: boolean) => () => {
     onStyleChange(contentType, toggle? "del" : "add");
   }
 

@@ -1,16 +1,17 @@
 import React from 'react';
 import useTextBlock from './hooks/useTextBlock';
-import { BlockProps } from '../../Block';
+import { BlockComponentProps } from '../../BlockComponent';
 import TextBlockActionMenuBar from '../common/action-menubar';
 import ContentEditableEle from '../common/ContentEditableEle';
 import { BaseProps } from '../../zone/base/BaseBlockZone';
+import { TextBlock } from '../../../../entities/block/text/TextBlock';
 
-interface TextBlockEleProps extends BlockProps {
+interface TextBlockEleProps extends BlockComponentProps<TextBlock> {
   zoneProps: BaseProps;
 }
 
 const TextBlockEle: React.FC<TextBlockEleProps> = ({ 
-  blockData, 
+  block, 
   useBlockReducer, 
   zoneProps
 }) => {
@@ -30,7 +31,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     isFocus,
     handleElementFocus,
     editable
-  } = useTextBlock(blockData, useBlockReducer, zoneProps);
+  } = useTextBlock(block, useBlockReducer, zoneProps);
 
   return (
     <div 
@@ -38,7 +39,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
       onBlur={handleBlur}
     > 
       <ContentEditableEle
-        className={blockData.styleType}
+        className={block.styleType}
         editable={editable}
         dangerouslySetInnerHTML={contentsHTML}
         ref={blockContentsRef}
@@ -54,7 +55,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
         styleToggle?
         <TextBlockActionMenuBar 
           show={styleToggle}
-          blockData={blockData}
+          block={block}
           startPosition={cursorStart}
           endPosition={cursorEnd}
           reBlockFocus={handleElementFocus}

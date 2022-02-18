@@ -1,16 +1,17 @@
 import React from 'react';
-import { BlockProps } from '../../Block';
+import { NumberedBlock } from '../../../../entities/block/text/NumberedBlock';
+import { BlockComponentProps } from '../../BlockComponent';
 import BaseBlockZone from '../../zone/base';
 import NumberedBlockEle from './NumberedBlockEle';
 
-const NumberedBlock: React.FC<BlockProps> = ({
-  blockData, 
+const NumberedBlockComponent: React.FC<BlockComponentProps<NumberedBlock>> = ({
+  block, 
   useBlockReducer, 
   parentInfo 
 }) => {
   return (
     <BaseBlockZone
-      blockData={blockData}
+      block={block}
       useBlockReducer={useBlockReducer}
       parentInfo={parentInfo}
     >
@@ -18,7 +19,7 @@ const NumberedBlock: React.FC<BlockProps> = ({
         (props) => {
           return (
             <NumberedBlockEle 
-              blockData={blockData}
+              block={block}
               useBlockReducer={useBlockReducer}
               zoneProps={props}
             />
@@ -29,4 +30,4 @@ const NumberedBlock: React.FC<BlockProps> = ({
   );
 }
 
-export default NumberedBlock;
+export default NumberedBlockComponent;

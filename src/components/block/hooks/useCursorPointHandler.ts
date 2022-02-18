@@ -3,7 +3,7 @@ import { checkInstanceOfHTMLElement } from "../utils";
 import { getSelectionEnd, getSelectionStart, setSelectionRange } from "../utils/selectionText";
 
 interface UseMoveCurSorPointProps<T extends HTMLElement = HTMLDivElement> {
-  element: T;
+  element: T | null;
   setCursorStart: (point: number) => void;
   setCursorEnd: (point: number) => void;
   cursorStart: number;
@@ -33,12 +33,11 @@ function useCursorPointHandler<T extends HTMLElement = HTMLDivElement>({
       }
     },
     handleMoveToEndPoint: () => {
-      if(checkInstanceOfHTMLElement(element)) {
-        const length = element.innerText.length;
-        setSelectionRange(element, length, length);
-        setCursorStart(length);
-        setCursorEnd(length);
-      }
+    if(!element || checkInstanceOfHTMLElement(element)) return false
+      const length = element.innerText.length;
+      setSelectionRange(element, length, length);
+      setCursorStart(length);
+      setCursorEnd(length);
     }
   }), [element]);
 

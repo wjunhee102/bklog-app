@@ -1,16 +1,17 @@
 import React from 'react';
-import { BlockProps } from '../../Block';
+import { BulletedBlock } from '../../../../entities/block/text/BulletedBlock';
+import { BlockComponentProps } from '../../BlockComponent';
 import { BaseProps } from '../../zone/base/BaseBlockZone';
 import TextBlockActionMenuBar from '../common/action-menubar';
 import ContentEditableEle from '../common/ContentEditableEle';
 import useTextBlock from '../text/hooks/useTextBlock';
 
-interface BulletedBlockEleProps extends BlockProps {
+interface BulletedBlockEleProps extends BlockComponentProps<BulletedBlock> {
   zoneProps: BaseProps;
 }
 
 const BulletedBlockEle: React.FC<BulletedBlockEleProps> = ({
-  blockData,
+  block,
   useBlockReducer,
   zoneProps
 }) => {
@@ -30,7 +31,7 @@ const BulletedBlockEle: React.FC<BulletedBlockEleProps> = ({
     isFocus,
     handleElementFocus,
     editable
-  } = useTextBlock(blockData, useBlockReducer, zoneProps);
+  } = useTextBlock(block, useBlockReducer, zoneProps);
 
   return (
     <div
@@ -38,7 +39,7 @@ const BulletedBlockEle: React.FC<BulletedBlockEleProps> = ({
       onBlur={handleBlur}
     >
       <ContentEditableEle
-        className={blockData.styleType}
+        className={block.styleType}
         editable={editable}
         dangerouslySetInnerHTML={contentsHTML}
         ref={blockContentsRef}
@@ -54,7 +55,7 @@ const BulletedBlockEle: React.FC<BulletedBlockEleProps> = ({
         styleToggle?
         <TextBlockActionMenuBar 
           show={styleToggle}
-          blockData={blockData}
+          block={block}
           startPosition={cursorStart}
           endPosition={cursorEnd}
           reBlockFocus={handleElementFocus}

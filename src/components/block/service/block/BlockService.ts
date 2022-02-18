@@ -1,9 +1,10 @@
 import { Block } from "../../entities/block/abstract/Block";
 import { ContainerBlock } from "../../entities/block/container/ContainerBlock";
 import { BaseTextBlock } from "../../entities/block/text/BaseTextBlock";
-import { mergeTextContents } from "../../entities/block/text/utils";
+import { changeStyleTextContents, mergeTextContents } from "../../entities/block/text/utils";
 import { BlockData, BlockDataInitProps, BlockType, RawBlockData, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
+import { BlockContentsText, OrderType, TextContentStyleType, TextContentType } from "../../entities/block/type/types/text";
 import { Token } from "../../entities/block/utils/token";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
@@ -164,6 +165,8 @@ export class BlockService {
   public updateBlockListStagedProperty<T extends UnionBlockGenericType = UnionBlockGenericType>(
     stageBlockDataList: StagedBlockData<T>[]
   ): BlockService {
+    if(!stageBlockDataList[0]) return this;
+
     const {
       blockList,
       modifyBlockTokenList,
@@ -190,7 +193,7 @@ export class BlockService {
   public addBlockInList(
     blockList: UnionBlock[], 
     targetPosition: string, 
-    currentBlockFrontPosition: boolean = true
+    keepCurrentBlockPosition: boolean = true
   ): BlockService {
     
     const [ targetBlockList ] = BlockService.resetToTargetPosition(blockList, targetPosition);
@@ -201,7 +204,7 @@ export class BlockService {
       this.blockList, 
       targetBlockList,
       targetPosition,
-      currentBlockFrontPosition
+      keepCurrentBlockPosition
     );
 
     this.historyBlockTokenList.push(...targetBlockList.map(block => new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(block.id))));
@@ -266,7 +269,7 @@ export class BlockService {
 
     const contents = BaseTextBlock.parseHtmlContents(innerHTML);
     const blockId = block.id;
-    const preContents = block.contents.concat().map(co => co.concat());
+    const preContents: BlockContentsText = block.contents.map(content => content.concat()) as BlockContentsText;
     const newContents = mergeTextContents(block.contents, contents);
 
     this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockId, {
@@ -280,10 +283,86 @@ export class BlockService {
     return this.removeBlockInList([this.blockList[targetIndex]]);
   }
 
-  public changeBlockType(blockIndex: number, type: BlockType): BlockService {
-    if(blockIndex >= this.blockList.length) return this;
+  /**
+   * block의 style type을 변경합니다.
+   * 새 배열 반환
+   */
+  public changeBlockStyleType(blockInfo: string | number, styleType: string): BlockService {
+    if(this.blockList.length < 1) return this;
 
-    const result = changeBlockType(type, this.blockList[blockIndex])
+    const blockIndex = typeof blockInfo === "number"?
+      blockInfo 
+      : this.blockList.findIndex(block => block.id === blockInfo);
+    
+    if(blockIndex === -1) return this;
+
+    const blockList = this.blockList.concat();
+
+    const [ newBlock, preProps ] = blockList[blockIndex].regeneration({
+      styleType
+    });
+
+    blockList[blockIndex] = newBlock;
+
+    this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newBlock.id, {
+      styleType
+    })));
+    this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[blockIndex].id, preProps)))
+    this.blockList = blockList;
+
+    return this;
+  }
+
+  public changeTextBlockStyle(
+    index: number, 
+    styleType: TextContentStyleType,
+    startPoint: number,
+    endPoint: number,
+    order: OrderType
+  ): BlockService {
+    if(this.blockList.length < 1) return this;
+    if(this.blockList[index] instanceof BaseTextBlock === false) return this;
+
+    const TextBlock: BaseTextBlock = this.blockList[index] as BaseTextBlock;
+
+    const contents = changeStyleTextContents(
+        TextBlock.contents, 
+        styleType, 
+        startPoint, 
+        endPoint, 
+        order
+      );
+
+    const [ newTextBlock, preProps ] = TextBlock.regeneration({
+      contents
+    });
+
+    const blockList = this.blockList.concat();
+    blockList[index] = newTextBlock;
+
+    this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newTextBlock.id, {
+      contents
+    })));
+    this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(newTextBlock.id, preProps)))
+    this.blockList = blockList;
+
+    return this;
+  }
+
+  /**
+   * block의 type을 변경합니다.
+   * 새 배열 반환
+   */
+  public changeBlockType(blockInfo: string | number, type: BlockType): BlockService {
+    if(this.blockList.length < 1) return this;
+
+    const blockIndex = typeof blockInfo === "number"?
+      blockInfo 
+      : this.blockList.findIndex(block => block.id === blockInfo);
+    
+    if(blockIndex === -1) return this;
+
+    const result = changeBlockType(type, this.blockList[blockIndex]);
 
     if(!result) return this;
 

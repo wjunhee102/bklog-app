@@ -1,3 +1,3 @@
-import NumberedBlock from "./NumberedBlock";
+import NumberedBlockComponent from "./NumberedBlockComponent";
 
-export default NumberedBlock;
+export default NumberedBlockComponent;

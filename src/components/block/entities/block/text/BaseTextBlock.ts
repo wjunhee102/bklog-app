@@ -7,10 +7,8 @@ import { parseHtmlContents } from "./utils";
 
 export class BaseTextBlock<Meta extends BlockMetaText = null> extends Block<TextGenericType, Meta> implements BlockFrame<TextGenericType> {
 
-  static get createBlockData() {
-    return (props: TextBlockDataProps | TextBlockData | TextRawBlockData) => {
-      return Block.createBlockData<TextGenericType>("text", props);
-    }
+  static createBlockData(props: TextBlockDataProps | TextBlockData | TextRawBlockData) {
+    return Block.createBlockData<TextGenericType>("text", props);
   }
 
   static parseHtmlContents(HTML: string) {

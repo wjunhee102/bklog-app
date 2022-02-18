@@ -23,7 +23,7 @@ const BlockUtilsMenuArticle: React.FC<BlockUtilsMenuArticleProps> = ({
   return (
     <div className={classNames(
       "block-utils-menu-box",
-      { [className]: className }
+      { [className as string]: className }
     )}>
       <BlockScrollMenu className="block-utils-menu">
         <BlockDeleteBtn handleClick={handleDelete} />

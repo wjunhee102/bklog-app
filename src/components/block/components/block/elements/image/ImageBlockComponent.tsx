@@ -1,16 +1,17 @@
 import React from 'react';
-import { BlockProps } from '../../Block';
+import { ImageBlock } from '../../../../entities/block/image/ImageBlock';
+import { BlockComponentProps } from '../../BlockComponent';
 import BaseBlockZone from '../../zone/base';
 import ImageBlockEle from './ImageBlockEle';
 
-const ImageBlock: React.FC<BlockProps> = ({
-  blockData,
+const ImageBlockComponent: React.FC<BlockComponentProps<ImageBlock>> = ({
+  block,
   useBlockReducer,
   parentInfo
 }) => {
   return (
     <BaseBlockZone
-      blockData={blockData}
+      block={block}
       useBlockReducer={useBlockReducer}
       parentInfo={parentInfo}
     > 
@@ -18,7 +19,7 @@ const ImageBlock: React.FC<BlockProps> = ({
         (props) => {
           return (
             <ImageBlockEle
-              blockData={blockData}
+              block={block}
               useBlockReducer={useBlockReducer}
               zoneProps={props}
             />
@@ -29,4 +30,4 @@ const ImageBlock: React.FC<BlockProps> = ({
   );
 }
 
-export default ImageBlock;
+export default ImageBlockComponent;

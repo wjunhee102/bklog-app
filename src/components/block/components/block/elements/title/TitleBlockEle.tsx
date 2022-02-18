@@ -1,10 +1,11 @@
 import React from 'react';
 import useTitleBlock from './hooks/useTitleBlock';
-import { BlockProps } from '../../Block';
+import { BlockComponentProps } from '../../BlockComponent';
 import ContentEditableEle from '../common/ContentEditableEle';
+import { TitleBlock } from '../../../../entities/block/title/TitleBlock';
 
-const TitleBlockEle: React.FC<BlockProps> = ({
-  blockData,
+const TitleBlockEle: React.FC<BlockComponentProps<TitleBlock>> = ({
+  block,
   useBlockReducer
 }) => {
 
@@ -16,7 +17,7 @@ const TitleBlockEle: React.FC<BlockProps> = ({
     isFocus,
     editable,
     handleBlur
-  } = useTitleBlock(blockData, useBlockReducer);
+  } = useTitleBlock(block, useBlockReducer);
 
   return (
     <div
@@ -24,10 +25,10 @@ const TitleBlockEle: React.FC<BlockProps> = ({
       onBlur={handleBlur}
     >
       <ContentEditableEle 
-        className={blockData.styleType}
+        className={block.styleType}
         editable={editable}
         ref={blockContentsRef}
-        contents={blockData.contents}
+        contents={block.contents}
         onKeyUp={handleKeyUp}
         onKeyPress={handleKeyPress}
         onMouseUp={handleMouseUp}

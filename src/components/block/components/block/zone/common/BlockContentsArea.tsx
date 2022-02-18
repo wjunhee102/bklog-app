@@ -1,17 +1,17 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripVertical, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { BlockProps } from '../../Block';
+import { BlockComponentProps } from '../../BlockComponent';
 import BlockUtilsMenu from '../../../common/block-utils-menu';
-import { BlockData } from '../../../../types';
 import { createBlockData } from '../../../../reducer/utils';
+import { UnionBlock } from '../../../../entities/block/type';
 
-interface BlockContentsAreaProps extends BlockProps {
-  childrenBlockData: BlockData<any, any>[];
+interface BlockContentsAreaProps extends BlockComponentProps {
+  childrenBlock: UnionBlock[] | null;
 }
 
 const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
-  blockData, useBlockReducer, childrenBlockData, children
+  block, useBlockReducer, childrenBlock, children
 }) => {
 
   const {
@@ -37,23 +37,23 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
   }, []);
 
   const handleAddBlock = useCallback(() => {
-    const { position } = blockData;
+    const { position } = block;
     const newBlockData = createBlockData({ position });
     onAddBlock([ newBlockData ], position, true, newBlockData.id);
-  }, [blockData]);
+  }, [block]);
 
   const handleGrabMouseDown = useCallback(() => {
     onChangeEditorState('isGrab', true);
-    onChangeEditingId(null);
+    onChangeEditingId();
 
     if(!isCliping) {
-      if(childrenBlockData) {
-        onSetTempClip([blockData.index, ...childrenBlockData.map(child => child.index)]);
+      if(childrenBlock) {
+        onSetTempClip([block.index, ...childrenBlock.map(child => child.index)]);
       } else {
-        onSetTempClip([blockData.index]);
+        onSetTempClip([block.index]);
       }
     }
-  }, [isCliping, childrenBlockData, blockData.index]);
+  }, [isCliping, childrenBlock, block.index]);
 
   useEffect(() => {
     if(!isHover) setUtilToggle(false);
@@ -93,7 +93,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
             utilToggle?
             <BlockUtilsMenu
               useBlockReducer={useBlockReducer}
-              blockData={blockData}
+              block={block}
               setToggle={setUtilToggle}
             />
             : null

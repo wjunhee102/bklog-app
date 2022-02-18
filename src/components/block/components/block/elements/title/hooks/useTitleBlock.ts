@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BlockData } from "../../../../../types";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
 import useElementFocus from "../../../../../hooks/useElementFocus";
 import useMoveCursorPoint from "../../../../../hooks/useCursorPointHandler";
 import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
+import { TitleBlock } from "../../../../../entities/block/title/TitleBlock";
 
-function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
+function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
   
   const {
     cursorStart,
@@ -90,7 +90,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
         );
       }
     }
-  }, [blockData, cursorStart, cursorEnd]);
+  }, [block, cursorStart, cursorEnd]);
 
   const {
     handleSetCursorPoint,
@@ -119,7 +119,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
 
   const isFocus = () => {
     handleMoveToEndPoint();
-    if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
+    if(block.id !== editingBlockId) onChangeEditingId(block.id);
   }
 
   useEffect(() => {
@@ -129,10 +129,10 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
       handleRefreshCursorPoint();
     }
 
-  }, [blockData.contents]);
+  }, [block.contents]);
 
   useEffect(() => {
-    if(editingBlockId === blockData.id) {
+    if(editingBlockId === block.id) {
       if(blockContentsRef.current) {
         handleElementFocus();
 
@@ -155,7 +155,7 @@ function useTitleBlock(blockData: BlockData, useBlockReducer: UseBlockType) {
   }, [isGrab]);
 
   useEffect(() => {
-    if(editingBlockId === blockData.id) handleFocus(blockContentsRef.current);
+    if(editingBlockId === block.id) handleFocus(blockContentsRef.current);
   }, []);
 
   return {

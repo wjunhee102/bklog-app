@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ParentInfoType } from "../../Block";
-import { BlockData } from "../../../../types";
+import { useEffect, useMemo, useState } from "react";
+import { ParentInfoType } from "../../BlockComponent";
 import { UseBlockType } from "../../../../hooks/useBlock";
+import { UnionBlock } from "../../../../entities/block/type";
 
-function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, parentInfo?: ParentInfoType) {
+function useBlockBase(block: UnionBlock, useBlockReducer: UseBlockType, parentInfo?: ParentInfoType) {
   
   const {
     state: {
@@ -20,11 +20,11 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
 
   const parentSelected = parentInfo? parentInfo.selected : false;
 
-  const childrenBlockData = useMemo(() => initBlock.hasOwnProperty(blockData.id)? 
-    initBlock[blockData.id] : null, [initBlock]); 
+  const childrenBlock = useMemo(() => initBlock && initBlock.hasOwnProperty(block.id)? 
+    initBlock[block.id] : null, [initBlock]); 
 
   useEffect(() => {
-    if(tempClipData.includes(blockData.index)) {
+    if(tempClipData.includes(block.index)) {
       setSelect(true);
     } else {
       setSelect(false);
@@ -32,14 +32,14 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
   }, [tempClipData]);
 
   useEffect(() => {
-    if(parentSelected && childrenBlockData) {
-      onSetTempClip(childrenBlockData.map(child => child.index));
+    if(parentSelected && childrenBlock) {
+      onSetTempClip(childrenBlock.map(child => child.index));
     }
   }, [parentSelected]);
 
   useEffect(() => {
     if(updatedBlockIdList[0]) {
-      setUpdated(updatedBlockIdList.includes(blockData.id));
+      setUpdated(updatedBlockIdList.includes(block.id));
     } else {
       setUpdated(false);
     }
@@ -51,7 +51,7 @@ function useBlockBase(blockData: BlockData, useBlockReducer: UseBlockType, paren
     selected,
     setSelect,
     updated,
-    childrenBlockData,
+    childrenBlock,
   }
 }
 

@@ -1,16 +1,18 @@
 import React from "react";
-import { BlockProps } from "../../Block";
+import { TextBlock } from "../../../../entities/block/text/TextBlock";
+import { BlockComponentProps } from "../../BlockComponent";
 import BaseBlockZone from "../../zone/base";
 import TextBlockEle from "./TextBlockEle";
 
-const TextBlock: React.FC<BlockProps> = ({ 
-  blockData, 
+
+const TextBlockComponent: React.FC<BlockComponentProps<TextBlock>> = ({ 
+  block, 
   useBlockReducer, 
   parentInfo 
 }) => {
   return (
     <BaseBlockZone
-      blockData={blockData}
+      block={block}
       useBlockReducer={useBlockReducer}
       parentInfo={parentInfo}
     >
@@ -18,7 +20,7 @@ const TextBlock: React.FC<BlockProps> = ({
         (props) => {
           return (
             <TextBlockEle 
-              blockData={blockData} 
+              block={block} 
               useBlockReducer={useBlockReducer} 
               zoneProps={props}
             />
@@ -29,4 +31,4 @@ const TextBlock: React.FC<BlockProps> = ({
   );
 }
 
-export default TextBlock;
+export default TextBlockComponent;

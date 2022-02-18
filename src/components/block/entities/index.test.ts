@@ -215,6 +215,7 @@ test('create ModifyDataToken', () => {
 });
 
 test('update Block', () => {
+ 
   const data = Block.createBlockData<TextGenericType>('numbered', { index: 1});
   if(!data) return false;
 

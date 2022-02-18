@@ -1,16 +1,17 @@
 import React from 'react';
-import { BlockProps } from '../../Block';
+import { BulletedBlock } from '../../../../entities/block/text/BulletedBlock';
+import { BlockComponentProps } from '../../BlockComponent';
 import BaseBlockZone from '../../zone/base';
 import BulletedBlockEle from './BulletedBlockEle';
 
-const BulletedBlock: React.FC<BlockProps> = ({
-  blockData,
+const BulletedBlockComponent: React.FC<BlockComponentProps<BulletedBlock>> = ({
+  block,
   useBlockReducer,
   parentInfo
 }) => {
   return (
     <BaseBlockZone
-      blockData={blockData}
+      block={block}
       useBlockReducer={useBlockReducer}
       parentInfo={parentInfo}
     >
@@ -18,7 +19,7 @@ const BulletedBlock: React.FC<BlockProps> = ({
         (props) => {
           return (
             <BulletedBlockEle 
-              blockData={blockData} 
+              block={block} 
               useBlockReducer={useBlockReducer} 
               zoneProps={props}
             />
@@ -29,4 +30,4 @@ const BulletedBlock: React.FC<BlockProps> = ({
   );
 }
 
-export default BulletedBlock;
+export default BulletedBlockComponent;

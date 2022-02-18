@@ -1,7 +1,7 @@
+import { BlockData, UnionBlockData } from "./entities/block/type";
 import { resetToTargetPosition } from "./reducer/utils";
-import { BlockData } from "./types";
 
-const TEST_BLOCK_1: BlockData[] = [
+const TEST_BLOCK_1: BlockData<any>[] = [
   {
     position: "1",
     index: 1,
@@ -79,7 +79,7 @@ const TEST_BLOCK_1: BlockData[] = [
     ]
   }
 ];
-const TEST_BLOCK_2: BlockData[] = [
+const TEST_BLOCK_2: BlockData<any>[] = [
   {
     position: "1-1-1",
     index: 1,

@@ -32,7 +32,7 @@ function createTitleBlockData({
     position: "title",
     type: "title",
     styleType: "bk-title",
-    styles: null,
+    styles: {},
     contents: contents? contents : ""
   }
 }

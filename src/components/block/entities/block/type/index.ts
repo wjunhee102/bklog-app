@@ -1,8 +1,10 @@
 import { ContainerBlock } from "../container/ContainerBlock";
 import { ImageBlock } from "../image/ImageBlock";
 import { BaseTextBlock } from "../text/BaseTextBlock";
+import { BulletedBlock } from "../text/BulletedBlock";
 import { NumberedBlock } from "../text/NumberedBlock";
 import { TextBlock } from "../text/TextBlock";
+import { TitleBlock } from "../title/TitleBlock";
 import { BlockContentsContainer, BlockMetaContainer, BlockStylesContainer, BlockTypeContainer } from "./types/container";
 import { BlockContentsImage, BlockStylesImage, BlockTypeImage } from "./types/image";
 import { BlockContentsText, BlockMetaText, BlockStylesText, BlockTypeText } from "./types/text";
@@ -104,7 +106,9 @@ export type UnionBlockDataProps = TitleBlockDataProps
 export type UnionMeta = null | BlockMetaText | BlockMetaContainer;
 
 // Blocks;
-export type UnionBlock = BaseTextBlock<BlockMetaText> | TextBlock | NumberedBlock | ImageBlock | ContainerBlock<BlockMetaContainer>;
+export type UnionTextBlock = BaseTextBlock<BlockMetaText> | TextBlock | NumberedBlock | BulletedBlock;
+
+export type UnionBlock = TitleBlock | UnionTextBlock | ImageBlock | ContainerBlock<BlockMetaContainer>;
 
 export type UnionInstanceBlock = typeof BaseTextBlock | typeof TextBlock | typeof NumberedBlock | typeof ImageBlock | typeof ContainerBlock;
 

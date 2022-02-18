@@ -6,7 +6,7 @@ function handleFocus<T extends HTMLElement = HTMLDivElement>(element: T | null) 
   }
 }
 
-function useElementFocus<T extends HTMLElement = HTMLDivElement>(element: T) {
+function useElementFocus<T extends HTMLElement = HTMLDivElement>(element: T | null) {
 
   const handleElementFocus = useCallback(() => {
     handleFocus(element);

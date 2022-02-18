@@ -1,20 +1,19 @@
 import React from 'react';
-import { updateObject } from '../../../../../store/utils';
+import { BlockType, UnionBlock } from '../../../entities/block/type';
 import { UseBlockType } from '../../../hooks/useBlock';
-import { BlockData, BlockDataProps, BlockTypes } from '../../../types';
-import { Token } from '../../../utils/token';
+import { BlockService } from '../../../service/block/BlockService';
 import BlockUtilsMenuArticle from './BlockUtilsMenuArticle';
 
 interface BlockUtilsMenuProps {
   className?: string;
-  blockData: BlockData;
+  block: UnionBlock;
   useBlockReducer: UseBlockType;
   setToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BlockUtilsMenu: React.FC<BlockUtilsMenuProps> = ({
   className,
-  blockData,
+  block,
   useBlockReducer,
   setToggle
 }) => {
@@ -25,21 +24,22 @@ const BlockUtilsMenu: React.FC<BlockUtilsMenuProps> = ({
   } = useBlockReducer;
 
   const handleDelete = () => {
-    onDeleteBlock([blockData], blockData.index !== 0? blockData.index - 1 : 0);
+    onDeleteBlock([block], block.index !== 0? block.index - 1 : 0);
     setToggle(false);
   }
 
   const handleDuplicate = () => {
-    const newBlockData = updateObject<BlockData, BlockDataProps>(blockData, {
-      id: Token.getUUID()
-    });
+    const newBlock = BlockService.copyBlockList([block])[0];
 
-    onAddBlock([newBlockData], blockData.position, true, newBlockData.id);
+    if(!newBlock) return false;
+
+    onAddBlock([newBlock], block.position, true, newBlock.id);
+
     setToggle(false);
   }
 
-  const handleTurnInto = (value: BlockTypes) => {
-    onChangeBlockType(blockData.id, value);
+  const handleTurnInto = (value: string) => {
+    onChangeBlockType(block.id, value as BlockType);
     setToggle(false);
   }
 

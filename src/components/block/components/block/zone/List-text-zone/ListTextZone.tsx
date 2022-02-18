@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
-import { BlockProps, ParentInfoType } from '../../Block';
+import { BlockComponentProps, ParentInfoType } from '../../BlockComponent';
 import useBlockBase from '../hooks/useBlockBase';
 import BlockContentsArea from '../common/BlockContentsArea';
 import ChildrenBlock from '../../ChildrenBlock';
@@ -38,7 +38,7 @@ const SortedTypeTable = {
   "square": "■"
 }
 
-function covertSortType(sortType, index?: number) {
+function covertSortType(sortType: any, index?: number) {
   if(index) return "1";
 
   return 
@@ -53,13 +53,13 @@ export interface ListTextProps {
   setSelect: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface ListTextZoneProps extends BlockProps {
+interface ListTextZoneProps extends BlockComponentProps {
   children: (props: ListTextProps) => React.ReactNode;
   parentInfo?: ParentInfoType | undefined;
 }
 
 const ListTextZone: React.FC<ListTextZoneProps> = ({
-  blockData, useBlockReducer, parentInfo, children
+  block, useBlockReducer, parentInfo, children
 }) => {
 
   const {
@@ -67,10 +67,10 @@ const ListTextZone: React.FC<ListTextZoneProps> = ({
     selected,
     setSelect,
     updated,
-    childrenBlockData
-  } = useBlockBase(blockData, useBlockReducer, parentInfo);
+    childrenBlock
+  } = useBlockBase(block, useBlockReducer, parentInfo);
 
-  const parentTagType = (parentInfo && parentInfo.type === blockData.type && parentInfo.tagTypeIdx)?  
+  const parentTagType = (parentInfo && parentInfo.type === block.type && parentInfo.tagTypeIdx)?  
     parentInfo.tagTypeIdx : undefined;
 
   return (
@@ -83,30 +83,30 @@ const ListTextZone: React.FC<ListTextZoneProps> = ({
     >
 
       <ListTag 
-        blockData={blockData}
+        block={block}
         useBlockReducer={useBlockReducer}
         parentTagType={parentTagType}
       />
 
       <BlockContentsArea
-        blockData={blockData}
+        block={block}
         useBlockReducer={useBlockReducer}
-        childrenBlockData={childrenBlockData}
+        childrenBlock={childrenBlock}
       >
         { children({selected, setSelect}) }
       </BlockContentsArea>
 
       <ChildrenBlock 
-        childrenBlockData={childrenBlockData} 
+        childrenBlock={childrenBlock} 
         useBlockReducer={useBlockReducer} 
         parentInfo={{
-          type: blockData.type,
+          type: block.type,
           selected
         }}
       />
 
       <BlockSelectArea 
-        blockData={blockData}
+        block={block}
         useBlockReducer={useBlockReducer}
         parentInfo={parentInfo}
         selected={selected}

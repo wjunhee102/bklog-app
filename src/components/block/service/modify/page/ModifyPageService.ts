@@ -1,5 +1,5 @@
 import { ModifyPageDataToken } from "../../../entities/modify/page/ ModifyPageDataToken";
-import { ModifyPageInfoType } from "../../../types";
+import { PageInfoProps } from "../../../entities/modify/type";
 import { ModifyTokenService } from "../abstract/ModifyTokenService";
 import { pushModifyDataToken } from "../utils";
 
@@ -39,7 +39,7 @@ export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken
     return new ModifyPageService(this._tokenList);
   }
 
-  public getData(): ModifyPageInfoType | null {
+  public getData(): PageInfoProps | null {
     if(!this._tokenList[0]) return null;
 
     return this._tokenList[0].getData().payload;

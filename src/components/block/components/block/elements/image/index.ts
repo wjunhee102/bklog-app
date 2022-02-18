@@ -1,3 +1,3 @@
-import ImageBlock from "./ImageBlock";
+import ImageBlockComponent from "./ImageBlockComponent";
 
-export default ImageBlock;
+export default ImageBlockComponent;

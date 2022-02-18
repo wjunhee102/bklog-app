@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { UseBlockType } from '../../../../../hooks/useBlock';
-import { BlockData, BlockTypes, ContentType, OrderType } from '../../../../../types';
 import { findTextStyle } from '../../../../../utils';
 import ColorActionMenu from './color-action-menu/ColorActionMenu';
 import BlockStyleActionMenu from './block-action-menu/BlockStyleActionMenu';
@@ -9,6 +8,8 @@ import BlockMenuBar from '../../../../common/menubar';
 import './TextBlockActionMenubar.scss';
 import classNames from 'classnames';
 import BlockTypeActionMenu from './block-action-menu/BlockTypeActionMenu';
+import { BlockType, UnionTextBlock } from '../../../../../entities/block/type';
+import { OrderType, TextContentStyleType } from '../../../../../entities/block/type/types/text';
 
 const FONT_SIZE_TABLE = {
   "bk-h1": 24,
@@ -20,7 +21,7 @@ const FONT_SIZE_TABLE = {
 
  const setLeftPosition = (styleType: string) => {
    if(styleType in FONT_SIZE_TABLE) {
-     return FONT_SIZE_TABLE[styleType]
+     return FONT_SIZE_TABLE[styleType as keyof typeof FONT_SIZE_TABLE]
    } else {
      return 16;
    }
@@ -30,16 +31,16 @@ export type MenuName = "not" | "color" | "blockStyleType" | "blockType";
 
 interface TextBlockActionMenuBarProps {
   show: boolean;
-  blockData: BlockData;
+  block: UnionTextBlock;
   startPosition: number;
   endPosition: number;
   reBlockFocus: any;
   useBlockReducer: UseBlockType;
 }
 
-const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
+const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
   show,
-  blockData: {
+  block: {
     index,
     styleType,
     type,
@@ -59,7 +60,7 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
 
   const [ currentMenuName, setCurrentMenuName ] = useState<MenuName>("not");
 
-  const onStyleChange = (contentType: ContentType, toggle: OrderType) => {
+  const onStyleChange = (contentType: TextContentStyleType, toggle: OrderType) => {
     onCommitTextBlock();
     onChangeTextStyle(
       index, 
@@ -77,8 +78,8 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> | null = ({
     setCurrentMenuName("not");
   }
 
-  const changeBlockType = (value: BlockTypes) => () => {
-    onChangeBlockType(index, value);
+  const changeBlockType = (value: string) => () => {
+    onChangeBlockType(index, value as BlockType);
     setCurrentMenuName("not");
   }
 

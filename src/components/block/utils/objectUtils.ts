@@ -7,9 +7,9 @@ function modifyAnObject<T extends Object = any, P extends Object = any>(object: 
 
   for(const key in propertys) {
     if(newObject.hasOwnProperty(key)) {
-      newObject[key as string] = propertys[key];
+      newObject[key as keyof typeof newObject] = propertys[key as keyof typeof propertys] as any;
 
-      if(!newObject[key as string]) delete newObject[key as string];
+      if(!newObject[key as keyof typeof newObject]) delete newObject[key as keyof typeof newObject];
     }
   }
 

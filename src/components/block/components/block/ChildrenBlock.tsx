@@ -1,23 +1,23 @@
 import React from "react";
+import { UnionBlock } from "../../entities/block/type";
 import { UseBlockType } from "../../hooks/useBlock";
-import { BlockData } from "../../types";
-import Block, { ParentInfoType } from "./Block";
+import Block, { ParentInfoType } from "./BlockComponent";
 
 interface ChildrenBlockProps {
-  childrenBlockData: BlockData[] | null;
+  childrenBlock: UnionBlock[] | null;
   useBlockReducer: UseBlockType;
   parentInfo: ParentInfoType;
 }
 
-const ChildrenBlock: React.FC<ChildrenBlockProps> = ({ childrenBlockData, useBlockReducer, parentInfo }) => {
+const ChildrenBlock: React.FC<ChildrenBlockProps> = ({ childrenBlock, useBlockReducer, parentInfo }) => {
   return (
     <>
       { 
-        childrenBlockData ? 
-        childrenBlockData.map((child: any)=> 
+        childrenBlock ? 
+        childrenBlock.map((child: any)=> 
           <Block
             key={child.id}
-            blockData={child}
+            block={child}
             useBlockReducer={useBlockReducer}
             parentInfo={parentInfo}
           />

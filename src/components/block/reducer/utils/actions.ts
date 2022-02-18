@@ -1,5 +1,4 @@
 import { 
-  OrderType,
   RESET_BLOCK, 
   ADD_BLOCK, 
   COMMIT_TEXT_BLOCK, 
@@ -27,7 +26,6 @@ import {
   EditorStateType,
   ClearStateType,
   CLEAR_STATE_ITEM,
-  StagedPage,
   EDIT_PAGE_INFO,
   COMMIT_PAGE,
   PreBlockInfo,
@@ -37,11 +35,13 @@ import {
   DELETE_TITLE_BLOCK,
   EDIT_BLOCK,
   EDIT_BLOCK_SIDE_INFO,
-  BlockSideInfo
+  StagedPageData
 } from ".";
-import { BlockData, ContentType, RawBlockData, ModifyBlockDataType, BlockTypes, BlockDataProps } from "../../types";
+import { BlockType, UnionBlock, UnionBlockDataProps, UnionRawBlockData } from "../../entities/block/type";
+import { BlockTypeText, TextContentStyleType, OrderType } from "../../entities/block/type/types/text";
+import { ModifyBklogData, ModifyBlockData } from "../../service/modify/type";
 
-function initBlockState(rawBlockData: RawBlockData[]) {
+function initBlockState(rawBlockData: UnionRawBlockData[]) {
   return {
     type: INIT_BLOCK_STATE,
     payload: rawBlockData
@@ -54,13 +54,13 @@ function resetBlock() {
   }
 }
 
-function addBlock(addBlockList: BlockData[], targetPosition: string, currentBlockPosition: boolean, nextEditInfo?: string | number) {
+function addBlock(addBlockList: UnionBlock[], targetPosition: string, keepCurrentBlockPosition: boolean, nextEditInfo?: string | number) {
   return {
     type: ADD_BLOCK,
     payload: {
       addBlockList,
       targetPosition,
-      currentBlockPosition,
+      keepCurrentBlockPosition,
       nextEditInfo
     }
   }
@@ -71,7 +71,7 @@ function addTextBlock(
   innerHTML: string,
   cursorStart: number,
   cursorEnd: number,
-  type?: BlockTypes,
+  type?: BlockTypeText,
   styleType?: string
 ) {
   return {
@@ -109,7 +109,7 @@ function changeEditingId(nextEditInfo?: string | number) {
   }
 }
 
-function editBlock(blockInfo: string | number, blockDataProps: BlockDataProps) {
+function editBlock(blockInfo: string | number, blockDataProps: UnionBlockDataProps) {
   return {
     type: EDIT_BLOCK,
     payload: {
@@ -152,7 +152,7 @@ function changeBlockContents(index: number, contents: any) {
   };
 }
 
-function deleteBlock(removedBlockList: BlockData[], nextEditInfo?: string | number) {
+function deleteBlock(removedBlockList: UnionBlock[], nextEditInfo?: string | number) {
   return {
     type: DELETE_BLOCK,
     payload: {
@@ -180,16 +180,16 @@ function deleteTitleBlock(innerText: string) {
   }
 }
 
-function updateBlock(modifyData: ModifyBlockDataType) {
+function updateBlock(modifyBlockData: ModifyBlockData) {
   return {
     type: UPDATE_BLOCK,
-    payload: modifyData
+    payload: modifyBlockData
   }
 }
 
 function changeTextStyle(
   index: number, 
-  styleType: ContentType, 
+  styleType: TextContentStyleType, 
   startPoint: number,
   endPoint: number,
   order: OrderType
@@ -286,7 +286,7 @@ function changeStyleType(blockInfo: string | number, styleType: string) {
   }
 }
 
-function changeBlockType(blockInfo: string | number, type: BlockTypes) {
+function changeBlockType(blockInfo: string | number, type: BlockType) {
   return {
     type: CHANGE_BLOCK_TYPE,
     payload: {
@@ -324,7 +324,7 @@ function clearStateItem(...key: ClearStateType[]) {
   }
 }
 
-function editPageInfo(stagedPage: StagedPage | null) {
+function editPageInfo(stagedPage: StagedPageData | null) {
   return {
     type: EDIT_PAGE_INFO,
     payload: stagedPage
@@ -338,7 +338,7 @@ function editPageInfo(stagedPage: StagedPage | null) {
 //   });
 // }
 
-function editBlockSideInfo(blockId: string, info?: BlockSideInfo) {
+function editBlockSideInfo(blockId: string, info?: any) {
   return {
     type: EDIT_BLOCK_SIDE_INFO,
     payload: {

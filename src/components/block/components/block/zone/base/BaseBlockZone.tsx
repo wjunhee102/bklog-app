@@ -1,23 +1,24 @@
 import React from "react";
 import useBlockBase from "../hooks/useBlockBase";
-import { BlockProps, ParentInfoType } from "../../Block";
+import { BlockComponentProps, ParentInfoType } from "../../BlockComponent";
 import ChildrenBlock from "../../ChildrenBlock";
 import classNames from "classnames";
 import BlockContentsArea from "../common/BlockContentsArea";
 import BlockSelectArea from "../common/block-select-area";
+import { UnionBlock } from "../../../../entities/block/type";
 
 export interface BaseProps {
   selected: boolean;
   setSelect: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface BaseBlockZoneProps extends BlockProps {
+interface BaseBlockZoneProps extends BlockComponentProps<UnionBlock> {
   children: (props: BaseProps) => React.ReactNode;
   parentInfo?: ParentInfoType;
 }
 
 const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({ 
-  blockData, useBlockReducer, parentInfo, children 
+  block, useBlockReducer, parentInfo, children 
 }) => {
 
   const {
@@ -25,8 +26,8 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     selected,
     setSelect,
     updated,
-    childrenBlockData
-  } = useBlockBase(blockData, useBlockReducer, parentInfo);
+    childrenBlock
+  } = useBlockBase(block, useBlockReducer, parentInfo);
 
   return (
     <div 
@@ -38,24 +39,24 @@ const BaseBlockZone: React.FC<BaseBlockZoneProps> = ({
     >
       
       <BlockContentsArea
-        blockData={blockData}
+        block={block}
         useBlockReducer={useBlockReducer}
-        childrenBlockData={childrenBlockData}
+        childrenBlock={childrenBlock}
       >
         { children({selected, setSelect}) }
       </BlockContentsArea>
       
       <ChildrenBlock 
-        childrenBlockData={childrenBlockData} 
+        childrenBlock={childrenBlock} 
         useBlockReducer={useBlockReducer} 
         parentInfo={{
-          type: blockData.type,
+          type: block.type,
           selected
         }} 
       />
 
       <BlockSelectArea 
-        blockData={blockData}
+        block={block}
         useBlockReducer={useBlockReducer}
         parentInfo={parentInfo}
         selected={selected}

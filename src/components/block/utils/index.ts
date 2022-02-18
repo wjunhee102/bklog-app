@@ -1,10 +1,11 @@
-import { TextContents, ContentType } from '../types';
-import { equalsArray } from '../reducer/utils/converter';
 import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
 import textBlockUtils from './textBlockUtils';
 import animateUtils from './animateUtils';
 import unicodeUtils from './unicodeUtils';
+import arrayUtils from './arrayUtils';
 import objectUtils from './objectUtils';
+import React from 'react';
+import { BlockContentsText, TextContentStyleType, TextContentType } from '../entities/block/type/types/text';
 
 const BOLD = "b" as const;
 const ITALY = "i" as const;
@@ -18,9 +19,8 @@ const BORDER_BOTTOM     = "border-bottom: 0.05em solid;" as const;
 const COLOR             = "color:" as const;
 const BACKGROUND_C      = "background-color:" as const;
 
-export const arrayUtils = { equalsArray };
 
-export function contentsElement(rawContents: TextContents): string {
+export function contentsElement(rawContents: TextContentType): string {
   let text: string;
   let className:string | null = null;
   let styles:string | null = null;
@@ -67,7 +67,7 @@ export function contentsElement(rawContents: TextContents): string {
   return text;
 }
 
-export function createContentsElement(accumulator: string, rawContents: TextContents): string {
+export function createContentsElement(accumulator: string, rawContents: TextContentType): string {
   return accumulator + contentsElement(rawContents);
 }
 
@@ -95,12 +95,12 @@ export function copyInClipboard(value: string) {
 }
 
 export function findTextStyle(
-  textContents: TextContents[], 
+  textContents: BlockContentsText, 
   position: number
-  ): ContentType[] | null | undefined {
+  ): TextContentStyleType[] | null | undefined {
 
   let count: number = 0;
-  let style: ContentType[] | null | undefined = null;
+  let style: TextContentStyleType[] | null | undefined = null;
 
   for(let i = 0; i < textContents.length; i++) {
     count += textContents[i][0].length;
@@ -113,19 +113,6 @@ export function findTextStyle(
   }
 
   return style;
-}
-
-export function arrayFindIndex(array: any[], props: any[]): number {
-  // JSON stringfy는 연산 속도가 느리니 수정 할 것.
-  const JSONProps = JSON.stringify(props);
-
-  for(let i = 0; i < array.length; i++) {
-    const JSONArray = JSON.stringify(array[i]);
-    if(JSONArray === JSONProps) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 export function divideText(text: string): string | string[] {
@@ -153,12 +140,16 @@ export function checkInstanceOfHTMLElement<T = HTMLElement>(element: T) {
   return element instanceof HTMLElement;
 }
 
-export interface KeyboardActionTable {
-  [P: string]: (e: React.KeyboardEvent<any>) => void;
+interface DefalutKeyboardActionTable {
   defaultAction?: (e: React.KeyboardEvent<any>) => void;
-  startAction?: (e: React.KeyboardEvent<any>) => boolean;
+  startAction?: (e: React.KeyboardEvent<any>) => boolean | void;
   finallyAction?: (e: React.KeyboardEvent<any>) => void;
 }
+
+export type KeyboardActionTable = DefalutKeyboardActionTable & {
+  [P: string]: (e: React.KeyboardEvent<any>) => void;
+};
+
 
 // textBlock utils
 export const keyboardActionHandler = textBlockUtils.keyboardActionHandler;
@@ -174,6 +165,12 @@ export const stringToUnicode10 = unicodeUtils.stringToUnicode10;
 export const unicode16ToChar   = unicodeUtils.unicode16ToChar;
 export const unicode10ToChar   = unicodeUtils.unicode10ToChar;
 export const unicodeHexTochar  = unicodeUtils.unicodeHexTochar;
+
+// array utils 
+export const arrayFindIndex = arrayUtils.arrayFindIndex;
+export const arrayPush      = arrayUtils.arrayPush;
+export const equalsArray    = arrayUtils.equalsArray;
+
 
 // object utils
 export const updateObject   = objectUtils.updateObject;

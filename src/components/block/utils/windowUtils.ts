@@ -10,6 +10,6 @@ const observer = new ResizeObserver(entries => {
   bodyInfo.height = boxElement.contentRect.height;
 });
 
-observer.observe(body);
+observer.observe(body as HTMLBodyElement);
 
 export default () => bodyInfo;

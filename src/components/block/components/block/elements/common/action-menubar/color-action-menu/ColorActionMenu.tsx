@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ContentType } from '../../../../../../types';
+import { TextContentStyleType } from '../../../../../../entities/block/type/types/text';
 import BlockScrollMenu from '../../../../../common/virtual-scroll/BlockScrollMenu';
 import BlockScrollMenuArticles, { ButtonProps } from '../../../../../common/virtual-scroll/BlockScrollMenuAriticles';
 import ActionMenuBox from '../common/ActionMenuBox';
@@ -102,7 +102,7 @@ const ColorActionMenuArticle: React.FC<ColorActionMenuArticleProps> | null = ({
   ) : null;
 
 
-const setColorStyle = (textStyle: ContentType[]) => textStyle.reduce((acc, cur) => {
+const setColorStyle = (textStyle: TextContentStyleType[]) => textStyle.reduce((acc: any, cur) => {
   if(cur[0] === "bc") {
     acc["backgroundColor"] = cur[1];
   } else if(cur[0] === "fc") {
@@ -116,7 +116,7 @@ interface ColorActionMenuProps {
   handleClick: (type: "fc" | "bc") => (value: string) => () => void;
   toggle: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-  textStyle: ContentType[];
+  textStyle?: TextContentStyleType[] | null;
 }
 
 

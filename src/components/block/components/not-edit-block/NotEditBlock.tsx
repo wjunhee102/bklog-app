@@ -1,8 +1,8 @@
 import React from 'react';
-import { ParentInfoType, BlockProps } from '../block/Block';
+import { ParentInfoType, BlockComponentProps } from '../block/BlockComponent';
 
-const NotEditBlock: React.FC<BlockProps> = ({
-  blockData,
+const NotEditBlock: React.FC<BlockComponentProps> = ({
+  block,
   useBlockReducer,
   parentInfo
 }) => {

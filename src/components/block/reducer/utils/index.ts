@@ -1,7 +1,10 @@
-import { BlockData, ModifyData, ModifyPageInfoType } from "../../types";
+import { StagedBlockData, UnionBlock } from "../../entities/block/type";
+import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
+import { ModifyPageDataToken } from "../../entities/modify/page/ ModifyPageDataToken";
+import { ModifyPageDataProps } from "../../entities/modify/type";
+import { HistoryBlockData } from "../../service/modify/type";
 import actionBlock from "./actions";
 import blockUtils from "./blockUtils";
-import converter from "./converter";
 import orderingBlockUtils from "./ordering";
 import reducerUtils from "./reducerUtils";
 import sideStoreUtils from "./sideUtils";
@@ -20,22 +23,11 @@ export const TextContentsTypeList = [
 /**
  * block - state
  */
-export type OrderType = 'add' | 'del' | 'color' | 'link';
+export interface SetBlockList {
+  [type: string]: UnionBlock[];
+}
 
 export type EditorStateType = 'isGrab' | 'isHoldingDown' | 'isCliping' | 'isPress';
-
-export type StateAryType = 'blockList' 
-  | 'stageBlock'
-  | 'stagePage'
-  | 'updatedBlockIdList'
-  | 'modifyData'
-  | 'tempFront'
-  | 'tempBack'
-  | 'tempClipData'
-  | 'clipBoard'
-  | 'modifyPageInfo'
-  | 'preBlockInfo'
-;
 
 export type StateBolType = 'isFetch' | EditorStateType;
 
@@ -44,20 +36,34 @@ export type StateNulType = 'targetPosition'
   | 'editingBlockId'
 ;
 
-export type ClearStateType = StateAryType | StateBolType | StateNulType;
+export type StateObjType = "stagedTextBlockData"
+ | "stagedPageData"
+ | "preBlockInfo";
 
-export interface StagedBlock{
+export type StateAryType = "blockList" 
+  | "updatedBlockIdList"
+  | "stagedBlockDataList"
+  | "modifyBlockTokenList"
+  | "modifyPageTokenList"
+  | "historyFront"
+  | "historyBack"
+  | "tempClipData"
+  | "clipBoard";
+
+export type ClearStateType = StateAryType 
+  | StateBolType 
+  | StateNulType
+  | StateObjType
+  | StateAryType  
+;
+
+export interface StagedTextBlockData {
   id: string;
-  contents: any;
-  blockIndex: number;
+  index: number;
+  contents: string;
 }
 
-export type StagedPage = ModifyPageInfoType;
-
-// export interface TempData {
-//   type: string;
-//   data: any;
-// }
+export type StagedPageData = ModifyPageDataProps;
 
 export interface ChangeEditorStateProps {
   isGrab?: boolean;
@@ -65,38 +71,10 @@ export interface ChangeEditorStateProps {
   isCliping?: boolean;
 }
 
-// export interface BlockStateProps {
-//   blockList?: BlockData[];
-//   modifyData?: ModifyData[];
-// }
-
-export interface SetBlockDataList {
-  [type: string]: BlockData[];
-}
-
-/** 
- * temp Data
-*/
-export type TempSet = "block" | "comment"; 
-
-export interface TempData<T = any> {
-  blockId: string;
-  payload: T;
-}
-
-export interface TempDataType {
+export interface HistoryData extends HistoryBlockData {
   editingBlockId?: string | null;
   preBlockInfo?: PreBlockInfo;
   pageInfo?: PageInfo;
-  create?: TempData<BlockData>[];
-  update?: TempData[];
-  delete?: TempData[];
-}
-
-export interface ResBlockUtils {
-  blockList: BlockData[];
-  modifyData: ModifyData[];
-  tempData: TempDataType | undefined;
 }
 
 export interface PreTextBlockInfo {
@@ -110,15 +88,6 @@ export type PageInfo = {
   title: string | null;
 }
 
-export interface NumberedBlockSideInfo {
-  order: number;
-}
-
-export type BlockSideInfo = NumberedBlockSideInfo;
-export interface BlockSideInfoGroup {
-  [P: string]: BlockSideInfo;
-}
-
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
@@ -127,19 +96,19 @@ export interface BlockState {
   isCliping: boolean;
   targetPosition: string | null;
   pageInfo: PageInfo;
-  blockList: BlockData[];
-  blockSideInfoGroup: BlockSideInfoGroup | null;
+  blockList: UnionBlock[];
   editingBlockId: string | null;
   preBlockInfo: PreBlockInfo | null;
-  stageBlock: StagedBlock[];
-  stagePage: StagedPage | null;
+  stagedTextBlockData: StagedTextBlockData | null;
+  stagedBlockDataList: StagedBlockData[];
+  stagedPageData: StagedPageData | null;
   updatedBlockIdList: string[];
-  modifyData: ModifyData[];
-  modifyPageInfo: ModifyPageInfoType | null;
-  tempFront: TempDataType[];
-  tempBack: TempDataType[];
+  modifyBlockTokenList: ModifyBlockToken[];
+  modifyPageTokenList: ModifyPageDataToken[];
+  historyFront: HistoryData[];
+  historyBack: HistoryData[];
   tempClipData: number[];
-  clipBoard: BlockData[];
+  clipBoard: UnionBlock[];
 }
 
 export type BlockStateProps = {
@@ -295,19 +264,7 @@ export type BlockActions = ReturnType<typeof initBlockState>
 export const createReducer        = reducerUtils.createReducer;
 export const createClearStatePart = reducerUtils.createClearStatePart;
 
-//converter
-export const addContentsStyle        = converter.addContentsStyle;
-export const changeStyleTextContents = converter.changeStyleTextContents;
-export const deleteContentsStyle     = converter.deleteContentsStyle;
-export const parseHtmlContents       = converter.parseHtmlContents;
-export const sliceTextContents       = converter.sliceTextContents;
-export const sliceText               = converter.sliceText;
-export const mergeTextContents       = converter.mergeTextContents;
-
 // block order utils;
-export const sortBlock     = orderingBlockUtils.sortBlock;
-export const orderingBlock = orderingBlockUtils.orderingBlock;
-export const initBlock     = orderingBlockUtils.initBlock;
 export const setBlockList  = orderingBlockUtils.setBlockList;
 
 // block utils

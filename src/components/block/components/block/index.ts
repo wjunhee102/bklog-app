@@ -1,3 +1,3 @@
-import Block from "./Block";
+import BlockComponent from "./BlockComponent";
 
-export default Block;
+export default BlockComponent;

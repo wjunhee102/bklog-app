@@ -1,16 +1,18 @@
 import React from 'react';
-import { BlockProps } from '../../Block';
+import { NumberedBlock } from '../../../../entities/block/text/NumberedBlock';
+import { UnionTextBlock } from '../../../../entities/block/type';
+import { BlockComponentProps } from '../../BlockComponent';
 import { BaseProps } from '../../zone/base/BaseBlockZone';
 import TextBlockActionMenuBar from '../common/action-menubar';
 import ContentEditableEle from '../common/ContentEditableEle';
 import useTextBlock from '../text/hooks/useTextBlock';
 
-interface NumberedBlockEleProps extends BlockProps {
+interface NumberedBlockEleProps extends BlockComponentProps<NumberedBlock> {
   zoneProps: BaseProps;
 }
 
 const NumberedBlockEle: React.FC<NumberedBlockEleProps> = ({
-  blockData,
+  block,
   useBlockReducer,
   zoneProps
 }) => {
@@ -30,7 +32,7 @@ const NumberedBlockEle: React.FC<NumberedBlockEleProps> = ({
     isFocus,
     handleElementFocus,
     editable
-  } = useTextBlock(blockData, useBlockReducer, zoneProps);
+  } = useTextBlock(block, useBlockReducer, zoneProps);
 
   return (
     <div 
@@ -38,7 +40,7 @@ const NumberedBlockEle: React.FC<NumberedBlockEleProps> = ({
       onBlur={handleBlur}
     >
       <ContentEditableEle
-        className={blockData.styleType}
+        className={block.styleType}
         editable={editable}
         dangerouslySetInnerHTML={contentsHTML}
         ref={blockContentsRef}
@@ -54,7 +56,7 @@ const NumberedBlockEle: React.FC<NumberedBlockEleProps> = ({
         styleToggle?
         <TextBlockActionMenuBar 
           show={styleToggle}
-          blockData={blockData}
+          block={block}
           startPosition={cursorStart}
           endPosition={cursorEnd}
           reBlockFocus={handleElementFocus}

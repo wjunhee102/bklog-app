@@ -41,12 +41,12 @@ function insertBlockList(
   currentBlockList: UnionBlock[],
   newBlockList: UnionBlock[],
   targetPosition: string,
-  currentBlockFrontPosition: boolean = true
+  keepCurrentBlockPosition: boolean = true
 ): UnionBlock[] {
   const blockList: UnionBlock[] = currentBlockList.concat();
   const index = blockList.findIndex(block => block.position === targetPosition);
 
-  if(currentBlockFrontPosition) {
+  if(keepCurrentBlockPosition) {
     blockList.splice(index, 1, currentBlockList[index], ...newBlockList);
   } else {
     blockList.splice(index, 1, ...newBlockList, currentBlockList[index]);

@@ -3,7 +3,7 @@ import ActionButton from './ActionButton';
 
 export interface ButtonProps {
   title: string;
-  value: string;
+  value: string | null;
   IconComponent?: React.ComponentElement<any, any>
 }
 
