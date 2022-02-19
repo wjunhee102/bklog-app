@@ -1,7 +1,7 @@
 import { StagedBlockData, UnionBlock } from "../../entities/block/type";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { ModifyPageDataToken } from "../../entities/modify/page/ ModifyPageDataToken";
-import { ModifyPageDataProps } from "../../entities/modify/type";
+import { ModifyPageDataProps, PageInfo } from "../../entities/modify/type";
 import { HistoryBlockData } from "../../service/modify/type";
 import actionBlock from "./actions";
 import blockUtils from "./blockUtils";
@@ -27,13 +27,13 @@ export interface SetBlockList {
   [type: string]: UnionBlock[];
 }
 
-export type EditorStateType = 'isGrab' | 'isHoldingDown' | 'isCliping' | 'isPress';
+export type EditorStateType = "isGrab" | "isHoldingDown" | "isCliping" | "isPress";
 
-export type StateBolType = 'isFetch' | EditorStateType;
+export type StateBolType = "isFetch" | EditorStateType;
 
-export type StateNulType = 'targetPosition'
-  | 'titleBlock'
-  | 'editingBlockId'
+export type StateNulType = "targetPosition"
+  | "titleBlock"
+  | "editingBlockId"
 ;
 
 export type StateObjType = "stagedTextBlockData"
@@ -84,10 +84,6 @@ export interface PreTextBlockInfo {
 
 export type PreBlockInfo = PreTextBlockInfo | { type: string, payload: any } | null;
 
-export type PageInfo = {
-  title: string | null;
-}
-
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
@@ -118,40 +114,40 @@ export type BlockStateProps = {
 /**
  * action type
  */
-export const INIT_BLOCK_STATE       = 'INIT_BLOCK_STATE' as const;
-export const RESET_BLOCK            = 'RESET_BLOCK' as const;
-export const CHANGE_EDITING_ID      = 'CHANGE_EDITING_ID' as const;
-export const ADD_BLOCK              = 'ADD_BLOCK' as const;
-export const ADD_TEXT_BLOCK         = 'ADD_TEXT_BLOCK' as const;
-export const ADD_TITLE_BLOCK        = 'ADD_TITLE_BLOCK' as const;
-export const EDIT_BLOCK             = 'EDIT_BLOCK' as const;
-export const EDIT_TEXT_BLOCK        = 'EDIT_TEXT_BLOCK' as const;
-export const COMMIT_TEXT_BLOCK      = 'COMMIT_TEXT_BLOCK' as const;
-export const COMMIT_PAGE            = 'COMMIT_PAGE' as const;
-export const CHANGE_BLOCK_CONTENTS  = 'CHANGE_BLOCK_CONTENTS' as const;
-export const DELETE_BLOCK           = 'DELETE_BLOCK' as const;
-export const DELETE_TEXT_BLOCK      = 'DELETE_TEXT_BLOCK' as const;
-export const DELETE_TITLE_BLOCK     = 'DELETE_TITLE_BLOCK' as const;
-export const UPDATE_BLOCK           = 'UPDATE_BLOCK' as const; // DB에 업데이트할 때
-export const SWITCH_BLOCK           = 'SWITCH_BLOCK' as const;
-export const REVERT_BLOCK           = 'REVERT_BLOCK' as const;
-export const CHANGE_TEXT_STYLE      = 'CHANGE_TEXT_STYLE' as const;
-export const SET_CLIPBOARD          = 'SET_CLIPBOARD' as const;
-export const SET_TEMPCLIP           = 'SET_TEMPCLIP' as const;
-export const CHANGE_EDITOR_STATE    = 'CHANGE_EDITOR_STATE' as const;
-export const CHANGE_TARGET_POSITION = 'CHANGE_TARGET_POSITION' as const;
-export const EDITOR_STATE_RESET     = 'EDITOR_STATE_RESET' as const;
-export const CHANGE_FETCH_STATE     = 'CHANGE_FETCH_STATE' as const;
-export const CHANGE_STYLE_TYPE      = 'CHANGE_STYLE_TYPE' as const;
-export const CHANGE_BLOCK_TYPE      = 'CHANGE_BLOCK_TYPE' as const;
-export const SET_PREBLOCKINFO       = 'SET_PREBLOCKINFO' as const;
-export const INIT_PAGE_TITLE        = 'INIT_PAGE_TITLE' as const;
-export const EDIT_PAGE_TITLE        = 'EDIT_PAGE_TITLE' as const;
-export const CLEAR_STATE_ITEM       = 'CLEAR_STATE_ITEM' as const;
-export const EDIT_PAGE_INFO         = 'EDIT_PAGE_INFO' as const;
-export const EDIT_BLOCK_SIDE_INFO   = 'EDIT_BLOCK_SIDE_INFO' as const;
+export const INIT_BLOCK_STATE       = "INIT_BLOCK_STATE" as const;
+export const RESET_BLOCK            = "RESET_BLOCK" as const;
+export const CHANGE_EDITING_ID      = "CHANGE_EDITING_ID" as const;
+export const ADD_BLOCK              = "ADD_BLOCK" as const;
+export const ADD_TEXT_BLOCK         = "ADD_TEXT_BLOCK" as const;
+export const ADD_TITLE_BLOCK        = "ADD_TITLE_BLOCK" as const;
+export const EDIT_BLOCK             = "EDIT_BLOCK" as const;
+export const EDIT_TEXT_BLOCK        = "EDIT_TEXT_BLOCK" as const;
+export const COMMIT_TEXT_BLOCK      = "COMMIT_TEXT_BLOCK" as const;
+export const COMMIT_PAGE            = "COMMIT_PAGE" as const;
+export const CHANGE_BLOCK_CONTENTS  = "CHANGE_BLOCK_CONTENTS" as const;
+export const DELETE_BLOCK           = "DELETE_BLOCK" as const;
+export const DELETE_TEXT_BLOCK      = "DELETE_TEXT_BLOCK" as const;
+export const DELETE_TITLE_BLOCK     = "DELETE_TITLE_BLOCK" as const;
+export const UPDATE_BLOCK           = "UPDATE_BLOCK" as const; // DB에 업데이트할 때
+export const SWITCH_BLOCK           = "SWITCH_BLOCK" as const;
+export const REVERT_BLOCK           = "REVERT_BLOCK" as const;
+export const CHANGE_TEXT_STYLE      = "CHANGE_TEXT_STYLE" as const;
+export const SET_CLIPBOARD          = "SET_CLIPBOARD" as const;
+export const SET_TEMPCLIP           = "SET_TEMPCLIP" as const;
+export const CHANGE_EDITOR_STATE    = "CHANGE_EDITOR_STATE" as const;
+export const CHANGE_TARGET_POSITION = "CHANGE_TARGET_POSITION" as const;
+export const EDITOR_STATE_RESET     = "EDITOR_STATE_RESET" as const;
+export const CHANGE_FETCH_STATE     = "CHANGE_FETCH_STATE" as const;
+export const CHANGE_STYLE_TYPE      = "CHANGE_STYLE_TYPE" as const;
+export const CHANGE_BLOCK_TYPE      = "CHANGE_BLOCK_TYPE" as const;
+export const SET_PREBLOCKINFO       = "SET_PREBLOCKINFO" as const;
+export const INIT_PAGE_TITLE        = "INIT_PAGE_TITLE" as const;
+export const EDIT_PAGE_TITLE        = "EDIT_PAGE_TITLE" as const;
+export const CLEAR_STATE_ITEM       = "CLEAR_STATE_ITEM" as const;
+export const EDIT_PAGE_INFO         = "EDIT_PAGE_INFO" as const;
+export const EDIT_BLOCK_SIDE_INFO   = "EDIT_BLOCK_SIDE_INFO" as const;
 
-export const TEST_CLIPBOARD    = 'TEST_CLIPBOARD' as const;
+export const TEST_CLIPBOARD    = "TEST_CLIPBOARD" as const;
 
 export type BLOCK_ACTION_TYPES = 
   typeof INIT_BLOCK_STATE

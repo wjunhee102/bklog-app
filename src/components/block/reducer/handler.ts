@@ -1,22 +1,29 @@
 import { initialBlockState } from ".";
-import { BlockData, ModifyPageInfoType } from "../types";
-import { modifyAnObject, updateObject } from "../utils";
+import { Block } from "../entities/block/abstract/Block";
+import { BaseTextBlock } from "../entities/block/text/BaseTextBlock";
+import { TextBlock } from "../entities/block/text/TextBlock";
+import { sliceText, sliceTextContents } from "../entities/block/text/utils";
+import { StagedBlockData, TextGenericType, UnionBlock, UnionTextBlock } from "../entities/block/type";
+import { HistoryBlockToken } from "../entities/modify/block/HistoryBlockToken";
+import { ModifyBlockToken } from "../entities/modify/block/ModifyBlockToken";
+import { ModifyPageDataToken } from "../entities/modify/page/ ModifyPageDataToken";
+import { PageInfo, PageInfoProps } from "../entities/modify/type";
+import { BlockService } from "../service/block/BlockService";
+import { HistoryBlockService } from "../service/modify/block/HistoryBlockService";
+import { ModifyBlockService } from "../service/modify/block/ModifyBlockService";
+import { HistoryBlockData } from "../service/modify/type";
+import { arrayPush, updateObject } from "../utils";
 import { 
   BlockState, 
   ActionHandlers, 
   createClearStatePart, 
-  createBlockData,
-  updateBlockContents, 
   updateModifyData, 
   tempDataPush, 
   addBlock, 
-  addBlockInList, 
   deleteBlock, 
   removeBlockInList, 
-  changeBlockTextStyle,
   changeTextStyle,
   switchBlock,
-  switchBlockList,
   BlockStateProps,
   revertBlock,
   COMMIT_TEXT_BLOCK, 
@@ -29,7 +36,6 @@ import {
   CHANGE_EDITOR_STATE,
   EDIT_TEXT_BLOCK,
   CHANGE_TARGET_POSITION,
-  addToStage,
   editTextBlock,
   changeTargetPosition,
   changeEditingId,
@@ -43,29 +49,19 @@ import {
   changeFetchState,
   CHANGE_FETCH_STATE,
   changeStyleType,
-  changeBlockStyleType,
   CHANGE_STYLE_TYPE,
   initBlockState,
-  initBlock,
   resetBlock,
   RESET_BLOCK,
   INIT_BLOCK_STATE,
   updateBlock,
-  updateBlockData,
   UPDATE_BLOCK,
-  replaceModifyBlockData,
   changeBlockContents,
   CHANGE_BLOCK_CONTENTS,
-  createModifyData,
-  createTempData,
   deleteTextBlock,
   DELETE_TEXT_BLOCK,
-  removeTextBlockInList,
   addTextBlock,
-  sliceTextContents,
-  parseHtmlContents,
   ADD_TEXT_BLOCK,
-  TempDataType,
   initPageTitle,
   editPageTitle,
   INIT_PAGE_TITLE,
@@ -76,40 +72,48 @@ import {
   editPageInfo,
   EDIT_PAGE_INFO,
   commitPage,
-  StagedPage,
   COMMIT_PAGE,
-  PageInfo,
   SET_PREBLOCKINFO,
   setPreBlockInfo,
   changeBlockType,
-  changeBlockDataType,
   CHANGE_BLOCK_TYPE,
   addTitleBlock,
-  sliceText,
   deleteTitleBlock,
   TextContentsTypeList,
   DELETE_TITLE_BLOCK,
   editBlock,
-  updateBlockDataProps,
   EDIT_BLOCK,
-  editBlockSideInfo,
-  BlockSideInfoGroup,
-  EDIT_BLOCK_SIDE_INFO
+  StagedPageData
 } from "./utils";
 
 function initBlockStateHandler(
   state: BlockState,
   { payload }: ReturnType<typeof initBlockState>
 ): BlockState {
-  const { blockList, modifyData } = initBlock(payload);
+  const [ blockDataList, initModifyDataTokenList ] = BlockService.createBlockDataList(payload);
 
-  return updateObject<BlockState, BlockStateProps>(state, 
-    updateObject<BlockState, BlockStateProps>(initialBlockState, {
-      blockList: blockList,
-      modifyData: updateModifyData(state.modifyData, modifyData),
-      isFetch: modifyData[0]? true : false
-    })
-  );
+  if(!blockDataList) return updateObject<BlockState, BlockStateProps>(state, {
+    modifyBlockTokenList: [...initModifyDataTokenList],
+    isFetch: true
+  });
+
+  const initialBlockList = BlockService.createBlockList(blockDataList);
+
+  if(!initialBlockList[0]) return updateObject<BlockState, BlockStateProps>(state, {
+    modifyBlockTokenList: [...initModifyDataTokenList],
+    isFetch: true
+  });
+
+  const {
+    blockList,
+    modifyBlockTokenList
+  } = new BlockService(initialBlockList).sort().ordering().getData();
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList,
+    modifyBlockTokenList: [...initModifyDataTokenList, ...modifyBlockTokenList],
+    isFetch: (modifyBlockTokenList[0] || initModifyDataTokenList[0])? true : false
+  });
 }
 
 function initPageTitleHandler(
@@ -117,9 +121,9 @@ function initPageTitleHandler(
   { payload }: ReturnType<typeof initPageTitle>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    pageInfo: {
+    pageInfo: updateObject<PageInfo, PageInfoProps>(state.pageInfo, {
       title: payload
-    }
+    })
   });
 }
 
@@ -158,7 +162,11 @@ function editTextBlockHandler(
   { payload: { blockId, blockIndex, contents } }: ReturnType<typeof editTextBlock>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    stageBlock: addToStage(state.stageBlock, blockId, blockIndex, contents)
+    stagedTextBlockData: {
+      id: blockId,
+      index: blockIndex,
+      contents
+    } 
   });
 }
 
@@ -166,12 +174,21 @@ function editPageTitleHandler(
   state: BlockState,
   { payload }: ReturnType<typeof editPageTitle>
 ): BlockState { 
-  const stagePage: StagedPage | null = state.stagePage? 
-    updateObject<StagedPage, StagedPage>(state.stagePage, { title: payload })
-    : { title: payload };
+  const stagedPageData: StagedPageData | null = state.stagedPageData? 
+    updateObject<StagedPageData>(state.stagedPageData, {
+      payload: updateObject(state.stagedPageData.payload, {
+        title: payload
+      })
+    })
+    : {
+      id: state.pageInfo.id,
+      payload: {
+        title: payload
+      }
+    };
 
   return updateObject<BlockState, BlockStateProps>(state, {
-    stagePage
+    stagedPageData
   });
 }
 
@@ -181,20 +198,21 @@ function editBlockHandler(
     blockInfo, blockDataProps
   } }: ReturnType<typeof editBlock>
 ): BlockState {
-  const result = updateBlockDataProps(state.blockList, blockInfo, blockDataProps);
+  // const result = updateBlockDataProps(state.blockList, blockInfo, blockDataProps);
 
-  if(!result) return state;
+  // if(!result) return state;
 
-  const { blockList, modifyData, tempData } = result;
+  // const { blockList, modifyData, tempData } = result;
 
-  tempData.editingBlockId = state.editingBlockId;
+  // tempData.editingBlockId = state.editingBlockId;
 
-  return updateObject<BlockState, BlockStateProps>(state, {
-    blockList,
-    isFetch: true,
-    tempBack: tempDataPush(state.tempBack, tempData),
-    modifyData: updateModifyData(state.modifyData, modifyData)
-  });
+  // return updateObject<BlockState, BlockStateProps>(state, {
+  //   blockList,
+  //   isFetch: true,
+  //   tempBack: tempDataPush(state.tempBack, tempData),
+  //   modifyData: updateModifyData(state.modifyData, modifyData)
+  // });
+  return state;
 }
 
 function editPageInfoHandler(
@@ -202,7 +220,7 @@ function editPageInfoHandler(
   { payload }: ReturnType<typeof editPageInfo>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    stagePage: payload
+    stagedPageData: payload
   });
 }
 
@@ -211,17 +229,40 @@ function commitTextBlockHandler(
   state: BlockState,
   action: ReturnType<typeof commitTextBlock>
 ): BlockState {
-  if(!state.stageBlock[0]) return state;
+  if(!state.stagedBlockDataList[0] && !state.stagedTextBlockData) return state;
 
-  const { blockList, modifyData, tempData } = updateBlockContents(state.blockList, state.stageBlock);
+  const stagedBlockDataList = state.stagedBlockDataList.concat();
+
+  if(state.stagedTextBlockData) {
+    const { id, index, contents } = state.stagedTextBlockData;
+
+    stagedBlockDataList.push({
+      id,
+      index,
+      contents: BaseTextBlock.parseHtmlContents(contents)
+    } as StagedBlockData<TextGenericType>);
+  }
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).updateBlockListStagedProperty(stagedBlockDataList).getData();
+
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
   
-  tempData.editingBlockId = state.editingBlockId;
+  if(!historyBlockData) return state;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    stageBlock: [],
-    modifyData: updateModifyData(state.modifyData, modifyData),
-    tempBack: tempDataPush(state.tempBack, tempData),
+    stagedTextBlockData: null,
+    stagedBlockDataList: [],
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
     isFetch: false
   });
 }
@@ -230,19 +271,20 @@ function commitPageHandler(
   state: BlockState,
   action: ReturnType<typeof commitPage>
 ): BlockState {
-  if(!state.stagePage) return state;
+  if(!state.stagedPageData) return state;
 
   const pageInfo: PageInfo = state.pageInfo;
 
-  const modifyPageInfo: ModifyPageInfoType | null = state.modifyPageInfo? 
-    updateObject<ModifyPageInfoType, StagedPage>(state.modifyPageInfo, state.stagePage)
-    : state.stagePage;
-
   return updateObject<BlockState, BlockStateProps>(state, {
-    stagePage: null,
-    pageInfo: updateObject<PageInfo, StagedPage>(pageInfo, state.stagePage),
-    modifyPageInfo,
-    tempBack: tempDataPush(state.tempBack, { pageInfo }),
+    stagedPageData: null,
+    pageInfo: updateObject<PageInfo, StagedPageData>(pageInfo, state.stagedPageData),
+    modifyPageTokenList: [...state.modifyPageTokenList, new ModifyPageDataToken({
+      id: pageInfo.id,
+      payload: state.stagedPageData
+    })],
+    historyBack: arrayPush(state.historyBack, {
+      pageInfo
+    }),
     isFetch: false
   });
 }
@@ -251,37 +293,66 @@ function changeBlockContentsHandler(
   state: BlockState,
   { payload: { index, contents } }: ReturnType<typeof changeBlockContents>
 ): BlockState {
-  const blockList = state.blockList.concat();
-  const tempBack: TempDataType = {
-    editingBlockId: state.editingBlockId,
-    update: [
-      createTempData(blockList[index].id, {
-        contents: blockList[index].contents.concat()
-      })
-    ]
-  };
-  const modifyData = [createModifyData("update", "block", blockList[index].id, {
-    contents: contents
-  })];
 
-  blockList[index].contents = contents;
+  const stagedBlockData: StagedBlockData = {
+    id: state.blockList[index].id,
+    index,
+    contents
+  }
+
+  const stagedBlockDataList = [...state.stagedBlockDataList, stagedBlockData];
+
+  if(state.stagedTextBlockData) {
+    const { id, index, contents } = state.stagedTextBlockData;
+
+    stagedBlockDataList.push({
+      id,
+      index,
+      contents: BaseTextBlock.parseHtmlContents(contents)
+    } as StagedBlockData<TextGenericType>);
+  }
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).updateBlockListStagedProperty(stagedBlockDataList).getData();
+
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+
+  if(!historyBlockData) return state;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    tempBack: tempDataPush(state.tempBack, tempBack),
-    modifyData: updateModifyData(state.modifyData, modifyData)
-  })
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
+    stagedBlockDataList: [],
+    stagedTextBlockData: null
+  });
 }
 
 function addBlockHandler(
   state: BlockState, 
   { 
-    payload: { addBlockList, targetPosition, nextEditInfo, currentBlockPosition } 
+    payload: { addBlockList, targetPosition, nextEditInfo, keepCurrentBlockPosition } 
   }: ReturnType<typeof addBlock>
 ): BlockState {
-  const { blockList, modifyData, tempData } = addBlockInList(state.blockList, addBlockList, targetPosition, currentBlockPosition);
+  
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList,
+  } = new BlockService(state.blockList)
+        .addBlockInList(addBlockList, targetPosition, keepCurrentBlockPosition)
+        .getData();
 
-  tempData.editingBlockId = state.editingBlockId;
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+
+  if(!historyBlockData) return state;
 
   const editingBlockId: string | null = nextEditInfo !== undefined? 
     typeof nextEditInfo === "string"? 
@@ -292,12 +363,12 @@ function addBlockHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     editingBlockId,
-    modifyData: updateModifyData(
-      state.modifyData, 
-      modifyData
-    ),
-    tempBack: tempDataPush(state.tempBack, tempData),
-    tempFront: [],
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
     isFetch: false
   });
 }
@@ -308,50 +379,61 @@ function addTextBlockHandler(
     index, innerHTML, cursorStart, cursorEnd, type, styleType
   } }: ReturnType<typeof addTextBlock>
 ): BlockState {  
-  const [ front, back ] = sliceTextContents(parseHtmlContents(innerHTML), cursorStart, cursorEnd);
-  const block = state.blockList[index];
+  if(state.blockList[index] instanceof BaseTextBlock === false) return state;
 
-  const blockContents = block.contents.concat();
+  const targetBlock: UnionTextBlock  = state.blockList[index] as UnionTextBlock;
 
-  block.contents = front;
+  const [ front, back ] = sliceTextContents(BaseTextBlock.parseHtmlContents(innerHTML), cursorStart, cursorEnd);
 
-  const stageBlock = state.stageBlock[0]? 
-    state.stageBlock.filter(data => data.id !== block.id) 
-    : [];
+  const [ newTargetBlock , preProps ] = targetBlock.regeneration({ contents: front });
 
-  const newBlock = createBlockData({
-    position: block.position,
-    type: type? type : block.type,
-    styleType: styleType? styleType : block.styleType,
-    contents: back
-  });
-
-  const { blockList, tempData, modifyData } = addBlockInList(state.blockList, [newBlock], newBlock.position);
-
-  tempData.editingBlockId = state.editingBlockId;
-
-  const findIndex = tempData.update.findIndex(data => data.blockId === block.id);
-  
-  if(findIndex !== -1) {
-    tempData.update[findIndex].payload = updateObject(tempData.update[findIndex].payload, {
-      contents: blockContents
-    });
-  } else {
-    tempData.update.push(createTempData(block.id, {
-      contents: blockContents
-    }));
-  }
-
-  modifyData.push(createModifyData("update", "block", block.id, {
+  const historyBlockToken = new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(targetBlock.id, preProps));
+  const modifyBlockToken = new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newTargetBlock.id, {
     contents: front
   }));
 
+  const newBlockData = Block.createBlockData(type? type : targetBlock.type, {
+    position: targetBlock.position,
+    styleType: styleType? styleType : targetBlock.styleType,
+    contents: back
+  });
+
+  if(!newBlockData) return state;
+
+  const newBlock = BlockService.createBlock(newBlockData);
+
+  if(!newBlock) return state;
+
+  state.blockList[index] = newTargetBlock;
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).addBlockInList([ newBlock ], newBlock.position).getData();
+
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).push(historyBlockToken).getData();
+
+  if(!historyBlockData) return state;
+
+  const stagedBlockDataList = state.stagedBlockDataList[0]? 
+    state.stagedBlockDataList.filter(data => data.id !== targetBlock.id) : [];
+  
+  const stagedTextBlockData = (state.stagedTextBlockData && state.stagedTextBlockData.id === targetBlock.id)?
+    null 
+    : state.stagedTextBlockData;
+
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    stageBlock,
+    stagedBlockDataList,
+    stagedTextBlockData,
     editingBlockId: newBlock.id,
-    tempBack: tempDataPush(state.tempBack, tempData),
-    modifyData: updateModifyData(state.modifyData, modifyData),
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
+    modifyBlockTokenList: [...state.modifyBlockTokenList, modifyBlockToken, ...modifyBlockTokenList],
     isFetch: false
   });
 }
@@ -367,30 +449,44 @@ function addTitleBlockHandler(
 
   const title: string = front;
 
-  const newBlock = createBlockData({
+  const newBlockData = TextBlock.createBlockData({
     position: "1",
-    type: "text",
     styleType: "bk-p",
     contents: [[end]]
-  })
+  });
 
-  const { blockList, tempData, modifyData } = addBlockInList(state.blockList, [newBlock], "1", false);
+  if(!newBlockData) return state;
 
-  tempData.editingBlockId = "title";
-  tempData.pageInfo = state.pageInfo;
+  const newBlock = new TextBlock(newBlockData);
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).addBlockInList([ newBlock ], "1").getData();
+
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+
+  if(!historyBlockData) return state;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    pageInfo: updateObject<PageInfo, PageInfo>(state.pageInfo, {
+    pageInfo: updateObject<PageInfo, PageInfoProps>(state.pageInfo, {
       title
     }),
-    stagePage: null,
+    stagedPageData: null,
     editingBlockId: newBlock.id,
-    tempBack: tempDataPush(state.tempBack, tempData),
-    modifyData: updateModifyData(state.modifyData, modifyData),
-    modifyPageInfo: {
-      title
-    },
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      pageInfo: state.pageInfo
+    }),
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    modifyPageTokenList: [...state.modifyPageTokenList, new ModifyPageDataToken({
+      id: state.pageInfo.id,
+      payload: {
+        title
+      }
+    })],
     isFetch: false
   })
 }
@@ -405,9 +501,15 @@ function deleteBlockHandler(
     return state;
   }
 
-  const { blockList, modifyData, tempData } = removeBlockInList(state.blockList, removedBlockList);
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).removeBlockInList(removedBlockList).getData();
 
-  tempData.editingBlockId = state.editingBlockId;
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+
+  if(!historyBlockData) return state;
 
   let editingBlockId: string | null;
 
@@ -421,14 +523,17 @@ function deleteBlockHandler(
 
   const removeBlockIdList = removedBlockList.map(block => block.id);
 
-
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     editingBlockId,
-    stageBlock: state.stageBlock? state.stageBlock.filter(data => !removeBlockIdList.includes(data.id)) : [],
-    tempBack: tempDataPush(state.tempBack, tempData),
-    tempFront: [],
-    modifyData: updateModifyData(state.modifyData, modifyData),
+    stagedTextBlockData: state.stagedTextBlockData && removeBlockIdList.includes(state.stagedTextBlockData.id)? null : state.stagedTextBlockData,
+    stagedBlockDataList: state.stagedBlockDataList[0]? state.stagedBlockDataList.filter(data => !removeBlockIdList.includes(data.id)) : [],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
     isFetch: false
   });
 }
@@ -445,55 +550,54 @@ function deleteTextBlockHandler(
     return state;
   }
 
-  const toBeDeletedBlock: BlockData = updateObject<BlockData>(state.blockList[index]);
-  const editingBlockId: string = index? state.blockList[index - 1].id : state.blockList[0].id;
-
-  const stageBlock = state.stageBlock[0]?  
-      state.stageBlock.filter(data => data.id !== toBeDeletedBlock.id) 
-      : [];
-
-  if(innerHTML) {
-    if(index === 0) return state;
-
-    const result = removeTextBlockInList(state.blockList.concat(), index, index - 1, innerHTML);
-    
-    if(!result) return state;
-
-    const { blockList, tempData, modifyData } = result;
-
-    return updateObject<BlockState, BlockStateProps>(state, {
+  const editingBlockId = state.blockList[index - 1].id;
+  const toBeDeletedBlockId = state.blockList[index].id;
+  const toBeDeletedBlockType = state.blockList[index].type;
+  let newBlockList: UnionBlock[];
+  let newModifyBlockTokenList: ModifyBlockToken[];
+  let historyBlockData: HistoryBlockData | null;
+  
+  if(state.blockList[index - 1] instanceof BaseTextBlock === true && innerHTML) {
+    const {
       blockList,
-      editingBlockId,
-      preBlockInfo: {
-        type: toBeDeletedBlock.type,
-        payload: ["delete", textLength]
-      },
-      tempBack: tempDataPush(state.tempBack, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData),
-      tempFront: [],
-      stageBlock,
-      isFetch: false
-    });
+      modifyBlockTokenList,
+      historyBlockTokenList
+    } = new BlockService(state.blockList).removeTextBlockInLIst(index, index - 1, innerHTML).getData();
 
+    newBlockList = blockList,
+    newModifyBlockTokenList = modifyBlockTokenList;
+    historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
   } else {
-
-    const { 
-      blockList,  
-      tempData,
-      modifyData
-    } = removeBlockInList(state.blockList.concat(), [state.blockList[index]]);
-
-    return updateObject<BlockState, BlockStateProps>(state, {
+    const {
       blockList,
-      editingBlockId,
-      stageBlock,
-      tempBack: tempDataPush(state.tempBack, tempData),
-      tempFront: [],
-      modifyData: updateModifyData(state.modifyData, modifyData),
-      isFetch: false
-    });
+      modifyBlockTokenList,
+      historyBlockTokenList
+    } = new BlockService(state.blockList).removeBlockInList([state.blockList[index]]).getData();
 
+    newBlockList = blockList,
+    newModifyBlockTokenList = modifyBlockTokenList;
+    historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
   }
+
+  if(!historyBlockData) return state;
+
+  return updateObject<BlockState, BlockStateProps>(state, {
+    blockList: newBlockList,
+    editingBlockId,
+    preBlockInfo: {
+      type: toBeDeletedBlockType,
+      payload: ["delete", textLength]
+    },
+    stagedTextBlockData: state.stagedTextBlockData && toBeDeletedBlockId === state.stagedTextBlockData.id? null : state.stagedTextBlockData,
+    stagedBlockDataList: state.stagedBlockDataList[0]? state.stagedBlockDataList.filter(data => toBeDeletedBlockId !== data.id) : [],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...newModifyBlockTokenList],
+    isFetch: false
+  });
 }
 
 function deleteTitleBlockHandler(
@@ -504,52 +608,60 @@ function deleteTitleBlockHandler(
     return state;
   }
 
-  const toBeDeletedBlock: BlockData = updateObject(state.blockList[0]);
-  const stageBlock = state.stageBlock[0]?  
-      state.stageBlock.filter(data => data.id !== toBeDeletedBlock.id) 
-      : [];
+  const toBeDeletedBlockId = state.blockList[0].id;
+  const toBeDeletedBlockType = state.blockList[0].type;
   
   let pageInfo = state.pageInfo;
-  let modifyPageInfo = state.modifyPageInfo;
+  let modifyPageTokenList: ModifyPageDataToken[] = [];
   let preBlockInfo = state.preBlockInfo;
 
-  const { 
-    blockList,  
-    tempData,
-    modifyData
-  } = removeBlockInList(state.blockList.concat(), [state.blockList[0]]);
+  if(payload && state.blockList[0] instanceof BaseTextBlock === true) {
+    const title = `${state.pageInfo.title? state.pageInfo.title : ""}${payload}`;
 
-  tempData.editingBlockId = toBeDeletedBlock.id;
-
-  if(payload) {
-    if(!TextContentsTypeList.includes(toBeDeletedBlock.type)) return state;
-    tempData.pageInfo = state.pageInfo;
-
-    pageInfo = updateObject<PageInfo, PageInfo>(state.pageInfo, {
-      title: `${state.pageInfo.title? state.pageInfo.title : ""}${payload}`
+    pageInfo = updateObject<PageInfo, PageInfoProps>(state.pageInfo, {
+      title
     });
 
-    modifyPageInfo = state.modifyPageInfo? 
-      updateObject<ModifyPageInfoType, PageInfo>(state.modifyPageInfo, pageInfo) 
-      : pageInfo;
+    modifyPageTokenList = [new ModifyPageDataToken({
+      id: state.pageInfo.id,
+      payload: {
+        title
+      }
+    })]
 
     preBlockInfo = {
-      type: toBeDeletedBlock.type,
+      type: toBeDeletedBlockType,
       payload: ["delete", payload.length]
     }
   }
-  console.log(tempData);
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).removeBlockInList([state.blockList[0]]).getData();
+
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+
+  if(!historyBlockData) return state;
+
+
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     editingBlockId: "title",
     pageInfo,
-    stageBlock,
+    stagedTextBlockData: state.stagedTextBlockData && toBeDeletedBlockId === state.stagedTextBlockData.id? null : state.stagedTextBlockData,
+    stagedBlockDataList: state.stagedBlockDataList[0]? state.stagedBlockDataList.filter(data => toBeDeletedBlockId !== data.id) : [],
     preBlockInfo,
-    stagePage: null,
-    tempBack: tempDataPush(state.tempBack, tempData),
-    tempFront: [],
-    modifyData: updateModifyData(state.modifyData, modifyData),
-    modifyPageInfo,
+    stagedPageData: null,
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      pageInfo: state.pageInfo,
+      ...historyBlockData
+    }),
+    historyFront: [],
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    modifyPageTokenList: [...state.modifyPageTokenList, ...modifyPageTokenList],
     isFetch: false
   });
 }
@@ -561,24 +673,39 @@ function changeTextStyleHandler(
   } }: ReturnType<typeof changeTextStyle>
 ): BlockState {
 
-  const result = changeBlockTextStyle(
-    state.blockList, 
-    index, 
-    styleType, 
-    startPoint, 
-    endPoint, 
-    order
-  );
-  
-  if(!result) return state;
+  const stagedBlockDataList = state.stagedBlockDataList.concat();
 
-  result.tempData.editingBlockId = state.editingBlockId;
+  if(state.stagedTextBlockData) {
+    const { id, index, contents } = state.stagedTextBlockData;
+
+    stagedBlockDataList.push({
+      id,
+      index,
+      contents: BaseTextBlock.parseHtmlContents(contents)
+    } as StagedBlockData<TextGenericType>);
+  }
+
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList)
+          .updateBlockListStagedProperty(stagedBlockDataList)
+          .changeTextBlockStyle(index, styleType, startPoint, endPoint, order)
+          .getData();
+
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+  
+  if(!historyBlockData) return state;
 
   return updateObject<BlockState, BlockStateProps>(state, {
-    blockList: result.blockList,
-    modifyData: updateModifyData(state.modifyData, result.modifyData),
-    tempFront: [],
-    tempBack: tempDataPush(state.tempBack, result.tempData),
+    blockList,
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
     isFetch: true
   });
 }
@@ -591,26 +718,29 @@ function switchBlockHandler(
 ): BlockState {
   if(!state.targetPosition) return state;
 
-  const result = switchBlockList(state.blockList, changedBlockIdList, state.targetPosition, container);
-  
-  if(!result) return updateObject<BlockState, BlockStateProps>(state, {
-    tempClipData: [],
-    isGrab: false,
-    isHoldingDown: false,
-  });
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList)
+            .switchBlockList(changedBlockIdList, state.targetPosition, container)
+            .getData();
 
-  const { blockList, tempData, modifyData } = result;
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
-  tempData.editingBlockId = state.editingBlockId;
+  if(!historyBlockData) return state;
 
   return updateObject<BlockState, BlockStateProps>(state, {
     isGrab: false,
     isHoldingDown: false,
     editingBlockId: state.blockList[state.tempClipData[0]].id,
     blockList,
-    modifyData: updateModifyData(state.modifyData, modifyData),
-    tempFront: [],
-    tempBack: tempDataPush(state.tempBack, tempData),
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    historyFront: [],
     tempClipData: [],
     isFetch: true
   });
@@ -618,7 +748,7 @@ function switchBlockHandler(
 
 function revertBlockHandler(
   state: BlockState,
-  { front }: ReturnType<typeof revertBlock>
+  { front = false }: ReturnType<typeof revertBlock>
 ): BlockState {
   return revertBlockState(state, front);
 }
@@ -703,19 +833,25 @@ function changeStyleTypeHandler(
     blockInfo, styleType
   }}: ReturnType<typeof changeStyleType>
 ): BlockState {
-  const result = changeBlockStyleType(state.blockList, blockInfo, styleType);
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).changeBlockStyleType(blockInfo, styleType).getData();
 
-  if(!result) return state;
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
-  const { blockList, modifyData, tempData } = result;
-  
-  tempData.editingBlockId = state.editingBlockId;
+  if(!historyBlockData) return state;
+
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     isFetch: true,
-    tempBack: tempDataPush(state.tempBack, tempData),
-    modifyData: updateModifyData(state.modifyData, modifyData)
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ... historyBlockData
+    }),
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList]
   });
 }
 
@@ -726,22 +862,26 @@ function changeBlockTypeHandler(
     blockInfo, type
   }}: ReturnType<typeof changeBlockType>
 ): BlockState {
-  const result = changeBlockDataType(state.blockList, blockInfo, type);
 
-  if(!result) {
-    return state;
-  } else {
-    const { blockList, modifyData, tempData } = result;
-    
-    tempData.editingBlockId = state.editingBlockId;
+   const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+   } = new BlockService(state.blockList).changeBlockType(blockInfo, type).getData();
 
-    return updateObject<BlockState, BlockStateProps>(state, {
-      blockList,
-      isFetch: true,
-      tempBack: tempDataPush(state.tempBack, tempData),
-      modifyData: updateModifyData(state.modifyData, modifyData)
-    })
-  }
+   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
+
+   if(!historyBlockData) return state;
+ 
+   return updateObject<BlockState, BlockStateProps>(state, {
+     blockList,
+     isFetch: true,
+     historyBack: arrayPush(state.historyBack, {
+       editingBlockId: state.editingBlockId,
+       ... historyBlockData
+     }),
+     modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList]
+   });
 }
 
 function updateBlockHandler(
@@ -749,23 +889,30 @@ function updateBlockHandler(
   { payload }: ReturnType<typeof updateBlock>
 ): BlockState {
 
-  const { blockList, tempData, modifyData } = updateBlockData(state.blockList, payload);
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(state.blockList).updateBlockList(payload).getData();
 
-  tempData.editingBlockId = state.editingBlockId;
+  const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
-  const updatedBlockIdList = [];
+  if(!historyBlockData) return state;
 
-  if(payload.create) payload.create.map(data => updatedBlockIdList.push(data.blockId));
+  const updatedBlockIdList: string[] = [];
 
-  if(payload.update) payload.update.map(data => updatedBlockIdList.push(data.blockId));
+  if(payload.create) payload.create.map(data => updatedBlockIdList.push(data.id));
+
+  if(payload.update) payload.update.map(data => updatedBlockIdList.push(data.id));
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     updatedBlockIdList,
-    tempBack: tempDataPush(state.tempBack, tempData),
-    modifyData: modifyData[0]? 
-      updateModifyData(replaceModifyBlockData(state.modifyData, payload), modifyData) 
-      : replaceModifyBlockData(state.modifyData, payload)
+    historyBack: arrayPush(state.historyBack, {
+      editingBlockId: state.editingBlockId,
+      ...historyBlockData
+    }),
+    modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList]
   });
 }
 
@@ -784,18 +931,6 @@ function clearStateItemHandler(
   { payload }: ReturnType<typeof clearStateItem>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, createClearStatePart<BlockStateProps>(initialBlockState, payload));
-}
-
-function editBlockSideInfoHandler(
-  state: BlockState,
-  { payload: {
-    blockId,
-    info
-  } }: ReturnType<typeof editBlockSideInfo>
-): BlockState {
-  return updateObject<BlockState, BlockStateProps>(state, {
-    blockSideInfoGroup: modifyAnObject(state.blockSideInfoGroup, { [blockId]: info })
-  });
 }
 
 const blockHandlers: ActionHandlers<BlockState> = {
@@ -828,8 +963,7 @@ const blockHandlers: ActionHandlers<BlockState> = {
   [UPDATE_BLOCK]           : updateBlockHandler,
   [SET_PREBLOCKINFO]       : setPreBlockInfoHandler,
   [CLEAR_STATE_ITEM]       : clearStateItemHandler,
-  [EDIT_PAGE_INFO]         : editPageInfoHandler,
-  [EDIT_BLOCK_SIDE_INFO]   : editBlockSideInfoHandler
+  [EDIT_PAGE_INFO]         : editPageInfoHandler
 };
 
 export default blockHandlers;
