@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { TextContents } from "../types";
+import { BlockContentsText } from "../entities/block/type/types/text";
 import { createContentsElement } from "../utils";
 
-function useConvertToHTML(contents: TextContents[] | string) {
+function useConvertToHTML(contents: BlockContentsText | string) {
   return useMemo(() => {
     let htmlElement: string;
 

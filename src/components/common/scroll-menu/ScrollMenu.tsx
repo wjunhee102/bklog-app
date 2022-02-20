@@ -13,7 +13,7 @@ const ScrollMenu: React.FC<ScrollMenuProps> = ({
   return (
     <div className={classNames(
       "scroll-menu",
-      { [className]: className }
+      { [className as string]: className }
     )}>
       { children }
     </div>

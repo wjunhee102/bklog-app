@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripVertical, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { BlockComponentProps } from '../../BlockComponent';
 import BlockUtilsMenu from '../../../common/block-utils-menu';
-import { createBlockData } from '../../../../reducer/utils';
 import { UnionBlock } from '../../../../entities/block/type';
+import { TextBlock } from '../../../../entities/block/text/TextBlock';
 
 interface BlockContentsAreaProps extends BlockComponentProps {
   childrenBlock: UnionBlock[] | null;
@@ -38,8 +38,13 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
 
   const handleAddBlock = useCallback(() => {
     const { position } = block;
-    const newBlockData = createBlockData({ position });
-    onAddBlock([ newBlockData ], position, true, newBlockData.id);
+    const newBlockData = TextBlock.createBlockData({ position });
+
+    if(!newBlockData) return false;
+
+    const newBlock = new TextBlock(newBlockData);
+
+    onAddBlock([ newBlock ], position, true, newBlockData.id);
   }, [block]);
 
   const handleGrabMouseDown = useCallback(() => {

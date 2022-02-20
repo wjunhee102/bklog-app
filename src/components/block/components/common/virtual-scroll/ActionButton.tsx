@@ -2,7 +2,7 @@ import React from 'react';
 import { ButtonProps } from './BlockScrollMenuAriticles';
 
 interface ActionButtonProps extends ButtonProps {
-  handleClick: (value: string) => () => void;
+  handleClick: (value: string | null) => () => void;
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({

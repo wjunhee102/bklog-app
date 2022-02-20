@@ -1,6 +1,8 @@
 import { initialState } from ".";
+import { PageInfo, PageInfoProps } from "../../../components/block/entities/modify/type";
+import { ModifyPageService } from "../../../components/block/service/modify/page/ModifyPageService";
 import { createClearStatePart, updateObject } from "../../utils";
-import { addPushModifyBlockData, changePageInfo, ADD_PUSH_MODIFY_BLOCK_DATA, CHANGE_PAGE_INFO, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, PageInfoProps, PageInfoType, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS, addPageEditor, addPageEditorSuccess, addPageEditorError, ADD_PAGE_EDITOR, ADD_PAGE_EDITOR_SUCCESS, ADD_PAGE_EDITOR_ERROR } from "./utils";
+import { addPushModifyBlockTokenList, changePageInfo, ADD_PUSH_MODIFY_BLOCK_DATA, CHANGE_PAGE_INFO, BklogState, BklogStateProps, changeUpdatedState, CHANGE_UPDATED_STATE, CHANGE_UPDATING_STATE, clearBklogState, CLEAR_BKLOG_STATE, getPage, getPageError, getPageSuccess, GET_PAGE, GET_PAGE_ERROR, GET_PAGE_SUCCESS, releaseUpdatingError, releaseUpdatingSuccess, RELEASE_UPDATING_ERROR, RELEASE_UPDATING_SUCCESS, resetBklog, RESET_BKLOG, updateBklog, updateBklogError, updateBklogSuccess, updateVersion, updateVersionError, updateVersionSuccess, UPDATE_BKLOG, UPDATE_BKLOG_ERROR, UPDATE_BKLOG_SUCCESS, UPDATE_VERSION, UPDATE_VERSION_ERROR, UPDATE_VERSION_SUCCESS, addPageEditor, addPageEditorSuccess, addPageEditorError, ADD_PAGE_EDITOR, ADD_PAGE_EDITOR_SUCCESS, ADD_PAGE_EDITOR_ERROR } from "./utils";
 
 function resetBklogHandler(
   state: BklogState, 
@@ -37,7 +39,7 @@ function getPageSuccessHandler(
     isLoading: false,
     isRefresh: false,
     isFetching: false,
-    pushModifyBlockData: null,
+    pushModifyBlockTokenList: null,
     pullModifyBlockData: null
   });
 }
@@ -53,12 +55,15 @@ function getPageErrorHandler(
   });
 }
 
-function addPushModifyBlockDataHandler(
+function addPushModifyBlockTokenListHandler(
   state: BklogState, 
-  { payload }: ReturnType<typeof addPushModifyBlockData>
+  { payload }: ReturnType<typeof addPushModifyBlockTokenList>
 ): BklogState {
+  const pushModifyBlockTokenList = state.pushModifyBlockTokenList?
+    [...state.pushModifyBlockTokenList, ...payload] : payload;
+
   return updateObject<BklogState, BklogStateProps>(state, {
-    pushModifyBlockData: payload
+    pushModifyBlockTokenList
   });
 }
 
@@ -66,15 +71,18 @@ function changePageInfoHandler(
   state: BklogState,
   { payload }: ReturnType<typeof changePageInfo>
 ): BklogState {
-  const pushModifyPageInfo = state.pushModifyPageInfo? 
-    updateObject(state.pushModifyPageInfo, payload)
-    : payload
+  const pushModifyPageTokenList = state.pushModifyPageTokenList?
+    [...state.pushModifyPageTokenList, ...payload] : payload;
 
-  const pageInfo = updateObject<PageInfoType, PageInfoProps>(state.pageInfo, payload);
+  const pageInfoProps = new ModifyPageService(payload).getData();
+
+  if(!pageInfoProps && !state.pageInfo) return state;
+
+  const pageInfo = updateObject<PageInfo, PageInfoProps>(state.pageInfo as PageInfo, pageInfoProps as PageInfoProps);
 
   return updateObject<BklogState, BklogStateProps>(state, {
     pageInfo,
-    pushModifyPageInfo
+    pushModifyPageTokenList
   });
 }
 
@@ -94,8 +102,8 @@ function updateBklogSuccessHandler(
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,
     isUpdated: true,
-    pushModifyBlockData: null,
-    pushModifyPageInfo: null,
+    pushModifyBlockTokenList: null,
+    pushModifyPageTokenList: null,
     version: pageVersion
   });
 }
@@ -123,8 +131,8 @@ function updateBklogErrorHandler(
       isFetching: false,
       isLoading: true,
       isRefresh: true,
-      pushModifyBlockData: null,
-      pushModifyPageInfo: null,
+      pushModifyBlockTokenList: null,
+      pushModifyPageTokenList: null,
       error: payload
     });
   }
@@ -141,14 +149,14 @@ function updateVersionHandler(
 
 function updateVersionSuccessHandler(
   state: BklogState,
-  { payload: { id, data: { modifyPageInfo, modifyBlockData } } }: ReturnType<typeof updateVersionSuccess>
+  { payload: { id, data: { pageInfo, blockData } } }: ReturnType<typeof updateVersionSuccess>
 ): BklogState {
   return updateObject<BklogState, BklogStateProps>(state, {
     isFetching: false,
-    pageInfo: modifyPageInfo? updateObject<PageInfoType, PageInfoProps>(state.pageInfo, modifyPageInfo) 
+    pageInfo: pageInfo && state.pageInfo? updateObject<PageInfo, PageInfoProps>(state.pageInfo, pageInfo) 
     : state.pageInfo,
     version: id,
-    pullModifyBlockData: modifyBlockData? modifyBlockData : state.pullModifyBlockData
+    pullModifyBlockData: blockData? blockData : state.pullModifyBlockData
   });
 }
 
@@ -241,7 +249,7 @@ export default {
   [GET_PAGE]                   : getPageHandler,
   [GET_PAGE_SUCCESS]           : getPageSuccessHandler,
   [GET_PAGE_ERROR]             : getPageErrorHandler,
-  [ADD_PUSH_MODIFY_BLOCK_DATA] : addPushModifyBlockDataHandler,
+  [ADD_PUSH_MODIFY_BLOCK_DATA] : addPushModifyBlockTokenListHandler,
   [CHANGE_PAGE_INFO]           : changePageInfoHandler,
   [UPDATE_BKLOG]               : updateBklogHandler,
   [UPDATE_BKLOG_SUCCESS]       : updateBklogSuccessHandler,

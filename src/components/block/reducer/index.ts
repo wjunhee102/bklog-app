@@ -8,15 +8,13 @@ export const initialBlockState: BlockState = {
   isHoldingDown: false,
   isCliping: false,
   targetPosition: null,
-  pageInfo: {
-    title: null
-  },
+  pageTitle: null,
   blockList: [],
   editingBlockId: null,
   preBlockInfo: null,
   stagedTextBlockData: null,
   stagedBlockDataList: [],
-  stagedPageData: null,
+  stagedPageTitle: null,
   modifyBlockTokenList: [],
   modifyPageTokenList: [],
   updatedBlockIdList: [],

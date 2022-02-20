@@ -1,6 +1,7 @@
 import { ModifyPageDataToken } from "../../../entities/modify/page/ ModifyPageDataToken";
-import { PageInfoProps } from "../../../entities/modify/type";
+import { COMMAND_UPDATE, ModifyData, ModifyPageGenericType, PageInfoProps, SET_PAGE } from "../../../entities/modify/type";
 import { ModifyTokenService } from "../abstract/ModifyTokenService";
+import { ModifyService } from "../ModifyService";
 import { pushModifyDataToken } from "../utils";
 
 export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken> {
@@ -10,8 +11,13 @@ export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken
     this._tokenList = tokenList;
   }
 
-  constructor(tokenList: ModifyPageDataToken[]) {
+  static setUpdateModifyData(pageInfoProps: PageInfoProps): ModifyData<ModifyPageGenericType> {
+    return ModifyService.createModifyData("page", COMMAND_UPDATE, SET_PAGE, pageInfoProps);
+  }
+
+  constructor(tokenList: ModifyPageDataToken[], merge: boolean = false) {
     this.init(tokenList);
+    if(merge) this.merge();
   }
 
   public merge() {

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BlockData } from "../../../../../types";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
@@ -7,8 +6,9 @@ import useElementFocus from "../../../../../hooks/useElementFocus";
 import useMoveCursorPoint from "../../../../../hooks/useCursorPointHandler";
 import useConvertToHTML from "../../../../../hooks/useCovertToHTML";
 import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
+import { UnionTextBlock } from "../../../../../entities/block/type";
 
-function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
+function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   
   const {
     cursorStart,
@@ -46,7 +46,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
     handleElementFocus 
   } = useElementFocus<HTMLDivElement>(blockContentsRef.current);
 
-  const contentsHTML = useConvertToHTML(blockData.contents);
+  const contentsHTML = useConvertToHTML(block.contents);
 
   const {
     handleKeyDown,
@@ -58,7 +58,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         if(e.ctrlKey && e.key === "Meta") return true;
       },
       defaultAction: (e: any) => {
-        onEditTextBlock(blockData.id, blockData.index, e.target.innerHTML);
+        onEditTextBlock(block.id, block.index, e.target.innerHTML);
       },
       finallyAction: (e: any) => {
         setCursorStart(getSelectionStart(e.target));
@@ -73,12 +73,12 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
       },
       "Backspace": (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
-          onEditTextBlock(blockData.id, blockData.index, e.target.innerHTML);
+          onEditTextBlock(block.id, block.index, e.target.innerHTML);
         } 
       },
       " ": (e: any) => {
         setCursorEnd(0);
-        onEditTextBlock(blockData.id, blockData.index, e.target.innerHTML);
+        onEditTextBlock(block.id, block.index, e.target.innerHTML);
         onCommitTextBlock();
       }
     },
@@ -87,7 +87,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         if(e.key === "Enter") {
           e.preventDefault();
           onAddTextBlock(
-            blockData.index, 
+            block.index, 
             e.target.innerHTML, 
             getSelectionStart(e.target), 
             getSelectionEnd(e.target)
@@ -105,10 +105,10 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
   
         if(cursorStartPoint === 0 && cursorEndPoint === 0) {
           if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
-            const nextEditIndex = blockData.index - 1;
-            onDeleteBlock([blockData], nextEditIndex);
-          } else if(blockData.index !== 0) {
-            onDeleteTextBlock(blockData.index, e.target.innerHTML, e.target.innerText.length);
+            const nextEditIndex = block.index - 1;
+            onDeleteBlock([block], nextEditIndex);
+          } else if(block.index !== 0) {
+            onDeleteTextBlock(block.index, e.target.innerHTML, e.target.innerText.length);
           } else {
             onDeleleTitleBlock(e.target.innerText);
           }
@@ -122,7 +122,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         setSelectionRange(e.target, 0, 0);
 
         if(cursorStart === 0 && cursorEnd === 0) {
-          onChangeEditingId(blockData.index - 1);
+          onChangeEditingId(block.index - 1);
         } 
       },
       "ArrowDown": (e: any) => {
@@ -133,11 +133,11 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
         setSelectionRange(e.target, contentsLength, contentsLength);
 
         if((cursorEnd && cursorStart) === e.target.innerText.length) {
-          onChangeEditingId(blockData.index + 1);
+          onChangeEditingId(block.index + 1);
         }
       }
     }
-  }, [blockData, cursorStart, cursorEnd]);
+  }, [block, cursorStart, cursorEnd]);
 
   const {
     handleMoveToWantPoint,
@@ -181,7 +181,7 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
       handleRefreshCursorPoint();
     } 
 
-    if(blockData.id !== editingBlockId) onChangeEditingId(blockData.id);
+    if(block.id !== editingBlockId) onChangeEditingId(block.id);
   }
 
   useEffect(() => {
@@ -191,10 +191,10 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
       handleRefreshCursorPoint();
     }
 
-  }, [blockData.contents]);
+  }, [block.contents]);
 
   useEffect(() => {
-    if(editingBlockId === blockData.id) {
+    if(editingBlockId === block.id) {
       if(blockContentsRef.current) {
         handleElementFocus();
 
@@ -215,11 +215,11 @@ function useTextBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneP
   }, [editingBlockId]);
 
   useEffect(() => {
-    if(editingBlockId === blockData.id) handleFocus(blockContentsRef.current);
+    if(editingBlockId === block.id) handleFocus(blockContentsRef.current);
   }, []);
 
   useEffect(() => {
-    if(cursorEnd - cursorStart >= 1 && blockData.id === editingBlockId) {
+    if(cursorEnd - cursorStart >= 1 && block.id === editingBlockId) {
       setStyleToggle(true);
     } else {
       setStyleToggle(false);

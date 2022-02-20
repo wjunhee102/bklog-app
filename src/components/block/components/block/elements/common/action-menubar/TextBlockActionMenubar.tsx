@@ -73,17 +73,20 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
     reBlockFocus();
   }
 
-  const changeTextType = (value: string) => () => {
+  const changeTextType = (value: string | null) => () => {
+    if(!value) return
     onChangeStyleType(index, value);
     setCurrentMenuName("not");
   }
 
-  const changeBlockType = (value: string) => () => {
+  const changeBlockType = (value: string | null) => () => {
+    if(!value) return
     onChangeBlockType(index, value as BlockType);
     setCurrentMenuName("not");
   }
 
-  const changeColorType = (type: "fc" | "bc") => (value: string) => () => {
+  const changeColorType = (type: "fc" | "bc") => (value: string | null) => () => {
+    if(!value) return
     onStyleChange([type, value], "color");
   }
 

@@ -72,7 +72,7 @@ const colorMenu = (type: string): ButtonProps[] => [
   }
 ]
 
-const ColorActionMenuList = (handleClick: (type: "fc" | "bc") => (value: string) => () => void) => [
+const ColorActionMenuList = (handleClick: (type: "fc" | "bc") => (value: string | null) => () => void) => [
   {
     title: "글자 색상",
     buttonList: colorMenu("text"),
@@ -86,7 +86,7 @@ const ColorActionMenuList = (handleClick: (type: "fc" | "bc") => (value: string)
 ];
 
 interface ColorActionMenuArticleProps {
-  handleClick: (type: "fc" | "bc") => (value: string) => () => void;
+  handleClick: (type: "fc" | "bc") => (value: string | null) => () => void;
   toggle: boolean;
 }
 
@@ -113,7 +113,7 @@ const setColorStyle = (textStyle: TextContentStyleType[]) => textStyle.reduce((a
 }, {});
 
 interface ColorActionMenuProps {
-  handleClick: (type: "fc" | "bc") => (value: string) => () => void;
+  handleClick: (type: "fc" | "bc") => (value: string | null) => () => void;
   toggle: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   textStyle?: TextContentStyleType[] | null;

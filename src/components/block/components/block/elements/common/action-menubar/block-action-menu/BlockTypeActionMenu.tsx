@@ -1,5 +1,6 @@
 import React from 'react';
-import { BlockTypes } from '../../../../../../types';
+import { BlockType } from '../../../../../../entities/block/type';
+import { BLOCK_BULLETED, BLOCK_NUMBERED, BLOCK_TEXT, BLOCK_TODO } from '../../../../../../entities/block/type/types/text';
 import BlockTurnIntoBtnList from '../../../../../common/button-list/BlockTurnIntoBtnList';
 import BlockScrollMenu from '../../../../../common/virtual-scroll/BlockScrollMenu';
 import BlockScrollMenuArticles, { ButtonProps } from '../../../../../common/virtual-scroll/BlockScrollMenuAriticles';
@@ -7,16 +8,16 @@ import ActionMenuBox from '../common/ActionMenuBox';
 import ActionMenuToggle from '../common/ActionMenuToggle';
 
 const BlockTypeTable = {
-  "text"     : "텍스트",
-  "todo"     : "체크리스트",
-  "bulleted" : "구분점 목록",
-  "numbered" : "번호 목록"
+  [BLOCK_TEXT]     : "텍스트",
+  [BLOCK_TODO]     : "체크리스트",
+  [BLOCK_BULLETED] : "구분점 목록",
+  [BLOCK_NUMBERED] : "번호 목록"
 }
 
-const switchBlockType = (type: BlockTypes) => type in BlockTypeTable? 
-  BlockTypeTable[type] : "Text";
+const switchBlockType = (type: BlockType) => type in BlockTypeTable? 
+  BlockTypeTable[type as keyof typeof BlockTypeTable] : "Text";
 
-const menuList = (handleClick: (value: string) => () => void) => [
+const menuList = (handleClick: (value: string | null) => () => void) => [
   {
     title: "변경하기",
     buttonList: BlockTurnIntoBtnList,
@@ -25,7 +26,7 @@ const menuList = (handleClick: (value: string) => () => void) => [
 ]
 
 interface BlockTypeActionMenuArticleProps {
-  handleClick: (value: BlockTypes) => () => void;
+  handleClick: (value: string | null) => () => void;
   toggle: boolean;
 }
 
@@ -43,8 +44,8 @@ const BlockTypeActionMenuArticle: React.FC<BlockTypeActionMenuArticleProps> | nu
 }
 
 interface BlockTypeActionMenuProps {
-  type: BlockTypes;
-  handleClick: (value: string) => () => void;
+  type: string;
+  handleClick: (value: string | null) => () => void;
   toggle: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
@@ -61,7 +62,7 @@ const BlockTypeActionMenu: React.FC<BlockTypeActionMenuProps> = ({
       <ActionMenuToggle
         onClick={onClick}
       >
-        { switchBlockType(type) }
+        { switchBlockType(type as BlockType) }
       </ActionMenuToggle>
       <BlockTypeActionMenuArticle handleClick={handleClick} toggle={toggle} /> 
     </ActionMenuBox>

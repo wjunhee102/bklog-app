@@ -1,8 +1,8 @@
 import React from 'react';
-import { BlockTypes } from '../../../types';
+import { BlockTypeText } from '../../../entities/block/type/types/text';
 import { ButtonProps } from './types';
 
-const BlockTurnIntoBtnList: ButtonProps<BlockTypes>[] = [
+const BlockTurnIntoBtnList: ButtonProps<BlockTypeText>[] = [
   {
     title: "텍스트",
     value: "text",

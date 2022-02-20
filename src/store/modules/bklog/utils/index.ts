@@ -1,39 +1,11 @@
-import { RawBlockData, ModifyBlockDataType, ModifyBklogDataType, ModifyPageInfoType } from "../../../../components/block/types";
+import { UnionRawBlockData } from "../../../../components/block/entities/block/type";
+import { ModifyBlockToken } from "../../../../components/block/entities/modify/block/ModifyBlockToken";
+import { ModifyPageDataToken } from "../../../../components/block/entities/modify/page/ ModifyPageDataToken";
+import { PageInfo } from "../../../../components/block/entities/modify/type";
+import { ModifyBklogData, ModifyBlockData } from "../../../../components/block/service/modify/type";
 import { ApiErrorType } from "../../../../utils/api-utils";
 import actions from "./actions";
 import apiUtils from "./apiUtils";
-
-export interface PageInfoType {
-  createdDate: Date;
-  updatedDate: Date;
-  id: string;
-  parentId: string | null;
-  title: string;
-  emoji: string | null;
-  coverImage: string | null;
-  coverColor: string | null;
-  lastAccessDate: Date;
-  views: number;
-  disclosureScope: number;
-  profileId: string;
-  editable: boolean;
-}
-
-export interface PageInfoProps {
-  createdDate?: Date;
-  updatedDate?: Date;
-  id?: string;
-  parentId?: string | null;
-  title?: string;
-  emoji?: string;
-  coverImage?: string;
-  coverColor?: string;
-  lastAccessDate?: Date;
-  views?: number;
-  disclosureScope?: number;
-  profileId?: string;
-  editable?: boolean;
-}
 
 interface Comments {
   id: string;
@@ -71,40 +43,24 @@ export interface BklogState {
   isRefresh: boolean;
   isUpdated: boolean;
   isUpdating: boolean;
-  pageInfo: PageInfoType | null;
+  pageInfo: PageInfo | null;
   version: string | null;
   pageStar: PageStarType | null;
   pageComments: PageCommentsType[] | null;
   pageEditorList: PageEditor[] | null ;
-  blockList: RawBlockData[] | null;
+  blockList: UnionRawBlockData[] | null;
   blockComments: BlockCommentsType[] | null; 
-  pushModifyBlockData: ModifyBlockDataType | null;
-  pushModifyPageInfo: ModifyPageInfoType | null;
-  pullModifyBlockData: ModifyBlockDataType | null;
+  pushModifyBlockTokenList: ModifyBlockToken[] | null;
+  pushModifyPageTokenList: ModifyPageDataToken[] | null;
+  pullModifyBlockData: ModifyBlockData | null;
   editingUserList: EditingUserInfo[] | null;
   error: ApiErrorType | null;
 }
 
 // pushModifyData에 pageInfo도 넣어서 보내기 pageTitle 변경햇을 때 여기로 집어넣게 하고 한번에 보내면 됨;
 
-export interface BklogStateProps {
-  isLoading?: boolean;
-  isFetching?: boolean;
-  isRefresh?: boolean;
-  isUpdated?: boolean;
-  isUpdating?: boolean;
-  pageInfo?: PageInfoType | null;
-  version?: string | null;
-  pageStar?: PageStarType | null;
-  pageComments?: PageCommentsType[] | null;
-  pageEditorList?: PageEditor[] | null ;
-  blockList?: RawBlockData[] | null;
-  blockComments?: BlockCommentsType[] | null; 
-  pushModifyBlockData?: ModifyBlockDataType | null;
-  pushModifyPageInfo?: ModifyPageInfoType | null;
-  pullModifyBlockData?: ModifyBlockDataType | null;
-  editingUserList?: EditingUserInfo[] | null;
-  error?: ApiErrorType | null;
+export type BklogStateProps = {
+  [Property in keyof BklogState]?: BklogState[Property];
 }
 
 // request type
@@ -114,13 +70,13 @@ export interface UpdateBklogPayload {
     current: string;
     next: string;
   };
-  data: ModifyBklogDataType;
+  data: ModifyBklogData;
 }
 
 // response type
 export interface ResGetPage {
-  pageInfo: PageInfoType;
-  blockList: RawBlockData[];
+  pageInfo: PageInfo;
+  blockList: UnionRawBlockData[];
   version: string;
 }
 
@@ -130,22 +86,7 @@ export interface ReqEditPageEditor {
   targetProfileId: string;
 }
 
-export type ClearBklogStateType = 'isLoading'
-  | 'isFetching'
-  | 'isRefresh'
-  | 'isUpdated'
-  | 'isUpdating'
-  | 'pageInfo' 
-  | 'blockList'
-  | 'version'
-  | 'pageStar'
-  | 'pageComments'
-  | 'pageEditorList'
-  | 'blockComments'
-  | 'pushModifyBlockData'
-  | 'pushModifyPageInfo'
-  | 'pullModifyBlockData'
-  | 'error';
+export type ClearBklogStateType = keyof BklogState;
 
 // actions
 export const RESET_BKLOG                 = 'bklog/RESET_BKLOG' as const;
@@ -175,30 +116,30 @@ export const EXCLUDE_PAGE_EDITOR         = 'bklog/EXCLUDE_PAGE_EDITOR' as const;
 export const EXCLUDE_PAGE_EDITOR_SUCCESS = 'bklog/EXCLUDE_PAGE_EDITOR_SUCCESS' as const;
 export const EXCLUDE_PAGE_EDITOR_ERROR   = 'bklog/EXCLUDE_PAGE_EDITOR_ERROR' as const;
 
-export const resetBklog               = actions.resetBklog;
-export const clearBklogState          = actions.clearBklogState;
-export const getPage                  = actions.getPage;
-export const getPageSuccess           = actions.getPageSuccess;
-export const getPageError             = actions.getPageError;
-export const addPushModifyBlockData   = actions.addPushModifyBlockData;
-export const changePageInfo           = actions.changePageInfo;
-export const updateBklog              = actions.updateBklog;
-export const updateBklogSuccess       = actions.updateBklogSuccess;
-export const updateBklogError         = actions.updateBklogError;
-export const updateVersion            = actions.updateVersion;
-export const updateVersionSuccess     = actions.updateVersionSuccess;
-export const updateVersionError       = actions.updateVersionError;
-export const changeUpdatedState       = actions.changeUpdatedState;
-export const changeUpdatingState      = actions.changeUpdatingState;
-export const releaseUpdating          = actions.releaseUpdating;
-export const releaseUpdatingSuccess   = actions.releaseUpdatingSuccess;
-export const releaseUpdatingError     = actions.releaseUpdatingError;
-export const addPageEditor            = actions.addPageEditor;
-export const addPageEditorSuccess     = actions.addPageEditorSuccess;
-export const addPageEditorError       = actions.addPageEditorError;
-export const excludePageEditor        = actions.excludePageEditor;
-export const excludePageEditorSuccess = actions.excludePageEditorSuccess;
-export const excludePageEditorError   = actions.excludePageEditorError;
+export const resetBklog                  = actions.resetBklog;
+export const clearBklogState             = actions.clearBklogState;
+export const getPage                     = actions.getPage;
+export const getPageSuccess              = actions.getPageSuccess;
+export const getPageError                = actions.getPageError;
+export const addPushModifyBlockTokenList = actions.addPushModifyBlockTokenList;
+export const changePageInfo              = actions.changePageInfo;
+export const updateBklog                 = actions.updateBklog;
+export const updateBklogSuccess          = actions.updateBklogSuccess;
+export const updateBklogError            = actions.updateBklogError;
+export const updateVersion               = actions.updateVersion;
+export const updateVersionSuccess        = actions.updateVersionSuccess;
+export const updateVersionError          = actions.updateVersionError;
+export const changeUpdatedState          = actions.changeUpdatedState;
+export const changeUpdatingState         = actions.changeUpdatingState;
+export const releaseUpdating             = actions.releaseUpdating;
+export const releaseUpdatingSuccess      = actions.releaseUpdatingSuccess;
+export const releaseUpdatingError        = actions.releaseUpdatingError;
+export const addPageEditor               = actions.addPageEditor;
+export const addPageEditorSuccess        = actions.addPageEditorSuccess;
+export const addPageEditorError          = actions.addPageEditorError;
+export const excludePageEditor           = actions.excludePageEditor;
+export const excludePageEditorSuccess    = actions.excludePageEditorSuccess;
+export const excludePageEditorError      = actions.excludePageEditorError;
 
 // api
 export const bklogFetchGet    = apiUtils.bklogFetchGet;

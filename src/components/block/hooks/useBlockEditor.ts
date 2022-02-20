@@ -8,8 +8,8 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
   const {
     state: {
       blockList,
-      stageBlock,
-      stagePage,
+      stagedTextBlockData,
+      stagedPageTitle,
       isGrab,
       isCliping,
       tempClipData,
@@ -61,7 +61,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
        startAction: (e: any) => {
         onChangeEditorState('isPress', true);
 
-        if((e.metaKey || e.ctrlKey) && !stageBlock[0]) {
+        if((e.metaKey || e.ctrlKey) && !stagedTextBlockData) {
           return false;
         } else {
           return true;
@@ -75,7 +75,7 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
         e.preventDefault();
         onRevertBlock(true);
       }
-   }, [stageBlock, tempClipData]);
+   }, [stagedTextBlockData, tempClipData]);
 
   const handleKeyUp = useKeyboardActionHandler({
     startAction: () => {
@@ -86,11 +86,11 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
 
    // idle
    const handleOnIdle = useCallback(() => {
-    if(stageBlock[0]) onCommitTextBlock();
-    if(stagePage) onCommitPage();
+    if(stagedTextBlockData) onCommitTextBlock();
+    if(stagedPageTitle) onCommitPage();
     onResetEditorState(true);
     onChangeFetchState(true);
-  }, [stageBlock, stagePage, onCommitTextBlock, onCommitPage]);
+  }, [stagedTextBlockData, stagedPageTitle, onCommitTextBlock, onCommitPage]);
 
   const { getLastActiveTime } = useIdleTimer({
     timeout: 10 * 60 * 1,

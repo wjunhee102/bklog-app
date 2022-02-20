@@ -8,7 +8,7 @@ export interface ButtonProps {
 }
 
 interface BlockScrollMenuArticleProps {
-  handleClick: (value: string) => () => void;
+  handleClick: (value: string | null) => () => void;
   buttonList: ButtonProps[];
   title: string;
 }

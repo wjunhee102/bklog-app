@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ModifyBlockDataType, ModifyPageInfoType } from '../components/block/types';
+import { ModifyBlockToken } from '../components/block/entities/modify/block/ModifyBlockToken';
+import { ModifyPageDataToken } from '../components/block/entities/modify/page/ ModifyPageDataToken';
+import { ModifyService } from '../components/block/service/modify/ModifyService';
 import { RootState } from '../store/modules';
-import { addPushModifyBlockData, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdatedState, ClearBklogStateType, clearBklogState, releaseUpdating, changeUpdatingState, changePageInfo, addPageEditor, excludePageEditor } from '../store/modules/bklog/utils';
+import { addPushModifyBlockTokenList, BklogState, resetBklog, updateBklog, getPage, updateVersion, changeUpdatedState, ClearBklogStateType, clearBklogState, releaseUpdating, changeUpdatingState, changePageInfo, addPageEditor, excludePageEditor } from '../store/modules/bklog/utils';
 import { Token } from '../utils/token';
 
 export const useConnectBklogStore = (): BklogState => useSelector((state: RootState) => state.bklog);
@@ -24,29 +26,34 @@ function useBklogActions(bklogState: BklogState) {
     dispatch(resetBklog());
   }, [dispatch]);
 
-  const onAddPushModifyBlockData = useCallback((modifyBlockData: ModifyBlockDataType) => {
-    dispatch(addPushModifyBlockData(modifyBlockData));
+  const onAddPushModifyBlockTokenList = useCallback((modifyBlockTokenList: ModifyBlockToken[]) => {
+    dispatch(addPushModifyBlockTokenList(modifyBlockTokenList));
   }, [dispatch]);
 
-  const onChangePageInfo = useCallback((modifyPageInfo: ModifyPageInfoType) => {
-    dispatch(changePageInfo(modifyPageInfo));
+  const onChangePageInfo = useCallback((modifyPageTokenList: ModifyPageDataToken[]) => {
+    dispatch(changePageInfo(modifyPageTokenList));
   }, [dispatch]);
 
   const onUpdateBklog = useCallback(() => {
-    if(bklogState.pageInfo && (bklogState.pushModifyBlockData || bklogState.pushModifyPageInfo)) {
+    if(bklogState.pageInfo && (bklogState.pushModifyBlockTokenList || bklogState.pushModifyPageTokenList)) {
+
+      const data = new ModifyService({
+        modifyBlockTokenList: bklogState.pushModifyBlockTokenList? bklogState.pushModifyBlockTokenList : undefined,
+        modifyPageTokenList: bklogState.pushModifyPageTokenList? bklogState.pushModifyPageTokenList : undefined
+      }).merge().getData();
+
+      if(!data) return false;
+
       dispatch(updateBklog({
         pageId: bklogState.pageInfo.id,
         pageVersions: {
-          current: bklogState.version,
+          current: bklogState.version? bklogState.version : "",
           next: Token.getUUID()
         },
-        data: {
-          modifyPageInfo: bklogState.pushModifyPageInfo? bklogState.pushModifyPageInfo : undefined,
-          modifyBlockData: bklogState.pushModifyBlockData? bklogState.pushModifyBlockData : undefined
-        }
+        data
       }));
    }
-  }, [dispatch, bklogState.pushModifyBlockData, bklogState.pushModifyPageInfo, bklogState.version]);
+  }, [dispatch, bklogState.pushModifyBlockTokenList, bklogState.pushModifyPageTokenList, bklogState.version]);
 
   const onUpdateVersion = useCallback((id, preId) => {
     dispatch(updateVersion(id, preId));
@@ -61,10 +68,12 @@ function useBklogActions(bklogState: BklogState) {
   }, [dispatch]);
 
   const onReleaseUpdating = useCallback(() => {
+    if(!bklogState.pageInfo) return false;
     dispatch(releaseUpdating(bklogState.pageInfo.id));
   }, [dispatch, bklogState.pageInfo]);
 
   const onAddPageEditor = useCallback((profileId: string, targetProfileId: string) => {
+    if(!bklogState.pageInfo) return false;
     dispatch(addPageEditor({
       pageId: bklogState.pageInfo.id, 
       profileId, 
@@ -73,6 +82,7 @@ function useBklogActions(bklogState: BklogState) {
   }, [dispatch]);
 
   const onExcludePageEditor = useCallback((profileId: string, targetProfileId: string) => {
+    if(!bklogState.pageInfo) return false;
     dispatch(excludePageEditor({
       pageId: bklogState.pageInfo.id, 
       profileId, 
@@ -85,7 +95,7 @@ function useBklogActions(bklogState: BklogState) {
     onClearBklogState,
     onResetBklog,
     onGetPage,
-    onAddPushModifyBlockData,
+    onAddPushModifyBlockTokenList,
     onChangePageInfo,
     onUpdateBklog,
     onUpdateVersion,

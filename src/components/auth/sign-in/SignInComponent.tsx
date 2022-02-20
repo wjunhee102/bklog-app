@@ -7,7 +7,7 @@ import './SignIn.scss';
 interface SignInComponentProps {
   handleSubmit: (e: any) => void;
   inputProps: InputPropsType[];
-  error: ApiErrorType;
+  error: ApiErrorType | null;
   errorEmail: boolean;
   errorPwd: boolean;
 }

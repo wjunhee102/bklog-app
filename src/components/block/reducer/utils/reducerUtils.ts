@@ -3,10 +3,12 @@ import { ActionHandlers } from ".";
 function createClearStatePart<P extends object, T extends P = any>(initialState: T, key: string[]): P {
   return key.reduce((acc, cur) => {
     if(initialState.hasOwnProperty(cur)) {
-      acc[cur] = initialState[cur];
+      Object.assign(acc, {
+        [cur]: initialState[cur as keyof typeof initialState]
+      })
     }
     return acc;
-  }, {} as P);
+  }, {} as P) as P;
 }
 
 type Action = {

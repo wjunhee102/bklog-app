@@ -21,7 +21,7 @@ const PageListTitle: React.FC<PageListTitleProps> = ({
       <div className="sidebar-icon-box">
         <div className="sidebar-icon">
           {
-            PageListTitleIconTable[title]
+            PageListTitleIconTable[title as keyof typeof PageListTitleIconTable]
           }
         </div>
       </div>

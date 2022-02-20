@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { ReturnConnectStoreHook } from "../components/block";
+import { ModifyBlockToken } from "../components/block/entities/modify/block/ModifyBlockToken";
+import { ModifyPageDataToken } from "../components/block/entities/modify/page/ ModifyPageDataToken";
 import { UseBlockType } from "../components/block/hooks/useBlock";
-import { convertModifyBlockData } from "../components/block/reducer/utils";
-import { ModifyBlockDataType, ModifyPageInfoType } from "../components/block/types";
+import { ModifyBlockService } from "../components/block/service/modify/block/ModifyBlockService";
+import { ModifyPageService } from "../components/block/service/modify/page/ModifyPageService";
 import { EditingUserInfo } from "../store/modules/bklog/utils";
 import { SOCKET_URL } from "../utils/api-utils";
 import { useConnectAuthStore } from "./useAuth";
@@ -24,7 +26,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
     bklogState, 
     onClearBklogState,
     onUpdateBklog, 
-    onAddPushModifyBlockData, 
+    onAddPushModifyBlockTokenList, 
     onGetPage,
     onUpdateVersion,
     onChangeUpdatedState,
@@ -50,16 +52,16 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   } = useBlockReducer;
 
   const {
-    pageInfo: {
-      title
-    },
+    pageTitle,
     editingBlockId,
     isFetch,
-    modifyData,
-    modifyPageInfo,
+    modifyBlockTokenList,
+    modifyPageTokenList,
   } = state;
 
-  const pageTitle: string | null = bklogState.pageInfo? bklogState.pageInfo.title : null;
+  const id: string | null = bklogState.pageInfo? bklogState.pageInfo.id : null;
+
+  const title: string | null = bklogState.pageInfo? bklogState.pageInfo.title : null;
 
   const isKeyPress: boolean = state.isPress;
 
@@ -75,9 +77,9 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   const editingPenName: string | null = user? user.penName : "unknown";
 
-  const pushModifyBlockData: ModifyBlockDataType | null = bklogState.pushModifyBlockData;
+  const pushModifyBlockTokenList: ModifyBlockToken[] | null = bklogState.pushModifyBlockTokenList;
 
-  const pushModifyPageInfo: ModifyPageInfoType | null = bklogState.pushModifyPageInfo;
+  const pushModifyPageTokenList: ModifyPageDataToken[] | null = bklogState.pushModifyPageTokenList;
 
   const currentVersion: string | null =  bklogState.version;
 
@@ -117,7 +119,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   // effect
   useEffect(() => {
-    if(bklogState.blockList) {
+    if(bklogState.blockList && bklogState.pageInfo) {
       console.log("init 실행");
       onInitBlockState(bklogState.blockList);
       onInitPageTitle(bklogState.pageInfo.title);
@@ -134,16 +136,16 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   useEffect(() => {
     if(isFetch && !isFetching && !updatingId && !isUpdated && !isKeyPress) {
-      if(modifyData && modifyData[0]) onAddPushModifyBlockData(convertModifyBlockData(modifyData));
-      if(modifyPageInfo) onChangePageInfo(modifyPageInfo);
+      if(modifyBlockTokenList[0]) onAddPushModifyBlockTokenList(new ModifyBlockService(modifyBlockTokenList, true).getTokenList());
+      if(modifyPageTokenList[0]) onChangePageInfo(new ModifyPageService(modifyPageTokenList, true).getTokenList());
     }
-  }, [modifyData, modifyPageInfo, isFetch, isFetching, updatingId, isKeyPress]);
+  }, [modifyBlockTokenList, modifyPageTokenList, isFetch, isFetching, updatingId, isKeyPress]);
 
   useEffect(() => {
-    if(isUpdated && socket) {
-      socket.emit("updated", [bklogState.pageInfo.id, currentVersion]);
+    if(isUpdated && socket && id) {
+      socket.emit("updated", [id, currentVersion]);
       onChangeUpdatedState();
-      onClearStateItem("modifyData", "modifyPageInfo");
+      onClearStateItem("modifyBlockTokenList", "modifyPageTokenList");
     } 
   }, [isUpdated]);
 
@@ -175,7 +177,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [bklogState.pullModifyBlockData]);
 
   useEffect(() => {
-    if(isRefresh) onGetPage(bklogState.pageInfo.id);
+    if(isRefresh && id) onGetPage(id);
   }, [isRefresh]);
 
   useEffect(() => {
@@ -221,14 +223,14 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
    // 일단 서버에서 충돌 막을 방법을 찾아야 할 듯.
   useEffect(() => {
-    if(!updatingId && !isFetching && socket && (pushModifyBlockData || pushModifyPageInfo)) {
+    if(!updatingId && !isFetching && socket && (pushModifyBlockTokenList || pushModifyPageTokenList)) {
       onUpdateBklog();
       socket.emit("update");
     }
-  }, [pushModifyBlockData, pushModifyPageInfo]);
+  }, [pushModifyBlockTokenList, pushModifyPageTokenList]);
 
   useEffect(() => {
-    if(isFetching && (pushModifyBlockData || pushModifyPageInfo)) {
+    if(isFetching && (pushModifyBlockTokenList || pushModifyPageTokenList)) {
       if(!updatingId && !isUpdating) {
         onUpdateBklog();
       } else {

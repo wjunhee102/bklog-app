@@ -35,7 +35,7 @@ import {
   DELETE_TITLE_BLOCK,
   EDIT_BLOCK,
   EDIT_BLOCK_SIDE_INFO,
-  StagedPageData
+  StagedPageTitle
 } from ".";
 import { BlockType, UnionBlock, UnionBlockDataProps, UnionRawBlockData } from "../../entities/block/type";
 import { BlockTypeText, TextContentStyleType, OrderType } from "../../entities/block/type/types/text";
@@ -324,10 +324,10 @@ function clearStateItem(...key: ClearStateType[]) {
   }
 }
 
-function editPageInfo(stagedPage: StagedPageData | null) {
+function editPageInfo(stagedPageTitle: StagedPageTitle | null) {
   return {
     type: EDIT_PAGE_INFO,
-    payload: stagedPage
+    payload: stagedPageTitle
   }
 }
 

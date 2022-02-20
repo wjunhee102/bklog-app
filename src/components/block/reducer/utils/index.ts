@@ -1,10 +1,8 @@
 import { StagedBlockData, UnionBlock } from "../../entities/block/type";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { ModifyPageDataToken } from "../../entities/modify/page/ ModifyPageDataToken";
-import { ModifyPageDataProps, PageInfo } from "../../entities/modify/type";
 import { HistoryBlockData } from "../../service/modify/type";
 import actionBlock from "./actions";
-import blockUtils from "./blockUtils";
 import orderingBlockUtils from "./ordering";
 import reducerUtils from "./reducerUtils";
 import sideStoreUtils from "./sideUtils";
@@ -50,20 +48,13 @@ export type StateAryType = "blockList"
   | "tempClipData"
   | "clipBoard";
 
-export type ClearStateType = StateAryType 
-  | StateBolType 
-  | StateNulType
-  | StateObjType
-  | StateAryType  
-;
-
 export interface StagedTextBlockData {
   id: string;
   index: number;
   contents: string;
 }
 
-export type StagedPageData = ModifyPageDataProps;
+export type StagedPageTitle = string;
 
 export interface ChangeEditorStateProps {
   isGrab?: boolean;
@@ -74,7 +65,7 @@ export interface ChangeEditorStateProps {
 export interface HistoryData extends HistoryBlockData {
   editingBlockId?: string | null;
   preBlockInfo?: PreBlockInfo;
-  pageInfo?: PageInfo;
+  pageTitle?: string | null;
 }
 
 export interface PreTextBlockInfo {
@@ -91,13 +82,13 @@ export interface BlockState {
   isHoldingDown: boolean;
   isCliping: boolean;
   targetPosition: string | null;
-  pageInfo: PageInfo;
+  pageTitle: string | null;
   blockList: UnionBlock[];
   editingBlockId: string | null;
   preBlockInfo: PreBlockInfo | null;
   stagedTextBlockData: StagedTextBlockData | null;
   stagedBlockDataList: StagedBlockData[];
-  stagedPageData: StagedPageData | null;
+  stagedPageTitle: StagedPageTitle | null;
   updatedBlockIdList: string[];
   modifyBlockTokenList: ModifyBlockToken[];
   modifyPageTokenList: ModifyPageDataToken[];
@@ -106,6 +97,8 @@ export interface BlockState {
   tempClipData: number[];
   clipBoard: UnionBlock[];
 }
+
+export type ClearStateType = keyof BlockState; 
 
 export type BlockStateProps = {
   [Property in keyof BlockState]?: BlockState[Property];
@@ -260,39 +253,9 @@ export type BlockActions = ReturnType<typeof initBlockState>
 export const createReducer        = reducerUtils.createReducer;
 export const createClearStatePart = reducerUtils.createClearStatePart;
 
+
+// side util
+export const revertBlockState = sideStoreUtils.revertBlockState;
+
 // block order utils;
 export const setBlockList  = orderingBlockUtils.setBlockList;
-
-// block utils
-export const copyToNewObjectArray  = blockUtils.copyToNewObjectArray;
-export const createRawBlockData    = blockUtils.createRawBlockData;
-export const createBlockData       = blockUtils.createBlockData;
-export const resetToTargetPosition = blockUtils.resetToTargetPosition;
-export const reissueBlockId        = blockUtils.reissueBlockId;
-export const updateBlockContents   = blockUtils.updateBlockContents;
-export const updateBlockDataProps  = blockUtils.updateBlockDataProps;
-export const changeBlockTextStyle  = blockUtils.changeBlockTextStyle;
-export const addToStage            = blockUtils.addToStage;
-export const addBlockInList        = blockUtils.addBlockInList;
-export const removeBlockInList     = blockUtils.removeBlockInList;
-export const removeTextBlockInList = blockUtils.removeTextBlockInList;
-export const changeBlockPosition   = blockUtils.changeBlockPosition;
-export const switchBlockList       = blockUtils.switchBlockList;
-export const restoreBlock          = blockUtils.restoreBlock;
-export const changeBlockStyleType  = blockUtils.changeBlockStyleType;
-export const updateBlockData       = blockUtils.updateBlockData;
-export const changeBlockDataType   = blockUtils.changeBlockDataType;
-
-// side utils 
-export const tempDataPush               = sideStoreUtils.tempDataPush;
-export const getContentsToBeChanged     = sideStoreUtils.getContentsToBeChanged;
-export const createTempData             = sideStoreUtils.createTempData;
-export const createModifyData           = sideStoreUtils.createModifyData;
-export const updateModifyData           = sideStoreUtils.updateModifyData;
-export const setCreateModifyDataOfBlock = sideStoreUtils.setCreateModifyDataOfBlock;
-export const setUpdateModifyDataOfBlock = sideStoreUtils.setUpdateModifyDataOfBlock;
-export const setDeleteModifyDataOfBlock = sideStoreUtils.setDeleteModifyDataOfBlock;
-export const convertModifyBlockData     = sideStoreUtils.convertModifyBlockData;
-export const replaceModifyBlockData     = sideStoreUtils.replaceModifyBlockData;
-export const createPageTitleBlockData   = sideStoreUtils.createPageTitleBlockData;
-export const revertBlockState           = sideStoreUtils.revertBlockState;

@@ -28,7 +28,9 @@ import {
   EXCLUDE_PAGE_EDITOR_SUCCESS,
   EXCLUDE_PAGE_EDITOR_ERROR
 } from ".";
-import { ModifyBklogDataType, ModifyBlockDataType, ModifyPageInfoType } from "../../../../components/block/types";
+import { ModifyBlockToken } from "../../../../components/block/entities/modify/block/ModifyBlockToken";
+import { ModifyPageDataToken } from "../../../../components/block/entities/modify/page/ ModifyPageDataToken";
+import { ModifyBklogData } from "../../../../components/block/service/modify/type";
 import { ApiErrorType } from "../../../../utils/api-utils";
 
 function resetBklog() {
@@ -65,17 +67,17 @@ function getPageError(error: ApiErrorType) {
   };
 }
 
-function addPushModifyBlockData(modifyBlockData: ModifyBlockDataType) {
+function addPushModifyBlockTokenList(modifyBlockTokenList: ModifyBlockToken[]) {
   return {
     type: ADD_PUSH_MODIFY_BLOCK_DATA,
-    payload: modifyBlockData
+    payload: modifyBlockTokenList
   };
 }
 
-function changePageInfo(modifyPageInfo: ModifyPageInfoType) {
+function changePageInfo(modifyPageTokenList: ModifyPageDataToken[]) {
   return {
     type: CHANGE_PAGE_INFO,
-    payload: modifyPageInfo
+    payload: modifyPageTokenList
   }
 }
 
@@ -110,7 +112,7 @@ function updateVersion(id: string, preId: string) {
   };
 }
 
-function updateVersionSuccess(data: {id: string, data: ModifyBklogDataType}) {
+function updateVersionSuccess(data: {id: string, data: ModifyBklogData}) {
   return {
     type: UPDATE_VERSION_SUCCESS,
     payload: data
@@ -203,7 +205,7 @@ export default {
   getPage,
   getPageSuccess,
   getPageError,
-  addPushModifyBlockData,
+  addPushModifyBlockTokenList,
   changePageInfo,
   updateBklog,
   updateBklogSuccess,

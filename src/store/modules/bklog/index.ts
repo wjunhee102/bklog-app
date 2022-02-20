@@ -15,8 +15,8 @@ export const initialState: BklogState = {
   pageEditorList: null,
   blockList: null,
   blockComments: null,
-  pushModifyBlockData: null,
-  pushModifyPageInfo: null,
+  pushModifyBlockTokenList: null,
+  pushModifyPageTokenList: null,
   pullModifyBlockData: null,
   editingUserList: [],
   error: null

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { PageInfoProps } from "../../../components/block/entities/modify/type";
 import { UseBkPageTypes } from "../../../pages/bkpage/hooks/useBkPage";
-import { PageInfoProps } from "../../../store/modules/bklog/utils";
+
 
 function useBkContainer({
     useBklogHooks,

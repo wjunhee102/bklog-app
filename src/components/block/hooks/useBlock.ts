@@ -31,7 +31,6 @@ import {
   clearStateItem,
   editPageInfo,
   commitPage,
-  createPageTitleBlockData,
   PreBlockInfo,
   setPreBlockInfo,
   changeBlockType,
@@ -40,7 +39,7 @@ import {
   editBlock,
   editBlockSideInfo,
   SetBlockList,
-  StagedPageData
+  StagedPageTitle
 } from '../reducer/utils';
 import { ModifyBlockData } from '../service/modify/type';
 
@@ -71,7 +70,7 @@ function useBlock() {
 
   const initBlock: SetBlockList | null = useMemo(()=> setBlockList(state.blockList), [state.blockList]);
 
-  const titleBlock: TitleBlock | null = useMemo(() => createPageTitleBlockData(state.pageInfo.title? state.pageInfo.title : ""), [state.pageInfo.title]);
+  const titleBlock: TitleBlock | null = useMemo(() => state.pageTitle? new TitleBlock(TitleBlock.createBlockData(state.pageTitle)) : null, [state.pageTitle]);
 
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 
@@ -214,7 +213,7 @@ function useBlock() {
     dispatch(clearStateItem(...key));
   }, [dispatch]);
 
-  const onEditPageInfo = useCallback((stagedPage: StagedPageData | null) => {
+  const onEditPageInfo = useCallback((stagedPage: StagedPageTitle | null) => {
     dispatch(editPageInfo(stagedPage));
   }, [dispatch]);
 

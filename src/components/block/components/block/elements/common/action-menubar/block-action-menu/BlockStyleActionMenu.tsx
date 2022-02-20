@@ -1,4 +1,5 @@
 import React from 'react';
+import { BlockType } from '../../../../../../entities/block/type';
 import BlockScrollMenu from '../../../../../common/virtual-scroll/BlockScrollMenu';
 import BlockScrollMenuArticles, { ButtonProps } from '../../../../../common/virtual-scroll/BlockScrollMenuAriticles';
 import ActionMenuBox from '../common/ActionMenuBox';
@@ -35,10 +36,10 @@ const BlockTypeTable = {
 }
 
 const switchBlockType = (styleType: string) => styleType in BlockTypeTable? 
-  BlockTypeTable[styleType] : "Text";
+  BlockTypeTable[styleType as keyof typeof BlockTypeTable] : "Text";
 
 
-const menuList = (handleClick: (value: string) => () => void) => [
+const menuList = (handleClick: (value: string | null) => () => void) => [
   {
     title: "변경하기",
     buttonList,
@@ -47,7 +48,7 @@ const menuList = (handleClick: (value: string) => () => void) => [
 ]
 
 interface BlockStyleActionMenuArticleProps {
-  handleClick: (value: string) => () => void;
+  handleClick: (value: string | null) => () => void;
   toggle: boolean;
 }
 
@@ -66,7 +67,7 @@ const BlockStyleActionMenuArticle: React.FC<BlockStyleActionMenuArticleProps> | 
 
 interface BlockStyleActionMenuProps {
   styleType: string;
-  handleClick: (value: string) => () => void;
+  handleClick: (value: string | null) => () => void;
   toggle: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 }

@@ -1,11 +1,12 @@
 import { useRef, useCallback, useEffect, useState } from "react";
+import { ImageBlock } from "../../../../../entities/block/image/ImageBlock";
+import { ImageStyles } from "../../../../../entities/block/type/types/image";
 import { UseBlockType } from "../../../../../hooks/useBlock";
-import { BlockData } from "../../../../../types";
 import { updateObject } from "../../../../../utils";
 import getBodyInfo from "../../../../../utils/windowUtils";
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
 
-function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
+function useImageBlock(block: ImageBlock, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   const {
     onEditBlock
   } = useBlockReducer;
@@ -21,13 +22,13 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
     firstPointRef.current = e.clientX;
     setDirection(directionValue);
 
-    if(!widthRef.current) {
+    if(!widthRef.current && imageBlockContainer.current) {
       widthRef.current = imageBlockContainer.current.clientWidth;
     }
   }, [widthRef]);
 
   const handleResize = useCallback((e: React.MouseEvent<HTMLDivElement>) => { 
-    if(!firstPointRef.current) return;
+    if(!firstPointRef.current || !imageBlockContainer.current) return;
     e.preventDefault();
 
     let reducedAreaRatio = 50 - ((getBodyInfo().width/100) >> 0); 
@@ -44,28 +45,28 @@ function useImageBlock(blockData: BlockData, useBlockReducer: UseBlockType, zone
     } else {
       widthRef.current = width;
     }
-  
+    
     imageBlockContainer.current.style.width = `${widthRef.current}px`;
   }, [firstPointRef, direction]);
 
 
   const handleResizeOff = useCallback((e) => {
     if(firstPointRef.current) firstPointRef.current = 0;
-    if(widthRef.current === imageBlockContainer.current.clientWidth) return;
+    if(!imageBlockContainer.current || widthRef.current === imageBlockContainer.current.clientWidth) return;
 
     widthRef.current = widthRef.current >> 0;
 
     onEditBlock(
-      blockData.index, { 
-        styles: updateObject(blockData.styles, { width: widthRef.current })
+      block.index, { 
+        styles: updateObject(block.styles, { width: widthRef.current })
     });
 
   }, [widthRef]);
 
   useEffect(() => {
     if(imageBlockContainer.current) {
-      for(const key in blockData.styles) {
-        imageBlockContainer.current.style[key] = blockData.styles[key];
+      for(const key in block.styles) {
+        imageBlockContainer.current.style[key as any] = block.styles[key as keyof ImageStyles];
       }
       widthRef.current = imageBlockContainer.current.clientWidth;
     }

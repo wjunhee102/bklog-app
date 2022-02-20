@@ -13,7 +13,7 @@ const BlockScrollMenu: React.FC<BlockScrollMenuProps> = ({
   return (
     <div className={classNames(
       "block-scroll-menu",
-      { [className]: className }
+      { [className as string]: className }
     )}>
       { children }
     </div>

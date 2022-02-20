@@ -44,13 +44,13 @@ export abstract class Block<T extends UnionBlockGenericType = UnionBlockGenericT
     contents
   }: BlockDataInitProps<T> | BlockData<T>) {
     this._index = index? index : 0;
-    this._parentId = parentId? parentId : "null",
-    this._position = position,
-    this._id = id,
-    this._type = type,
-    this._styleType = styleType,
-    this._contents = contents,
-    this._styles = styles
+    this._parentId = parentId? parentId : "null";
+    this._position = position;
+    this._id = id;
+    this._type = type;
+    this._styleType = styleType;
+    this._contents = contents;
+    this._styles = styles;
   }
 
   get index(): number {

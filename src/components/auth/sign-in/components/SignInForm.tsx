@@ -9,7 +9,7 @@ import { ApiErrorType } from '../../../../utils/api-utils';
 interface SignInFormProps {
   onSubmit: React.FormEventHandler<HTMLFormElement>;
   inputProps: InputPropsType[];
-  error: ApiErrorType;
+  error: ApiErrorType | null;
   errorEmail: boolean;
   errorPwd: boolean;
 }

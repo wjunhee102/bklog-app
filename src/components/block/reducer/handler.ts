@@ -7,21 +7,18 @@ import { StagedBlockData, TextGenericType, UnionBlock, UnionTextBlock } from "..
 import { HistoryBlockToken } from "../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../entities/modify/block/ModifyBlockToken";
 import { ModifyPageDataToken } from "../entities/modify/page/ ModifyPageDataToken";
-import { PageInfo, PageInfoProps } from "../entities/modify/type";
 import { BlockService } from "../service/block/BlockService";
 import { HistoryBlockService } from "../service/modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../service/modify/block/ModifyBlockService";
+import { ModifyPageService } from "../service/modify/page/ModifyPageService";
 import { HistoryBlockData } from "../service/modify/type";
 import { arrayPush, updateObject } from "../utils";
 import { 
   BlockState, 
   ActionHandlers, 
   createClearStatePart, 
-  updateModifyData, 
-  tempDataPush, 
   addBlock, 
-  deleteBlock, 
-  removeBlockInList, 
+  deleteBlock,
   changeTextStyle,
   switchBlock,
   BlockStateProps,
@@ -66,7 +63,6 @@ import {
   editPageTitle,
   INIT_PAGE_TITLE,
   EDIT_PAGE_TITLE,
-  revertBlockState,
   clearStateItem,
   CLEAR_STATE_ITEM,
   editPageInfo,
@@ -79,11 +75,10 @@ import {
   CHANGE_BLOCK_TYPE,
   addTitleBlock,
   deleteTitleBlock,
-  TextContentsTypeList,
   DELETE_TITLE_BLOCK,
   editBlock,
   EDIT_BLOCK,
-  StagedPageData
+  revertBlockState
 } from "./utils";
 
 function initBlockStateHandler(
@@ -121,9 +116,7 @@ function initPageTitleHandler(
   { payload }: ReturnType<typeof initPageTitle>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    pageInfo: updateObject<PageInfo, PageInfoProps>(state.pageInfo, {
-      title: payload
-    })
+    pageTitle: payload
   });
 }
 
@@ -174,21 +167,8 @@ function editPageTitleHandler(
   state: BlockState,
   { payload }: ReturnType<typeof editPageTitle>
 ): BlockState { 
-  const stagedPageData: StagedPageData | null = state.stagedPageData? 
-    updateObject<StagedPageData>(state.stagedPageData, {
-      payload: updateObject(state.stagedPageData.payload, {
-        title: payload
-      })
-    })
-    : {
-      id: state.pageInfo.id,
-      payload: {
-        title: payload
-      }
-    };
-
   return updateObject<BlockState, BlockStateProps>(state, {
-    stagedPageData
+    stagedPageTitle: payload
   });
 }
 
@@ -220,7 +200,7 @@ function editPageInfoHandler(
   { payload }: ReturnType<typeof editPageInfo>
 ): BlockState {
   return updateObject<BlockState, BlockStateProps>(state, {
-    stagedPageData: payload
+    stagedPageTitle: payload
   });
 }
 
@@ -271,19 +251,19 @@ function commitPageHandler(
   state: BlockState,
   action: ReturnType<typeof commitPage>
 ): BlockState {
-  if(!state.stagedPageData) return state;
+  if(!state.stagedPageTitle) return state;
 
-  const pageInfo: PageInfo = state.pageInfo;
+  const pageTitle: string | null = state.pageTitle;
+
 
   return updateObject<BlockState, BlockStateProps>(state, {
-    stagedPageData: null,
-    pageInfo: updateObject<PageInfo, StagedPageData>(pageInfo, state.stagedPageData),
-    modifyPageTokenList: [...state.modifyPageTokenList, new ModifyPageDataToken({
-      id: pageInfo.id,
-      payload: state.stagedPageData
-    })],
+    stagedPageTitle: null,
+    pageTitle: state.stagedPageTitle,
+    modifyPageTokenList: [...state.modifyPageTokenList, new ModifyPageDataToken(ModifyPageService.setUpdateModifyData({
+      title: state.stagedPageTitle
+    }))],
     historyBack: arrayPush(state.historyBack, {
-      pageInfo
+      pageTitle
     }),
     isFetch: false
   });
@@ -447,7 +427,7 @@ function addTitleBlockHandler(
 ): BlockState {
   const [ front, end ] = sliceText(text, cursorStart, cursorEnd);
 
-  const title: string = front;
+  const pageTitle: string = front;
 
   const newBlockData = TextBlock.createBlockData({
     position: "1",
@@ -471,22 +451,17 @@ function addTitleBlockHandler(
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
-    pageInfo: updateObject<PageInfo, PageInfoProps>(state.pageInfo, {
-      title
-    }),
-    stagedPageData: null,
+    pageTitle,
+    stagedPageTitle: null,
     editingBlockId: newBlock.id,
     historyBack: arrayPush(state.historyBack, {
       editingBlockId: state.editingBlockId,
-      pageInfo: state.pageInfo
+      pageTitle: state.pageTitle
     }),
     modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList],
-    modifyPageTokenList: [...state.modifyPageTokenList, new ModifyPageDataToken({
-      id: state.pageInfo.id,
-      payload: {
-        title
-      }
-    })],
+    modifyPageTokenList: [...state.modifyPageTokenList, new ModifyPageDataToken(ModifyPageService.setUpdateModifyData({
+      title: pageTitle
+    }))],
     isFetch: false
   })
 }
@@ -564,7 +539,7 @@ function deleteTextBlockHandler(
       historyBlockTokenList
     } = new BlockService(state.blockList).removeTextBlockInLIst(index, index - 1, innerHTML).getData();
 
-    newBlockList = blockList,
+    newBlockList = blockList;
     newModifyBlockTokenList = modifyBlockTokenList;
     historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
   } else {
@@ -574,7 +549,7 @@ function deleteTextBlockHandler(
       historyBlockTokenList
     } = new BlockService(state.blockList).removeBlockInList([state.blockList[index]]).getData();
 
-    newBlockList = blockList,
+    newBlockList = blockList;
     newModifyBlockTokenList = modifyBlockTokenList;
     historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
   }
@@ -611,23 +586,18 @@ function deleteTitleBlockHandler(
   const toBeDeletedBlockId = state.blockList[0].id;
   const toBeDeletedBlockType = state.blockList[0].type;
   
-  let pageInfo = state.pageInfo;
   let modifyPageTokenList: ModifyPageDataToken[] = [];
   let preBlockInfo = state.preBlockInfo;
+  let pageTitle: string | null = state.pageTitle;
 
   if(payload && state.blockList[0] instanceof BaseTextBlock === true) {
-    const title = `${state.pageInfo.title? state.pageInfo.title : ""}${payload}`;
+    const title = `${state.pageTitle? state.pageTitle : ""}${payload}`;
 
-    pageInfo = updateObject<PageInfo, PageInfoProps>(state.pageInfo, {
+    pageTitle = title;
+
+    modifyPageTokenList = [new ModifyPageDataToken(ModifyPageService.setUpdateModifyData({
       title
-    });
-
-    modifyPageTokenList = [new ModifyPageDataToken({
-      id: state.pageInfo.id,
-      payload: {
-        title
-      }
-    })]
+    }))];
 
     preBlockInfo = {
       type: toBeDeletedBlockType,
@@ -649,14 +619,14 @@ function deleteTitleBlockHandler(
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
     editingBlockId: "title",
-    pageInfo,
+    pageTitle,
     stagedTextBlockData: state.stagedTextBlockData && toBeDeletedBlockId === state.stagedTextBlockData.id? null : state.stagedTextBlockData,
     stagedBlockDataList: state.stagedBlockDataList[0]? state.stagedBlockDataList.filter(data => toBeDeletedBlockId !== data.id) : [],
     preBlockInfo,
-    stagedPageData: null,
+    stagedPageTitle: null,
     historyBack: arrayPush(state.historyBack, {
       editingBlockId: state.editingBlockId,
-      pageInfo: state.pageInfo,
+      pageTitle: state.pageTitle,
       ...historyBlockData
     }),
     historyFront: [],
