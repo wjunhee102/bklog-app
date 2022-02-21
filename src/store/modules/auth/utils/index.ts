@@ -3,8 +3,8 @@ import actions from './actions';
 import { ApiErrorType } from '../../../../utils/api-utils';
 
 export interface UserProfile {
-  penName: string;
-  id: string;
+  penName: string | null;
+  id: string | null;
   photo: string | null;
   coverImage: string | null;
   coverColor: string | null;
@@ -90,14 +90,8 @@ export interface AuthState {
   errorToggle: boolean;
 }
 
-export interface AuthStateProps {
-  loading?: boolean;
-  user?: UserInfo | null;
-  signUpSuccess?: boolean | null;
-  signUpState?: SignUpState;
-  error?: ApiErrorType;
-  waitingCount?: number;
-  errorToggle?: boolean;
+export type AuthStateProps = {
+  [Property in keyof AuthState]?: AuthState[Property]; 
 }
 
 export type ClearAuthStateType = 'loading'

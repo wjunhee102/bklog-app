@@ -17,7 +17,7 @@ function Profile() {
   return (
     <div className={`user-profile flex-none w-full whitespace-nowrap border-b mb-12`}>
       { 
-        pageEditor? 
+        (pageEditor && pageEditor.penName && pageEditor.photo && pageEditor.bio)? 
         <>
           <EditorBlock
             penName={pageEditor.penName}

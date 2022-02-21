@@ -38,7 +38,7 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
               <div className="ml-0 relative">
                 <div>
                   {
-                    user?
+                    user && user.penName?
                     <UserBlock
                       className={classNames({"hover:bg-purple-500 hover:text-white outline-none": onUserMenu})}
                       photo={user.photo}

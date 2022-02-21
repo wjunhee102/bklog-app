@@ -19,8 +19,6 @@ const Template: ComponentStory<typeof PageBtn> = (args: any) => (
 export const Primary = Template.bind({});
 Primary.args = {
   penName: "test",
-  id: "222",
-  title: "page titlesadasdadadadadasdasdasdasdasd",
   onUpdatePage: (data: ReqUpdatePageInfo) => { console.log(data) },
   onDeletePage: (pageId: string) => { console.log(pageId) },
   editable: true

@@ -1,6 +1,4 @@
 import { useEffect, useMemo } from "react";
-import useAuth from "../../../hooks/useAuth";
-import usePage from "../../../hooks/usePage";
 import useSocket from "../../../hooks/useSocket";
 import { UseBkPageTypes } from "../../../pages/bkpage/hooks/useBkPage";
 import { Page } from "../../../store/modules/page/utils";
@@ -17,10 +15,12 @@ export interface PageListTable {
 const LIST_NAME_TABLE = ["delete", "private", "follwing", "org", "following / org", "public"];
 
 function setPageListTable(acc: PageListTable, cur: Page) {
+  if(!LIST_NAME_TABLE[cur.disclosureScope]) return acc;
+
   if(acc.hasOwnProperty(LIST_NAME_TABLE[cur.disclosureScope])) {
-    acc[LIST_NAME_TABLE[cur.disclosureScope]].push(cur);
+    acc[LIST_NAME_TABLE[cur.disclosureScope as number] as keyof PageListTable]?.push(cur);
   } else {
-    acc[LIST_NAME_TABLE[cur.disclosureScope]] = [cur];
+    acc[LIST_NAME_TABLE[cur.disclosureScope as number] as keyof PageListTable] = [cur];
   }
 
   return acc;
@@ -53,7 +53,7 @@ function useSidebar({
     onCreatePage("page", 5);
   }
 
-  const socket = useSocket(SOCKET_URL);
+  const socket = useSocket(SOCKET_URL? SOCKET_URL : "http://localhost:4500/bklog");
 
   useEffect(() => {
     if(socket && pageState.updatedVersion) {

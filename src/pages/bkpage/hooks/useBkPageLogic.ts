@@ -20,7 +20,7 @@ function useBkPageLogic({
   useBklogHooks,
   navigate
 }: UseBkPageTypes) {
-  const [ errMessage, setErrMessage ] = useState<string>(null);
+  const [ errMessage, setErrMessage ] = useState<string | null>(null);
   const [ errorToggle, setErrToggle ] = useState<boolean>(false);
 
   const {

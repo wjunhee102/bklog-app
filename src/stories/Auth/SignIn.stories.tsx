@@ -48,7 +48,7 @@ export const Primary = Template.bind({});
 Primary.args = {
   handleSubmit: (e: any) => { e.preventDefault() },
   inputProps: inputProps(false, false),
-  error: false,
+  error: null,
   errorEmail: false,
   errorPwd: false
 }
@@ -58,7 +58,12 @@ export const Error = Template.bind({});
 Error.args = {
   handleSubmit: (e: any) => { e.preventDefault() },
   inputProps: inputProps(true, true),
-  error: true,
+  error: {
+    type: "AUTH",
+    detail: "dsad",
+    message: "오류",
+    code: "022"
+  },
   errorEmail: true,
   errorPwd: true
 }

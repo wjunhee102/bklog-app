@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <nav className="sidebar">
           <EditorBlock bkPageHooks={bkPageHooks} />
           {
-            pageListTable?
+            pageListTable && pageState.pageEditor.penName?
             <PageList 
               penName={pageState.pageEditor.penName} 
               pageListTable={pageListTable} 

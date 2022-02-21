@@ -50,7 +50,7 @@ function clearAuthStateHandler(
   state: AuthState,
   { payload }: ReturnType<typeof clearAuthState>
 ) {
-  return updateObject<AuthState, AuthStateProps>(state, createClearStatePart(initialAuthState, payload));
+  return updateObject<AuthState, AuthStateProps>(state, createClearStatePart<AuthStateProps>(initialAuthState, payload));
 }
 
 function checkEmailUsedSuccessHandler(

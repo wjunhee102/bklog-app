@@ -14,7 +14,7 @@ import {
   RESIGNINUSER_ERROR
 } from './utils/index';
 import { ALL_RESET, createPromiseSaga } from '../../utils';
-import { ApiError } from '../../../utils/api-utils';
+import { ApiError, ApiErrorType } from '../../../utils/api-utils';
 
 function checkEmailUsed(email: string) {
   return authFetchGet("check-email", { email });
@@ -57,9 +57,9 @@ function* reissueTokenSaga({ payload }: any) {
       yield put({ type: payload.type, payload: payload.payload? payload.payload : undefined });
     }
 
-  } catch(error) {
+  } catch(error: any) {
     
-    if(error.type !== "System") {
+    if(error && error.type !== "System") {
       yield put({ type: ALL_RESET });
     } else {
       yield put({ type: RESIGNINUSER_ERROR, payload: new ApiError(error).get });

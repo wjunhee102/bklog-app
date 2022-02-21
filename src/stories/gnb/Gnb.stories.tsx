@@ -19,7 +19,8 @@ const dummyUseConnectStore = (
 ) => ({
   loading,
   user,
-  onSignOutUser: () => {}
+  onSignOutUser: () => {},
+  onAllReset: () => {}
 });
 
 const userInfo: UserInfo = {

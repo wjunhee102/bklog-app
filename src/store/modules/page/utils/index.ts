@@ -12,11 +12,8 @@ export interface Page {
   parentId: string | null;
 }
 
-export interface PageProps {
-  title?: string;
-  disclosureScope?: number;
-  emoji?: string | null;
-  parentId?: string | null;
+export type PageProps = {
+  [Property in keyof Page]?: Page[Property];
 }
 
 export interface ReqCreatePage {
@@ -67,17 +64,8 @@ export interface PageState {
   error: ApiErrorType | null;
 }
 
-export interface PageStateProps {
-  toggle?: boolean;
-  editToggle?: boolean;
-  loading?: boolean;
-  pageEditor?: UserProfile;
-  pageEditable?: boolean;
-  pageList?: Page[];
-  tempPageInfo?: PageProps | null;
-  updatingPageId?: string | null;
-  updatedVersion?: [string, string] | null;
-  error?: ApiErrorType | null;
+export type PageStateProps = {
+  [Property in keyof PageState]?: PageState[Property];
 }
 
 export interface ReqDeletePage {

@@ -17,7 +17,7 @@ function createPromiseSaga<T = any>(
       const data: T = yield call<any>(promiseCreator, action.payload);
 
       yield put({ type: SUCCESS, payload: data });
-    } catch(error) {
+    } catch(error: any) {
       if(error.type === "AUTH" && error.code === "001") {
         yield put({ type: REISSUETOKEN, payload: action });
       } else {

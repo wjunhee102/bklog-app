@@ -34,12 +34,12 @@ function useBkContainer({
 
   const { pageId } = useParams();
 
-  const pageInfo: PageInfoProps = useMemo(() => bklogState.pageInfo, [bklogState.pageInfo]);
+  const pageInfo: PageInfoProps | null = useMemo(() => bklogState.pageInfo, [bklogState.pageInfo]);
 
   useEffect(() => {
     onResetBklog();
-    onGetPage(pageId);
-    if(pageEditor) onGetPageList("id", pageEditor.id, user? {id: user.id} : undefined);
+    if(pageId) onGetPage(pageId);
+    if(pageEditor && pageEditor.id) onGetPageList("id", pageEditor.id, user && user.id? {id: user.id} : undefined);
   }, [pageId]);
 
 

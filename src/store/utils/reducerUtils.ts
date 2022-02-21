@@ -84,7 +84,7 @@ function createReducer<State, T extends Action>(
 function createClearStatePart<P extends object, T extends P = any>(initialState: T, key: string[]): P {
   return key.reduce((acc, cur) => {
     if(initialState.hasOwnProperty(cur)) {
-      acc[cur] = initialState[cur];
+      acc[cur as keyof P] = initialState[cur as keyof T] as never;
     }
     return acc;
   }, {} as P);

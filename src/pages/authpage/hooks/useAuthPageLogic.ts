@@ -6,7 +6,7 @@ function useAuthPageLogic({
   usePageHooks,
   navigate
 }: UseAuthPageTypes) {
-  const [ errMessage, setErrMessage ] = useState<string>(null); 
+  const [ errMessage, setErrMessage ] = useState<string | null>(null); 
 
   const {
     authState: { user, error, loading, errorToggle, signUpSuccess },  

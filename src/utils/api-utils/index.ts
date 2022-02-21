@@ -49,4 +49,4 @@ export const ApiError = api.ApiError;
 export const API_SERVER_URL = process.env.REACT_APP_API_URL;
 export const SOCKET_URL = process.env.REACT_APP_SOCKET_URL;
 
-export const BaseRestFetch = new Rest(API_SERVER_URL);
+export const BaseRestFetch = new Rest(API_SERVER_URL? API_SERVER_URL : "http://localhost:4500/v2");

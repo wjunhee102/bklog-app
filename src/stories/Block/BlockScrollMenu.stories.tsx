@@ -132,12 +132,12 @@ const Template: ComponentStory<typeof BlockScrollMenu> = (args: any) => (
   </BlockScrollMenu>
 );
 
-export const Primary = Template.bind({});
-Primary.args = {
-  menuList: [MenuList2, MenuList2]
-}
+// export const Primary = Template.bind({});
+// Primary.args = {
+//   menuList: [MenuList2, MenuList2]
+// }
 
-export const Color = Template.bind({});
-Color.args = {
-  menuList: ColorActionMenuList((value: string) => () => console.log(value))
-}
+// export const Color = Template.bind({});
+// Color.args = {
+//   menuList: ColorActionMenuList((value: string | null) => () => console.log(value))
+// }

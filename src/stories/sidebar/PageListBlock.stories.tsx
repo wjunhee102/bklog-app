@@ -26,22 +26,30 @@ Primary.args = {
     {
       title: "Page1",
       id: "1",
-      penName: "test"
+      disclosureScope: 5,
+      emoji: null,
+      parentId: null
     },
     {
       title: "Page2",
       id: "2",
-      penName: "test"
+      disclosureScope: 5,
+      emoji: null,
+      parentId: null
     },
     {
       title: "Page3",
       id: "3",
-      penName: "test"
+      disclosureScope: 5,
+      emoji: null,
+      parentId: null
     },
     {
       title: "Page4",
       id: "4",
-      penName: "test"
+      disclosureScope: 5,
+      emoji: null,
+      parentId: null
     }
   ]
 }

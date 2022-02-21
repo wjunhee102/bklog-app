@@ -101,7 +101,7 @@ function createPageSuccessHandler(
 ): PageState {
   const pageList = state.pageList.concat();
 
-  pageList.push(updateObject<Page, PageProps>(createPageInfo(payload), state.tempPageInfo));
+  if(state.tempPageInfo) pageList.push(updateObject<Page, PageProps>(createPageInfo(payload), state.tempPageInfo));
   
   pageList.sort((a, b) => {
     const titleA = a.title.toUpperCase();
@@ -174,9 +174,6 @@ function getPageListSuccessHandler(
   state: PageState,
   { payload: { pageInfoList, userProfile } }: ReturnType<typeof getPageListSuccess>
 ): PageState {
-
-  console.log("getPageList", pageInfoList, userProfile);
-
   return updateObject<PageState, PageStateProps>(state, {
     loading: false,
     pageList: pageInfoList,
@@ -209,13 +206,14 @@ function updatePageInfoSuccessHandler(
   state: PageState,
   { payload }: ReturnType<typeof updatePageInfoSuccess>
 ): PageState {
+  if(!state.updatingPageId || !state.tempPageInfo) return state;
   return updateObject<PageState, PageStateProps>(state, {
     updatedVersion: [state.updatingPageId, payload.pageVersion],
     updatingPageId: null,
     pageList: state.pageList.map(page => 
       page.id !== state.updatingPageId?
       page 
-      : updateObject<Page, PageProps>(page, state.tempPageInfo)
+      : updateObject<Page, PageProps>(page, state.tempPageInfo as PageProps)
     ),
     tempPageInfo: null
   });

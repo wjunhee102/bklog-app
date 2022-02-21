@@ -25,9 +25,7 @@ function useBkSwitch(type: GetPageListReqType, {
   } = useAuthHooks;
 
   useEffect(() => {
-    onGetPageList(type, userInfo, user? {
-      id: user.id
-    } : undefined);
+    if(userInfo) onGetPageList(type, userInfo, user && user.id? { id: user.id } : undefined);
   }, [type, userInfo, user]);
 
   useEffect(() => {
