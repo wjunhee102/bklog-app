@@ -475,7 +475,7 @@ function deleteBlockHandler(
 
     return state;
   }
-
+  
   const {
     blockList,
     modifyBlockTokenList,
@@ -485,7 +485,7 @@ function deleteBlockHandler(
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
   if(!historyBlockData) return state;
-
+  
   let editingBlockId: string | null;
 
   if(typeof nextEditInfo === "string") {
@@ -531,7 +531,7 @@ function deleteTextBlockHandler(
   let newBlockList: UnionBlock[];
   let newModifyBlockTokenList: ModifyBlockToken[];
   let historyBlockData: HistoryBlockData | null;
-  
+
   if(state.blockList[index - 1] instanceof BaseTextBlock === true && innerHTML) {
     const {
       blockList,

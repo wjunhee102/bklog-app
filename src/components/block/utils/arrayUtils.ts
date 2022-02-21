@@ -39,23 +39,13 @@ function equalsArray(aryA: any[], aryB: any[]): boolean {
   return targetBList.length? false : true;
 }
 
-
-// function arrayFindIndex(array: any[], factor: any[]): number {
-//   for(let i = 0; i < array.length; i++) {
-//     if(array[i][0] === factor[0]) {
-//       return i;
-//     }
-//   }
-//   return -1;
-// }
-
 function arrayFindIndex(ary: any[][], targetAry: any[]): number {
   
   const target = new Set(targetAry);
   const length = targetAry.length;
 
   for(let i = 0; i < ary.length; i++) {
-    if( ary.length === length 
+    if( ary[i].length === length 
       && ary[i].filter(val => target.has(val)).length === length ) return i;
   }
 

@@ -157,12 +157,10 @@ const TEST_BLOCK_2: UnionBlockData[] = [
   }
 ]
 
-
-
 test('create Block', () => {
   const test1 = new TextBlock(TEXT_BLOCK as TextBlockData);
   const test2 = new NumberedBlock(TEST_BLOCK_1[1] as TextBlockData);
-
+  console.log(test1.getTextContents);
   expect(test1.getBlockData().id).toEqual(TEXT_BLOCK.id);
   expect(test2).toBeInstanceOf(Block);
 })

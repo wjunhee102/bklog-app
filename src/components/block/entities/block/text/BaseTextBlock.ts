@@ -1,9 +1,8 @@
 import { Block } from "../abstract/Block";
 import { BlockFrame } from "../abstract/BlockFrame";
 import { BlockDataInitProps, TextBlockData, TextBlockDataProps, TextGenericType, TextRawBlockData } from "../type";
-import { createContentsElement, createContentsText } from "../../../utils";
 import { BlockMetaText } from "../type/types/text";
-import { parseHtmlContents } from "./utils";
+import { parseHtmlContents, createContentsElement, createContentsText } from "./utils";
 
 export class BaseTextBlock<Meta extends BlockMetaText = null> extends Block<TextGenericType, Meta> implements BlockFrame<TextGenericType> {
 

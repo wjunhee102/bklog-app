@@ -4,7 +4,7 @@ import { BaseTextBlock } from "../../entities/block/text/BaseTextBlock";
 import { changeStyleTextContents, mergeTextContents } from "../../entities/block/text/utils";
 import { BlockData, BlockDataInitProps, BlockType, RawBlockData, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
-import { BlockContentsText, OrderType, TextContentStyleType, TextContentType } from "../../entities/block/type/types/text";
+import { BlockContentsText, OrderType, TextContentStyleType } from "../../entities/block/type/types/text";
 import { Token } from "../../entities/block/utils/token";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
@@ -269,16 +269,17 @@ export class BlockService {
 
     const contents = BaseTextBlock.parseHtmlContents(innerHTML);
     const blockId = block.id;
-    const preContents: BlockContentsText = block.contents.map(content => content.concat()) as BlockContentsText;
-    const newContents = mergeTextContents(block.contents, contents);
+    const newContents = mergeTextContents(block.contents.map(content => content.concat()) as BlockContentsText, contents);
 
+    const preProps = block.updateBlock({
+      contents: newContents
+    });
+    console.log(preProps, newContents);
     this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockId, {
       contents: newContents
     })));
 
-    this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockId, {
-      contents: preContents
-    })));
+    this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockId, preProps)));
 
     return this.removeBlockInList([this.blockList[targetIndex]]);
   }

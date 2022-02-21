@@ -1,4 +1,3 @@
-import { TextBlockData } from "../../type";
 import {
   TextContentStyleType,
   TextContentType,
@@ -840,6 +839,67 @@ function mergeTextContents(
   return copyToBeMergedContents;
 }
 
+const FONT_WEIGHT_BOLD  = "font-weight: 700;" as const;
+const FONT_STYLE_ITALIC = "font-style: italic;" as const;
+const BORDER_BOTTOM     = "border-bottom: 0.05em solid;" as const;
+const COLOR             = "color:" as const;
+const BACKGROUND_C      = "background-color:" as const;
+
+function contentsElement(rawContents: TextContentType): string {
+  let text: string;
+  let className:string | null = null;
+  let styles:string | null = null;
+  let aTag: any;
+
+  if(rawContents.length === 2) {
+    rawContents[1].forEach((content:string[]) => {
+      switch(content[0]) {
+
+        case BOLD:
+          styles = styles? styles + ` ${FONT_WEIGHT_BOLD}` : FONT_WEIGHT_BOLD;
+          break;
+
+        case ITALY:
+          styles = styles? styles + ` ${FONT_STYLE_ITALIC}` : FONT_STYLE_ITALIC;
+          break;
+
+        case UNDERBAR:
+          styles = styles? styles + ` ${BORDER_BOTTOM}` : BORDER_BOTTOM;
+          break;
+
+        case FONT_COLOR:
+          styles = styles? styles + ` ${COLOR} ${content[1]};` : `${COLOR} ${content[1]};`;
+          break;
+
+        case BACKGROUND_COLOR:
+          styles = styles? styles + ` ${BACKGROUND_C} ${content[1]};` : `${BACKGROUND_C} ${content[1]};`;
+          break;
+          
+        case ANCHOR:
+          aTag = content[1];
+      }
+    })
+    text = `<span${className? ' class="'+ className + '"' : ""}${styles? ' style="' + styles + '"' : ""}>${rawContents[0]}</span>`
+
+    if(aTag) {
+      let preText = text;
+      text = `<a href="${aTag}">${preText}</a>`;
+    }
+  } else {
+    text = rawContents[0];
+  }
+
+  return text;
+}
+
+function createContentsElement(accumulator: string, rawContents: TextContentType): string {
+  return accumulator + contentsElement(rawContents);
+}
+
+function createContentsText(accumulator: string, rawContents: TextContentType): string {
+  return accumulator + rawContents[0];
+}
+
 const converter = {
   parseHtmlContents,
   addContentsStyle,
@@ -847,7 +907,10 @@ const converter = {
   changeStyleTextContents,
   sliceTextContents,
   sliceText,
-  mergeTextContents
+  mergeTextContents,
+  contentsElement,
+  createContentsElement,
+  createContentsText
 }
 
 export default converter;

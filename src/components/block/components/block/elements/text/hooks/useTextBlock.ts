@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
@@ -7,6 +7,7 @@ import useMoveCursorPoint from "../../../../../hooks/useCursorPointHandler";
 import useConvertToHTML from "../../../../../hooks/useCovertToHTML";
 import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
 import { UnionTextBlock } from "../../../../../entities/block/type";
+import useGetTextBlockContents from "../../../../../hooks/useGetTextBlockContents";
 
 function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
   
@@ -46,7 +47,7 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
     handleElementFocus 
   } = useElementFocus<HTMLDivElement>(blockContentsRef.current);
 
-  const contentsHTML = useConvertToHTML(block.contents);
+  const contentsHTML = useGetTextBlockContents(block);
 
   const {
     handleKeyDown,
@@ -64,14 +65,14 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
         setCursorStart(getSelectionStart(e.target));
         setCursorEnd(getSelectionEnd(e.target));
       },
-      "Enter": (e: any) => {
+      Enter: (e: any) => {
         e.preventDefault();
       },
-      "ArrowUp": (e: any) => {
+      ArrowUp: (e: any) => {
       },
-      "ArrowDown": (e: any) => {
+      ArrowDown: (e: any) => {
       },
-      "Backspace": (e: any) =>{
+      Backspace: (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
           onEditTextBlock(block.id, block.index, e.target.innerHTML);
         } 
@@ -83,7 +84,7 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
       }
     },
     keyPress: {
-      "Enter": (e: any) => {
+      Enter: (e: any) => {
         if(e.key === "Enter") {
           e.preventDefault();
           onAddTextBlock(
@@ -96,13 +97,13 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
       }
     },
     keyDown: {
-      "Backspace": (e: any) => {
+      Backspace: (e: any) => {
         const cursorStartPoint = getSelectionStart(e.target);
         const cursorEndPoint   = getSelectionEnd(e.target);
         
         setCursorStart(cursorStartPoint);
         setCursorEnd(cursorEndPoint);
-  
+        console.log("backspace")
         if(cursorStartPoint === 0 && cursorEndPoint === 0) {
           if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
             const nextEditIndex = block.index - 1;
@@ -115,7 +116,7 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
           
         }
       },
-      "ArrowUp": (e: any) => {
+      ArrowUp: (e: any) => {
         e.preventDefault();
         setCursorStart(0);
         setCursorEnd(0);
@@ -125,7 +126,7 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
           onChangeEditingId(block.index - 1);
         } 
       },
-      "ArrowDown": (e: any) => {
+      ArrowDown: (e: any) => {
         e.preventDefault();
         const contentsLength = e.target.innerText.length;
         setCursorStart(contentsLength);
@@ -175,6 +176,7 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
   }, []);
 
   const isFocus = () => {
+    console.log("styleToggle", styleToggle);
     if(!styleToggle) {
       handleMoveToEndPoint();
     } else if((cursorStart | cursorEnd)) {

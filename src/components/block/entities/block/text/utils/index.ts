@@ -7,3 +7,6 @@ export const changeStyleTextContents = converter.changeStyleTextContents;
 export const sliceTextContents       = converter.sliceTextContents;
 export const sliceText               = converter.sliceText;
 export const mergeTextContents       = converter.mergeTextContents;
+export const contentsElement         = converter.contentsElement;
+export const createContentsElement   = converter.createContentsElement;
+export const createContentsText      = converter.createContentsText;

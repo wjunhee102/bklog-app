@@ -57,30 +57,26 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
      onResetEditorState(false);
    }, []);
 
-   const handleKeyDown = useKeyboardActionHandler({
-       startAction: (e: any) => {
-        onChangeEditorState('isPress', true);
-
-        if((e.metaKey || e.ctrlKey) && !stagedTextBlockData) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      ["z"]: (e: any) => {
-        e.preventDefault();
-        onRevertBlock();
-      },
-      ["y"]: (e: any) =>  {
-        e.preventDefault();
-        onRevertBlock(true);
-      }
-   }, [stagedTextBlockData, tempClipData]);
+  const handleKeyDown = useKeyboardActionHandler({
+    startAction: (e: any) => {
+      onChangeEditorState('isPress', true);
+      if((e.metaKey || e.ctrlKey) && !stagedTextBlockData) return false;
+      return true;
+    },
+    z: (e: any) => {
+      e.preventDefault();
+      onRevertBlock();
+    },
+    y: (e: any) =>  {
+      e.preventDefault();
+      onRevertBlock(true);
+    }
+  }, [stagedTextBlockData, tempClipData]);
 
   const handleKeyUp = useKeyboardActionHandler({
     startAction: () => {
       onChangeEditorState('isPress', false);
-      return true;
+      return false;
     }
   }, []);
 

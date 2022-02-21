@@ -20,20 +20,20 @@ function useCursorPointHandler<T extends HTMLElement = HTMLDivElement>({
 
   const cursorHandlers = useMemo(() => ({
     handleSetCursorPoint: () => {
-      if(checkInstanceOfHTMLElement(element)) {
-        const getStartPosition = getSelectionStart(element);
-        const getEndPosition = getSelectionEnd(element);
-        setCursorStart(getStartPosition);
-        setCursorEnd(getEndPosition);
-      }
+      if(!checkInstanceOfHTMLElement(element)) return;
+
+      const getStartPosition = getSelectionStart(element);
+      const getEndPosition = getSelectionEnd(element);
+      setCursorStart(getStartPosition);
+      setCursorEnd(getEndPosition);
     },
     handleMoveToWantPoint: (start: number, end: number) => {
-      if(checkInstanceOfHTMLElement(element)) {
-        setSelectionRange(element, start, end);
-      }
+      if(!checkInstanceOfHTMLElement(element)) return;
+      
+      setSelectionRange(element, start, end);
     },
     handleMoveToEndPoint: () => {
-    if(!element || checkInstanceOfHTMLElement(element)) return false
+    if(!element || !checkInstanceOfHTMLElement(element)) return;
       const length = element.innerText.length;
       setSelectionRange(element, length, length);
       setCursorStart(length);
@@ -42,9 +42,9 @@ function useCursorPointHandler<T extends HTMLElement = HTMLDivElement>({
   }), [element]);
 
   const handleRefreshCursorPoint = useCallback(() => {
-    if(checkInstanceOfHTMLElement(element)) {
-      setSelectionRange(element, cursorStart, cursorEnd? cursorEnd : cursorStart);
-    }
+    if(!checkInstanceOfHTMLElement(element)) return;
+    
+    setSelectionRange(element, cursorStart, cursorEnd? cursorEnd : cursorStart);
   }, [element, cursorStart, cursorEnd]);
 
   return {

@@ -379,6 +379,7 @@ test("add block in list", () => {
   expect(blockService.getBlockList().map(block => block.position).join(',')).toEqual("1,1-1,2,3");
 
   new BlockService(blockList2).sort();
+  
   const { 
     blockList, 
     modifyBlockTokenList,

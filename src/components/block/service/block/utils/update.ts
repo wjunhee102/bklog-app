@@ -1,5 +1,5 @@
 import { checkKindOfBlockType, createBlock, ResBlockService } from ".";
-import { BlockType, StagedBlockData, UnionBlock } from "../../../entities/block/type";
+import { BlockDataProps, BlockType, StagedBlockData, UnionBlock, UnionBlockGenericType } from "../../../entities/block/type";
 import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
 import { HistoryBlockService } from "../../modify/block/HistoryBlockService";
@@ -13,19 +13,29 @@ function updateBlockListStagedProperty(
   const modifyBlockTokenList: ModifyBlockToken[] = [];
   const historyBlockTokenList: HistoryBlockToken[] = [];
 
-  for(const { id, index, styleType, styles, contents } of stagedBlockDataList) {
+  for(const stagedBlockData of stagedBlockDataList) {
+
+    const id = stagedBlockData.id;
+    const index = stagedBlockData.index;
 
     if(blockList[index] && id === blockList[index].id) {
-      const [ newBlock, preProps ] = blockList[index].regeneration({ styleType, styles, contents });
+
+      const props: BlockDataProps<UnionBlockGenericType> = {
+        ...stagedBlockData
+      }
+
+      props.id = undefined;
+      props.index = undefined;
+      delete props.id;
+      delete props.index;
+
+      const [ newBlock, preProps ] = blockList[index].regeneration(props as StagedBlockData);
 
       blockList[index] = newBlock;
 
       historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(newBlock.id, preProps)));
-      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newBlock.id, {
-        styleType,
-        styles,
-        contents
-      })));
+      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newBlock.id, props)));
+      
     }
 
   }
