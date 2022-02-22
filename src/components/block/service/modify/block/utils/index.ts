@@ -87,11 +87,11 @@ function modifyDataReducer(length: number = 6) {
     switch (cur.command) {
       case COMMAND_CREATE:
         const rawData = cur.getRawData();
-        if(Object.keys(rawData.payload).length === length) acc.create?.push(rawData);
+        if(Object.keys(rawData.payload).length === length) acc.create?.push(rawData as any);
         break;
   
       case COMMAND_UPDATE:
-        acc.update?.push(cur.getRawData());
+        acc.update?.push(cur.getRawData() as any);
         break;
   
       case COMMAND_DELETE:

@@ -64,10 +64,10 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
   });
 
   if(preProps.position !== "1") {
-    modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(firstBlock.id, {
+    modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(firstBlock.id, firstBlock.type, {
       position: "1"
     })));
-    historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(firstBlock.id, preProps)));
+    historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(firstBlock.id, firstBlock.type, preProps)));
   }
 
   for(let index = 1; index < blockListLength; index++) {
@@ -104,11 +104,11 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
 
     if(position !== block.position) {
 
-      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(block.id, {
+      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(block.id, block.type,{
         position: block.position
       })));
 
-      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, {
+      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, block.type, {
         position
       })));
       
@@ -157,7 +157,7 @@ function resetToTargetPosition(
 
   historyBlockTokenList.push(
     new HistoryBlockToken(
-      HistoryBlockService.setUpdateModifyData(blockList[0].id, firstPreProps)
+      HistoryBlockService.setUpdateModifyData(blockList[0].id, blockList[0].type, firstPreProps)
   ));
 
   stack.push([blockList[0].position.split(/-/).length, blockList[0].id]);
@@ -195,7 +195,7 @@ function resetToTargetPosition(
 
     historyBlockTokenList.push(
       new HistoryBlockToken(
-        HistoryBlockService.setUpdateModifyData(blockList[index].id, preProps)
+        HistoryBlockService.setUpdateModifyData(blockList[index].id, blockList[index].type, preProps)
     ));
 
   }

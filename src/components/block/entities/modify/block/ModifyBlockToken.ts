@@ -4,8 +4,8 @@ import { ModifyBlockDataProps, ModifyBlockGenericType, ModifyData, RawModifyData
 
 export class ModifyBlockToken<T extends UnionBlockGenericType = UnionBlockGenericType> extends ModifyDataToken<ModifyBlockGenericType<T>> {
 
-  constructor({ id, command, payload }: ModifyData<ModifyBlockGenericType<T>> | ModifyBlockDataProps<T>) {
-    super({ id, set: SET_BLOCK, command, payload });
+  constructor({ id, type, command, payload }: ModifyData<ModifyBlockGenericType<T>> | ModifyBlockDataProps<T>) {
+    super({ id, type, set: SET_BLOCK, command, payload });
   }
 
   public getRawData(): RawModifyData<ModifyBlockGenericType<T>> {
@@ -16,6 +16,7 @@ export class ModifyBlockToken<T extends UnionBlockGenericType = UnionBlockGeneri
 
     return {
       id: this.id,
+      type: this.type,
       payload
     }
   }

@@ -2,6 +2,7 @@ import { ModifyData, UnionModifyGenericType } from "./type";
 
 export class ModifyDataToken<T extends UnionModifyGenericType> {
   private _id: string = "";
+  private _type: T["type"] = "";
   private _command: T["command"] = "update";
   private _set: T["set"] = "block";
   private _payload: T["payload"] = {}; 
@@ -11,31 +12,36 @@ export class ModifyDataToken<T extends UnionModifyGenericType> {
     this.init(props);
   }
 
-  private init({ id, command, set, payload }: ModifyData<T>) {
+  private init({ id, type, command, set, payload }: ModifyData<T>) {
     this._id = id;
+    this._type = type;
     this._command = command;
     this._set = set;
     this._payload = payload;
     this._timestamp = new Date().getTime();
   }
 
-  get id(): string {
+  get id() {
     return this._id;
   }
 
-  get command(): T["command"] {
+  get type() {
+    return this._type;
+  }
+
+  get command() {
     return this._command;
   }
 
-  get set(): T["set"] {
+  get set() {
     return this._set;
   }
 
-  get payload(): T["payload"] {
+  get payload() {
     return this._payload;
   }
 
-  get timestamp(): number {
+  get timestamp() {
     return this._timestamp;
   }
 
@@ -61,6 +67,7 @@ export class ModifyDataToken<T extends UnionModifyGenericType> {
   public getData(): ModifyData<T> {
     return {
       id: this._id,
+      type: this._type,
       command: this._command,
       set: this._set,
       payload: this._payload

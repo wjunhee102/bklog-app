@@ -33,8 +33,8 @@ function updateBlockListStagedProperty(
 
       blockList[index] = newBlock;
 
-      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(newBlock.id, preProps)));
-      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newBlock.id, props)));
+      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(newBlock.id, newBlock.type, preProps)));
+      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newBlock.id, newBlock.type, props)));
       
     }
 
@@ -83,7 +83,7 @@ function removeBlockList(
   for(const block of removedBlockList) {
     const position = block.position;
 
-    modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(block.id)));
+    modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(block.id, block.type)));
     block.updateBlock({ position: "null" });
 
     for(let i = block.index + 1; i < blockLength; i++) {
@@ -99,8 +99,8 @@ function removeBlockList(
         position: newPosition
       });
 
-      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[i].id, preProps)))
-      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockList[i].id, {
+      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[i].id, blockList[i].type, preProps)))
+      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockList[i].id, blockList[i].type, {
         position: newPosition
       })));
     }
@@ -133,10 +133,10 @@ function changeBlockType(type: BlockType, block: UnionBlock): {
 
   return {
     block: newBlock,
-    modifyBlockToken: new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, {
+    modifyBlockToken: new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, type,{
       type
     })),
-    historyBlockToken: new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(block.id, {
+    historyBlockToken: new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(block.id, block.type,{
       type: block.type
     }))
   };

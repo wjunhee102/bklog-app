@@ -15,12 +15,14 @@ export class ModifyService {
   
   static createModifyData<P extends UnionModifyGenericType>(
     id: string,
+    type: string,
     command: P["command"],
     set: P["set"],
     payload: P["payload"]
   ): ModifyData<P> {
     return {
       id,
+      type,
       command,
       set,
       payload

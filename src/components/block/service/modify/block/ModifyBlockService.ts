@@ -1,6 +1,6 @@
-import { UnionBlockGenericType, RawBlockData, RawBlockDataProps, UnionRawBlockData, BlockDataProps, BlockData, UnionBlockData } from "../../../entities/block/type";
+import { UnionBlockGenericType, RawBlockData, RawBlockDataProps, UnionRawBlockData, BlockDataProps, BlockData, UnionBlockData, BlockType } from "../../../entities/block/type";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
-import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockGenericType, ModifyData, SET_BLOCK } from "../../../entities/modify/type";
+import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockDataProps, ModifyBlockGenericType, ModifyData, SET_BLOCK } from "../../../entities/modify/type";
 import { ModifyTokenService } from "../abstract/ModifyTokenService";
 import { ModifyService } from "../ModifyService";
 import { ModifyBlockDataGeneticType } from "../type";
@@ -13,18 +13,21 @@ export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> 
   static setCreateModifyData<G extends UnionBlockGenericType = UnionBlockGenericType>(
     blockData: BlockData<G> | RawBlockData<G> | UnionBlockData | UnionRawBlockData
   ): ModifyData<ModifyBlockGenericType<G>> {
-    return ModifyService.createModifyData<ModifyBlockGenericType<G>>(blockData.id, COMMAND_CREATE, SET_BLOCK, convertRawBlockData(blockData));
+    return ModifyService.createModifyData<ModifyBlockGenericType<G>>(blockData.id, blockData.type, COMMAND_CREATE, SET_BLOCK, convertRawBlockData(blockData) as RawBlockData<G>);
   }
   
   static setUpdateModifyData<G extends UnionBlockGenericType = UnionBlockGenericType>(
     blockId: string,
+    type: G["type"],
     blockDataProps: BlockDataProps<G> | RawBlockDataProps<G>
   ): ModifyData<ModifyBlockGenericType<G>> {
-    return ModifyService.createModifyData(blockId, COMMAND_UPDATE, SET_BLOCK, convertRawBlockData(blockDataProps, true));
+    return ModifyService.createModifyData(blockId, type, COMMAND_UPDATE, SET_BLOCK, convertRawBlockData(blockDataProps, true));
   }
 
-  static setDeleteModifyData(blockId: string): ModifyData<ModifyBlockGenericType<any>> {
-    return ModifyService.createModifyData(blockId, COMMAND_DELETE, SET_BLOCK, {});
+  static setDeleteModifyData(blockId: string, type: BlockType): ModifyData<ModifyBlockGenericType<any>> {
+    return ModifyService.createModifyData(blockId, type, COMMAND_DELETE, SET_BLOCK, {
+      type
+    });
   }
 
   private init(tokenList: ModifyBlockToken[]) {

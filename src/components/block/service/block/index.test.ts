@@ -519,6 +519,7 @@ test('update block list', () => {
     update: [
       {
         id: "4T1-1",
+        type: "text",
         payload: {
           contents: [["반갑습니다."]]
         }

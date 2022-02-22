@@ -5,13 +5,14 @@ import { HistoryBlockDataProps, HistoryBlockGenericType, ModifyData, RawModifyDa
 
 export class HistoryBlockToken<T extends UnionBlockGenericType = UnionBlockGenericType> extends ModifyDataToken<HistoryBlockGenericType<T>> {
   
-  constructor({ id, command, payload }: ModifyData<HistoryBlockGenericType<T>> | HistoryBlockDataProps<T>) {
-    super({ id, set: SET_BLOCK, command, payload });
+  constructor({ id, type, command, payload }: ModifyData<HistoryBlockGenericType<T>> | HistoryBlockDataProps<T>) {
+    super({ id, type, set: SET_BLOCK, command, payload });
   }
 
   public getRawData(): RawModifyData<HistoryBlockGenericType<T>> {
     return {
       id: this.id,
+      type: this.type,
       payload: this.payload
     }
   }

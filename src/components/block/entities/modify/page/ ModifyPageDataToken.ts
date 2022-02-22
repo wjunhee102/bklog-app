@@ -4,7 +4,7 @@ import { ModifyData, COMMAND_UPDATE, ModifyPageDataProps, ModifyPageGenericType,
 export class ModifyPageDataToken extends ModifyDataToken<ModifyPageGenericType> {
 
   constructor({ id, payload }: ModifyData<ModifyPageGenericType> | ModifyPageDataProps) {
-    super({ id, payload, set: SET_PAGE, command: COMMAND_UPDATE });
+    super({ id, payload, type: "page", set: SET_PAGE, command: COMMAND_UPDATE });
   }
 
 }
