@@ -1,8 +1,8 @@
-import React from 'react';
-import { BLOCK_BULLETED, BLOCK_NUMBERED } from '../../../../../entities/block/type/types/text';
-import { BlockComponentProps } from '../../../BlockComponent';
-import BulltedTag from './BulletedTag';
-import NumberedTag from './NumberedTag';
+import React from "react";
+import { BLOCK_BULLETED, BLOCK_NUMBERED } from "../../../../../entities/block/type/types/text";
+import { BlockComponentProps } from "../../../BlockComponent";
+import BulltedTag from "./BulletedTag";
+import NumberedTag from "./NumberedTag";
 
 export interface ListTagProps extends BlockComponentProps {
   parentTagType?: number;

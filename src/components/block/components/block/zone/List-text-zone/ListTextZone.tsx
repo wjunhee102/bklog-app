@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
-import classNames from 'classnames';
-import { BlockComponentProps, ParentInfoType } from '../../BlockComponent';
-import useBlockBase from '../hooks/useBlockBase';
-import BlockContentsArea from '../common/BlockContentsArea';
-import ChildrenBlock from '../../ChildrenBlock';
-import BlockSelectArea from '../common/block-select-area';
-import './SortedTextZone.scss';
-import ListTag from './elements/ListTag';
+import React, { useEffect, useState } from "react";
+import classNames from "classnames";
+import { BlockComponentProps, ParentInfoType } from "../../BlockComponent";
+import useBlockBase from "../hooks/useBlockBase";
+import BlockContentsArea from "../common/BlockContentsArea";
+import ChildrenBlock from "../../ChildrenBlock";
+import BlockSelectArea from "../common/block-select-area";
+import ListTag from "./elements/ListTag";
+import { BLOCK_NUMBERED } from "../../../../entities/block/type/types/text";
+import { NumberedBlock } from "../../../../entities/block/text/NumberedBlock";
+
 
 // numbered, bulleted, todo
 
@@ -44,6 +46,18 @@ function covertSortType(sortType: any, index?: number) {
   return 
 }
 
+function getFrontPosition(position: string): string {
+  const positionArg = position.split('-');
+  const index = positionArg.length - 1;
+  const lastPosition = +positionArg[index];
+
+  if(lastPosition < 2) return "null";
+
+  positionArg[index] = `${lastPosition - 1}`;    
+
+  return positionArg.join('-');
+}
+
 // function setSortText(type: string, parentSortType: number | null) {
 
 // }
@@ -53,14 +67,19 @@ export interface ListTextProps {
   setSelect: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface ListTextZoneProps extends BlockComponentProps {
+interface ListTextZoneProps extends BlockComponentProps<NumberedBlock> {
   children: (props: ListTextProps) => React.ReactNode;
-  parentInfo?: ParentInfoType | undefined;
 }
 
 const ListTextZone: React.FC<ListTextZoneProps> = ({
   block, useBlockReducer, parentInfo, children
 }) => {
+
+  const {
+    state: {
+      blockList
+    }
+  } = useBlockReducer;
 
   const {
     parentSelected,
@@ -72,6 +91,25 @@ const ListTextZone: React.FC<ListTextZoneProps> = ({
 
   const parentTagType = (parentInfo && parentInfo.type === block.type && parentInfo.tagTypeIdx)?  
     parentInfo.tagTypeIdx : undefined;
+
+  useEffect(() => {
+    const inFrontOfBlock = blockList[block.index - 1];
+
+    if(inFrontOfBlock
+      && inFrontOfBlock instanceof NumberedBlock 
+      && inFrontOfBlock.position === getFrontPosition(block.position)
+      && inFrontOfBlock.meta?.order) {
+      block.setOrder(inFrontOfBlock.meta.order + 1);
+
+      return;
+    }
+
+    block.setOrder(1);
+  }, [blockList[block.index - 1]?.meta]);
+
+  useEffect(() => {
+    console.log(block.position, block.meta);
+  }, [block.meta]);
 
   return (
     <div

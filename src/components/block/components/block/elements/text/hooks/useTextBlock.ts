@@ -1,28 +1,26 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UseBlockType } from "../../../../../hooks/useBlock";
 import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
 import { BaseProps } from "../../../zone/base/BaseBlockZone";
-import useElementFocus from "../../../../../hooks/useElementFocus";
-import useMoveCursorPoint from "../../../../../hooks/useCursorPointHandler";
-import useConvertToHTML from "../../../../../hooks/useCovertToHTML";
 import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
 import { UnionTextBlock } from "../../../../../entities/block/type";
-import useGetTextBlockContents from "../../../../../hooks/useGetTextBlockContents";
+import { BLOCK_BULLETED, BLOCK_NUMBERED } from "../../../../../entities/block/type/types/text";
+import useBaseTextBlockUtils from "../../../../../hooks/useBaseTextBlockUtils";
 
-function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zoneProps: BaseProps) {
-  
+// const BulletList = ['.', '-'];
+interface UseTextBlockProps {
+  block: UnionTextBlock;
+  useBlockReducer: UseBlockType;
+  zoneProps: BaseProps;
+}
+
+function useTextBlock(props: UseTextBlockProps) {
+  const { block, useBlockReducer } = props;
+
   const {
     cursorStart,
     cursorEnd,
     setCursorStart,
-    setCursorEnd,
-    state: {
-      isGrab,
-      isHoldingDown,
-      isCliping,
-      preBlockInfo,
-      editingBlockId,
-    },    
+    setCursorEnd, 
     onChangeEditingId,
     onEditTextBlock,
     onAddTextBlock,
@@ -30,24 +28,21 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
     onDeleteBlock,
     onDeleteTextBlock,
     onDeleleTitleBlock,
+    onChangeBlockType,
     onClearStateItem
   } = useBlockReducer;
-
+  
   const {
-    selected
-  } = zoneProps;
-
-  const [ editable, setEditable ]       = useState<boolean>(true);
-  const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
-
-  const blockContentsRef = useRef<HTMLDivElement>(null);
-
-  const { 
-    handleFocus,
-    handleElementFocus 
-  } = useElementFocus<HTMLDivElement>(blockContentsRef.current);
-
-  const contentsHTML = useGetTextBlockContents(block);
+    styleToggle,
+    blockContentsRef,
+    contentsHTML,
+    handleClick,
+    handleMouseUp,
+    handleBlur,
+    isFocus,
+    handleElementFocus,
+    editable
+  } = useBaseTextBlockUtils(props);
 
   const {
     handleKeyDown,
@@ -78,9 +73,22 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
         } 
       },
       " ": (e: any) => {
-        setCursorEnd(0);
-        onEditTextBlock(block.id, block.index, e.target.innerHTML);
-        onCommitTextBlock();
+        if((cursorStart && cursorEnd) === 1) {
+          onClearStateItem("stagedTextBlockData");
+          switch(e.target.innerText[0]) {
+            case "1":
+              onChangeBlockType(block.index, BLOCK_NUMBERED);
+              break;
+            case "-":
+              onChangeBlockType(block.index, BLOCK_BULLETED);
+              break;
+          }
+          
+        } else {
+          setCursorEnd(0);
+          onEditTextBlock(block.id, block.index, e.target.innerHTML);
+          onCommitTextBlock();
+        }
       }
     },
     keyPress: {
@@ -140,102 +148,6 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
     }
   }, [block, cursorStart, cursorEnd]);
 
-  const {
-    handleMoveToWantPoint,
-    handleSetCursorPoint,
-    handleMoveToEndPoint,
-    handleRefreshCursorPoint
-  } = useMoveCursorPoint<HTMLDivElement>({
-    element: blockContentsRef.current,
-    setCursorStart,
-    setCursorEnd,
-    cursorStart,
-    cursorEnd
-  });
-
-  const handleClick = useCallback((e: any) => {
-    const parentNode = e.target.parentNode;
-
-    if(parentNode.tagName === "A") {
-      window.open(parentNode.href);
-    }
-
-  }, []);
-
-  const handleMouseUp = () => {
-    handleSetCursorPoint();
-  };
-
-  const handleBlur = useCallback((e: any) => {
-    if(e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) {
-      setCursorStart(0);
-      setCursorEnd(0);
-      onCommitTextBlock();
-      onChangeEditingId();
-    }
-  }, []);
-
-  const isFocus = () => {
-    console.log("styleToggle", styleToggle);
-    if(!styleToggle) {
-      handleMoveToEndPoint();
-    } else if((cursorStart | cursorEnd)) {
-      handleRefreshCursorPoint();
-    } 
-
-    if(block.id !== editingBlockId) onChangeEditingId(block.id);
-  }
-
-  useEffect(() => {
-    const focused = document.activeElement;
-    
-    if((cursorStart | cursorEnd) && blockContentsRef.current && focused === blockContentsRef.current) {
-      handleRefreshCursorPoint();
-    }
-
-  }, [block.contents]);
-
-  useEffect(() => {
-    if(editingBlockId === block.id) {
-      if(blockContentsRef.current) {
-        handleElementFocus();
-
-        if(preBlockInfo) {
-          if(preBlockInfo.type === "text") {
-            if(preBlockInfo.payload[0] === "delete") {
-              const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
-              handleMoveToWantPoint(length, length);
-            }
-            onClearStateItem("preBlockInfo");
-          }
-        }
-
-      }
-    } else {
-      setStyleToggle(false);
-    }
-  }, [editingBlockId]);
-
-  useEffect(() => {
-    if(editingBlockId === block.id) handleFocus(blockContentsRef.current);
-  }, []);
-
-  useEffect(() => {
-    if(cursorEnd - cursorStart >= 1 && block.id === editingBlockId) {
-      setStyleToggle(true);
-    } else {
-      setStyleToggle(false);
-    }
-  }, [cursorStart, cursorEnd]);
-
-  useEffect(() => {
-    if(isGrab) {
-      setEditable(!isGrab);
-    } else {
-      setEditable(!selected);
-    }
-  }, [selected]);
-
   return {
     cursorStart,
     cursorEnd,
@@ -250,8 +162,7 @@ function useTextBlock(block: UnionTextBlock, useBlockReducer: UseBlockType, zone
     handleBlur,
     isFocus,
     handleElementFocus,
-    editable,
-    setEditable
+    editable
   };
 }
 
