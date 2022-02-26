@@ -210,7 +210,6 @@ function commitTextBlockHandler(
   action: ReturnType<typeof commitTextBlock>
 ): BlockState {
   if(!state.stagedBlockDataList[0] && !state.stagedTextBlockData) return state;
-
   const stagedBlockDataList = state.stagedBlockDataList.concat();
 
   if(state.stagedTextBlockData) {
@@ -367,12 +366,13 @@ function addTextBlockHandler(
 
   const [ newTargetBlock , preProps ] = targetBlock.regeneration({ contents: front });
 
-  const historyBlockToken = new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(targetBlock.id, preProps));
-  const modifyBlockToken = new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newTargetBlock.id, {
+  const historyBlockToken = new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(targetBlock.id, targetBlock.type, preProps));
+  const modifyBlockToken = new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newTargetBlock.id, newTargetBlock.type, {
     contents: front
   }));
 
   const newBlockData = Block.createBlockData(type? type : targetBlock.type, {
+    type: type? type : targetBlock.type,
     position: targetBlock.position,
     styleType: styleType? styleType : targetBlock.styleType,
     contents: back
@@ -443,7 +443,7 @@ function addTitleBlockHandler(
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
-  } = new BlockService(state.blockList).addBlockInList([ newBlock ], "1").getData();
+  } = new BlockService(state.blockList).addBlockInList([ newBlock ], "1", true).getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
@@ -833,18 +833,36 @@ function changeBlockTypeHandler(
   }}: ReturnType<typeof changeBlockType>
 ): BlockState {
 
-   const {
+  const stagedBlockDataList = state.stagedBlockDataList.concat();
+
+  if(state.stagedTextBlockData) {
+    const { id, index, contents } = state.stagedTextBlockData;
+
+    stagedBlockDataList.push({
+      id,
+      index,
+      contents: BaseTextBlock.parseHtmlContents(contents)
+    } as StagedBlockData<TextGenericType>);
+  }
+    
+  const {
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
-   } = new BlockService(state.blockList).changeBlockType(blockInfo, type).getData();
+   } = new BlockService(state.blockList).updateBlockListStagedProperty(stagedBlockDataList).changeBlockType(blockInfo, type).getData();
 
    const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
    if(!historyBlockData) return state;
- 
+
+   const index: number = typeof blockInfo === "number"? blockInfo : blockList.findIndex(block => block.id === blockInfo);
+   const editingBlockId: string | null = index !== -1? blockList[index].id : null;
+
    return updateObject<BlockState, BlockStateProps>(state, {
      blockList,
+     editingBlockId,
+     stagedTextBlockData: null,
+     stagedBlockDataList: [],
      isFetch: true,
      historyBack: arrayPush(state.historyBack, {
        editingBlockId: state.editingBlockId,
@@ -900,6 +918,7 @@ function clearStateItemHandler(
   state: BlockState,
   { payload }: ReturnType<typeof clearStateItem>
 ): BlockState {
+  console.log(createClearStatePart<BlockStateProps>(initialBlockState, payload));
   return updateObject<BlockState, BlockStateProps>(state, createClearStatePart<BlockStateProps>(initialBlockState, payload));
 }
 

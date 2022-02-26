@@ -1,7 +1,7 @@
-import { BlockData, BlockDataProps, RawBlockData, RawBlockDataProps, UnionBlockGenericType } from "../../../../entities/block/type";
+import { BlockData, BlockDataProps, BlockType, RawBlockData, RawBlockDataProps, UnionBlockGenericType } from "../../../../entities/block/type";
 import { ModifyBlockToken } from "../../../../entities/modify/block/ModifyBlockToken";
 import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, UnionModifyBlockToken } from "../../../../entities/modify/type";
-import { ModifyBlockDataGeneticType, UnionModifBlockDataGenericType } from "../../type";
+import { ModifyBlockDataGenericType, UnionModifBlockDataGenericType } from "../../type";
 
 function commandCreateHandler<T extends UnionModifyBlockToken = ModifyBlockToken>(modifyDataTokenList: T[], { command, payload }: T, index: number) {  
   if(command === COMMAND_DELETE) {
@@ -82,20 +82,23 @@ export function convertRawBlockData<T extends UnionBlockGenericType>(blockDataPr
   return rawData;
 }
 
-function modifyDataReducer(length: number = 6) {
-  return function <T extends UnionModifBlockDataGenericType = ModifyBlockDataGeneticType>(acc: T["data"], cur: T["token"]) {
+function modifyDataReducer<T extends ModifyBlockDataGenericType = ModifyBlockDataGenericType>(length: number = 6) {
+  return function (acc: T["data"], cur: T["token"]) {
     switch (cur.command) {
       case COMMAND_CREATE:
         const rawData = cur.getRawData();
-        if(Object.keys(rawData.payload).length === length) acc.create?.push(rawData as any);
+        if(Object.keys(rawData.payload).length === length) acc.create?.push(rawData);
         break;
   
       case COMMAND_UPDATE:
-        acc.update?.push(cur.getRawData() as any);
+        acc.update?.push(cur.getRawData());
         break;
   
       case COMMAND_DELETE:
-        acc.delete?.push(cur.id);
+        acc.delete?.push({
+          id: cur.id,
+          type: cur.type
+        });
         break;
     }
   
@@ -106,7 +109,7 @@ function modifyDataReducer(length: number = 6) {
 export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(tokenList: T["token"][], length: number = 6): T["data"] | null {
   if(!tokenList[0]) return null;
 
-  const modifyBlockData = tokenList.reduce(modifyDataReducer(length), {
+  const modifyBlockData = tokenList.reduce(modifyDataReducer<T>(length), {
     create: [],
     update: [],
     delete: []

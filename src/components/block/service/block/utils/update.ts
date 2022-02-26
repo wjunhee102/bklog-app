@@ -119,13 +119,10 @@ function changeBlockType(type: BlockType, block: UnionBlock): {
   modifyBlockToken: ModifyBlockToken;
   historyBlockToken: HistoryBlockToken;
 } | null {
-  
-  const kindOfType = checkKindOfBlockType(type);
-  let newBlock: UnionBlock | null;
 
-  if(checkKindOfBlockType(block.type) !== kindOfType) return null;
+  if(checkKindOfBlockType(block.type) !== checkKindOfBlockType(type)) return null;
 
-  newBlock = createBlock(Object.assign(block.getBlockData(), {
+  const newBlock = createBlock(Object.assign(block.getBlockData(), {
     type
   }));
 

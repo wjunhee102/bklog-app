@@ -1,7 +1,7 @@
 import React from "react";
-import { TextBlock } from "../../../../entities/block/text/TextBlock";
-import { BlockComponentProps } from "../../BlockComponent";
-import BaseBlockZone from "../../zone/base";
+import { TextBlock } from "../../../../../entities/block/text/TextBlock";
+import { BlockComponentProps } from "../../../BlockComponent";
+import BaseBlockZone from "../../../zone/base";
 import TextBlockEle from "./TextBlockEle";
 
 

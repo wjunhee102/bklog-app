@@ -35,7 +35,6 @@ export interface PageInfo {
   lastAccessDate: Date;
   views: number;
   disclosureScope: number;
-  version: string;
   profileId: string;
   editable: boolean;
 }  
@@ -92,9 +91,12 @@ export type UnionModifyGenericType = ModifyBlockGenericType<UnionBlockGenericTyp
 /*
 * RawModifyData 
 */ 
-export interface RawModifyData<T extends UnionModifyGenericType = UnionModifyGenericType> {
+export interface PartsModifyData<T extends UnionModifyGenericType = UnionModifyGenericType> {
   id: string;
   type: T["type"];
+}
+
+export interface RawModifyData<T extends UnionModifyGenericType = UnionModifyGenericType> extends PartsModifyData<T> {
   payload: T["payload"];
 }
 

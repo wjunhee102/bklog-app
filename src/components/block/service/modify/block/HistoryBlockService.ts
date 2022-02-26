@@ -1,11 +1,11 @@
 import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockToken";
 import { ModifyTokenService } from "../abstract/ModifyTokenService";
-import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockGenericType, ModifyData, SET_BLOCK, UnionModifyDataToken } from "../../../entities/modify/type";
+import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockGenericType, ModifyData, SET_BLOCK } from "../../../entities/modify/type";
 import { UnionBlockGenericType, RawBlockData, RawBlockDataProps, UnionRawBlockData, BlockDataProps, BlockData, UnionBlockData, BlockType } from "../../../entities/block/type";
 import { ModifyService } from "../ModifyService";
 import { convertModifyBlockData, pushModifyBlockToken } from "./utils";
 import { compareFunction, compareFunctionReverce } from "../utils";
-import { HistoryBlockDataGeneticType } from "../type";
+import { HistoryBlockDataGenericType } from "../type";
 
 export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken> {
   private _tokenList: HistoryBlockToken[] = [];
@@ -72,7 +72,7 @@ export class HistoryBlockService implements ModifyTokenService<HistoryBlockToken
   }
 
   public getData() {
-    return convertModifyBlockData<HistoryBlockDataGeneticType>(this._tokenList, 8);
+    return convertModifyBlockData<HistoryBlockDataGenericType>(this._tokenList, 8);
   }
 
 }

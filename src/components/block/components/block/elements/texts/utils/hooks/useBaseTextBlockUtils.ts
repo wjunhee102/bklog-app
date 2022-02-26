@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { BaseProps } from "../components/block/zone/base/BaseBlockZone";
-import { UnionTextBlock } from "../entities/block/type";
-import { UseBlockType } from "./useBlock";
-import useCursorPointHandler from "./useCursorPointHandler";
-import useElementFocus from "./useElementFocus";
-import useGetTextBlockContents from "./useGetTextBlockContents";
+import { BaseProps } from "../../../../zone/base/BaseBlockZone";
+import { UnionTextBlock } from "../../../../../../entities/block/type";
+import { UseBlockType } from "../../../../../../hooks/useBlock";
+import useCursorPointHandler from "../../../../../../hooks/useCursorPointHandler";
+import useElementFocus from "../../../../../../hooks/useElementFocus";
+import useGetTextBlockContents from "../../../../../../hooks/useGetTextBlockContents";
 
 interface UseBaseTextBlockUtilsProps {
   block: UnionTextBlock;

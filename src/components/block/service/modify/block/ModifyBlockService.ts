@@ -1,9 +1,9 @@
 import { UnionBlockGenericType, RawBlockData, RawBlockDataProps, UnionRawBlockData, BlockDataProps, BlockData, UnionBlockData, BlockType } from "../../../entities/block/type";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
-import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockDataProps, ModifyBlockGenericType, ModifyData, SET_BLOCK } from "../../../entities/modify/type";
+import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, ModifyBlockGenericType, ModifyData, SET_BLOCK } from "../../../entities/modify/type";
 import { ModifyTokenService } from "../abstract/ModifyTokenService";
 import { ModifyService } from "../ModifyService";
-import { ModifyBlockDataGeneticType } from "../type";
+import { ModifyBlockDataGenericType } from "../type";
 import { compareFunction, compareFunctionReverce } from "../utils";
 import { convertModifyBlockData, convertRawBlockData, pushModifyBlockToken } from "./utils";
 
@@ -76,7 +76,7 @@ export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> 
   }
 
   public getData() {
-    return convertModifyBlockData<ModifyBlockDataGeneticType>(this._tokenList);
+    return convertModifyBlockData<ModifyBlockDataGenericType>(this._tokenList);
   }
 
 }

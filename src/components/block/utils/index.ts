@@ -1,5 +1,5 @@
 import { createBlockData, parseHtmlContents } from '../../preBlock/reducer/utils';
-import textBlockUtils from './textBlockUtils';
+import keyboardUtils from './keyboardUtils';
 import animateUtils from './animateUtils';
 import unicodeUtils from './unicodeUtils';
 import arrayUtils from './arrayUtils';
@@ -152,8 +152,8 @@ export type KeyboardActionTable = DefalutKeyboardActionTable & {
 
 
 // textBlock utils
-export const keyboardActionHandler = textBlockUtils.keyboardActionHandler;
-export const setCursorPoint        = textBlockUtils.setCursorPoint;
+export const keyboardActionHandler = keyboardUtils.keyboardActionHandler;
+export const setCursorPoint        = keyboardUtils.setCursorPoint;
 
 // animate utils
 export const animateElement = animateUtils.animateElement;

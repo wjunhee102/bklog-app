@@ -6,8 +6,9 @@ import BlockContentsArea from "../common/BlockContentsArea";
 import ChildrenBlock from "../../ChildrenBlock";
 import BlockSelectArea from "../common/block-select-area";
 import ListTag from "./elements/ListTag";
-import { BLOCK_NUMBERED } from "../../../../entities/block/type/types/text";
 import { NumberedBlock } from "../../../../entities/block/text/NumberedBlock";
+import { BulletedBlock } from "../../../../entities/block/text/BulletedBlock";
+import "./ListTextZone.scss";
 
 
 // numbered, bulleted, todo
@@ -45,19 +46,6 @@ function covertSortType(sortType: any, index?: number) {
 
   return 
 }
-
-function getFrontPosition(position: string): string {
-  const positionArg = position.split('-');
-  const index = positionArg.length - 1;
-  const lastPosition = +positionArg[index];
-
-  if(lastPosition < 2) return "null";
-
-  positionArg[index] = `${lastPosition - 1}`;    
-
-  return positionArg.join('-');
-}
-
 // function setSortText(type: string, parentSortType: number | null) {
 
 // }
@@ -67,7 +55,7 @@ export interface ListTextProps {
   setSelect: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface ListTextZoneProps extends BlockComponentProps<NumberedBlock> {
+interface ListTextZoneProps extends BlockComponentProps<NumberedBlock | BulletedBlock> {
   children: (props: ListTextProps) => React.ReactNode;
 }
 
@@ -92,25 +80,6 @@ const ListTextZone: React.FC<ListTextZoneProps> = ({
   const parentTagType = (parentInfo && parentInfo.type === block.type && parentInfo.tagTypeIdx)?  
     parentInfo.tagTypeIdx : undefined;
 
-  useEffect(() => {
-    const inFrontOfBlock = blockList[block.index - 1];
-
-    if(inFrontOfBlock
-      && inFrontOfBlock instanceof NumberedBlock 
-      && inFrontOfBlock.position === getFrontPosition(block.position)
-      && inFrontOfBlock.meta?.order) {
-      block.setOrder(inFrontOfBlock.meta.order + 1);
-
-      return;
-    }
-
-    block.setOrder(1);
-  }, [blockList[block.index - 1]?.meta]);
-
-  useEffect(() => {
-    console.log(block.position, block.meta);
-  }, [block.meta]);
-
   return (
     <div
       className={classNames(
@@ -120,18 +89,20 @@ const ListTextZone: React.FC<ListTextZoneProps> = ({
       )}
     >
 
-      <ListTag 
-        block={block}
-        useBlockReducer={useBlockReducer}
-        parentTagType={parentTagType}
-      />
-
       <BlockContentsArea
         block={block}
         useBlockReducer={useBlockReducer}
         childrenBlock={childrenBlock}
       >
-        { children({selected, setSelect}) }
+        <div className="block-contents-container">
+          <ListTag 
+            block={block}
+            useBlockReducer={useBlockReducer}
+            parentTagType={parentTagType}
+          />
+
+          { children({selected, setSelect}) }
+        </div>
       </BlockContentsArea>
 
       <ChildrenBlock 

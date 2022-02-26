@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import useBlock, { UseBlockType } from './hooks/useBlock';
 import { ReturnConnectStoreHook } from '.';
-import Block from './components/block';
+import BlockComponent from './components/block';
 import useBlockEditor from './hooks/useBlockEditor';
 import './assets/BlockEditor.scss';
 import { UnionBlock } from './entities/block/type';
@@ -65,7 +65,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook, className }
 
             {
               titleBlock?
-              <Block 
+              <BlockComponent 
                 key={titleBlock.id}
                 block={titleBlock}
                 useBlockReducer={useBlockReducer}
@@ -77,7 +77,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook, className }
           {
             initBlock?
             initBlock.root.map((block: UnionBlock) =>
-              <Block
+              <BlockComponent
                 key={block.id}
                 block={block}
                 useBlockReducer={useBlockReducer}
@@ -105,7 +105,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook, className }
               tempClipData.map((data, idx) => {
                 const block = blockList[data];
                 return (
-                  <Block 
+                  <BlockComponent 
                     key={idx} 
                     block={block}
                     useBlockReducer={useBlockReducer}

@@ -1,20 +1,17 @@
 import React from 'react';
 import useTextBlock from './hooks/useTextBlock';
-import { BlockComponentProps } from '../../BlockComponent';
-import TextBlockActionMenuBar from '../common/action-menubar';
-import ContentEditableEle from '../common/ContentEditableEle';
-import { BaseProps } from '../../zone/base/BaseBlockZone';
-import { TextBlock } from '../../../../entities/block/text/TextBlock';
+import { BlockComponentProps } from '../../../BlockComponent';
+import TextBlockActionMenuBar from '../../common/action-menubar';
+import ContentEditableEle from '../../common/ContentEditableEle';
+import { BaseProps } from '../../../zone/base/BaseBlockZone';
+import { TextBlock } from '../../../../../entities/block/text/TextBlock';
 
 interface TextBlockEleProps extends BlockComponentProps<TextBlock> {
   zoneProps: BaseProps;
 }
 
-const TextBlockEle: React.FC<TextBlockEleProps> = ({ 
-  block, 
-  useBlockReducer, 
-  zoneProps
-}) => {
+const TextBlockEle: React.FC<TextBlockEleProps> = (props) => {
+  const { block, useBlockReducer } = props;
 
   const {
     cursorStart,
@@ -31,7 +28,7 @@ const TextBlockEle: React.FC<TextBlockEleProps> = ({
     isFocus,
     handleElementFocus,
     editable
-  } = useTextBlock(block, useBlockReducer, zoneProps);
+  } = useTextBlock(props);
 
   return (
     <div 

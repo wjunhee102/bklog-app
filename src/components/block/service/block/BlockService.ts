@@ -2,7 +2,7 @@ import { Block } from "../../entities/block/abstract/Block";
 import { ContainerBlock } from "../../entities/block/container/ContainerBlock";
 import { BaseTextBlock } from "../../entities/block/text/BaseTextBlock";
 import { changeStyleTextContents, mergeTextContents } from "../../entities/block/text/utils";
-import { BlockData, BlockDataInitProps, BlockType, RawBlockData, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
+import { BlockData, BlockDataInitProps, BlockType, RawBlockData, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockDataProps, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
 import { BlockContentsText, OrderType, TextContentStyleType } from "../../entities/block/type/types/text";
 import { Token } from "../../entities/block/utils/token";
@@ -377,6 +377,8 @@ export class BlockService {
     this.modifyBlockTokenList.push(modifyBlockToken);
     this.historyBlockTokenList.push(historyBlockToken);
 
+    this.blockList = this.blockList.concat();
+
     return this;
   }
 
@@ -459,7 +461,20 @@ export class BlockService {
         const index = blockList.findIndex(block => block.id === data.id);
         
         if(index !== -1) {
-          const preProps = blockList[index].updateBlock(data.payload)
+          let preProps: UnionBlockDataProps = {}; 
+
+          if(data.payload.type) {
+            const result = changeBlockType(data.payload.type, blockList[index]);
+
+            if(result) {
+              const { block, historyBlockToken } = result;
+              blockList[index] = block;
+              this.historyBlockTokenList.push(historyBlockToken);
+            }
+          }
+
+          preProps = Object.assign(preProps, blockList[index].updateBlock(data.payload));
+   
           this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(data.id, data.type, preProps)));
         } else {
           this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(data.id, data.type)));
@@ -469,7 +484,7 @@ export class BlockService {
     }
 
     if(modifyBlockData.delete) {
-      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, modifyBlockData.delete);
+      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, modifyBlockData.delete.map(data => data.id));
 
       blockList = newBlockList;
 
@@ -516,7 +531,22 @@ export class BlockService {
         const index = blockList.findIndex(block => block.id === data.id);
 
         if(index !== -1) {
-          const preProps = blockList[index].updateBlock(data.payload);
+          let preProps: UnionBlockDataProps = {}; 
+
+          if(data.payload.type) {
+            const result = changeBlockType(data.payload.type, blockList[index]);
+
+            if(result) {
+              const { block, modifyBlockToken, historyBlockToken } = result;
+              
+              blockList[index] = block;
+
+              this.historyBlockTokenList.push(historyBlockToken);
+              this.modifyBlockTokenList.push(modifyBlockToken);
+            }
+          }
+
+          preProps = Object.assign(preProps, blockList[index].updateBlock(data.payload));
 
           this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(data.id, blockList[index].type, data.payload)));
           this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(data.id, data.type, preProps)));
@@ -526,7 +556,7 @@ export class BlockService {
     }
     
     if(historyBlockData.delete) {
-      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, historyBlockData.delete);
+      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, historyBlockData.delete.map(data => data.id));
 
       blockList = newBlockList;
 

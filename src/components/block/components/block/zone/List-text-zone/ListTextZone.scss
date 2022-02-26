@@ -4,4 +4,13 @@
     width: 30px;
     text-align: center;
   }
+
+  .block-contents-container {
+    @apply flex justify-start;
+
+    .list-tag {
+      @apply mr-4 h-full w-4 text-center mx-px;
+      line-height: 1.5;
+    }
+  }
 }

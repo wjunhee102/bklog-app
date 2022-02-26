@@ -3,7 +3,7 @@ import { UnionBlock } from "../../entities/block/type";
 import { UseBlockType } from "../../hooks/useBlock";
 import BlockComponentTable from './BlockComponentTable';
 
-export type ParentInfoType = {
+export interface ParentInfoType {
   type: string;
   selected: boolean;
   tagTypeIdx?: number;

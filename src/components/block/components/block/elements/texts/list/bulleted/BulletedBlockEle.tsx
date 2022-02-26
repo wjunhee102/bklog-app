@@ -1,21 +1,18 @@
 import React from 'react';
-import { BulletedBlock } from '../../../../entities/block/text/BulletedBlock';
-import { BlockComponentProps } from '../../BlockComponent';
-import { BaseProps } from '../../zone/base/BaseBlockZone';
-import TextBlockActionMenuBar from '../common/action-menubar';
-import ContentEditableEle from '../common/ContentEditableEle';
-import useTextBlock from '../text/hooks/useTextBlock';
+import { BulletedBlock } from '../../../../../../entities/block/text/BulletedBlock';
+import { BlockComponentProps } from '../../../../BlockComponent';
+import { BaseProps } from '../../../../zone/base/BaseBlockZone';
+import TextBlockActionMenuBar from '../../../common/action-menubar';
+import ContentEditableEle from '../../../common/ContentEditableEle';
+import useListBlock from '../hooks/useListBlock';
 
 interface BulletedBlockEleProps extends BlockComponentProps<BulletedBlock> {
   zoneProps: BaseProps;
 }
 
-const BulletedBlockEle: React.FC<BulletedBlockEleProps> = ({
-  block,
-  useBlockReducer,
-  zoneProps
-}) => {
-  
+const BulletedBlockEle: React.FC<BulletedBlockEleProps> = (props) => {
+  const { block, useBlockReducer } = props;
+
   const {
     cursorStart,
     cursorEnd,
@@ -31,7 +28,7 @@ const BulletedBlockEle: React.FC<BulletedBlockEleProps> = ({
     isFocus,
     handleElementFocus,
     editable
-  } = useTextBlock(block, useBlockReducer, zoneProps);
+  } = useListBlock(props);
 
   return (
     <div

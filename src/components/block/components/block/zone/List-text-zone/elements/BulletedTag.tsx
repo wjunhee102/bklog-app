@@ -1,5 +1,5 @@
-import React from 'react';
-import { ListTagProps } from './ListTag';
+import React from "react";
+import { ListTagProps } from "./ListTag";
 
 const BulltedTag: React.FC<ListTagProps> = ({
   block, 
@@ -7,8 +7,8 @@ const BulltedTag: React.FC<ListTagProps> = ({
   parentTagType
 }) => {
   return (
-    <div>
-
+    <div className="list-tag">
+      ●
     </div>
   );
 }

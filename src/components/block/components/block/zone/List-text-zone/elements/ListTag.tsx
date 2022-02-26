@@ -1,10 +1,12 @@
 import React from "react";
+import { BulletedBlock } from "../../../../../entities/block/text/BulletedBlock";
+import { NumberedBlock } from "../../../../../entities/block/text/NumberedBlock";
 import { BLOCK_BULLETED, BLOCK_NUMBERED } from "../../../../../entities/block/type/types/text";
 import { BlockComponentProps } from "../../../BlockComponent";
 import BulltedTag from "./BulletedTag";
 import NumberedTag from "./NumberedTag";
 
-export interface ListTagProps extends BlockComponentProps {
+export interface ListTagProps<T extends NumberedBlock | BulletedBlock = NumberedBlock | BulletedBlock> extends BlockComponentProps<T> {
   parentTagType?: number;
 }
 
@@ -19,7 +21,7 @@ const ListTag: React.FC<ListTagProps> = ({
   parentTagType
 }) => {
   if(TagComponentTable.hasOwnProperty(block.type)) {
-    return TagComponentTable[block.type as keyof typeof TagComponentTable]({block, useBlockReducer, parentTagType});
+    return TagComponentTable[block.type as keyof typeof TagComponentTable]({block: block as never, useBlockReducer, parentTagType});
   } 
 
   return null;

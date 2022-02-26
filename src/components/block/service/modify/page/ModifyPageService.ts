@@ -12,7 +12,7 @@ export class ModifyPageService implements ModifyTokenService<ModifyPageDataToken
   }
 
   static setUpdateModifyData(pageInfoProps: PageInfoProps): ModifyData<ModifyPageGenericType> {
-    return ModifyService.createModifyData("page", COMMAND_UPDATE, SET_PAGE, pageInfoProps);
+    return ModifyService.createModifyData("page", "page", COMMAND_UPDATE, SET_PAGE, pageInfoProps);
   }
 
   constructor(tokenList: ModifyPageDataToken[], merge: boolean = false) {

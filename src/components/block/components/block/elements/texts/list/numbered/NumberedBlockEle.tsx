@@ -1,22 +1,18 @@
 import React from 'react';
-import { NumberedBlock } from '../../../../entities/block/text/NumberedBlock';
-import { UnionTextBlock } from '../../../../entities/block/type';
-import { BlockComponentProps } from '../../BlockComponent';
-import { BaseProps } from '../../zone/base/BaseBlockZone';
-import TextBlockActionMenuBar from '../common/action-menubar';
-import ContentEditableEle from '../common/ContentEditableEle';
-import useTextBlock from '../text/hooks/useTextBlock';
+import { NumberedBlock } from '../../../../../../entities/block/text/NumberedBlock';
+import { BlockComponentProps } from '../../../../BlockComponent';
+import { BaseProps } from '../../../../zone/base/BaseBlockZone';
+import TextBlockActionMenuBar from '../../../common/action-menubar';
+import ContentEditableEle from '../../../common/ContentEditableEle';
+import useNumberedBlock from '../hooks/useListBlock';
 
 interface NumberedBlockEleProps extends BlockComponentProps<NumberedBlock> {
   zoneProps: BaseProps;
 }
 
-const NumberedBlockEle: React.FC<NumberedBlockEleProps> = ({
-  block,
-  useBlockReducer,
-  zoneProps
-}) => {
-  
+const NumberedBlockEle: React.FC<NumberedBlockEleProps> = (props) => {
+  const { block,useBlockReducer } = props;
+
   const {
     cursorStart,
     cursorEnd,
@@ -32,7 +28,7 @@ const NumberedBlockEle: React.FC<NumberedBlockEleProps> = ({
     isFocus,
     handleElementFocus,
     editable
-  } = useTextBlock(block, useBlockReducer, zoneProps);
+  } = useNumberedBlock(props);
 
   return (
     <div 

@@ -223,3 +223,31 @@ test('update Block', () => {
   expect(numberedBlock.regeneration({ index: 4 })[0].index).toEqual(4);
 
 })
+
+
+
+test('decorator', () => {
+  @ClassDecorator
+  class A {
+    b: string = "hello";
+
+    get c(): string {
+      return `${this.b} World`;
+    }
+
+    d(e: string): void {
+      console.log(e);
+    }
+  }
+
+  function ClassDecorator(constructor: typeof A) {
+    const method = constructor.prototype.d
+
+    constructor.prototype.d = function(e: string) {
+      method(e)
+      console.log("잇힝힝")
+    }
+  }
+
+  new A().d("오홍홍");
+})

@@ -525,7 +525,7 @@ test('update block list', () => {
         }
       }
     ],
-    delete: ["4T4"]
+    delete: [{ id: "4T4", type: "text" }]
   }
 
   const blockService2 = new BlockService(blockService.getBlockList()).updateBlockList(modifyBlockData);

@@ -1,10 +1,10 @@
-import { UseBlockType } from "../../../../../hooks/useBlock";
-import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../utils/selectionText';
-import { BaseProps } from "../../../zone/base/BaseBlockZone";
-import useKeyboardActionHandlerAll from "../../../../../hooks/useKeyboardActionHandlerAll";
-import { UnionTextBlock } from "../../../../../entities/block/type";
-import { BLOCK_BULLETED, BLOCK_NUMBERED } from "../../../../../entities/block/type/types/text";
-import useBaseTextBlockUtils from "../../../../../hooks/useBaseTextBlockUtils";
+import { UseBlockType } from "../../../../../../hooks/useBlock";
+import { getSelectionStart, getSelectionEnd, setSelectionRange } from '../../../../../../utils/selectionText';
+import { BaseProps } from "../../../../zone/base/BaseBlockZone";
+import useKeyboardActionHandlerAll from "../../../../../../hooks/useKeyboardActionHandlerAll";
+import { UnionTextBlock } from "../../../../../../entities/block/type";
+import { BLOCK_BULLETED, BLOCK_NUMBERED } from "../../../../../../entities/block/type/types/text";
+import useBaseTextBlockUtils from "../../utils/hooks/useBaseTextBlockUtils";
 
 // const BulletList = ['.', '-'];
 interface UseTextBlockProps {
@@ -74,14 +74,12 @@ function useTextBlock(props: UseTextBlockProps) {
       },
       " ": (e: any) => {
         if((cursorStart && cursorEnd) === 1) {
-          onClearStateItem("stagedTextBlockData");
-          switch(e.target.innerText[0]) {
-            case "1":
-              onChangeBlockType(block.index, BLOCK_NUMBERED);
-              break;
-            case "-":
-              onChangeBlockType(block.index, BLOCK_BULLETED);
-              break;
+          onEditTextBlock(block.id, block.index, block.getHtmlContents);
+
+          if(!Object.is(+e.target.innerText[0], NaN)) {
+            onChangeBlockType(block.index, BLOCK_NUMBERED);
+          } else if(e.target.innerText[0] === "-") {
+            onChangeBlockType(block.index, BLOCK_BULLETED);
           }
           
         } else {
