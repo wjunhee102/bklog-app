@@ -171,10 +171,10 @@ function updatePageInfoError(error: ApiErrorType) {
   }
 }
 
-function deletePage(data: ReqDeletePage) {
+function deletePage(pageId: string) {
   return {
     type: DELETE_PAGE,
-    payload: data
+    payload: pageId
   }
 }
 

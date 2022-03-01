@@ -13,7 +13,7 @@ import usePage from "./usePage";
 import useSocket from "./useSocket";
 
 function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStoreHook {
-  const socket = useSocket(SOCKET_URL? SOCKET_URL : "http://localhost:4500");
+  const socket = useSocket(SOCKET_URL);
 
   const [ newVersion, setVersion ]          = useState<string | null>(null);
   const [ updated, setUpdated ]             = useState<boolean>(false);

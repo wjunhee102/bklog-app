@@ -1,12 +1,12 @@
 import { takeEvery } from "redux-saga/effects";
 import { createPromiseSaga } from "../../utils";
 import { UserProfile } from "../auth/utils";
-import { bklogFetchDelete, bklogFetchGet, bklogFetchPost } from "../bklog/utils";
+import { bklogFetchDelete, bklogFetchGet, bklogFetchPatch, bklogFetchPost } from "../bklog/utils";
 import { userFetchGet } from "../user/utils";
 import { CREATE_PAGE, GET_PAGE_LIST, ReqCreatePage, GetPageListPayload, GET_USER_PROFILE, ReqUpdatePageInfo, UPDATE_PAGE_INFO, ResGetPageList, ReqDeletePage, DELETE_PAGE } from "./utils";
 
 function createPage(data: ReqCreatePage) {
-  return bklogFetchPost("create-page", data);
+  return bklogFetchPost(`page`, data);
 }
 
 function getUserProfile({ type, userInfo }: GetPageListPayload) {
@@ -18,11 +18,11 @@ function getPageList({ type, userInfo, query }: GetPageListPayload) {
 }
 
 function updatePageInfo(data: ReqUpdatePageInfo) {
-  return bklogFetchPost("updatepageinfo", data);
+  return bklogFetchPatch(`pageinfo/${data.pageId}`, data);
 }
 
-function deletePage(data: ReqDeletePage) {
-  return bklogFetchDelete("delete-page", data);
+function deletePage(pageId: string) {
+  return bklogFetchDelete(`page/${pageId}`);
 }
 
 const createPageSaga     = createPromiseSaga<string>(CREATE_PAGE, createPage);

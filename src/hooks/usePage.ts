@@ -38,7 +38,7 @@ function usePageActions(state: PageState) {
   }, [dispatch]);
 
   const onDeletePage = useCallback((pageId: string) => {
-    dispatch(deletePage({ pageId }));
+    dispatch(deletePage(pageId));
   }, [dispatch]);
 
   const onUpdatePage = useCallback((data: ReqUpdatePageInfo) => {

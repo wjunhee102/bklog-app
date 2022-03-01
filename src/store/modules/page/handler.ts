@@ -236,7 +236,7 @@ function deletePageHandler(
 ): PageState {
   return updateObject<PageState, PageStateProps>(state, {
     error: null,
-    updatingPageId: payload.pageId
+    updatingPageId: payload
   });
 }
 

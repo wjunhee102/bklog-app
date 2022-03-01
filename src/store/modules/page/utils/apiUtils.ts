@@ -1,21 +1,7 @@
-import { BaseRestFetch } from "../../../../utils/api-utils";
+import { createGetRestFetch, createRestFetch } from "../../../../utils/api-utils";
 
-function pageFetchGet(url: string, query?: any) {
-  return BaseRestFetch.restApi({
-    method: "get",
-    url: `page/${url}`,
-    withCredentials: true,
-    qs: query
-  });
-}
+const pageFetchGet = createGetRestFetch("page");
 
-function pageFetchPost(url: string, data: object) {
-  return BaseRestFetch.restApi({
-    method: "post",
-    url: `page/${url}`,
-    withCredentials: true,
-    data
-  });
-}
+const pageFetchPost = createRestFetch("page", "post");
 
 export default { pageFetchGet, pageFetchPost };
