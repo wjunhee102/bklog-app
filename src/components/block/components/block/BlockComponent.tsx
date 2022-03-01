@@ -1,5 +1,7 @@
 import React from "react";
 import { UnionBlock } from "../../entities/block/type";
+import { BLOCK_IMAGE } from "../../entities/block/type/types/image";
+import { BLOCK_TEXT } from "../../entities/block/type/types/text";
 import { UseBlockType } from "../../hooks/useBlock";
 import BlockComponentTable from './BlockComponentTable';
 

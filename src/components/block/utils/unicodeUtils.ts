@@ -33,7 +33,7 @@ function unicodeToChar(decimal: Decimal = 16) {
   }
 }
 
-function unicodeHexTochar(unicode: string, decima: Decimal = 16) {
+function unicodeHexTochar(unicode: string) {
   return String.fromCharCode(parseInt(`${parseInt(unicode, 16)}`, 16));
 } 
 
