@@ -1,30 +1,11 @@
-import { BaseRestFetch } from "../../../../utils/api-utils";
+import { createAllRestFetch } from "../../../../utils/api-utils";
 
-function bklogFetchGet(url: string, query?: any) {
-  return BaseRestFetch.restApi({
-    method: "get",
-    url: `bklog/${url}`,
-    withCredentials: true,
-    qs: query
-  });
-}
+const bklogFetch = createAllRestFetch("bklog");
 
-function bklogFetchPost(url: string, data: object) {
-  return BaseRestFetch.restApi({
-    method: "post",
-    url: `bklog/${url}`,
-    withCredentials: true,
-    data
-  });
-}
-
-function bklogFetchDelete(url: string, data: object) {
-  return BaseRestFetch.restApi({
-    method: "delete",
-    url: `bklog/${url}`,
-    withCredentials: true,
-    data
-  })
-}
-
-export default { bklogFetchGet, bklogFetchPost, bklogFetchDelete };
+export default { 
+  bklogFetchGet: bklogFetch.getFetch, 
+  bklogFetchPost: bklogFetch.postFetch, 
+  bklogFetchPut: bklogFetch.putFetch,
+  bklogFetchPatch: bklogFetch.patchFetch,
+  bklogFetchDelete: bklogFetch.deleteFetch
+};
