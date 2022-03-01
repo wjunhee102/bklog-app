@@ -7,7 +7,7 @@ import { ModifyBlockService } from "../../block/service/modify/block/ModifyBlock
 const initialBlockList: UnionRawBlockData[] = [
   {
     position: "1",
-    id: "d5cc272592ec494bbc80c16f96379e61",
+    id: "T1",
     type: "text",
     styleType: "bk-p",
     styles: null,
@@ -17,7 +17,7 @@ const initialBlockList: UnionRawBlockData[] = [
   },
   {
     position: "2",
-    id: "d5cc272597ec494bbc80c16f96379e62",
+    id: "T2",
     type: "text",
     styleType: "bk-p",
     styles: null,
@@ -27,7 +27,7 @@ const initialBlockList: UnionRawBlockData[] = [
   },
   {
     position: "3",
-    id: "d5cc272597ec494bbc80c16f96379a61",
+    id: "T3",
     type: "text",
     styleType: "bk-h4",
     styles: null,
@@ -37,7 +37,7 @@ const initialBlockList: UnionRawBlockData[] = [
   },
   {
     position: "3-1",
-    id: "d5cc272597ec494bbc80c16f96379261",
+    id: "T3-1",
     type: "text",
     styleType: "bk-h4",
     styles: null,
@@ -47,7 +47,7 @@ const initialBlockList: UnionRawBlockData[] = [
   },
   {
     position: "3-2",
-    id: "d5cc2725d7ec494bbc80c16f96379261",
+    id: "T3-2",
     type: "text",
     styleType: "bk-h4",
     styles: null,
@@ -57,7 +57,7 @@ const initialBlockList: UnionRawBlockData[] = [
   },
   {
     position: "4",
-    id: "d5cc2725d7esc494bbc80c16f96379261",
+    id: "T4",
     type: "text",
     styleType: "bk-h4",
     styles: null,
@@ -67,7 +67,7 @@ const initialBlockList: UnionRawBlockData[] = [
   },
   {
     position: "5",
-    id: "d5cc2725d7ec494bbc80c13d6f96379261",
+    id: "T5",
     type: "image",
     styleType: "none",
     styles: {
