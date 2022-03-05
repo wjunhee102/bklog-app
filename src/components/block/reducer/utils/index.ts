@@ -1,6 +1,7 @@
 import { StagedBlockData, UnionBlock } from "../../entities/block/type";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { ModifyPageDataToken } from "../../entities/modify/page/ ModifyPageDataToken";
+import setMap from "../../service/block/utils/setMap";
 import { HistoryBlockData } from "../../service/modify/type";
 import actionBlock from "./actions";
 import orderingBlockUtils from "./ordering";
@@ -259,3 +260,6 @@ export const revertBlockState = sideStoreUtils.revertBlockState;
 
 // block order utils;
 export const setBlockList  = orderingBlockUtils.setBlockList;
+
+// map utils
+export const createBlockIdMap = setMap.createBlockIdMap;

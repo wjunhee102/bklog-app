@@ -1,4 +1,4 @@
-import { BlockData, BlockDataProps, BlockType, RawBlockData, RawBlockDataProps, UnionBlockGenericType } from "../../../../entities/block/type";
+import { BlockData, BlockDataProps, RawBlockData, RawBlockDataProps, UnionBlockGenericType } from "../../../../entities/block/type";
 import { ModifyBlockToken } from "../../../../entities/modify/block/ModifyBlockToken";
 import { COMMAND_CREATE, COMMAND_DELETE, COMMAND_UPDATE, UnionModifyBlockToken } from "../../../../entities/modify/type";
 import { ModifyBlockDataGenericType, UnionModifBlockDataGenericType } from "../../type";

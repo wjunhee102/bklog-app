@@ -683,7 +683,7 @@ function changeTextStyleHandler(
 function switchBlockHandler(
   state: BlockState, 
   { payload: { 
-    changedBlockIdList, container 
+    changedBlockIdMap, container 
   } }: ReturnType<typeof switchBlock>
 ): BlockState {
   if(!state.targetPosition) return state;
@@ -693,7 +693,7 @@ function switchBlockHandler(
     modifyBlockTokenList,
     historyBlockTokenList
   } = new BlockService(state.blockList)
-            .switchBlockList(changedBlockIdList, state.targetPosition, container)
+            .switchBlockList(changedBlockIdMap, state.targetPosition, container)
             .getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();

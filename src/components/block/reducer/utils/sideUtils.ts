@@ -5,7 +5,6 @@ import { HistoryBlockService } from "../../service/modify/block/HistoryBlockServ
 import { ModifyPageService } from "../../service/modify/page/ModifyPageService";
 import { arrayPush, updateObject } from "../../utils";
 
-
 function revertBlockState(
   state: BlockState, 
   front: boolean

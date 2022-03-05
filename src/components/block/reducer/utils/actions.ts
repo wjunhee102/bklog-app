@@ -213,11 +213,11 @@ function revertBlock(front?: boolean) {
   }
 }
 
-function switchBlock(changedBlockIdList: string[], container?: boolean) {
+function switchBlock(changedBlockIdMap: Map<string, true>, container?: boolean) {
   return {
     type: SWITCH_BLOCK,
     payload: {
-      changedBlockIdList,
+      changedBlockIdMap,
       container: container? true : false
     }
   }

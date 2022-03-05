@@ -41,6 +41,7 @@ import {
   SetBlockList,
   StagedPageTitle
 } from '../reducer/utils';
+import { BlockIdMap } from '../service/block/utils';
 import { ModifyBlockData } from '../service/modify/type';
 
 interface CursorType {
@@ -159,10 +160,10 @@ function useBlock() {
   }, [dispatch]);
 
   const onSwitchBlock = useCallback((
-    changedBlockIdList: string[],
+    changedBlockIdMap: BlockIdMap,
     container?: boolean
   ) => {
-    dispatch(switchBlock(changedBlockIdList, container))
+    dispatch(switchBlock(changedBlockIdMap, container))
   }, [dispatch]);
 
   const onRevertBlock = useCallback((front?: boolean) => {

@@ -11,8 +11,10 @@ import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToke
 import checkBlock from "./checkBlock";
 import create from "./create";
 import ordering from "./ordering";
+import setMap from "./setMap";
 import update from "./update";
 
+export type BlockIdMap = Map<string, true>;
 export interface ResBlockService {
   blockList: UnionBlock[];
   modifyBlockTokenList?: ModifyBlockToken[];
@@ -28,6 +30,8 @@ export const BlockInstancesTable = {
   [BLOCK_TODO]      : TextBlock,
   [BLOCK_CONTAINER] : TextBlock
 }
+
+export const createBlockIdMap = setMap.createBlockIdMap;
 
 export const createBlock = create.createBlock;
 

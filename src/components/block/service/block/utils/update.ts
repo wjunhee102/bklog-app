@@ -1,4 +1,4 @@
-import { checkKindOfBlockType, createBlock, ResBlockService } from ".";
+import { checkKindOfBlockType, createBlock, createBlockIdMap, ResBlockService } from ".";
 import { BlockDataProps, BlockType, StagedBlockData, UnionBlock, UnionBlockGenericType } from "../../../entities/block/type";
 import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
@@ -69,8 +69,9 @@ function removeBlockList(
   currentBlockList: UnionBlock[],
   removedBlockList: UnionBlock[]
 ): ResBlockService {
+  
   const blockList: UnionBlock[] = currentBlockList.concat();
-  const removedIdList: string[] = removedBlockList.map(block => block.id);
+  const removedBlockIdMap = createBlockIdMap(removedBlockList);
   const modifyBlockTokenList: ModifyBlockToken[] = [];
   const historyBlockTokenList: HistoryBlockToken[] = [
     ...removedBlockList
@@ -88,7 +89,7 @@ function removeBlockList(
 
     for(let i = block.index + 1; i < blockLength; i++) {
       if(blockList[i].position.indexOf(position) !== 0) break;
-      if(removedIdList.includes(blockList[i].id)) break;
+      if(removedBlockIdMap.has(blockList[i].id)) break;
 
       const rawNewPosition = blockList[i].position.split(/-/);
       rawNewPosition.pop();

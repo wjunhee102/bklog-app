@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction, useCallback, useMemo, useEffect } from
 import classNames from "classnames";
 import DropAreaComponent from './elements/DropAreaComponent';
 import { BlockComponentProps, ParentInfoType } from '../../../BlockComponent';
+import { createBlockIdMap } from '../../../../../reducer/utils';
 
 function createDropDirection(id: string, direction: string) {
   return `${direction}-${id}`;
@@ -89,7 +90,7 @@ const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
   }, []);
 
   const handleSelectMouseUp = useCallback((createContainer?: boolean) => () => {
-    if(tempClipData[0] !== undefined) onSwitchBlock(tempClipData.map(index => blockList[index].id), createContainer);
+    if(tempClipData[0] !== undefined) onSwitchBlock(createBlockIdMap(tempClipData.map(index => blockList[index])), createContainer);
     setDropDirection(null);
   }, [tempClipData]);
 

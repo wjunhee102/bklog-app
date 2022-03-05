@@ -11,7 +11,7 @@ import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { HistoryBlockService } from "../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../modify/block/ModifyBlockService";
 import { HistoryBlockData, ModifyBlockData } from "../modify/type";
-import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, resetToTargetPosition, updateBlockListStagedProperty, setPosition, changeBlockType } from "./utils";
+import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, resetToTargetPosition, updateBlockListStagedProperty, setPosition, changeBlockType, createBlockIdMap, BlockIdMap } from "./utils";
 
 export class BlockService {
   private modifyBlockTokenList: ModifyBlockToken[] = [];
@@ -81,13 +81,13 @@ export class BlockService {
    */
   static divideBlock(
     blockList: UnionBlock[], 
-    targetIdList: string[]
+    targetIdMap: BlockIdMap
   ): [ UnionBlock[], UnionBlock[] ] {
     const removedBlockList: UnionBlock[] = [];
     const targetBlockList: UnionBlock[] = [];
 
     for(const block of blockList) {
-      if(targetIdList.includes(block.id)) {
+      if(targetIdMap.has(block.id)) {
         targetBlockList.push(block.regeneration({})[0]);
       } else {
         removedBlockList.push(block.regeneration({})[0]);
@@ -382,8 +382,8 @@ export class BlockService {
     return this;
   }
 
-  public changeBlockPosition(targetIdList: string[], targetPosition: string) {
-    const [ removedBlockList, targetBlockList ] = BlockService.divideBlock(this.blockList, targetIdList);
+  public changeBlockPosition(targetIdMap: BlockIdMap, targetPosition: string) {
+    const [ removedBlockList, targetBlockList ] = BlockService.divideBlock(this.blockList, targetIdMap);
     const index = removedBlockList.findIndex(block => block.position === targetPosition) + 1;
 
     if(index === 0) return this;
@@ -417,7 +417,7 @@ export class BlockService {
   }
 
   public switchBlockList(
-    targetIdList: string[],
+    targetIdMap: BlockIdMap,
     targetPosition: string,
     container: boolean = false
   ): BlockService {
@@ -450,7 +450,7 @@ export class BlockService {
       this.blockList = blockList;
     }
 
-    return this.changeBlockPosition(targetIdList, targetPosition);
+    return this.changeBlockPosition(targetIdMap, targetPosition);
   }
 
   public updateBlockList(modifyBlockData: ModifyBlockData): BlockService {
@@ -484,7 +484,8 @@ export class BlockService {
     }
 
     if(modifyBlockData.delete) {
-      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, modifyBlockData.delete.map(data => data.id));
+
+      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, createBlockIdMap(modifyBlockData.delete));
 
       blockList = newBlockList;
 
@@ -556,7 +557,8 @@ export class BlockService {
     }
     
     if(historyBlockData.delete) {
-      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, historyBlockData.delete.map(data => data.id));
+
+      const [ newBlockList, removedBlockList ] = BlockService.divideBlock(blockList, createBlockIdMap(historyBlockData.delete));
 
       blockList = newBlockList;
 
