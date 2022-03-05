@@ -3,7 +3,7 @@ import { createPromiseSaga } from "../../utils";
 import { bklogFetchGet, bklogFetchPost, GET_PAGE, RELEASE_UPDATING, UpdateBklogPayload, UPDATE_BKLOG, UPDATE_VERSION } from "./utils";
 
 function updateBklog(data: UpdateBklogPayload) {
-  return bklogFetchPost(`bklog/${data.pageId}`, data);
+  return bklogFetchPost(`page/${data.pageId}`, data);
 }
 
 function getPage(pageId: string) {

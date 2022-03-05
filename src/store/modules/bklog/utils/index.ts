@@ -143,7 +143,7 @@ export const excludePageEditorError      = actions.excludePageEditorError;
 
 // api
 export const bklogFetchGet    = apiUtils.getFetch;
-export const bklogFetchPost   = apiUtils.patchFetch;
+export const bklogFetchPost   = apiUtils.postFetch;
 export const bklogFetchPut    = apiUtils.putFetch;
 export const bklogFetchPatch  = apiUtils.patchFetch;
 export const bklogFetchDelete = apiUtils.deleteFetch;

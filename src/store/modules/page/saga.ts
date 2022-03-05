@@ -18,7 +18,7 @@ function getPageList({ type, userInfo, query }: GetPageListPayload) {
 }
 
 function updatePageInfo(data: ReqUpdatePageInfo) {
-  return bklogFetchPatch(`pageinfo/${data.pageId}`, data);
+  return bklogFetchPatch(`page/${data.pageId}`, data);
 }
 
 function deletePage(pageId: string) {
