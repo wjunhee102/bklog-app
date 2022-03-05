@@ -68,7 +68,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
         </button>
       </div>
     </form>
-  )
+  );
 }
 
 export default SignInForm;
