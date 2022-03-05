@@ -1,7 +1,7 @@
 import React from 'react';
 import { BulletedBlock } from '../../../../../../entities/block/text/BulletedBlock';
 import { BlockComponentProps } from '../../../../BlockComponent';
-import ListTextZone from '../../../../zone/list-text-zone';
+import ListTextZone from '../../../../zone/list-text-zone/ListTextZone';
 import BulletedBlockEle from './BulletedBlockEle';
 
 const BulletedBlockComponent: React.FC<BlockComponentProps<BulletedBlock>> = (props) => {

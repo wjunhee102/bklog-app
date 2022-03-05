@@ -1,7 +1,7 @@
 import React from 'react';
 import { NumberedBlock } from '../../../../../../entities/block/text/NumberedBlock';
 import { BlockComponentProps } from '../../../../BlockComponent';
-import ListTextZone from '../../../../zone/list-text-zone';
+import ListTextZone from '../../../../zone/list-text-zone/ListTextZone';
 import NumberedBlockEle from './NumberedBlockEle';
 
 const NumberedBlockComponent: React.FC<BlockComponentProps<NumberedBlock>> = (props) => {
