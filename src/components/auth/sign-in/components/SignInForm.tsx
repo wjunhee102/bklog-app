@@ -62,7 +62,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
       <div>
         <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-500 hover:bg-purple-600 active:outline-none active:ring-2 active:ring-offset-2 active:ring-purple-600">
           <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-            <FontAwesomeIcon className="text-base text-purple-300 group-hover:text-purple-200" icon={faLock} />
+            <FontAwesomeIcon className="text-base text-purple-300 group-hover:text-purple-200" icon={faLock as any} />
           </span>
           Sign in
         </button>

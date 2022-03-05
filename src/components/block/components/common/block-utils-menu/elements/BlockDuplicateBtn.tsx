@@ -14,7 +14,7 @@ const BlockDuplicateBtn: React.FC<BlockDuplicateBtnProps> = ({
     <div className="block-duplicate-btn">
       <ActionButton
         onClick={handleClick}
-        IconComponent={<FontAwesomeIcon className="text-gray-500" icon={faClone} />}
+        IconComponent={<FontAwesomeIcon className="text-gray-500" icon={faClone as any} />}
       >
         복제하기
       </ActionButton>

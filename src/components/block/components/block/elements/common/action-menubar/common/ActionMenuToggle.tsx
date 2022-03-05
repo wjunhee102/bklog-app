@@ -18,7 +18,7 @@ const ActionMenuToggle: React.FC<ActionMenuToggleProps> = ({
       onClick={onClick}
     >
       { children }
-      <FontAwesomeIcon className="toggle-icon" icon={faAngleDown} />
+      <FontAwesomeIcon className="toggle-icon" icon={faAngleDown as any} />
     </button>
   );
 }

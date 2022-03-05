@@ -79,7 +79,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
             className="block-add-button"
             onClick={handleAddBlock}
           >
-            <FontAwesomeIcon icon={faPlus} />
+            <FontAwesomeIcon icon={faPlus as any} />
           </button> 
 
         </div>
@@ -91,7 +91,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
             onClick={() => setUtilToggle(!utilToggle)}
             onMouseDown={handleGrabMouseDown}
           >
-            <FontAwesomeIcon icon={faGripVertical} />
+            <FontAwesomeIcon icon={faGripVertical as any} />
           </button>
 
           {

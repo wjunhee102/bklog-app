@@ -33,7 +33,7 @@ const PageList: React.FC<PageListProps> = ({ pageEditor, pageList }) => {
                 누르면 색이 바뀌게 하면 될거 같음.
               */}
               <button className="h-8 pb-2 w-8 outline-none click:outline-none text-gray-300 hover:text-gray-600">
-                <FontAwesomeIcon icon={faSortDown} />
+                <FontAwesomeIcon icon={faSortDown as any} />
               </button>
             </li>  
           ) : <li></li>

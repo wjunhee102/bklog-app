@@ -22,7 +22,7 @@ function DarkModeToggle() {
         )}
       >
         <span className="sr-only">Dark mode toggle</span>
-        <FontAwesomeIcon className={classNames("transform transition-all", {"translate-x-8": dark})} icon={dark? faMoon : faCircle} />
+        <FontAwesomeIcon className={classNames("transform transition-all", {"translate-x-8": dark})} icon={dark? faMoon : faCircle as any} />
       </button>
     </div>
   )

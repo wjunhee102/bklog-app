@@ -15,12 +15,12 @@ const BlockTurnIntoBtn: React.FC<BlockTurnIntoBtnProps> = ({
     <div className="block-turninto-btn-box">
       <div className="block-turninto-btn">
         <ActionButton
-          IconComponent={<FontAwesomeIcon className="text-gray-500" icon={faExchangeAlt} />}
+          IconComponent={<FontAwesomeIcon className="text-gray-500" icon={faExchangeAlt as any} />}
         > 
           <div className="title-box">
             <div> 변경하기 </div> 
             <div>
-              <FontAwesomeIcon className="text-gray-400" icon={faCaretRight} />
+              <FontAwesomeIcon className="text-gray-400" icon={faCaretRight as any} />
             </div>
           </div>
         </ActionButton>

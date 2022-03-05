@@ -8,8 +8,8 @@ interface PageListTitleProps {
 }
 
 const PageListTitleIconTable = {
-  "private": <FontAwesomeIcon className="sidebar-svg" icon={faUserShield} />,
-  "public": <FontAwesomeIcon className="sidebar-svg" icon={faBookOpen} />
+  "private": <FontAwesomeIcon className="sidebar-svg" icon={faUserShield as any} />,
+  "public": <FontAwesomeIcon className="sidebar-svg" icon={faBookOpen as any} />
 }
 
 const PageListTitle: React.FC<PageListTitleProps> = ({

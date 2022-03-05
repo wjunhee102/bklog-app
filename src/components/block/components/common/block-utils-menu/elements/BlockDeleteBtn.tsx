@@ -13,7 +13,7 @@ const BlockDeleteBtn: React.FC<BlockDeleteBtnProps> = ({
   return (
     <div className="block-delete-btn">
       <ActionButton
-        IconComponent={<FontAwesomeIcon className="text-gray-500" icon={faTrashAlt} />}
+        IconComponent={<FontAwesomeIcon className="text-gray-500" icon={faTrashAlt as any} />}
         onClick={handleClick}
       >
         삭제하기
