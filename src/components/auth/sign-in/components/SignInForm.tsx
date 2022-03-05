@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
 import InputComponent from '../../InputComponent';
 import { InputPropsType } from '../hooks/useSignIn';
 import { ApiErrorType } from '../../../../utils/api-utils';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 interface SignInFormProps {
   onSubmit: React.FormEventHandler<HTMLFormElement>;
