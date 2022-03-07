@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import SignIn from "../../components/auth/sign-in"
 import SignUp from "../../components/auth/sign-up"
-import NotFoundPage from "../NotFoundPage"
+import NotFoundPage from "../notfoundpage/NotFoundPage"
 import { UseAuthPageTypes } from "./hooks/useAuthPage"
 
 interface AuthRoutesProps {

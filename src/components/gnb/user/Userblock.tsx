@@ -25,7 +25,7 @@ const UserBlock: React.FC<UserBlockProps> = ({
             </svg>
           </div>
       } 
-      <span className="ml-4">{penName}</span>
+      <span className="ml-4 font-medium">{penName}</span>
     </button>
   )
 }

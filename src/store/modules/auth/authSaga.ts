@@ -15,6 +15,7 @@ import {
 } from './utils/index';
 import { ALL_RESET, createPromiseSaga } from '../../utils';
 import { ApiError, ApiErrorType } from '../../../utils/api-utils';
+import { getCountOfReissueToken, setCountOfReissueToken } from '../../..';
 
 function checkEmailUsed(email: string) {
   return authFetchGet("check-email", { email });
@@ -48,9 +49,17 @@ function reissueToken() {
   return authFetchGet("reissue-token");
 }
 
-
 function* reissueTokenSaga({ payload }: any) {
   try {
+    if(getCountOfReissueToken() > 5) { 
+
+      yield put({ type: ALL_RESET });
+      
+      setCountOfReissueToken(0);
+
+      return;
+    };
+
     yield call(reissueToken);
 
     if(payload) {

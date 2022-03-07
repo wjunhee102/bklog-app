@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import NotFoundPage from '../NotFoundPage';
+import NotFoundPage from '../notfoundpage/NotFoundPage';
 import BkPageContainer from './components/BkPageContainer';
 import { UseBkPageTypes } from './hooks/useBkPage';
 

@@ -54,7 +54,7 @@ const BlockEditor: React.FC<BlockEditorProps> = ({ connectStoreHook, className }
       <div className="block-container-outer">
         
         <div className="cover">
-          <img src="/img/cover.jpg" alt="junhee"/>
+          <img src="/img/space.jpg" alt="junhee"/>
         </div>
         
         <div className={classNames(

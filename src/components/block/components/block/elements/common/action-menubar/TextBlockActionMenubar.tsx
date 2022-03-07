@@ -53,7 +53,6 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
 }) => {
   const {
     onChangeTextStyle,
-    onCommitTextBlock,
     onChangeStyleType,
     onChangeBlockType
   } = useBlockReducer;
@@ -61,7 +60,6 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
   const [ currentMenuName, setCurrentMenuName ] = useState<MenuName>("not");
 
   const onStyleChange = (contentType: TextContentStyleType, toggle: OrderType) => {
-    onCommitTextBlock();
     onChangeTextStyle(
       index, 
       contentType,
@@ -86,8 +84,11 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
   }
 
   const changeColorType = (type: "fc" | "bc") => (value: string | null) => () => {
-    if(!value) return
-    onStyleChange([type, value], "color");
+    if(!value) {
+      onChangeTextStyle(index, [type, ""], startPosition, endPosition, "del");
+    } else {
+      onStyleChange([type, value], "color");
+    }
   }
 
   const changeCurrentMenuName = (name: MenuName) => () => {

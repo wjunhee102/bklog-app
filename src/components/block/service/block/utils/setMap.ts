@@ -1,5 +1,4 @@
 import { BlockIdMap } from ".";
-import { UnionBlock } from "../../../entities/block/type";
 
 function createBlockIdMap<T extends { id: string }>(data: T[]): BlockIdMap {
   const blockIdMap = new Map<string, true>();
@@ -12,7 +11,6 @@ function createBlockIdMap<T extends { id: string }>(data: T[]): BlockIdMap {
 
   return blockIdMap;
 }
-
 
 export default {
   createBlockIdMap

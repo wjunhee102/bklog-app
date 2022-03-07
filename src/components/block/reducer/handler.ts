@@ -443,7 +443,7 @@ function addTitleBlockHandler(
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
-  } = new BlockService(state.blockList).addBlockInList([ newBlock ], "1", true).getData();
+  } = new BlockService(state.blockList).addBlockInList([ newBlock ], "1", false).getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 

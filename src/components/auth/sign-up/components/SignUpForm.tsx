@@ -56,7 +56,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
       </div>
 
       <div className="p-2">
-        <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-500 hover:bg-purple-600 active:outline-none active:ring-2 active:ring-offset-2 active:ring-purple-600">
+        <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white gradient gradient-hover active:outline-none active:ring-2 active:ring-offset-2 active:ring-purple-600">
           Sign up
         </button>
       </div>

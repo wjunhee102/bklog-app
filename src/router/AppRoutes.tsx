@@ -4,7 +4,7 @@ import DefaultContainer from '../pages/container/default';
 import AuthPage from '../pages/authpage';
 import BkPage from '../pages/bkpage';
 import HomePage from '../pages/homepage';
-import NotFoundPage from '../pages/NotFoundPage';
+import NotFoundPage from '../pages/notfoundpage/NotFoundPage';
 import Redirect from './Redirect';
 
 const AppRoutes: React.FC = () => {

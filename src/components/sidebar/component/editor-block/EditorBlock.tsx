@@ -54,11 +54,14 @@ const EditorBlock: React.FC<EditorBlockProps> = ({
         </div>
       </div> */}
 
-      <div className="test2-editor-block">
+      <div className="test2-editor-block gradient">
         <div className="editor-block-top">
 
           <div className="user-image">
-            <svg xmlns="http://www.w3.org/2000/svg" className="user-svg" fill="white" viewBox="0 0 24 24" stroke="rgb(254, 202, 202)">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" className="user-svg" fill="white" viewBox="0 0 24 24" stroke="rgb(254, 202, 202)">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg> */}
+            <svg xmlns="http://www.w3.org/2000/svg" className="user-svg" fill="transparent" viewBox="0 0 24 24" stroke="#fff">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>

@@ -12,11 +12,6 @@ const Home: React.FC = () => {
       <div className="portfolio-container">
         <Portfolio />
       </div>
-      <div>
-        <Link to="/bklog">
-          bklog 이동
-        </Link>
-      </div>
     </div>
   )
 }

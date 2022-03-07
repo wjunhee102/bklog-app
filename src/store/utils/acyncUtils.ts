@@ -3,6 +3,7 @@ import { REISSUETOKEN, RESET_AUTH } from '../modules/auth/utils';
 import { ApiError } from '../../utils/api-utils';
 import { RESET_BKLOG } from '../modules/bklog/utils';
 import { RESET_PAGE } from '../modules/page/utils';
+import { getCountOfReissueToken, setCountOfReissueToken } from '../..';
 
 function createPromiseSaga<T = any>(
   type: string, 
@@ -15,15 +16,21 @@ function createPromiseSaga<T = any>(
   return function* (action: any) {
     try {
       const data: T = yield call<any>(promiseCreator, action.payload);
+  
+     setCountOfReissueToken(0);
 
       yield put({ type: SUCCESS, payload: data });
     } catch(error: any) {
+
       if(error.type === "AUTH" && error.code === "001") {
+        setCountOfReissueToken(getCountOfReissueToken() + 1);
+
         yield put({ type: REISSUETOKEN, payload: action });
+
       } else {
-        console.log("error", ERROR, error, new ApiError(error).get);
         yield put({ type: ERROR, payload: new ApiError(error).get });
       }
+      
     }
   } 
 }  

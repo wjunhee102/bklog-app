@@ -2,7 +2,7 @@ import React from 'react';
 import BlockEditor from '../../components/block';
 import useConnectBklogStore from '../../hooks/useConnectBklogStore';
 import LoadingWindow from '../../components/common/loading-window';
-import NotFoundPage from '../../pages/NotFoundPage';
+import NotFoundPage from '../../pages/notfoundpage/NotFoundPage';
 import { UseBkPageTypes } from '../../pages/bkpage/hooks/useBkPage';
 import useBkContainer from './hooks/useBkContainer';
 import './BklogContainer.scss';

@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Sibebar from "../../../components/sidebar";
 import BklogContainer from "../../../containers/bklog-container";
 import { GetPageListReqType } from '../../../store/modules/page/utils';
-import NotFoundPage from "../../NotFoundPage";
+import NotFoundPage from "../../notfoundpage/NotFoundPage";
 import { UseBkPageTypes } from "../hooks/useBkPage";
 import useBkContainer from "../hooks/useBkContainer";
 import BkDashBoard from "./BkDashBoard";

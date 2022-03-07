@@ -3,6 +3,7 @@ import { ReturnConnectStoreHook } from "../../block";
 import { UnionRawBlockData } from "../../block/entities/block/type";
 import { UseBlockType } from "../../block/hooks/useBlock";
 import { ModifyBlockService } from "../../block/service/modify/block/ModifyBlockService";
+import { data } from "./initialData";
 
 const initialBlockList: UnionRawBlockData[] = [
   {
@@ -86,13 +87,16 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
     state: {
       preBlockInfo,
       modifyBlockTokenList,
-      historyBack
+      historyBack,
+      blockList
     },
-    onInitBlockState
+    onInitBlockState,
+    onInitPageTitle
   } = useBlockReducer;
 
   useEffect(() => {
-    onInitBlockState(initialBlockList);
+    onInitBlockState(data);
+    onInitPageTitle("안녕하세요 Bklog입니다!");
   }, []);
 
   useEffect(() => {
@@ -107,6 +111,10 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
     console.log(historyBack);
   }, [historyBack]);
   
+  useEffect(() => {
+    localStorage.setItem("bklog", JSON.stringify(blockList.map(block => block.getRawBlockData())));
+  }, [blockList]);
+
   return {
     updated
   }

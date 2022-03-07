@@ -46,16 +46,16 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
   
   const modifyBlockTokenList: ModifyBlockToken[] = [];
   const historyBlockTokenList: HistoryBlockToken[] = [];
-  const stackId: string[] = [];
+  const idStack: string[] = [];
 
   let blockListLength = blockList.length;
-  let stackIdLength = 0;
+  let idStackLength = 0;
   let currentPosition = [1];
   let currentPositionLength = 0;
   
   const firstBlock = blockList[0];
 
-  stackId.push(firstBlock.id);
+  idStack.push(firstBlock.id);
 
   const preProps = firstBlock.updateBlock({
     index: 0,
@@ -77,13 +77,13 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
 
     if(currentPositionLength === length) {
       
-      stackId[stackIdLength] = block.id;
+      idStack[idStackLength] = block.id;
       currentPosition[currentPositionLength]++;
 
     } else if(currentPositionLength < length){
 
-      stackId.push(block.id);
-      stackIdLength++;
+      idStack.push(block.id);
+      idStackLength++;
       currentPosition.push(1);
       currentPositionLength++;
 
@@ -92,12 +92,12 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
       for(let i = 0; i <= currentPositionLength - length; i++) {
         currentPosition.pop();
         currentPositionLength--;
-        stackId.pop();
-        stackIdLength--;
+        idStack.pop();
+        idStackLength--;
       } 
 
       currentPosition[currentPositionLength]++;
-      stackId[stackIdLength] = block.id;
+      idStack[idStackLength] = block.id;
     }
 
     let position = currentPosition.join("-");
@@ -116,7 +116,7 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
 
     block.updateBlock({
       index,
-      parentId: !stackIdLength? "root": stackId[stackIdLength - 1],
+      parentId: !idStackLength? "root": idStack[idStackLength - 1],
       position
     });
 
