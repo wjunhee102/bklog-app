@@ -66,10 +66,10 @@ function useBaseTextBlockUtils({
 
   const handleClick = useCallback((e: any) => {
     const parentNode = e.target.parentNode;
-
+  
     if(parentNode.tagName === "A") {
       window.open(parentNode.href);
-    }
+    } 
 
   }, []);
 
@@ -115,7 +115,7 @@ function useBaseTextBlockUtils({
     } else {
       setStyleToggle(false);
     }
-  }, [cursorStart, cursorEnd]);
+  }, [cursorStart, cursorEnd, editingBlockId]);
 
   useEffect(() => {
     if(isGrab) {
@@ -145,6 +145,12 @@ function useBaseTextBlockUtils({
       setStyleToggle(false);
     }
   }, [editingBlockId]);
+
+  useEffect(() => {
+    // 크롬에서 한글 중복입력 이슈에 관한 조치 
+    blockContentsRef.current?.blur();
+    blockContentsRef.current?.focus();
+  }, [block.contents]);
 
   return {
     styleToggle,
