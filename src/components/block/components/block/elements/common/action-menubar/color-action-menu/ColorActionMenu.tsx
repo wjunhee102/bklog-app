@@ -6,12 +6,22 @@ import ActionMenuBox from '../common/ActionMenuBox';
 import ActionMenuToggle from '../common/ActionMenuToggle';
 
 interface ColorActionIconProps {
-  style: string;
+  style: {
+    backgroundColor?: string;
+    color?: string; 
+  };
+}
+
+function setColorIconStyle(type: string, color: string): {
+  backgroundColor?: string;
+  color?: string; 
+} {
+  return type === "text"? { color } : { backgroundColor: color } ;
 }
 
 export const ColorActionIcon: React.FC<ColorActionIconProps> = ({ style }) => {
   return (
-    <div className={`${style} color-action-icon`}>A</div>
+    <div style={style} className="color-action-icon">A</div>
   )
 }
 
@@ -19,56 +29,56 @@ const colorMenu = (type: string): ButtonProps[] => [
   {
     title: "기본",
     value: null,
-    IconComponent: <ColorActionIcon style={""} />
+    IconComponent: <ColorActionIcon style={{}} />
   },
   {
     title: "회색",
     value: "rgba(107, 114, 128, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-gray-500`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(107, 114, 128, 1)")} />
   },
   {
     title: "갈색",
     value: "rgba(180, 83, 9, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-yellow-700`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(180, 83, 9, 1)")} />
   },
   {
     title: "주황",
     value: "rgba(252, 211, 77, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-yellow-500`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(252, 211, 77, 1)")} />
   },
   {
     title: "노랑",
     value: "rgba(251, 191, 36, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-yellow-400`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(251, 191, 36, 1)")} />
   },
   {
     title: "초록",
     value: "rgba(16, 185, 129, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-green-500`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(16, 185, 129, 1)")} />
   }
   , 
   {
     title: "파랑",
     value: "rgba(59, 130, 246, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-blue-500`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(59, 130, 246, 1)")} />
   }
   , 
   {
     title: "보라",
     value: "rgba(139, 92, 246, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-purple-500`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(139, 92, 246, 1)")} />
   }
   , 
   {
     title: "분홍",
     value: "rgba(244, 114, 182, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-pink-400`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(244, 114, 182, 1)")} />
   }
   , 
   {
     title: "빨강",
     value: "rgba(239, 68, 68, 1)",
-    IconComponent: <ColorActionIcon style={`${type}-red-500`} />
+    IconComponent: <ColorActionIcon style={setColorIconStyle(type, "rgba(239, 68, 68, 1)")} />
   }
 ]
 
