@@ -95,7 +95,8 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
   const {
     handleSetCursorPoint,
     handleMoveToEndPoint,
-    handleRefreshCursorPoint
+    handleRefreshCursorPoint,
+    handleMoveToWantPoint
   } = useMoveCursorPoint({
     element: blockContentsRef.current,
     setCursorStart,
@@ -161,6 +162,7 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
   useEffect(() => {
     blockContentsRef.current?.blur();
     blockContentsRef.current?.focus();
+    handleMoveToWantPoint(cursorStart, cursorEnd);
   }, [block.contents]);
 
   return {

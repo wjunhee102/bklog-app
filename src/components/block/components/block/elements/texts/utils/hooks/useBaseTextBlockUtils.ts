@@ -150,6 +150,7 @@ function useBaseTextBlockUtils({
     // 크롬에서 한글 중복입력 이슈에 관한 조치 
     blockContentsRef.current?.blur();
     blockContentsRef.current?.focus();
+    handleMoveToWantPoint(cursorStart, cursorEnd);
   }, [block.contents]);
 
   return {

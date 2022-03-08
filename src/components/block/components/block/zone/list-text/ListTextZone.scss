@@ -57,7 +57,7 @@
     .bulleted {
       &.bk-h1 {
         font: {
-          size: 1em;
+          size: 14px;
           weight: 500;
         }
         line-height: 48px;
@@ -65,7 +65,7 @@
       
       &.bk-h2 {
         font: {
-          size: 0.8em;
+          size: 13px;
           weight: 500;
         } 
         line-height: 42px;
@@ -73,7 +73,7 @@
       
       &.bk-h3 {
         font: {
-          size: 0.75em;
+          size: 12px;
           weight: 500;
         } 
         line-height: 35px;
@@ -81,7 +81,7 @@
       
       &.bk-h4 {
         font: {
-          size: 0.9em;
+          size: 10px;
           weight: 500;
           line-height: 35px;
         } 
@@ -89,7 +89,7 @@
       }
       
       &.bk-p {
-        font-size: 0.5em;
+        font-size: 10px;
         line-height: 24px;
       }
     }

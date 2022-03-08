@@ -84,12 +84,6 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
   const updated = false;
 
   const {
-    state: {
-      preBlockInfo,
-      modifyBlockTokenList,
-      historyBack,
-      blockList
-    },
     onInitBlockState,
     onInitPageTitle
   } = useBlockReducer;

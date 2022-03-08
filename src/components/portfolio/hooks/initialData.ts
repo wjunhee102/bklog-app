@@ -37,36 +37,13 @@ export const data: UnionRawBlockData[] = [
         "styles": null
     }, {
         "position": "3",
-        "id": "T3",
-        "type": "text",
-        "styleType": "bk-h4",
-        "contents": [
-            [
-                "Bklog 관련 노션 문서로 이동!",
-                [
-                    [
-                        "a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"
-                    ],
-                    ["b"],
-                    [
-                        "fc", "rgba(59,130,246,1)"
-                    ],
-                    [
-                        "bc", "rgba(251,191,36,1)"
-                    ]
-                ]
-            ]
-        ],
-        "styles": null
-    }, {
-        "position": "4",
         "id": "4a49f11416046255b8cec55035851dfe",
         "type": "text",
         "styleType": "bk-p",
         "contents": [],
         "styles": null
     }, {
-        "position": "5",
+        "position": "4",
         "id": "45669a0b47bf63e2b5a160dc5dfb63a7",
         "type": "text",
         "styleType": "bk-h3",
@@ -83,7 +60,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "6",
+        "position": "5",
         "id": "4bd66b90981829099aa5574452a1dc24",
         "type": "numbered",
         "styleType": "bk-p",
@@ -106,7 +83,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "7",
+        "position": "6",
         "id": "4d1bdfb061c33f02aa5e3f3bbf0524cf",
         "type": "numbered",
         "styleType": "bk-p",
@@ -129,7 +106,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "8",
+        "position": "7",
         "id": "4166d0118f29a895ab05b8f45e71df7a",
         "type": "numbered",
         "styleType": "bk-p",
@@ -152,14 +129,14 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "9",
+        "position": "8",
         "id": "48862098ac410443af2098d78cc3ab8f",
         "type": "text",
         "styleType": "bk-h4",
         "contents": [],
         "styles": null
     }, {
-        "position": "10",
+        "position": "9",
         "id": "429eaa995de579c5b2a0ee9875544aee",
         "type": "text",
         "styleType": "bk-h2",
@@ -173,7 +150,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "11",
+        "position": "10",
         "id": "T2",
         "type": "text",
         "styleType": "bk-p",
@@ -191,7 +168,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "12",
+        "position": "11",
         "id": "47ada938cddc6e53b06e12863bfe7038",
         "type": "text",
         "styleType": "bk-h3",
@@ -209,7 +186,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "13",
+        "position": "12",
         "id": "461136d48a0c43488c18407992e32186",
         "type": "text",
         "styleType": "bk-h2",
@@ -228,7 +205,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "14",
+        "position": "13",
         "id": "4b10b3b2b9f5fc688ecbd9749cc19729",
         "type": "text",
         "styleType": "bk-h1",
@@ -247,7 +224,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "15",
+        "position": "14",
         "id": "43c14eb6941b86f89ecbfb53d01aee66",
         "type": "numbered",
         "styleType": "bk-p",
@@ -264,7 +241,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "16",
+        "position": "15",
         "id": "4a832c50f92f8b739f9e432139a06308",
         "type": "numbered",
         "styleType": "bk-p",
@@ -281,7 +258,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "17",
+        "position": "16",
         "id": "4340c806a9e169aebe7726de7c6e04d0",
         "type": "bulleted",
         "styleType": "bk-p",
@@ -298,7 +275,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "18",
+        "position": "17",
         "id": "457220e74f96561e88068daa3b7b3c12",
         "type": "text",
         "styleType": "bk-h3",
@@ -315,7 +292,7 @@ export const data: UnionRawBlockData[] = [
         ],
         "styles": null
     }, {
-        "position": "19",
+        "position": "18",
         "id": "T5",
         "type": "image",
         "styleType": "none",
@@ -326,8 +303,106 @@ export const data: UnionRawBlockData[] = [
             "width": "150px"
         }
     }, {
+        "position": "19",
+        "id": "4bfc40816452de809366857f7b5fd64f",
+        "type": "text",
+        "styleType": "bk-p",
+        "contents": [],
+        "styles": null
+    }, {
         "position": "20",
         "id": "4fdaabaa35af2ecd9389c06766658929",
+        "type": "text",
+        "styleType": "bk-h2",
+        "contents": [
+            ["링크 리스트"]
+        ],
+        "styles": null
+    }, {
+        "position": "21",
+        "id": "T6",
+        "type": "bulleted",
+        "styleType": "bk-p",
+        "contents": [
+            [
+                "Bklog 관련 노션 문서",
+                [
+                    [
+                        "a", "https://www.notion.so/Bklog-3445d5ed743d4223923ab33cc7565b36"
+                    ],
+                    ["b"],
+                    ["_"]
+                ]
+            ]
+        ],
+        "styles": null
+    }, {
+        "position": "22",
+        "id": "T7",
+        "type": "bulleted",
+        "styleType": "bk-p",
+        "contents": [
+            [
+                "Bklog App github link",
+                [
+                    [
+                        "a", "https://github.com/wjunhee102/bklog-app"
+                    ],
+                    ["b"],
+                    ["_"]
+                ]
+            ]
+        ],
+        "styles": null
+    }, {
+        "position": "23",
+        "id": "T8",
+        "type": "bulleted",
+        "styleType": "bk-p",
+        "contents": [
+            [
+                "Bklog Api github link",
+                [
+                    [
+                        "a", "https://github.com/wjunhee102/bklog-api"
+                    ],
+                    ["b"],
+                    ["_"]
+                ]
+            ]
+        ],
+        "styles": null
+    }, {
+        "position": "24",
+        "id": "406d936c7636638d9ae6c1b6cfea881a",
+        "type": "text",
+        "styleType": "bk-p",
+        "contents": [],
+        "styles": null
+    }, {
+        "position": "25",
+        "id": "454103b317453ed5966ad7cb8ceb4ff3",
+        "type": "text",
+        "styleType": "bk-p",
+        "contents": [],
+        "styles": null
+    }, {
+        "position": "26",
+        "id": "459e868041d8619980ff6c7d4ed68026",
+        "type": "text",
+        "styleType": "bk-p",
+        "contents": [],
+        "styles": null
+    }, {
+        "position": "27",
+        "id": "423c3d6ca098c584865fd20f359eca28",
+        "type": "text",
+        "styleType": "bk-p",
+        "contents": [],
+        "styles": null
+    }, {
+        "position": "28",
+        "id": "4b16fde4b43d277387a3c01420289d6a",
         "type": "text",
         "styleType": "bk-p",
         "contents": [],

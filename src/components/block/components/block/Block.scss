@@ -1,3 +1,15 @@
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
 .block {
 
   &.text-block, &.title-block, &.numbered-block, &.bulleted-block {
@@ -37,6 +49,25 @@
 
     a {
       cursor: pointer;
+      transition: all 0.4s;
+
+      span {
+        transition: all 0.4s;
+      }
+      
+      &:hover {
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradient 10s ease infinite;
+        border-radius: 4px;
+        color: #fff;
+
+        span {
+          color: inherit !important;
+          background-color: transparent !important;
+        }
+      }
+
     }
 
   }
