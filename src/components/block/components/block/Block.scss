@@ -14,7 +14,6 @@
 
   .bk-text-contents {
     font-size: inherit;
-    line-height: 1.2;
     height: auto;
     color : inherit;
     width: 100%;
@@ -71,6 +70,7 @@
       size: 2em;
       weight: 500;
     }
+    line-height: 48px;
   }
   
   .bk-h2 {
@@ -78,6 +78,7 @@
       size: 1.75em;
       weight: 500;
     } 
+    line-height: 42px;
   }
   
   .bk-h3 {
@@ -85,6 +86,7 @@
       size: 1.5em;
       weight: 500;
     } 
+    line-height: 35px;
   }
   
   .bk-h4 {
@@ -92,11 +94,12 @@
       size: 1.25em;
       weight: 500;
     } 
+    line-height: 30px;
   }
   
   .bk-p {
     font-size: 1em;
-    line-height: 1.5;
+    line-height: 24px;
   }
 
 }

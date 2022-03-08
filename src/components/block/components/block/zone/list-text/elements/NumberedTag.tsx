@@ -44,7 +44,7 @@ const NumberedTag: React.FC<ListTagProps<NumberedBlock>> = ({
   }, [blockList[block.index - 1]?.meta]);
 
   return (
-    <div className="list-tag">
+    <div className={`list-tag ${block.styleType}`}>
       {block.meta.order? block.meta.order : ""}.
     </div>
   );

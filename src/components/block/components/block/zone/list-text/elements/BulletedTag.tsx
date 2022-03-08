@@ -7,7 +7,7 @@ const BulltedTag: React.FC<ListTagProps> = ({
   parentTagType
 }) => {
   return (
-    <div className="list-tag">
+    <div className={`list-tag bulleted ${block.styleType}`}>
       ●
     </div>
   );

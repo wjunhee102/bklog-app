@@ -1,5 +1,5 @@
 .block-scroll-menu2 {
-  @apply h-auto rounded shadow-md overflow-auto h-auto border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700;
+  @apply h-auto rounded shadow-md dark:ring-white overflow-auto h-auto border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700;
   max-height: 50vh;
 
   .title {

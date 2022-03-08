@@ -10,7 +10,88 @@
 
     .list-tag {
       @apply mr-4 h-full w-4 text-center mx-px;
-      line-height: 1.5;
+      font-size: inherit;
+      line-height: 1.2;
+      margin-top: 1px;
+      margin-bottom: 1px;
+
+      &.bk-h1 {
+        font: {
+          size: 1.8em;
+          weight: 500;
+        }
+        line-height: 48px;
+      }
+      
+      &.bk-h2 {
+        font: {
+          size: 1.5em;
+          weight: 500;
+        } 
+        line-height: 42px;
+      }
+      
+      &.bk-h3 {
+        font: {
+          size: 1.25em;
+          weight: 500;
+        } 
+        line-height: 35px;
+      }
+      
+      &.bk-h4 {
+        font: {
+          size: 1.1em;
+          weight: 500;
+          line-height: 35px;
+        } 
+        line-height: 30px;
+      }
+      
+      &.bk-p {
+        font-size: 1em;
+        line-height: 24px;
+      }
+    }
+
+    .bulleted {
+      &.bk-h1 {
+        font: {
+          size: 1em;
+          weight: 500;
+        }
+        line-height: 48px;
+      }
+      
+      &.bk-h2 {
+        font: {
+          size: 0.8em;
+          weight: 500;
+        } 
+        line-height: 42px;
+      }
+      
+      &.bk-h3 {
+        font: {
+          size: 0.75em;
+          weight: 500;
+        } 
+        line-height: 35px;
+      }
+      
+      &.bk-h4 {
+        font: {
+          size: 0.9em;
+          weight: 500;
+          line-height: 35px;
+        } 
+        line-height: 30px;
+      }
+      
+      &.bk-p {
+        font-size: 0.5em;
+        line-height: 24px;
+      }
     }
   }
 }
