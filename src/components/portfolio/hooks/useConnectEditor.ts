@@ -99,22 +99,6 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
     onInitPageTitle("안녕하세요 Bklog입니다!");
   }, []);
 
-  useEffect(() => {
-    console.log(new ModifyBlockService(modifyBlockTokenList, true).getData());
-  }, [modifyBlockTokenList]);
-
-  useEffect(() => {
-    console.log(preBlockInfo);
-  }, [preBlockInfo]);
-
-  useEffect(() => {
-    console.log(historyBack);
-  }, [historyBack]);
-  
-  useEffect(() => {
-    localStorage.setItem("bklog", JSON.stringify(blockList.map(block => block.getRawBlockData())));
-  }, [blockList]);
-
   return {
     updated
   }

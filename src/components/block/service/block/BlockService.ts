@@ -13,6 +13,13 @@ import { ModifyBlockService } from "../modify/block/ModifyBlockService";
 import { HistoryBlockData, ModifyBlockData } from "../modify/type";
 import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, resetToTargetPosition, updateBlockListStagedProperty, setPosition, changeBlockType, createBlockIdMap, BlockIdMap } from "./utils";
 
+/**
+ * TODO
+ * -
+ * 현재 position 방식으로 블럭의 위치를 정하는 방식에서 
+ * 단방향 연결리스트로 변경해야 함.
+ * 
+ */
 export class BlockService {
   private modifyBlockTokenList: ModifyBlockToken[] = [];
   private historyBlockTokenList: HistoryBlockToken[] = [];

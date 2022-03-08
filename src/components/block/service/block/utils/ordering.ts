@@ -36,6 +36,15 @@ function sortBlock(blockList: UnionBlock[]) {
   });
 }
 
+
+/**
+ * TODO
+ * -
+ * 현재 position 방식으로 블럭의 위치를 정하는 방식에서 
+ * 단방향 연결리스트로 변경해야 함.
+ * targetIdList를 받아서 해당 아이디부터 변경하고 바뀐 값이 없는 블럭부터 끝났다고 판단해서 짤 것.
+ * 
+ */
 /**
  * 원본 배열에 반영
  * @param blockList 
@@ -128,6 +137,15 @@ function orderingBlock(blockList: UnionBlock[]): ResBlockService {
     modifyBlockTokenList: modifyBlockTokenList[0]? modifyBlockTokenList : undefined,
     historyBlockTokenList: historyBlockTokenList[0]? historyBlockTokenList : undefined
   };
+}
+
+function orderingBlockNew(blockList: any, targetIdList: string[]) {
+  let currentTargetIdx = 0;
+  let targetId = targetIdList[currentTargetIdx];
+
+  const newBlockList = [];
+  
+
 }
 
 /**
