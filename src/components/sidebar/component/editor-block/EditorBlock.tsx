@@ -67,13 +67,17 @@ const EditorBlock: React.FC<EditorBlockProps> = ({
           </div>
 
           <div className="user-penname">
-            Test
+            {pageEditor.penName}
           </div>
           
         </div>
 
         <div className="editor-block-bottom">
-        <div className="user-bio">안녕하세요. 프론트엔드   개발자입니다.</div>
+        <div className="user-bio"> 
+          {
+            pageEditor.bio? pageEditor.bio : `안녕하세요. ${pageEditor.penName}입니다.`
+          } 
+        </div>
         </div>
       </div>
 
