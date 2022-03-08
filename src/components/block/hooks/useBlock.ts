@@ -49,6 +49,11 @@ interface CursorType {
   end: number;
 }
 
+interface ClientPositionType {
+  x: number;
+  y: number;
+}
+
 // state 값을 전부 useReducer로 통합할 것.
 function useBlock() {
 
@@ -62,6 +67,16 @@ function useBlock() {
   const setCursorEnd = useCallback((point: number) => { 
     cursor.current.end = point; 
   }, [cursor.current]);
+
+  const clientPostion = useRef<ClientPositionType>({ x: 0, y: 0});
+
+  const setClientX = useCallback((x: number) => {
+    clientPostion.current.x = x;
+  }, [clientPostion.current]);
+
+  const setClientY = useCallback((y: number) => {
+    clientPostion.current.y = y;
+  }, [clientPostion.current]);
 
   // state
   const [ currentDropDirection, setDropDirection ] = useState<string | null>(null);
@@ -227,6 +242,10 @@ function useBlock() {
     cursorEnd: cursor.current.end,
     setCursorStart,
     setCursorEnd,
+    clientX: clientPostion.current.x,
+    clientY: clientPostion.current.y,
+    setClientX,
+    setClientY,
     currentDropDirection,
     setDropDirection,
     state, 

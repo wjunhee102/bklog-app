@@ -52,6 +52,7 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
   useBlockReducer
 }) => {
   const {
+    clientX,
     onChangeTextStyle,
     onChangeStyleType,
     onChangeBlockType
@@ -100,6 +101,14 @@ const TextBlockActionMenuBar: React.FC<TextBlockActionMenuBarProps> = ({
   const textStyle = useMemo(() => 
     findTextStyle(contents, startPosition), 
   [contents, startPosition]);
+
+  // const actionMenubarPosition = useMemo(() => {
+  //   const width = document.body.clientWidth - 300;
+
+  //   const position = startPosition * setLeftPosition(styleType)
+
+  //   return position < width? position : width;
+  // }, [startPosition]);
 
   return (
     <div 
