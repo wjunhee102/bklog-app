@@ -158,6 +158,11 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
     if(editingBlockId === block.id) handleFocus(blockContentsRef.current);
   }, []);
 
+  useEffect(() => {
+    blockContentsRef.current?.blur();
+    blockContentsRef.current?.focus();
+  }, [block.contents]);
+
   return {
     blockContentsRef,
     handleKeyUp,
