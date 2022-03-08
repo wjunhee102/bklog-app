@@ -31,7 +31,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
               key={props.id}
               labelClass="sr-only"
               className={classNames(
-                "dark:bg-gray-100 appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 focus:ring-1 sm:text-sm",
+                "dark:bg-gray-100 appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:z-10 focus:ring-1 sm:text-sm focus:ring-offset-1",
                 props.style,
                 {"border-red-500": props.error}
               )}
@@ -60,7 +60,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
       </div>
 
       <div>
-        <button type="submit" className="gradient gradient-hover whitespace-nowrap group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white active:outline-none active:ring-2 active:ring-offset-2 active:ring-purple-600">
+        <button type="submit" className="gradient gradient-hover whitespace-nowrap group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white active:outline-none active:ring-2 active:ring-offset-1">
           <span className="absolute left-0 inset-y-0 flex items-center pl-3">
             <FontAwesomeIcon className="text-base text-white group-hover:text-purple-200" icon={faLock as any} />
           </span>
