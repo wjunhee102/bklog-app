@@ -8,6 +8,8 @@ const initState: BaseState = {
 function base(state: BaseState = initState, action: BaseActions) {
   switch(action.type) {
     case CHANGE_DARK_MODE:
+      localStorage.setItem("dark", JSON.stringify(!state.dark));
+
       return Object.assign({}, state, {
         dark: !state.dark
       });
@@ -18,7 +20,15 @@ function base(state: BaseState = initState, action: BaseActions) {
       });
 
     default: 
-      return state;
+      const darkMode = localStorage.getItem("dark");
+
+      if(darkMode) {
+        return Object.assign({}, state, {
+          dark: true
+        });
+      } else {
+        return state;
+      }
   }
 }
 

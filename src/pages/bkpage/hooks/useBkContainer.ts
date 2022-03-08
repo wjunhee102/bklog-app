@@ -12,10 +12,14 @@ function useBkSwitch(type: GetPageListReqType, {
 
   const {
     pageState: {
-      pageList
+      error,
+      pageList,
+      tempPageInfo,
+      pageEditor
     },
     onGetPageList,
-    onChangeToggle
+    onChangeToggle,
+    onClearPageState
   } = usePageHooks;
 
   const {
@@ -27,16 +31,23 @@ function useBkSwitch(type: GetPageListReqType, {
   useEffect(() => {
     if(userInfo) onGetPageList(type, userInfo, user && user.id? { id: user.id } : undefined);
   }, [type, userInfo, user]);
-
+  
   useEffect(() => {
-    // if(pageList[0]) {
-    //   navigate(`/bklog/${type}/${userInfo}/${pageList[0].id}`)
-    // }
-  }, [pageList]);
+    if(error && error.code === "004") navigate("/not-found-page");
+  }, [error]);
 
   useEffect(() => {
     onChangeToggle(true);
   }, []);
+
+  useEffect(() => {
+
+    if(user && user.id === pageEditor.id && tempPageInfo?.id) {
+      navigate(`/bklog/id/${user.id}/${tempPageInfo.id}`);
+      onClearPageState('tempPageInfo');
+    }
+    
+  }, [tempPageInfo]);
 }
 
 export default useBkSwitch;

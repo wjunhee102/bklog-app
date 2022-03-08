@@ -16,6 +16,7 @@ function handleErrorPopup({
 }
 
 function useBkPageLogic({
+  usePageHooks,
   useAuthHooks,
   useBklogHooks,
   navigate

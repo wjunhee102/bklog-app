@@ -8,7 +8,8 @@ interface BkDashBoardProps {
 const BkDashBoard: React.FC<BkDashBoardProps> = ({
   bkPageHooks: {
     usePageHooks,
-    useAuthHooks
+    useAuthHooks,
+    navigate
   }
 }) => {
 
@@ -16,7 +17,9 @@ const BkDashBoard: React.FC<BkDashBoardProps> = ({
 
   const {
     pageState: {
-      pageList
+      pageEditor,
+      pageList,
+      tempPageInfo
     },
     onCreatePage
   } = usePageHooks;
@@ -27,19 +30,23 @@ const BkDashBoard: React.FC<BkDashBoardProps> = ({
     }
   } = useAuthHooks
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  }, [pageList]);
+  // }, [pageList]);
 
   const handleClick = () => {
-    if(user) {
-      onCreatePage("undefined", 1);
+    if(user && user.id === pageEditor.id) {
+      onCreatePage("page", 1);
     }
   }  
 
   return (
-    <div className="bk-dashboard">
-      <button onClick={handleClick}>생성</button>
+    <div className="bk-dashboard"> 
+      {
+        user && user.id === pageEditor.id?
+        <button className="create-btn gradient gradient-hover" onClick={handleClick}>페이지 생성</button>
+        : null
+      }
     </div>
   );
 }

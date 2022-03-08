@@ -19,3 +19,22 @@
     z-index: 99;
   }
 }
+
+.bk-dashboard {
+  @apply w-full h-full flex items-center justify-center; 
+
+
+  .create-btn {
+    @apply border border-transparent focus:outline-none active:ring-2 active:ring-offset-1;
+
+    color: #fff;
+    text-shadow: 0.4px 0.4px 5px rgba(0, 0, 0, 0.4);
+    font-size: 1.3em;
+    font-weight: 600;
+    width: 210px;
+    height: 46px;
+    line-height: 30px;
+    border-radius: 6px;
+  }
+
+}

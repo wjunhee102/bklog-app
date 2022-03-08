@@ -117,7 +117,10 @@ function createPageSuccessHandler(
 
   return updateObject<PageState, PageStateProps>(state, {
     loading: false,
-    pageList
+    pageList,
+    tempPageInfo: {
+      id: payload
+    }
   });
 }
 
@@ -127,7 +130,8 @@ function createPageErrorHandler(
 ): PageState {
   return updateObject<PageState, PageStateProps>(state, {
     loading: false,
-    error: payload
+    error: payload,
+    tempPageInfo: null
   });
 }
 
