@@ -188,7 +188,7 @@ const Portfolio: React.FC = () => {
   // }, [count]);
 
   return (
-    <main className="portfolio h-screen">
+    <main className="portfolio">
       
       {/* <header className="cover-area">
         <div className="container">

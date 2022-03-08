@@ -14,7 +14,7 @@ const DefaultPage: React.FC = () => {
 
   return (
     <div>
-      asdasd
+
     </div>
   );
 }

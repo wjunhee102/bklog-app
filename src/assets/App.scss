@@ -6,7 +6,16 @@
 }
 
 .app {
-  @apply w-auto h-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100;  
+  @apply w-screen h-screen;
+
+	&.light {
+		@apply text-gray-700 bg-gray-100;
+	}
+
+	&.dark {
+		@apply bg-gray-900 text-gray-100;
+	}
+
 }
 
 .gradient {

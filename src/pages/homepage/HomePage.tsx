@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   useHomePage();
 
   return (
-    <div className="home overflow-auto h-full">
+    <div className="home overflow-auto h-full box-border">
       <div className="portfolio-container">
         <Portfolio />
       </div>

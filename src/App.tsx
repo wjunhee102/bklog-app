@@ -9,7 +9,7 @@ const App: React.FC = () => {
   const { dark } = useApp();
 
   return (
-    <div className={classNames("app", {"dark": dark}, {"light": !dark})}>
+    <div className={classNames("app", { dark }, {light: !dark})}>
       <Router />
     </div>
   );

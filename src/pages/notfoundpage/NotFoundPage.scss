@@ -1,12 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700;800&display=swap'); 
 
 .not-found-page {
-  @apply w-screen h-screen overflow-hidden p-4;
+  @apply w-full h-full box-border bg-gray-800 overflow-hidden p-4;
 
   color: #fff;
   font-size: 16px;
   font-family: 'Open Sans',sans-serif;
-  background-color: #ffffff;
 
   .not-found-page-container {
     width: calc(100% - 100px);
@@ -27,14 +26,21 @@
     color: #f48f8f;
   }
 
-  a {
-    font-weight: 700;
-    color: #fff;
+  .return-home {
+    margin-top: 30px;
 
-    &:hover {
-      text-shadow: 1px 0.4px 3px rgba(0, 0, 0, 0.5);
-      text-decoration: underline;
+    a {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: #fff;
+  
+      &:hover {
+        text-shadow: 1px 0.4px 3px rgba(0, 0, 0, 0.5);
+        text-decoration: underline;
+      }
+  
     }
 
   }
+  
 }
