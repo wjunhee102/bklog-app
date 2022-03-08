@@ -6,21 +6,29 @@
   @apply w-full block h-auto box-border;
 
   .page-list-title-box {
-    @apply w-full h-auto rounded-lg flex my-3;
+    @apply mx-auto h-auto rounded-lg flex my-3;
+    width: 96%;
 
   &:hover {
     @apply bg-gray-200 dark:bg-gray-700;
   }
+  
+    .sidebar-icon-box {
+      padding-left: 8px;
 
-    .sidebar-icon {
-      padding-top: 5px;
-
-      .sidebar-svg {
-        width: 20px;
-        height: auto;
+      .sidebar-icon {
+     
+        padding-top: 5px;
+  
+        .sidebar-svg {
+          width: 20px;
+          height: auto;
+        }
       }
+  
     }
 
+    
     .page-list-title {
       @apply text-gray-500 dark:text-gray-400 uppercase text-sm tracking-widest block w-full font-semibold rounded bg-transparent text-left box-border;
       height: 40px;

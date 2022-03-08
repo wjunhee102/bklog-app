@@ -29,7 +29,7 @@ const PageBtn: React.FC<PageBtnProps> = ({
       }
     });
     setEditToggle(false);
-  }, [onUpdatePage]);
+  }, [page]);
 
   const handleAction = useCallback((key: string) => {
     switch(key) {
@@ -40,7 +40,7 @@ const PageBtn: React.FC<PageBtnProps> = ({
         setEditToggle(true);
         break
     }
-  }, [onDeletePage]);
+  }, [page]);
 
   return (
     <div className="page-btn-box">

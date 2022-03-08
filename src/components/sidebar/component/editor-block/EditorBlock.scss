@@ -49,10 +49,11 @@
 }
 
 .test2-editor-block {
-  @apply rounded-3xl relative overflow-hidden;
+  @apply relative overflow-hidden;
 
+  border-radius: 11px;
   height: 140px;
-  margin: 14px 15px;
+  margin: 10px;
   color: #ffffff;
 
   .editor-block-top {
