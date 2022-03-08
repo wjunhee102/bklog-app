@@ -9,7 +9,7 @@
   z-index: 30;
 
   .block-utils-menu {
-    @apply relative bg-white dark:bg-black py-2 w-full text-gray-800 dark:text-white;
+    @apply relative bg-white dark:bg-gray-800 py-2 w-full text-gray-800 dark:text-white;
 
     .block-delete-btn, .block-duplicate-btn, .block-turninto-btn {
       .action-btn-icon-box {

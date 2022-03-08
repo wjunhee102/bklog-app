@@ -1,7 +1,7 @@
 @import './base.scss';
 
 .blur-bg {
-  @apply bg-opacity-70 bg-white;
+  @apply bg-opacity-70 bg-white dark:bg-black;
   backdrop-filter: saturate(180%) blur(10px);
 }
 

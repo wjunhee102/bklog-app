@@ -5,6 +5,7 @@ import { BlockComponentProps } from '../../BlockComponent';
 import BlockUtilsMenu from '../../../common/block-utils-menu';
 import { UnionBlock } from '../../../../entities/block/type';
 import { TextBlock } from '../../../../entities/block/text/TextBlock';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface BlockContentsAreaProps extends BlockComponentProps {
   childrenBlock: UnionBlock[] | null;
@@ -79,7 +80,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
             className="block-add-button"
             onClick={handleAddBlock}
           >
-            <FontAwesomeIcon icon={faPlus as any} />
+            <FontAwesomeIcon icon={faPlus as IconProp} />
           </button> 
 
         </div>
@@ -91,7 +92,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
             onClick={() => setUtilToggle(!utilToggle)}
             onMouseDown={handleGrabMouseDown}
           >
-            <FontAwesomeIcon icon={faGripVertical as any} />
+            <FontAwesomeIcon icon={faGripVertical as IconProp} />
           </button>
 
           {

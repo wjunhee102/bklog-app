@@ -16,10 +16,15 @@
   }
 }
 
+
 .blur-bg {
+  @apply bg-opacity-40 bg-white dark:bg-gray-800;
   backdrop-filter: saturate(180%) blur(10px);
-  background-color: rgba(255, 255, 255, 0.7);
 }
+// .blur-bg {
+//   backdrop-filter: saturate(180%) blur(10px);
+//   bac
+// }
 
 .block-editor {
   position: relative;

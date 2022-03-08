@@ -4,7 +4,8 @@
   font-size: 14px;
 
   .block-menu-bar {
-    @apply rounded flex shadow-lg border border-gray-200 box-content;
+    @apply rounded flex shadow-lg border border-gray-200 dark:border-gray-700 box-content dark:border-gray-700;
   }
+
 }
 

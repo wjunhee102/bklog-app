@@ -2,7 +2,7 @@
   @apply absolute bg-transparent z-20 bottom-full hidden;
 
   .action-menu-box {
-    @apply relative h-full px-2 border-r border-gray-300 font-medium text-gray-700; 
+    @apply relative h-full px-2 border-r border-gray-300 dark:border-gray-700 font-medium text-gray-700 dark:text-gray-200; 
 
     &:last-child {
       @apply border-r-0;
@@ -41,7 +41,7 @@
     }
 
     .menu-box {
-      @apply absolute -left-1/2 top-3/4 bg-white bg-opacity-100 h-auto w-auto z-30;
+      @apply absolute -left-1/2 top-3/4 bg-transparent bg-opacity-100 h-auto w-auto z-30;
     }
   }
     
@@ -54,6 +54,7 @@
     height: 20px;
     line-height: 20px;
     text-align: center;
+    text-shadow: 0.4px 0.5px 1px rgba(0, 0, 0, 0.2);
   
     @apply text-center font-semibold;
 }

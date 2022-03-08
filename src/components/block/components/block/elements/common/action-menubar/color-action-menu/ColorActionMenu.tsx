@@ -20,8 +20,10 @@ function setColorIconStyle(type: string, color: string): {
 }
 
 export const ColorActionIcon: React.FC<ColorActionIconProps> = ({ style }) => {
+  const className = style.backgroundColor? "text-white color-action-icon" : "bg-white dark:text-black color-action-icon";
+
   return (
-    <div style={style} className="color-action-icon">A</div>
+    <div style={style} className={className}>A</div>
   )
 }
 
