@@ -315,7 +315,7 @@ export const data: UnionRawBlockData[] = [
         "type": "text",
         "styleType": "bk-h2",
         "contents": [
-            ["링크 리스트"]
+            ["링크 리스트", [["b"]]]
         ],
         "styles": null
     }, {

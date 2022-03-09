@@ -1,5 +1,5 @@
 import React from 'react';
-import { UseAuthPageTypes } from '../../../pages/authpage/hooks/useAuthPage';
+import { UseAuthPageTypes } from '../../../pages/auth/hooks/useAuthPage';
 import useSignIn from './hooks/useSignIn';
 import SignInComponent from './SignInComponent';
 

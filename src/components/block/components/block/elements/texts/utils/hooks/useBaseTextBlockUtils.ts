@@ -89,7 +89,7 @@ function useBaseTextBlockUtils({
   const isFocus = () => {
     if(!styleToggle) {
       handleMoveToEndPoint();
-    } else if((cursorStart | cursorEnd)) {
+    } else if(cursorStart | cursorEnd) {
       handleRefreshCursorPoint();
     } 
 

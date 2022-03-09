@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import useSocket from "../../../hooks/useSocket";
-import { UseBkPageTypes } from "../../../pages/bkpage/hooks/useBkPage";
+import { UseBkPageTypes } from "../../../pages/bklog/hooks/useBkPage";
 import { Page } from "../../../store/modules/page/utils";
 import { SOCKET_URL } from "../../../utils/api-utils";
 

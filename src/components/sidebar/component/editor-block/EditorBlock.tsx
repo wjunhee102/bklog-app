@@ -1,5 +1,5 @@
 import React from 'react';
-import { UseBkPageTypes } from '../../../../pages/bkpage/hooks/useBkPage';
+import { UseBkPageTypes } from '../../../../pages/bklog/hooks/useBkPage';
 import './EditorBlock.scss';
 
 interface EditorBlockProps {

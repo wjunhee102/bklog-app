@@ -5,7 +5,7 @@ import PageList from './component/page-list';
 import CreatePageButton from './component/CreatePageButton';
 import useSidebar from './hooks/useSidebar';
 import './sidebar.scss';
-import { UseBkPageTypes } from '../../pages/bkpage/hooks/useBkPage';
+import { UseBkPageTypes } from '../../pages/bklog/hooks/useBkPage';
 import EditorBlock from './component/editor-block';
 
 interface SidebarProps {
