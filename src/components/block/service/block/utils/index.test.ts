@@ -268,7 +268,6 @@ test("sort", () => {
 
 test("ordering", () => {
   //console.log(orderingTest3, orderingTest4, orderingTest5, orderingTest6);
-  console.log(orderingTest6, orderingTest7);
 
   // expect(orderingTest1.blockList.map(getId).join("")).toEqual(TEST_CASE);
   // expect(orderingTest2.blockList.map(getId).join("")).toEqual(TEST_CASE);

@@ -5,6 +5,12 @@ import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToke
 import { HistoryBlockService } from "../../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../../modify/block/ModifyBlockService";
 
+const findBlock = (blockId: string) => (block: UnionBlock) => block.id === blockId;
+
+function findBlockIndex(blockList: UnionBlock[], targetId: string) {
+  return blockList.findIndex(findBlock(targetId));
+}
+
 function updateBlockListStagedProperty(
   preBlockList: UnionBlock[],
   stagedBlockDataList: StagedBlockData[]
@@ -47,23 +53,139 @@ function updateBlockListStagedProperty(
   }
 }
 
+function getPreviousId(blockList: UnionBlock[]): string {
+  const length = blockList.length;
+  let previousBlock: UnionBlock = blockList[0];
+
+  for(let i = 1; i < length; i++) {
+    const block = blockList[i];
+
+    if(previousBlock.id === block.previousId) previousBlock = block;
+  }
+  
+  return previousBlock.id;
+}
+
+function recolieBlockPreviousId(
+  newBlockList: UnionBlock[], 
+  targetBlock: UnionBlock
+): {
+  modifyBlockToken: ModifyBlockToken,
+  historyBlockToken: HistoryBlockToken
+} {
+  const previousId = getPreviousId(newBlockList);
+
+  const preProps = targetBlock.updateBlock({ previousId });
+
+  return {
+    modifyBlockToken: new ModifyBlockToken(
+      ModifyBlockService
+      .setUpdateModifyData(targetBlock.id, targetBlock.type, { previousId })
+    ),
+    historyBlockToken: new HistoryBlockToken(
+      HistoryBlockService
+      .setUpdateModifyData(targetBlock.id, targetBlock.type, preProps)
+    )
+  }
+}
+
 function insertBlockList(
   currentBlockList: UnionBlock[],
-  newBlockList: UnionBlock[],
-  targetPosition: string,
+  toBeInsertedBlockList: UnionBlock[],
+  targetIndex: number,
   keepCurrentBlockPosition: boolean = true
 ): UnionBlock[] {
-  const blockList: UnionBlock[] = currentBlockList.concat();
-  const index = blockList.findIndex(block => block.position === targetPosition);
+  if(!currentBlockList[targetIndex]) throw Error("update.ts insertBlockList: not find block");
+
+  const newBlockList: UnionBlock[] = currentBlockList.concat();
 
   if(keepCurrentBlockPosition) {
-    blockList.splice(index, 1, currentBlockList[index], ...newBlockList);
+    newBlockList.splice(targetIndex, 1, currentBlockList[targetIndex], ...toBeInsertedBlockList);
   } else {
-    blockList.splice(index, 1, ...newBlockList, currentBlockList[index]);
+    newBlockList.splice(targetIndex, 1, ...toBeInsertedBlockList, currentBlockList[targetIndex]);
   }
 
-  return blockList;
+  return newBlockList;
 }
+
+// function insertBlockList(
+//   currentBlockList: UnionBlock[],
+//   newBlockList: UnionBlock[],
+//   targetId: string,
+//   keepCurrentBlockPosition: boolean = true
+// ): ResBlockService {
+//   const blockList: UnionBlock[] = currentBlockList.concat();
+//   const index = blockList.findIndex(block => block.id === targetId);
+//   const nextIndex = index + 1;
+//   const modifyBlockTokenList: ModifyBlockToken[] = [];
+//   const historyBlockTokenList: HistoryBlockToken[] = [];
+
+//   if(index === -1) throw new Error("update.ts line 59: not find block");
+  
+//   const targetBlock = currentBlockList[index];
+
+//   if(keepCurrentBlockPosition) {
+//     let isPrevious = targetBlock.id === newBlockList[0].previousId? true : false;
+
+//     if(blockList[nextIndex]) {
+//       const nextBlock = blockList[nextIndex];
+  
+//       let isPreviousNextBlock = targetBlock.id === nextBlock.previousId? true : false;
+      
+//       if(isPrevious === isPreviousNextBlock) {
+        
+//         const {
+//           modifyBlockToken,
+//           historyBlockToken
+//         } = recolieBlockPreviousId(newBlockList, nextBlock);
+        
+//         modifyBlockTokenList.push(modifyBlockToken);
+//         historyBlockTokenList.push(historyBlockToken);
+//       }
+      
+//     }
+
+//     blockList.splice(index, 1, currentBlockList[index], ...newBlockList);
+//   } else {
+
+//     if(index) {
+//       const previousBlock = blockList[index - 1];
+
+      
+
+
+//     } else {
+//       const preProps = newBlockList[0].updateBlock({
+//         parentId: null,
+//         previousId: null
+//       });
+
+//       modifyBlockTokenList.push(
+//         new ModifyBlockToken(
+//           ModifyBlockService
+//           .setUpdateModifyData(newBlockList[0].id, newBlockList[0].type, {
+//             parentId: null,
+//             previousId: null
+//           })
+//         )
+//       );
+//       historyBlockTokenList.push(
+//         new HistoryBlockToken(
+//           HistoryBlockService
+//           .setUpdateModifyData(newBlockList[0].id, newBlockList[0].type, preProps)
+//         )
+//       );
+//     }
+
+//     blockList.splice(index, 1, ...newBlockList, currentBlockList[index]);
+//   }
+
+//   return {
+//     blockList,
+//     modifyBlockTokenList: modifyBlockTokenList[0]? modifyBlockTokenList : undefined,
+//     historyBlockTokenList: historyBlockTokenList[0]? historyBlockTokenList : undefined
+//   }
+// }
 
 function removeBlockList(
   currentBlockList: UnionBlock[],
@@ -71,7 +193,7 @@ function removeBlockList(
 ): ResBlockService {
   
   const blockList: UnionBlock[] = currentBlockList.concat();
-  const removedBlockIdMap = createBlockIdMap(removedBlockList);
+  const removedBlockIdMap = createBlockIdMap(removedBlockList); 
   const modifyBlockTokenList: ModifyBlockToken[] = [];
   const historyBlockTokenList: HistoryBlockToken[] = [
     ...removedBlockList
@@ -79,37 +201,73 @@ function removeBlockList(
       new HistoryBlockToken(HistoryBlockService.setCreateModifyData(block.getBlockData()))
     )
   ];
-  const blockLength = blockList.length;
+
+  let startRemovedBlock: UnionBlock | null = null; 
+
+  let isRemoved = false;
 
   for(const block of removedBlockList) {
-    const position = block.position;
 
-    modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(block.id, block.type)));
-    block.updateBlock({ position: "null" });
+    modifyBlockTokenList.push(
+      new ModifyBlockToken(
+        ModifyBlockService
+        .setDeleteModifyData(block.id, block.type)
+    ));
 
-    for(let i = block.index + 1; i < blockLength; i++) {
-      if(blockList[i].position.indexOf(position) !== 0) break;
-      if(removedBlockIdMap.has(blockList[i].id)) break;
+    const nextBlock = blockList[block.index + 1];
+    
+    if(removedBlockIdMap.has(nextBlock.id)) {
+      if(isRemoved) continue;
+      isRemoved = true;
 
-      const rawNewPosition = blockList[i].position.split(/-/);
-      rawNewPosition.pop();
+      startRemovedBlock = block;
+    } else {
 
-      const newPosition = rawNewPosition.join('-');
+      let blockDataProps: BlockDataProps<UnionBlockGenericType>;
 
-      const preProps = blockList[i].updateBlock({
-        position: newPosition
-      });
+      if(isRemoved) {
+        if(!startRemovedBlock) continue;
 
-      historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[i].id, blockList[i].type, preProps)))
-      modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockList[i].id, blockList[i].type, {
-        position: newPosition
-      })));
+        if(
+          startRemovedBlock.parentId !== nextBlock.parentId 
+          && startRemovedBlock.id !== nextBlock.previousId
+        ) continue;
+
+        blockDataProps = {
+          previousId: block.previousId,
+          parentId: block.parentId
+        }
+
+      } else {
+        if(
+          block.parentId !== nextBlock.parentId 
+          && block.id !== nextBlock.previousId
+        ) continue;
+
+        blockDataProps = {
+          previousId: block.previousId,
+          parentId: block.parentId
+        }
+      }
+
+      const preBlock = nextBlock.updateBlock(blockDataProps);
+
+      modifyBlockTokenList.push(
+        new ModifyBlockToken(
+          ModifyBlockService
+          .setUpdateModifyData(nextBlock.id, nextBlock.type, blockDataProps)
+      ));
+      historyBlockTokenList.push(
+        new HistoryBlockToken(
+          HistoryBlockService
+          .setUpdateModifyData(nextBlock.id, nextBlock.type, preBlock)
+      ));
     }
 
   }
 
   return {
-    blockList: blockList.filter(block => block.position !== "null"),
+    blockList: blockList.filter(block => !removedBlockIdMap.has(block.id)),
     modifyBlockTokenList,
     historyBlockTokenList
   }
@@ -143,6 +301,9 @@ function changeBlockType(type: BlockType, block: UnionBlock): {
 
 export default {
   updateBlockListStagedProperty,
+  findBlock,
+  findBlockIndex,
+  recolieBlockPreviousId,
   insertBlockList,
   removeBlockList,
   changeBlockType

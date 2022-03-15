@@ -11,7 +11,7 @@ import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
 import { HistoryBlockService } from "../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../modify/block/ModifyBlockService";
 import { HistoryBlockData, ModifyBlockData } from "../modify/type";
-import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, orderingBlock, removeBlockList, resetToTargetPosition, updateBlockListStagedProperty, setPosition, changeBlockType, createBlockIdMap, BlockIdMap } from "./utils";
+import { sortBlockList, resetToTargetPosition, checkInstanceOfBlock, createBlock, insertBlockList, positioningBlock, removeBlockList, updateBlockListStagedProperty, changeBlockType, createBlockIdMap, BlockIdMap, BlockPosition, ResBlockService, findBlockIndex } from "./utils";
 
 /**
  * TODO
@@ -20,6 +20,8 @@ import { sortBlock, checkInstanceOfBlock, createBlock, insertBlockList, ordering
  * 단방향 연결리스트로 변경해야 함.
  * 
  */
+
+const findBlock = (blockId: string) => (block: UnionBlock) => block.id === blockId;
 export class BlockService {
   private modifyBlockTokenList: ModifyBlockToken[] = [];
   private historyBlockTokenList: HistoryBlockToken[] = [];
@@ -72,14 +74,14 @@ export class BlockService {
   }
 
   /**
-   * target position에 맞춰 position을 덥어씌웁니다.
+   * target id에 맞춰 block를 정렬합니다
    * 원본 배열에 반영
    */
   static resetToTargetPosition(
     blockList: UnionBlock[],
-    targetPosition: string
-  ): [ UnionBlock[], HistoryBlockToken[] ] {
-    return resetToTargetPosition(blockList, targetPosition);
+    targetBlockPosition: BlockPosition,
+  ) {
+    return resetToTargetPosition(blockList, targetBlockPosition);
   }
 
   /**
@@ -107,14 +109,31 @@ export class BlockService {
   /**
    * target position에 맞춰 새 포지션을 반환 합니다.
    */
-  static setPosition(
-    prePosition: string,
-    targetPosition: string = "0"
-  ): string {
-    return setPosition(prePosition, targetPosition);
-  }
+  // static setPosition(
+  //   prePosition: string,
+  //   targetPosition: string = "0"
+  // ): string {
+  //   return setPosition(prePosition, targetPosition);
+  // }
 
   constructor(private blockList: UnionBlock[]) {} 
+
+  private initResultData({
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  }: ResBlockService) {
+    this.blockList = blockList;
+
+    if(modifyBlockTokenList && modifyBlockTokenList[0]) {
+      this.modifyBlockTokenList.push(...modifyBlockTokenList);
+    }
+
+    if(historyBlockTokenList && historyBlockTokenList[0]) {
+      this.historyBlockTokenList.push(...historyBlockTokenList);
+    }
+
+  }
 
   public getBlockList(): UnionBlock[] {
     return this.blockList;
@@ -133,34 +152,23 @@ export class BlockService {
   }
 
   /**
-   * position에 따라서 정렬합니다.
-   * 원본 배열에 반영
+   * parentId, previousId에 따라서 정렬합니다.
+   * 새 배열 반환
    */
   public sort(): BlockService {
-    this.blockList = sortBlock(this.blockList);
+    this.blockList = sortBlockList(this.blockList);
     return this;
   }
 
   /**
-   * 현재 배열 순서에 따라 position과 index를 선언합니다.
+   * 현재 배열 순서에 따라 previousId와 parentId를 재조정합니다.
    * 원본 배열에 반영
    */
-  public ordering(): BlockService {
-    const {
-      blockList,
-      modifyBlockTokenList,
-      historyBlockTokenList
-    } = orderingBlock(this.blockList);
-
-    this.blockList = blockList;
-
-    if(modifyBlockTokenList) {
-      this.modifyBlockTokenList.push(...modifyBlockTokenList);
-    }
-
-    if(historyBlockTokenList) {
-      this.historyBlockTokenList.push(...historyBlockTokenList);
-    }
+  public positioning(blockPosition: BlockPosition = {
+    previousId: null,
+    parentId: null
+  }): BlockService {
+    this.initResultData(positioningBlock(this.blockList, blockPosition));
 
     return this;
   }
@@ -174,21 +182,7 @@ export class BlockService {
   ): BlockService {
     if(!stageBlockDataList[0]) return this;
 
-    const {
-      blockList,
-      modifyBlockTokenList,
-      historyBlockTokenList
-    } = updateBlockListStagedProperty(this.blockList, stageBlockDataList);
-
-    this.blockList = blockList;
-
-    if(modifyBlockTokenList) {
-      this.modifyBlockTokenList.push(...modifyBlockTokenList);
-    }
-
-    if(historyBlockTokenList) {
-      this.historyBlockTokenList.push(...historyBlockTokenList);
-    }
+    this.initResultData(updateBlockListStagedProperty(this.blockList, stageBlockDataList));
 
     return this;
   }
@@ -198,29 +192,40 @@ export class BlockService {
    * 새 배열 반환
    */
   public addBlockInList(
-    blockList: UnionBlock[], 
-    targetPosition: string, 
+    targetBlockList: UnionBlock[], 
+    targetId: string, 
+    previous: boolean,
     keepCurrentBlockPosition: boolean = true
   ): BlockService {
-    
-    const [ targetBlockList ] = BlockService.resetToTargetPosition(blockList, targetPosition);
+    const targetIndex = this.blockList.findIndex(findBlock(targetId));
 
-    this.modifyBlockTokenList.push(...targetBlockList.map(block => new ModifyBlockToken(ModifyBlockService.setCreateModifyData(block.getRawBlockData()))));
+    if(targetIndex === - 1) return this;
+    const previousBlock = this.blockList[targetIndex];
+
+    const blockPosition: BlockPosition = previous? {
+      parentId: previousBlock.parentId,
+      previousId: previousBlock.id
+    } : {
+      parentId: previousBlock.id,
+      previousId: null
+    }
+    
+    const { blockList } = BlockService.resetToTargetPosition(targetBlockList, blockPosition);
+
+    this.modifyBlockTokenList.push(...blockList.map(block => new ModifyBlockToken(ModifyBlockService.setCreateModifyData(block.getRawBlockData()))));
 
     const newBlockList = insertBlockList(
       this.blockList, 
       targetBlockList,
-      targetPosition,
-      keepCurrentBlockPosition
+      targetIndex,
+      previous? keepCurrentBlockPosition : true
     );
 
     this.historyBlockTokenList.push(...targetBlockList.map(block => new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(block.id, block.type))));
 
     this.blockList = newBlockList;
 
-    this.ordering();
-
-    return this;
+    return this.positioning();
   }
 
   /**
@@ -240,23 +245,9 @@ export class BlockService {
       removedBlockList.push(...this.blockList.filter(block => removedIdList.includes(block.id)));
     }
 
-    const {
-      blockList,
-      modifyBlockTokenList,
-      historyBlockTokenList
-    } = removeBlockList(this.blockList, removedBlockList);
+    this.initResultData(removeBlockList(this.blockList, removedBlockList));
 
-    this.blockList = blockList;
-
-    if(modifyBlockTokenList) {
-      this.modifyBlockTokenList.push(...modifyBlockTokenList);
-    }
-
-    if(historyBlockTokenList) {
-      this.historyBlockTokenList.push(...historyBlockTokenList);
-    }
-
-    return this.ordering();
+    return this.positioning();
   }
 
   /**
@@ -281,9 +272,9 @@ export class BlockService {
     const preProps = block.updateBlock({
       contents: newContents
     });
-    console.log(preProps, newContents);
+  
     this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockId, 
-      block.type ,
+      block.type,
       { contents: newContents }
     )));
 
@@ -352,11 +343,13 @@ export class BlockService {
     const blockList = this.blockList.concat();
     blockList[index] = newTextBlock;
 
-    this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newTextBlock.id, newTextBlock.type, {
-      contents
-    })));
-    this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(TextBlock.id, TextBlock.type, preProps)))
-    this.blockList = blockList;
+    this.initResultData({
+      blockList,
+      modifyBlockTokenList: [new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newTextBlock.id, newTextBlock.type, {
+        contents
+      }))],
+      historyBlockTokenList: [new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(TextBlock.id, TextBlock.type, preProps))]
+    });
 
     return this;
   }
@@ -380,36 +373,53 @@ export class BlockService {
 
     const { block, modifyBlockToken, historyBlockToken } = result;
 
-    this.blockList[blockIndex] = block;
-    this.modifyBlockTokenList.push(modifyBlockToken);
-    this.historyBlockTokenList.push(historyBlockToken);
+    const blockList = this.blockList.concat();
+    blockList[blockIndex] = block;
 
-    this.blockList = this.blockList.concat();
+    this.initResultData({
+      blockList,
+      modifyBlockTokenList: [modifyBlockToken],
+      historyBlockTokenList: [historyBlockToken]
+    })
 
     return this;
   }
 
-  public changeBlockPosition(targetIdMap: BlockIdMap, targetPosition: string) {
+  public changeBlockPosition(targetIdMap: BlockIdMap, targetId: string, previous: boolean) {
     const [ removedBlockList, targetBlockList ] = BlockService.divideBlock(this.blockList, targetIdMap);
-    const index = removedBlockList.findIndex(block => block.position === targetPosition) + 1;
+    const previousindex = findBlockIndex(removedBlockList, targetId);
 
-    if(index === 0) return this;
+    if(previousindex === -1) return this;
 
+    const targetIndex: number = previousindex + 1;
     const containerBlockList = removedBlockList.filter(block => block.type === BLOCK_CONTAINER);
-    const setedPosition = BlockService.setPosition(targetPosition, "0");
     const newBlockList = [...removedBlockList];
+    const previousBlock = removedBlockList[previousindex];
+
+    const blockPosition: BlockPosition = previous? {
+      previousId: previousBlock.id,
+      parentId: previousBlock.parentId
+    }: {
+      previousId: null,
+      parentId: previousBlock.id
+    }
     
-    const [ blockList, historyBlockTokenList ] = BlockService.resetToTargetPosition(targetBlockList, setedPosition);
+    const {
+      blockList,
+      modifyBlockTokenList,
+      historyBlockTokenList
+    } = BlockService.resetToTargetPosition(targetBlockList, blockPosition);
 
     this.historyBlockTokenList.push(...historyBlockTokenList);
+    this.modifyBlockTokenList.push(...modifyBlockTokenList);
 
-    newBlockList.splice(index, 0, ...blockList);
+    newBlockList.splice(targetIndex, 0, ...blockList);
 
     if(containerBlockList[0]) {
       for(const block of containerBlockList) {
-        const idx = newBlockList.findIndex(({ id }) => id === block.id) + 1;
+        const idx = newBlockList.findIndex(({ parentId }) => parentId === block.id);
 
-        if(!newBlockList[idx] || newBlockList[idx].position.indexOf(block.position) !== 0) {
+        if(idx === -1) {
           this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setCreateModifyData(block.getBlockData())));
           this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(block.id, block.type)));
           newBlockList.splice(idx, 1);
@@ -420,44 +430,46 @@ export class BlockService {
 
     this.blockList = newBlockList;
 
-    return this.ordering();
+    return this.positioning();
   }
 
   public switchBlockList(
     targetIdMap: BlockIdMap,
-    targetPosition: string,
+    targetId: string,
+    previous: boolean,
     container: boolean = false
   ): BlockService {
-    let position: string = targetPosition;
 
     if(container) {
       const blockList = this.blockList.concat();
-      const containerBlockData = ContainerBlock.createBlockData({ position: targetPosition });
+      const containerBlockData = ContainerBlock.createBlockData(previous
+        ? { previousId: targetId }
+        : { parentId: targetId }
+      );
       
       if(!containerBlockData) return this;
 
       const containerBlock = new ContainerBlock(containerBlockData, null);
 
-      const targetIndex = this.blockList.findIndex(block => block.position === targetPosition);
+      const targetIndex = findBlockIndex(this.blockList, targetId);
 
       blockList.splice(targetIndex, 0, containerBlock);
 
-      position = targetPosition.split(/-/).concat('1').join('-');
-      const preProps = blockList[targetIndex + 1].updateBlock({ position });
-
       this.historyBlockTokenList.push(
-        new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(containerBlock.id, containerBlock.type)),
-        new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[targetIndex + 1].id, blockList[targetIndex + 1].type, preProps))
-      );
+        new HistoryBlockToken(
+          HistoryBlockService
+          .setDeleteModifyData(containerBlock.id, containerBlock.type)
+      ));
       this.modifyBlockTokenList.push(
-        new ModifyBlockToken(ModifyBlockService.setCreateModifyData(containerBlock.getRawBlockData())),
-        new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(blockList[targetIndex + 1].id, blockList[targetIndex + 1].type, { position }))
-      );
+        new ModifyBlockToken(
+          ModifyBlockService
+          .setCreateModifyData(containerBlock.getRawBlockData())
+      ));
 
       this.blockList = blockList;
     }
 
-    return this.changeBlockPosition(targetIdMap, targetPosition);
+    return this.changeBlockPosition(targetIdMap, targetId, previous);
   }
 
   public updateBlockList(modifyBlockData: ModifyBlockData): BlockService {
@@ -508,7 +520,7 @@ export class BlockService {
         this.modifyBlockTokenList.push(...modifyBlockTokenList);
       }
 
-      if(!blockDataList[0]) return this.sort().ordering();
+      if(!blockDataList[0]) return this.sort().positioning();
 
       const toBeCreatedBlockList = BlockService.createBlockList(blockDataList);
       
@@ -528,7 +540,7 @@ export class BlockService {
 
     this.blockList = blockList;
     
-    return this.sort().ordering();
+    return this.sort().positioning();
   }
 
   public restoreBlockList(historyBlockData: HistoryBlockData): BlockService {
@@ -584,7 +596,7 @@ export class BlockService {
         this.modifyBlockTokenList.push(...modifyBlockTokenList);
       }
 
-      if(!blockDataList[0]) return this.sort().ordering();
+      if(!blockDataList[0]) return this.sort().positioning();
 
       const toBeCreatedBlockList = BlockService.createBlockList(blockDataList);
 
@@ -606,7 +618,7 @@ export class BlockService {
 
     this.blockList = blockList;
 
-    return this.sort().ordering();
+    return this.sort().positioning();
   }
 
 }

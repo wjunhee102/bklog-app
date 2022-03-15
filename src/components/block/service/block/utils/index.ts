@@ -10,7 +10,7 @@ import { HistoryBlockToken } from "../../../entities/modify/block/HistoryBlockTo
 import { ModifyBlockToken } from "../../../entities/modify/block/ModifyBlockToken";
 import checkBlock from "./checkBlock";
 import create from "./create";
-import ordering from "./ordering";
+import positioning from "./positioning";
 import setMap from "./setMap";
 import update from "./update";
 
@@ -19,6 +19,11 @@ export interface ResBlockService {
   blockList: UnionBlock[];
   modifyBlockTokenList?: ModifyBlockToken[];
   historyBlockTokenList?: HistoryBlockToken[];
+}
+
+export interface BlockPosition {
+  previousId: string | null;
+  parentId: string | null;
 }
 
 export const BlockInstancesTable = {
@@ -35,12 +40,14 @@ export const createBlockIdMap = setMap.createBlockIdMap;
 
 export const createBlock = create.createBlock;
 
-export const sortBlock             = ordering.sortBlock;
-export const orderingBlock         = ordering.orderingBlock;
-export const resetToTargetPosition = ordering.resetToTargetPosition;
-export const setPosition           = ordering.setPosition;
+export const sortBlockList         = positioning.sortBlockList;
+export const positioningBlock      = positioning.positioningBlock;
+export const resetToTargetPosition = positioning.resetToTargetPosition;
 
+export const findBlock                     = update.findBlock;
+export const findBlockIndex                = update.findBlockIndex;        
 export const updateBlockListStagedProperty = update.updateBlockListStagedProperty;
+export const recolieBlockPreviousId        = update.recolieBlockPreviousId;
 export const insertBlockList               = update.insertBlockList;
 export const removeBlockList               = update.removeBlockList;
 export const changeBlockType               = update.changeBlockType;
