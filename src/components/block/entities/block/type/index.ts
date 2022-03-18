@@ -39,8 +39,9 @@ export type UnionBlockGenericType = TextGenericType
   | ImageGenericType;
 
 export interface RawBlockData<T extends UnionBlockGenericType> {
-  position: string;
   id: string;
+  previousId: string | null;
+  parentId: string | null;
   type: T['type'];
   styleType: string;
   styles: T['styles'];
@@ -49,7 +50,6 @@ export interface RawBlockData<T extends UnionBlockGenericType> {
 
 export interface FrameBlockData {
   index: number;
-  parentId: string;
 }
 
 // blockData
@@ -120,3 +120,5 @@ export interface StagedBlockData<T extends UnionBlockGenericType = UnionBlockGen
   styles?: T['styles'];
   contents?: T['contents']; 
 }
+
+export type KeyofBlockDataProps<T extends UnionBlockGenericType = UnionBlockGenericType> = keyof BlockDataProps<T>;

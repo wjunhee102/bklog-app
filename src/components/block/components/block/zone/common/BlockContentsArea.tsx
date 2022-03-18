@@ -38,14 +38,13 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
   }, []);
 
   const handleAddBlock = useCallback(() => {
-    const { position } = block;
-    const newBlockData = TextBlock.createBlockData({ position });
+    const newBlockData = TextBlock.createBlockData({ previousId: block.id });
 
     if(!newBlockData) return false;
 
     const newBlock = new TextBlock(newBlockData);
 
-    onAddBlock([ newBlock ], position, true, newBlockData.id);
+    onAddBlock([ newBlock ], block.id, true, true, newBlockData.id);
   }, [block]);
 
   const handleGrabMouseDown = useCallback(() => {

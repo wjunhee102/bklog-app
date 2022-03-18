@@ -42,7 +42,7 @@ export class ModifyBlockService implements ModifyTokenService<ModifyBlockToken> 
   public sort(reverse: boolean = false) {
     if(!this._tokenList[0]) return this;
     
-    this._tokenList.sort(!reverse? compareFunction : compareFunctionReverce)
+    this._tokenList.sort(!reverse? compareFunction : compareFunctionReverce);
 
     return this;
   }

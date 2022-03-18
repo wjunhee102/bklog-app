@@ -76,13 +76,17 @@ export interface PreTextBlockInfo {
 
 export type PreBlockInfo = PreTextBlockInfo | { type: string, payload: any } | null;
 
+export interface TargetInfo {
+  id: string,
+  previous: boolean
+}
 export interface BlockState {
   isFetch: boolean;
   isGrab: boolean;
   isPress: boolean;
   isHoldingDown: boolean;
   isCliping: boolean;
-  targetPosition: string | null;
+  targetInfo: TargetInfo | null;
   pageTitle: string | null;
   blockList: UnionBlock[];
   editingBlockId: string | null;

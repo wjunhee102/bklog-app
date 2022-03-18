@@ -35,7 +35,8 @@ import {
   DELETE_TITLE_BLOCK,
   EDIT_BLOCK,
   EDIT_BLOCK_SIDE_INFO,
-  StagedPageTitle
+  StagedPageTitle,
+  TargetInfo
 } from ".";
 import { BlockType, UnionBlock, UnionBlockDataProps, UnionRawBlockData } from "../../entities/block/type";
 import { BlockTypeText, TextContentStyleType, OrderType } from "../../entities/block/type/types/text";
@@ -54,12 +55,13 @@ function resetBlock() {
   }
 }
 
-function addBlock(addBlockList: UnionBlock[], targetPosition: string, keepCurrentBlockPosition: boolean, nextEditInfo?: string | number) {
+function addBlock(addBlockList: UnionBlock[], targetId: string, previous: boolean, keepCurrentBlockPosition: boolean, nextEditInfo?: string | number) {
   return {
     type: ADD_BLOCK,
     payload: {
       addBlockList,
-      targetPosition,
+      targetId,
+      previous,
       keepCurrentBlockPosition,
       nextEditInfo
     }
@@ -213,13 +215,10 @@ function revertBlock(front?: boolean) {
   }
 }
 
-function switchBlock(changedBlockIdMap: Map<string, true>, container?: boolean) {
+function switchBlock(isCreateContainer?: boolean) {
   return {
     type: SWITCH_BLOCK,
-    payload: {
-      changedBlockIdMap,
-      container: container? true : false
-    }
+    payload: isCreateContainer? true : false
   }
 }
 
@@ -246,11 +245,11 @@ function chageEditorState(type: EditorStateType, toggle: boolean) {
   }
 }
 
-function changeTargetPosition(targetPosition?: string) {
+function changeTargetPosition(targetInfo: TargetInfo | null = null) {
   return {
     type: CHANGE_TARGET_POSITION,
     payload: {
-      targetPosition
+      targetInfo
     }
   }
 }

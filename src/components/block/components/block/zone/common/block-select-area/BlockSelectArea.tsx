@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useCallback, useMemo, useEffect } from
 import classNames from "classnames";
 import DropAreaComponent from './elements/DropAreaComponent';
 import { BlockComponentProps, ParentInfoType } from '../../../BlockComponent';
-import { createBlockIdMap } from '../../../../../reducer/utils';
+import { TargetInfo } from '../../../../../reducer/utils';
 
 function createDropDirection(id: string, direction: string) {
   return `${direction}-${id}`;
@@ -30,7 +30,7 @@ function calculartionPosition(
 }
 
 interface DropData {
-  position: string;
+  targetInfo: TargetInfo;
   direction: string;
 }
 
@@ -66,22 +66,28 @@ const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
 
   const dropDataList: DropData[] = useMemo(() => [
     {
-      position: calculartionPosition(block.position, parentInfo && parentInfo.type === "container"? "next" : "child"),
+      targetInfo: {
+        id: block.id,
+        previous: parentInfo && parentInfo.type === "container"? true : false
+      },
       direction: "right"
     },
     {
-      position: calculartionPosition(block.position, parentInfo && parentInfo.type === "container"? "child" : "next"),
+      targetInfo: {
+        id: block.id,
+        previous: parentInfo && parentInfo.type === "container"? false : true
+      },
       direction: "down"
     }
-  ], [block.position]);
+  ], [block.id]);
 
   const handleSelectMouseEnter = useCallback((
-    position: string, 
+    targetInfo: TargetInfo, 
     direction: string
   ) => () => {
     if(isGrab && !selected && !parentSelected) {
       setDropDirection(direction);
-      onChangeTargetPosition(position);
+      onChangeTargetPosition(targetInfo);
     }
   }, [tempClipData, isGrab]);
 
@@ -90,7 +96,7 @@ const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
   }, []);
 
   const handleSelectMouseUp = useCallback((createContainer?: boolean) => () => {
-    if(tempClipData[0] !== undefined) onSwitchBlock(createBlockIdMap(tempClipData.map(index => blockList[index])), createContainer);
+    if(tempClipData[0] !== undefined) onSwitchBlock(createContainer);
     setDropDirection(null);
   }, [tempClipData]);
 
@@ -110,12 +116,12 @@ const BlockSelectArea: React.FC<BlockSelectAreaProps> = ({
       <div className="select-area-container">
 
       {
-        dropDataList.map(({ position, direction }, idx) => (
+        dropDataList.map(({ targetInfo, direction }, idx) => (
           <DropAreaComponent
             key={idx}
             on={currentDropDirection === createDropDirection(block.id, direction)}
             dropDirection={direction}
-            onMouseEnter={handleSelectMouseEnter(position, createDropDirection(block.id, direction))}
+            onMouseEnter={handleSelectMouseEnter(targetInfo, createDropDirection(block.id, direction))}
             onMouseLeave={handleSelectMouseLeave}
             onMouseUp={handleSelectMouseUp()}
           />

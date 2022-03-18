@@ -78,7 +78,8 @@ import {
   DELETE_TITLE_BLOCK,
   editBlock,
   EDIT_BLOCK,
-  revertBlockState
+  revertBlockState,
+  createBlockIdMap
 } from "./utils";
 
 function initBlockStateHandler(
@@ -102,7 +103,7 @@ function initBlockStateHandler(
   const {
     blockList,
     modifyBlockTokenList
-  } = new BlockService(initialBlockList).sort().ordering().getData();
+  } = new BlockService(initialBlockList).sort().positioning().getData();
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
@@ -317,7 +318,7 @@ function changeBlockContentsHandler(
 function addBlockHandler(
   state: BlockState, 
   { 
-    payload: { addBlockList, targetPosition, nextEditInfo, keepCurrentBlockPosition } 
+    payload: { addBlockList, targetId, nextEditInfo, keepCurrentBlockPosition } 
   }: ReturnType<typeof addBlock>
 ): BlockState {
   
@@ -326,7 +327,7 @@ function addBlockHandler(
     modifyBlockTokenList,
     historyBlockTokenList,
   } = new BlockService(state.blockList)
-        .addBlockInList(addBlockList, targetPosition, keepCurrentBlockPosition)
+        .addBlockInList(addBlockList, targetId, true, keepCurrentBlockPosition)
         .getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
@@ -373,7 +374,7 @@ function addTextBlockHandler(
 
   const newBlockData = Block.createBlockData(type? type : targetBlock.type, {
     type: type? type : targetBlock.type,
-    position: targetBlock.position,
+    previousId: targetBlock.id,
     styleType: styleType? styleType : targetBlock.styleType,
     contents: back
   });
@@ -390,7 +391,7 @@ function addTextBlockHandler(
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
-  } = new BlockService(state.blockList).addBlockInList([ newBlock ], newBlock.position).getData();
+  } = new BlockService(state.blockList).addBlockInList([ newBlock ], targetBlock.id, true).getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).push(historyBlockToken).getData();
 
@@ -430,7 +431,6 @@ function addTitleBlockHandler(
   const pageTitle: string = front;
 
   const newBlockData = TextBlock.createBlockData({
-    position: "1",
     styleType: "bk-p",
     contents: [[end]]
   });
@@ -443,7 +443,7 @@ function addTitleBlockHandler(
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
-  } = new BlockService(state.blockList).addBlockInList([ newBlock ], "1", false).getData();
+  } = new BlockService(state.blockList).addBlockInList([ newBlock ], state.blockList[0].id, true, false).getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
 
@@ -682,18 +682,17 @@ function changeTextStyleHandler(
 
 function switchBlockHandler(
   state: BlockState, 
-  { payload: { 
-    changedBlockIdMap, container 
-  } }: ReturnType<typeof switchBlock>
+  { payload: isCreateContainer }: ReturnType<typeof switchBlock>
 ): BlockState {
-  if(!state.targetPosition) return state;
+  if(!state.targetInfo || !state.tempClipData) return state;
+  const changedBlockIdMap = createBlockIdMap(state.tempClipData.map(index => state.blockList[index]));
 
   const {
     blockList,
     modifyBlockTokenList,
     historyBlockTokenList
   } = new BlockService(state.blockList)
-            .switchBlockList(changedBlockIdMap, state.targetPosition, container)
+            .switchBlockList(changedBlockIdMap, state.targetInfo.id, state.targetInfo.previous, isCreateContainer)
             .getData();
 
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
@@ -701,6 +700,7 @@ function switchBlockHandler(
   if(!historyBlockData) return state;
 
   return updateObject<BlockState, BlockStateProps>(state, {
+    targetInfo: null,
     isGrab: false,
     isHoldingDown: false,
     editingBlockId: state.blockList[state.tempClipData[0]].id,
@@ -736,11 +736,11 @@ function changeEditorStateHandler(
 
 function changeTargetPositionHandler(
   state: BlockState,
-  { payload: { targetPosition } }: ReturnType<typeof changeTargetPosition>
+  { payload: { targetInfo } }: ReturnType<typeof changeTargetPosition>
 ): BlockState {
 
   return updateObject<BlockState, BlockStateProps>(state, {
-    targetPosition: targetPosition? targetPosition : null
+    targetInfo
   });
 }
 
@@ -784,7 +784,7 @@ function editorStateResetHandler(
     isGrab: false,
     isPress: false,
     tempClipData: [],
-    targetPosition: null
+    targetInfo: null
   });
 }
 
@@ -895,6 +895,7 @@ function updateBlockHandler(
 
   return updateObject<BlockState, BlockStateProps>(state, {
     blockList,
+    editingBlockId: state.editingBlockId,
     updatedBlockIdList,
     historyBack: arrayPush(state.historyBack, {
       editingBlockId: state.editingBlockId,

@@ -5,7 +5,8 @@ import { UseBlockType } from '../block/hooks/useBlock';
 
 const initialBlockList: UnionRawBlockData[] = [
   {
-    position: "1",
+    parentId: null,
+    previousId: null,
     id: "T1",
     type: "text",
     styleType: "bk-p",
@@ -15,7 +16,8 @@ const initialBlockList: UnionRawBlockData[] = [
     ]
   },
   {
-    position: "2",
+    parentId: null,
+    previousId: "T1",
     id: "T2",
     type: "text",
     styleType: "bk-p",
@@ -25,7 +27,8 @@ const initialBlockList: UnionRawBlockData[] = [
     ]
   },
   {
-    position: "3",
+    parentId: null,
+    previousId: "T2",
     id: "T3",
     type: "text",
     styleType: "bk-h4",
@@ -35,7 +38,8 @@ const initialBlockList: UnionRawBlockData[] = [
     ]
   },
   {
-    position: "3-1",
+    parentId: "T3",
+    previousId: null,
     id: "T3-1",
     type: "text",
     styleType: "bk-h4",
@@ -45,7 +49,8 @@ const initialBlockList: UnionRawBlockData[] = [
     ]
   },
   {
-    position: "3-2",
+    parentId: "T3",
+    previousId: "T3-1",
     id: "T3-2",
     type: "text",
     styleType: "bk-h4",
@@ -55,7 +60,8 @@ const initialBlockList: UnionRawBlockData[] = [
     ]
   },
   {
-    position: "4",
+    parentId: null,
+    previousId: "T3",
     id: "T4",
     type: "text",
     styleType: "bk-h4",
@@ -65,7 +71,8 @@ const initialBlockList: UnionRawBlockData[] = [
     ]
   },
   {
-    position: "5",
+    parentId: null,
+    previousId: "T4",
     id: "T5",
     type: "image",
     styleType: "none",
@@ -83,7 +90,8 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
 
   const {
     state: {
-      blockList
+      blockList,
+      modifyBlockTokenList
     },
     onInitBlockState,
     onInitPageTitle
@@ -96,6 +104,7 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
 
   useEffect(() => {
     console.log(blockList);
+    console.log(modifyBlockTokenList);
   }, [blockList]);
 
   return {

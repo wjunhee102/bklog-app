@@ -1,7 +1,17 @@
 import { SetBlockList} from ".";
 import { UnionBlock } from "../../entities/block/type";
 
-const reducer = (acc: any, cur: UnionBlock) => {
+const reducer = (acc: any, cur: UnionBlock, idx: number) => {
+  cur.setIndex(idx);
+
+  if(!cur.parentId) {
+    if(!acc.root) acc.root = [];
+    
+    acc.root.push(cur);
+
+    return acc;
+  }
+
   if(!acc.hasOwnProperty([cur.parentId])) {
     acc[cur.parentId] = []
   } 

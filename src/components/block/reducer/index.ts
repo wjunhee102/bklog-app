@@ -7,7 +7,7 @@ export const initialBlockState: BlockState = {
   isPress: false,
   isHoldingDown: false,
   isCliping: false,
-  targetPosition: null,
+  targetInfo: null,
   pageTitle: null,
   blockList: [],
   editingBlockId: null,

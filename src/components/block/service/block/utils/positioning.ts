@@ -99,7 +99,6 @@ export function sortBlockList(blockList: UnionBlock[]): UnionBlock[] {
       }
 
       previousBlock = blockList[index];
-
       newBlockList.push(previousBlock);
     }
   }
@@ -108,9 +107,11 @@ export function sortBlockList(blockList: UnionBlock[]): UnionBlock[] {
 
   const [ blockMap, firstBlock ] = setBlockMap(blockList, index);
 
-  previousBlock = firstBlock? firstBlock : blockList[index];
-  index++;
-  newBlockList.push(previousBlock);
+  if(firstBlock) {
+    previousBlock = firstBlock;
+    index++;
+    newBlockList.push(previousBlock);
+  }
 
   const blockStack: UnionBlock[] = [];
 
@@ -159,7 +160,7 @@ export function sortBlockList(blockList: UnionBlock[]): UnionBlock[] {
   });
 
   if(newBlockList.length !== length) throw new Error("The same block id may exist.");
-  
+
   return newBlockList;
 }
 

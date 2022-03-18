@@ -8,9 +8,9 @@ import { ModifyBlockToken } from "./modify/block/ModifyBlockToken";
 import { ModifyDataToken } from "./modify/ModifyDataToken";
 
 const TEXT_BLOCK = {
-  position: "1",
+  previousId: null,
   index: 1,
-  parentId: "root",
+  parentId: null,
   id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
   type: "text",
   styleType: "bk-h1",
@@ -26,9 +26,9 @@ const TEXT_BLOCK = {
 
 const TEST_BLOCK_1: Array<UnionBlockData> = [
   {
-    position: "1",
+    previousId: null,
     index: 1,
-    parentId: "root",
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     type: "text",
     styleType: "bk-h1",
@@ -42,9 +42,9 @@ const TEST_BLOCK_1: Array<UnionBlockData> = [
     ]
   },
   {
-    position: "1-1",
-    index: 2,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+    previousId: null,
+    index: 1,
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c163f96379e62",
     type: "numbered",
     styleType: "bk-h1",
@@ -58,9 +58,9 @@ const TEST_BLOCK_1: Array<UnionBlockData> = [
     ]
   },
   {
-    position: "1-2",
-    index: 3,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+    previousId: null,
+    index: 1,
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c16f496379e63",
     type: "text",
     styleType: "bk-h1",
@@ -74,9 +74,9 @@ const TEST_BLOCK_1: Array<UnionBlockData> = [
     ]
   },
   {
-    position: "1-2-1",
-    index: 4,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f496379e63",
+    previousId: null,
+    index: 1,
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c162f96379e64",
     type: "text",
     styleType: "bk-h1",
@@ -92,9 +92,9 @@ const TEST_BLOCK_1: Array<UnionBlockData> = [
 ];
 const TEST_BLOCK_2: UnionBlockData[] = [
   {
-    position: "1-1-1",
+    previousId: null,
     index: 1,
-    parentId: "root",
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c16f96379e61",
     type: "text",
     styleType: "bk-h1",
@@ -108,9 +108,9 @@ const TEST_BLOCK_2: UnionBlockData[] = [
     ]
   },
   {
-    position: "1-1-1-1",
-    index: 2,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+    previousId: null,
+    index: 1,
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c163f96379e62",
     type: "text",
     styleType: "bk-h1",
@@ -124,9 +124,9 @@ const TEST_BLOCK_2: UnionBlockData[] = [
     ]
   },
   {
-    position: "1-1-1-2",
-    index: 3,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f96379e61",
+    previousId: null,
+    index: 1,
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c16f496379e63",
     type: "text",
     styleType: "bk-h1",
@@ -140,9 +140,9 @@ const TEST_BLOCK_2: UnionBlockData[] = [
     ]
   },
   {
-    position: "2-2",
-    index: 4,
-    parentId: "d5cc2725-97ec-494b-bc80-c16f96379e62",
+    previousId: null,
+    index: 1,
+    parentId: null,
     id: "d5cc2725-97ec-494b-bc80-c162f96379e64",
     type: "text",
     styleType: "bk-h1",

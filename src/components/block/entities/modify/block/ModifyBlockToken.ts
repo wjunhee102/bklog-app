@@ -9,10 +9,9 @@ export class ModifyBlockToken<T extends UnionBlockGenericType = UnionBlockGeneri
   }
 
   public getRawData(): RawModifyData<ModifyBlockGenericType<T>> {
-    const payload = Object.assign({}, this.payload, { index: undefined, parentId: undefined });
+    const payload = Object.assign({}, this.payload, { index: undefined });
 
     delete payload.index;
-    delete payload.parentId;
 
     return {
       id: this.id,

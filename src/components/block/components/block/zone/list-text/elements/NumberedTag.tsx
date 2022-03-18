@@ -32,7 +32,7 @@ const NumberedTag: React.FC<ListTagProps<NumberedBlock>> = ({
 
     if(inFrontOfBlock
       && inFrontOfBlock instanceof NumberedBlock 
-      && inFrontOfBlock.position === getFrontPosition(block.position)
+      && inFrontOfBlock.id === block.previousId
       && inFrontOfBlock.meta?.order
     ) {
       block.setOrder(inFrontOfBlock.meta.order + 1);

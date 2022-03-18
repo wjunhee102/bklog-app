@@ -85,6 +85,7 @@ export function sort(blockList: RawBlockData[]): RawBlockData[] {
     index++;
 
     for(; index < length; index++) {
+
       if(!blockList[index].previousId) {
         if(previousBlock.id !== blockList[index].parentId) break;
       } else {
@@ -100,11 +101,12 @@ export function sort(blockList: RawBlockData[]): RawBlockData[] {
   if(index === length) return newBlockList;
 
   const [ blockMap, firstBlock ] = setBlockMap(blockList, index);
-
-  previousBlock = firstBlock? firstBlock : blockList[index];
-
-  index++;
-  newBlockList.push(previousBlock);
+ 
+  if(firstBlock) {
+    previousBlock = firstBlock;
+    index++;
+    newBlockList.push(previousBlock);
+  }
 
   const blockStack: RawBlockData[] = [];
 
@@ -112,7 +114,7 @@ export function sort(blockList: RawBlockData[]): RawBlockData[] {
 
   for(; index < length; index++) {
     const blockMapValueList = blockMap.get(previousBlock.id);
-    
+
     if(!blockMapValueList) {
       if(!blockStack[0]) break;
       
@@ -125,7 +127,7 @@ export function sort(blockList: RawBlockData[]): RawBlockData[] {
       for(let i = blockMapValueList.length - 1; i > 0; i--) {
         blockStack.push(blockMapValueList[i].block);
       }
-
+  
       currentBlock = blockMapValueList[0].block;
     } 
     
@@ -313,17 +315,18 @@ export function ordering(blockList: RawBlockData[], targetIdList?: string[]) {
 
     } else {
     
-      if(endPointId === blockList[index].previousId) {
-        endPointId = END;
+      while(targetId !== endPointId) {
         targetIdListIndex++;
 
         if(targetIdList && targetIdList[targetIdListIndex]) {
           targetId = targetIdList[targetIdListIndex];
+        
         } else {
           targetId = END;
         }
-
       }
+
+      endPointId = END;
 
     }
    
@@ -354,7 +357,7 @@ export function ordering(blockList: RawBlockData[], targetIdList?: string[]) {
       if(!block) break;
 
       previousBlock = block;
-      console.log("while", previousBlock, currentBlock);
+
       const result = reconcileBlock(previousBlock, currentBlock);
 
       if(result) {

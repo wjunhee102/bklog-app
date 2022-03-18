@@ -33,7 +33,7 @@ const BlockUtilsMenu: React.FC<BlockUtilsMenuProps> = ({
 
     if(!newBlock) return false;
 
-    onAddBlock([newBlock], block.position, true, newBlock.id);
+    onAddBlock([newBlock], block.id, true, true, newBlock.id);
 
     setToggle(false);
   }

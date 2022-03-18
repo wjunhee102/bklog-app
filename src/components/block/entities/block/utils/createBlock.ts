@@ -6,13 +6,13 @@ import { BLOCK_TITLE } from "../type/types/title";
 import { Token } from "./token";
 
 function createTextBlockData({
-  id, index, parentId, position, type, styleType, styles, contents
+  id, index, parentId, previousId, type, styleType, styles, contents
 }: TextBlockDataProps): TextBlockData {
   return {
     id: id? id : Token.getUUID(),
     index: index? index : 0,
-    parentId: parentId? parentId : "null",
-    position: position? position : "0",
+    parentId: parentId? parentId : null,
+    previousId: previousId? previousId : null,
     type: type? type : "text",
     styleType: styleType? styleType : "bk-p",
     styles: styles? styles : type && type === "todo"? {
@@ -29,7 +29,7 @@ function createTitleBlockData({
     id: "title",
     index: 0,
     parentId: "title",
-    position: "title",
+    previousId: null,
     type: "title",
     styleType: "bk-title",
     styles: {},
@@ -38,13 +38,13 @@ function createTitleBlockData({
 }
 
 function createContainerBlockData({
-  id, index, parentId, position, type, styleType, styles, contents
+  id, index, parentId, previousId, type, styleType, styles, contents
 }: ContainerBlockDataProps): ContainerBlockData {
   return {
     id: id? id : Token.getUUID(),
     index: index? index : 0,
-    parentId: parentId? parentId : "null",
-    position: position? position : "0",
+    parentId: parentId? parentId : null,
+    previousId: previousId? previousId : null,
     type: type? type : "container",
     styleType: styleType? styleType : "bk-container",
     styles: styles? styles : null,
@@ -53,13 +53,13 @@ function createContainerBlockData({
 }
 
 function createImageBlockData({
-  id, index, parentId, position, type, styleType, styles, contents
+  id, index, parentId, previousId, type, styleType, styles, contents
 }: ImageBlockDataProps): ImageBlockData {
   return {
     id: id? id : Token.getUUID(),
     index: index? index : 0,
-    parentId: parentId? parentId : "null",
-    position: position? position : "0",
+    parentId: parentId? parentId : null,
+    previousId: previousId? previousId : null,
     type: type? type : "image",
     styleType: styleType? styleType : "bk-image",
     styles: styles? styles : {

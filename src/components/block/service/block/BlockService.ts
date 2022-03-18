@@ -437,10 +437,11 @@ export class BlockService {
     targetIdMap: BlockIdMap,
     targetId: string,
     previous: boolean,
-    container: boolean = false
+    isCreateContainer: boolean = false
   ): BlockService {
 
-    if(container) {
+    if(isCreateContainer) {
+      
       const blockList = this.blockList.concat();
       const containerBlockData = ContainerBlock.createBlockData(previous
         ? { previousId: targetId }

@@ -238,6 +238,34 @@ export const test7: RawBlockData[] = [
   }
 ];
 
+export const test8: RawBlockData[] = [
+  {
+    id: "4T1",
+    parentId: null,
+    previousId: null,
+  },
+  {
+    id: "4T1-1-1",
+    parentId: "4T1-1",
+    previousId: null,
+  },
+  {
+    id: "4T2",
+    parentId: null,
+    previousId: "4T1",
+  },
+  {
+    id: "4T3",
+    parentId: null,
+    previousId: "4T2"
+  },
+  {
+    id: "4T1-1",
+    parentId: "4T1",
+    previousId: null,
+  }
+];
+
 const sortedTest1 = sort(test1);
 const sortedTest2 = sort(test2);
 const sortedTest3 = sort(test3);
@@ -245,12 +273,13 @@ const sortedTest4 = sort(test4);
 const sortedTest5 = sort(test5);
 const sortedTest6 = sort(test6);
 const sortedTest7 = sort(test7);
+const sortedTest8 = sort(test8);
 
-// const orderingTest1 = ordering(sortedTest1);
-// const orderingTest2 = ordering(sortedTest2);
-// const orderingTest3 = ordering(sortedTest3);
-// const orderingTest4 = ordering(sortedTest4);
-// const orderingTest5 = ordering(sortedTest5);
+const orderingTest1 = ordering(sortedTest1);
+const orderingTest2 = ordering(sortedTest2);
+const orderingTest3 = ordering(sortedTest3);
+const orderingTest4 = ordering(sortedTest4);
+const orderingTest5 = ordering(sortedTest5);
 const orderingTest6 = ordering(sortedTest6);
 const orderingTest7 = ordering(sortedTest7);
 
@@ -267,24 +296,11 @@ test("sort", () => {
 });
 
 test("ordering", () => {
-  //console.log(orderingTest3, orderingTest4, orderingTest5, orderingTest6);
-
-  // expect(orderingTest1.blockList.map(getId).join("")).toEqual(TEST_CASE);
-  // expect(orderingTest2.blockList.map(getId).join("")).toEqual(TEST_CASE);
-  // expect(orderingTest3.blockList.map(getId).join("")).toEqual(TEST_CASE);
-  // expect(orderingTest4.blockList.map(getId).join("")).toEqual(TEST_CASE);
-  // expect(orderingTest5.blockList.map(getId).join("")).toEqual(TEST_CASE);
+  expect(orderingTest1.blockList.map(getId).join("")).toEqual(TEST_CASE);
+  expect(orderingTest2.blockList.map(getId).join("")).toEqual(TEST_CASE);
+  expect(orderingTest3.blockList.map(getId).join("")).toEqual(TEST_CASE);
+  expect(orderingTest4.blockList.map(getId).join("")).toEqual(TEST_CASE);
+  expect(orderingTest5.blockList.map(getId).join("")).toEqual(TEST_CASE);
   expect(orderingTest6.blockList.map(getId).join("")).toEqual(TEST_CASE);
   expect(orderingTest7.blockList.map(getId).join("")).toEqual(TEST_CASE);
-});
-
-test("flag", () => {
-  let flag = 0;
-
-  //flag |= 1;
-  flag |= 2;
-  // flag |= 4;
-  flag |= 8;
-
-  console.log(flag & 1, flag & 2, flag & 4, flag & 8);
 });

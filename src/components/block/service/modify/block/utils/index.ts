@@ -66,13 +66,9 @@ export function pushModifyBlockToken<T extends UnionModifyBlockToken = ModifyBlo
 }
 
 export function convertRawBlockData<T extends UnionBlockGenericType>(blockDataProps: BlockData<T> | BlockDataProps<T>, id: boolean = false): RawBlockData<T> | RawBlockDataProps<T> {
-  const rawData = Object.assign({}, blockDataProps, {
-    index: undefined,
-    parentId: undefined
-  });
+  const rawData = Object.assign({}, blockDataProps, { index: undefined });
 
   delete rawData.index;
-  delete rawData.parentId;
 
   if(id) {
     rawData.id = undefined;

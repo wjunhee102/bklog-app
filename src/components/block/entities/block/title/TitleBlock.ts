@@ -7,7 +7,8 @@ export class TitleBlock extends Block<TitleGenericType, null> implements BlockFr
   static createBlockData(title: string): BlockData<TitleGenericType> {
     return {
       index: 0,
-      position: "title",
+      previousId: null,
+      parentId: null,
       id: "title",
       type: "title",
       styleType: "title",

@@ -39,7 +39,8 @@ import {
   editBlock,
   editBlockSideInfo,
   SetBlockList,
-  StagedPageTitle
+  StagedPageTitle,
+  TargetInfo
 } from '../reducer/utils';
 import { BlockIdMap } from '../service/block/utils';
 import { ModifyBlockData } from '../service/modify/type';
@@ -126,10 +127,11 @@ function useBlock() {
   const onAddBlock = useCallback((
     blockList: UnionBlock[], 
     targetPosition: string,
+    previous: boolean,
     currentBlockPosition: boolean,
     nextEditInfo?: string | number 
   ) => {
-    dispatch(addBlock(blockList, targetPosition, currentBlockPosition, nextEditInfo));
+    dispatch(addBlock(blockList, targetPosition, previous, currentBlockPosition, nextEditInfo));
   }, [dispatch]);
 
   const onAddTextBlock = useCallback((
@@ -175,18 +177,17 @@ function useBlock() {
   }, [dispatch]);
 
   const onSwitchBlock = useCallback((
-    changedBlockIdMap: BlockIdMap,
-    container?: boolean
+    isCreateContainer?: boolean
   ) => {
-    dispatch(switchBlock(changedBlockIdMap, container))
+    dispatch(switchBlock(isCreateContainer))
   }, [dispatch]);
 
   const onRevertBlock = useCallback((front?: boolean) => {
     dispatch(revertBlock(front));
   }, [dispatch]);
 
-  const onChangeTargetPosition = useCallback((targetPosition?: string) => {
-    dispatch(changeTargetPosition(targetPosition));
+  const onChangeTargetPosition = useCallback((targetInfo?: TargetInfo) => {
+    dispatch(changeTargetPosition(targetInfo));
   }, [dispatch]);
 
   const onSetTempClip = useCallback((index: number[]) => {
