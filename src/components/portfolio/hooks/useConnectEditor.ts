@@ -12,7 +12,7 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
   } = useBlockReducer;
 
   useEffect(() => {
-    onInitBlockState(data);
+    onInitBlockState(data, true);
     onInitPageTitle("안녕하세요 Bklog입니다!");
   }, []);
 

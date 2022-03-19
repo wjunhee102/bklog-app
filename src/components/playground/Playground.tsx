@@ -99,7 +99,7 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
   } = useBlockReducer;
 
   useEffect(() => {
-    onInitBlockState(initialBlockList);
+    onInitBlockState(initialBlockList, true);
     onInitPageTitle("안녕하세요");
   }, []);
 
