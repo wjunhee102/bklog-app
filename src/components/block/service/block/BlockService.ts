@@ -2,12 +2,13 @@ import { Block } from "../../entities/block/abstract/Block";
 import { ContainerBlock } from "../../entities/block/container/ContainerBlock";
 import { BaseTextBlock } from "../../entities/block/text/BaseTextBlock";
 import { changeStyleTextContents, mergeTextContents } from "../../entities/block/text/utils";
-import { BlockData, BlockDataInitProps, BlockType, RawBlockData, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockDataProps, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
+import { BlockData, BlockDataInitProps, BlockDataProps, BlockType, RawBlockData, RawBlockDataProps, StagedBlockData, UnionBlock, UnionBlockData, UnionBlockDataProps, UnionBlockGenericType, UnionRawBlockData } from "../../entities/block/type";
 import { BLOCK_CONTAINER } from "../../entities/block/type/types/container";
 import { BlockContentsText, OrderType, TextContentStyleType } from "../../entities/block/type/types/text";
 import { Token } from "../../entities/block/utils/token";
 import { HistoryBlockToken } from "../../entities/modify/block/HistoryBlockToken";
 import { ModifyBlockToken } from "../../entities/modify/block/ModifyBlockToken";
+import { HistoryBlockGenericType, ModifyBlockGenericType, RawModifyData } from "../../entities/modify/type";
 import { HistoryBlockService } from "../modify/block/HistoryBlockService";
 import { ModifyBlockService } from "../modify/block/ModifyBlockService";
 import { HistoryBlockData, ModifyBlockData } from "../modify/type";
@@ -477,29 +478,46 @@ export class BlockService {
     let blockList = this.blockList.concat();
 
     if(modifyBlockData.update) {
-      for(const data of modifyBlockData.update) {
-        const index = blockList.findIndex(block => block.id === data.id);
-        
-        if(index !== -1) {
-          let preProps: UnionBlockDataProps = {}; 
+      const updateBlockMap = new Map<string, RawModifyData<ModifyBlockGenericType>>();
 
-          if(data.payload.type) {
-            const result = changeBlockType(data.payload.type, blockList[index]);
+      modifyBlockData.update.forEach(data => {
+        updateBlockMap.set(data.id, data);
+      });
 
-            if(result) {
-              const { block, historyBlockToken } = result;
-              blockList[index] = block;
-              this.historyBlockTokenList.push(historyBlockToken);
-            }
-          }
+      for(let i = 0; i < blockList.length; i++) {
+        const data = updateBlockMap.get(blockList[i].id);
 
-          preProps = Object.assign(preProps, blockList[index].updateBlock(data.payload));
-   
-          this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(data.id, data.type, preProps)));
-        } else {
+        if(!data) continue;
+
+        updateBlockMap.delete(data.id);
+
+        if(data.type !== blockList[i].type) {
           this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(data.id, data.type)));
+
+          continue;
         }
-        
+
+        let preProps: UnionBlockDataProps = {}; 
+
+        if(data.payload.type) {
+          const result = changeBlockType(data.payload.type, blockList[i]);
+
+          if(result) {
+            const { block, historyBlockToken } = result;
+            blockList[i] = block;
+            this.historyBlockTokenList.push(historyBlockToken);
+          }
+        }
+
+        preProps = Object.assign(preProps, blockList[i].updateBlock(data.payload));
+   
+        this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(data.id, data.type, preProps)));
+      }
+
+      if(updateBlockMap.size) {
+        updateBlockMap.forEach(data => {
+          this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setDeleteModifyData(data.id, data.type)));
+        });
       }
     }
 
@@ -524,18 +542,28 @@ export class BlockService {
       if(!blockDataList[0]) return this.sort().positioning();
 
       const toBeCreatedBlockList = BlockService.createBlockList(blockDataList);
-      
-      for(const block of toBeCreatedBlockList) {
-        const index = blockList.findIndex(preBlock => preBlock.id === block.id);
 
-        if(index === -1) {
-          blockList.push(block);
-          this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(block.id, block.type)));
-        } else {
-          const preProps = blockList[index].updateBlock(block.getRawBlockData());
-          this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[index].id, blockList[index].type, preProps)));
-        }
+      const createBlockMap = new Map<string, UnionBlock>();
+
+      toBeCreatedBlockList.forEach(block => {
+        createBlockMap.set(block.id, block);
+      });
+
+      for(let i = 0; i < blockList.length; i++) {
+        const newBlock = createBlockMap.get(blockList[i].id);
+
+        if(!newBlock) continue;
+
+        createBlockMap.delete(blockList[i].id);
+
+        const preProps = blockList[i].updateBlock(newBlock.getRawBlockData());
+        this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[i].id, blockList[i].type, preProps)));
       }
+
+      createBlockMap.forEach(block => {
+        blockList.push(block);
+        this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(block.id, block.type)));
+      });
 
     }
 
@@ -548,32 +576,38 @@ export class BlockService {
     let blockList = this.blockList.concat();
 
     if(historyBlockData.update) {
-      for(const data of historyBlockData.update) {
-        const index = blockList.findIndex(block => block.id === data.id);
+      const updateBlockMap = new Map<string, RawModifyData<HistoryBlockGenericType>>();
 
-        if(index !== -1) {
-          let preProps: UnionBlockDataProps = {}; 
+      historyBlockData.update.forEach(data => {
+        updateBlockMap.set(data.id, data);
+      });
 
-          if(data.payload.type) {
-            const result = changeBlockType(data.payload.type, blockList[index]);
+      for(let i = 0; i < blockList.length; i++) {
+        const data = updateBlockMap.get(blockList[i].id);
 
-            if(result) {
-              const { block, modifyBlockToken, historyBlockToken } = result;
-              
-              blockList[index] = block;
+        if(!data) continue;
 
-              this.historyBlockTokenList.push(historyBlockToken);
-              this.modifyBlockTokenList.push(modifyBlockToken);
-            }
+        updateBlockMap.delete(data.id);
+
+        let preProps: UnionBlockDataProps = {};
+
+        if(data.payload.type) {
+          const result = changeBlockType(data.payload.type, blockList[i]);
+
+          if(result) {
+            const { block, modifyBlockToken, historyBlockToken } = result;
+            blockList[i] = block;
+            
+            this.historyBlockTokenList.push(historyBlockToken);
+            this.modifyBlockTokenList.push(modifyBlockToken);
           }
-
-          preProps = Object.assign(preProps, blockList[index].updateBlock(data.payload));
-
-          this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(data.id, blockList[index].type, data.payload)));
-          this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(data.id, data.type, preProps)));
         }
 
-      } 
+        preProps = Object.assign(preProps, blockList[i].updateBlock(data.payload));
+
+        this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(data.id, blockList[i].type, data.payload)));
+        this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(data.id, data.type, preProps)));
+      }
     }
     
     if(historyBlockData.delete) {
@@ -601,20 +635,29 @@ export class BlockService {
 
       const toBeCreatedBlockList = BlockService.createBlockList(blockDataList);
 
-      for(const block of toBeCreatedBlockList) {
-        const index = blockList.findIndex(preBlock => preBlock.id === block.id);
+      const createBlockMap = new Map<string, UnionBlock>();
 
-        if(index === -1) {
-          blockList.push(block);
-          this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setCreateModifyData(block.getRawBlockData())));
-          this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(block.id, block.type)));
-        } else {
-          const preProps = blockList[index].updateBlock(block.getRawBlockData());
-          this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[index].id, blockList[index].type, preProps)));
-          this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(block.id, block.type, block.getRawBlockData())));
-        }
+      toBeCreatedBlockList.forEach(block => {
+        createBlockMap.set(block.id, block);
+      });
+
+      for(let i = 0; i < blockList.length; i++) {
+        const newBlock = createBlockMap.get(blockList[i].id);
+
+        if(!newBlock) continue;
+
+        createBlockMap.delete(blockList[i].id);
+
+        const preProps = blockList[i].updateBlock(newBlock.getRawBlockData());
+        this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setUpdateModifyData(blockList[i].id, blockList[i].type, preProps)));
+        this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setUpdateModifyData(newBlock.id, newBlock.type, newBlock.getRawBlockData())));
       }
-    
+
+      createBlockMap.forEach(block => {
+        blockList.push(block);
+        this.modifyBlockTokenList.push(new ModifyBlockToken(ModifyBlockService.setCreateModifyData(block.getRawBlockData())));
+        this.historyBlockTokenList.push(new HistoryBlockToken(HistoryBlockService.setDeleteModifyData(block.id, block.type)));
+      });
     }
 
     this.blockList = blockList;

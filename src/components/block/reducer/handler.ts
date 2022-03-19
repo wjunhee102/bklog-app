@@ -919,7 +919,6 @@ function clearStateItemHandler(
   state: BlockState,
   { payload }: ReturnType<typeof clearStateItem>
 ): BlockState {
-  console.log(createClearStatePart<BlockStateProps>(initialBlockState, payload));
   return updateObject(state, createClearStatePart<BlockStateProps>(initialBlockState, payload));
 }
 

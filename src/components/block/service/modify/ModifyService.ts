@@ -58,7 +58,7 @@ export class ModifyService {
 
     if(this.modifyBlockService) {
       const modifyBlockData = this.modifyBlockService.getData();
-      console.log("modify", this.modifyBlockService, modifyBlockData);
+
       if(modifyBlockData) modifyBklogData.blockData = modifyBlockData;
     }
 
