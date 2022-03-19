@@ -8,21 +8,21 @@ function resetBklogHandler(
   state: BklogState, 
   action: ReturnType<typeof resetBklog>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, initialState);
+  return updateObject(state, initialState);
 }
 
 function clearBklogStateHandler(
   state: BklogState,
   { payload }: ReturnType<typeof clearBklogState>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, createClearStatePart<BklogStateProps>(initialState, payload));
+  return updateObject(state, createClearStatePart<BklogStateProps>(initialState, payload));
 }
 
 function getPageHandler(
   state: BklogState,
   { payload }: ReturnType<typeof getPage>
 ) {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isLoading: true,
     isFetching: true
   })
@@ -32,7 +32,7 @@ function getPageSuccessHandler(
   state: BklogState, 
   { payload: { pageInfo, blockList, version } }: ReturnType<typeof getPageSuccess> 
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     pageInfo,
     blockList,
     version,
@@ -48,7 +48,7 @@ function getPageErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof getPageError>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     error: payload,
     isLoading: false,
     isFetching: false
@@ -62,7 +62,7 @@ function addPushModifyBlockTokenListHandler(
   const pushModifyBlockTokenList = state.pushModifyBlockTokenList?
     [...state.pushModifyBlockTokenList, ...payload] : payload;
 
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     pushModifyBlockTokenList
   });
 }
@@ -78,9 +78,9 @@ function changePageInfoHandler(
 
   if(!pageInfoProps && !state.pageInfo) return state;
 
-  const pageInfo = updateObject<PageInfo, PageInfoProps>(state.pageInfo as PageInfo, pageInfoProps as PageInfoProps);
+  const pageInfo = updateObject(state.pageInfo as PageInfo, pageInfoProps as PageInfoProps);
 
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     pageInfo,
     pushModifyPageTokenList
   });
@@ -90,7 +90,7 @@ function updateBklogHandler(
   state: BklogState, 
   action: ReturnType<typeof updateBklog>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isFetching: true
   });
 }
@@ -99,7 +99,7 @@ function updateBklogSuccessHandler(
   state: BklogState, 
   { payload: { pageVersion } }: ReturnType<typeof updateBklogSuccess>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isFetching: false,
     isUpdated: true,
     pushModifyBlockTokenList: null,
@@ -115,19 +115,19 @@ function updateBklogErrorHandler(
   if(payload.type === "Bklog" && (payload.code === "001" || payload.code === "005")) {
 
     if(payload.code === "001") {
-      return updateObject<BklogState, BklogStateProps>(state, {
+      return updateObject(state, {
         isLoading: false,
         isUpdating: true
       });
     } else {
-      return updateObject<BklogState, BklogStateProps>(state, {
+      return updateObject(state, {
         isLoading: true,
         isRefresh: true
       });
     }
 
   } else {
-    return updateObject<BklogState, BklogStateProps>(state, {
+    return updateObject(state, {
       isFetching: false,
       isLoading: true,
       isRefresh: true,
@@ -142,7 +142,7 @@ function updateVersionHandler(
   state: BklogState,
   action: ReturnType<typeof updateVersion>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isFetching: true
   });
 }
@@ -151,9 +151,9 @@ function updateVersionSuccessHandler(
   state: BklogState,
   { payload: { id, data: { pageInfo, blockData } } }: ReturnType<typeof updateVersionSuccess>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isFetching: false,
-    pageInfo: pageInfo && state.pageInfo? updateObject<PageInfo, PageInfoProps>(state.pageInfo, pageInfo) 
+    pageInfo: pageInfo && state.pageInfo? updateObject(state.pageInfo, pageInfo) 
     : state.pageInfo,
     version: id,
     pullModifyBlockData: blockData? blockData : state.pullModifyBlockData
@@ -165,12 +165,12 @@ function updateVersionErrorHandler(
   { payload }: ReturnType<typeof updateVersionError>
 ): BklogState {
   if(payload.type === "Bklog" && payload.code === "004") {
-    return updateObject<BklogState, BklogStateProps>(state, {
+    return updateObject(state, {
       isLoading: true,
       isRefresh: true
     });
   } else {
-    return updateObject<BklogState, BklogStateProps>(state, {
+    return updateObject(state, {
       isLoading: true,
       isRefresh: true,
       error: payload
@@ -182,7 +182,7 @@ function changeUpdatedStateHandler(
   state: BklogState,
   { payload }: ReturnType<typeof changeUpdatedState>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isUpdated: payload? true : false
   });
 }
@@ -191,7 +191,7 @@ function changeUpdatingStateHandler(
   state: BklogState,
   { payload }: ReturnType<typeof changeUpdatedState>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isUpdating: payload? true : false
   });
 }
@@ -201,7 +201,7 @@ function releaseUpdatingSuccessHandler(
   state: BklogState,
   action: ReturnType<typeof releaseUpdatingSuccess>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isUpdating: false
   });
 }
@@ -210,7 +210,7 @@ function releaseUpdatingErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof releaseUpdatingError>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     error: payload
   });
 }
@@ -219,7 +219,7 @@ function addPageEditorHandler(
   state: BklogState,
   action: ReturnType<typeof addPageEditor>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isLoading: true
   });
 }
@@ -228,7 +228,7 @@ function addPageEditorSuccessHandler(
   state: BklogState,
   action: ReturnType<typeof addPageEditorSuccess>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isLoading: false
   });
 }
@@ -237,7 +237,7 @@ function addPageEditorErrorHandler(
   state: BklogState,
   { payload }: ReturnType<typeof addPageEditorError>
 ): BklogState {
-  return updateObject<BklogState, BklogStateProps>(state, {
+  return updateObject(state, {
     isLoading: false,
     error: payload
   });

@@ -48,7 +48,7 @@ function handleAsyncActions (type: any, key: any, keepData: boolean = false) {
   };
 }
 
-function updateObject<T = any, P = any>(oldObject: T, ...newValues: P[]): T {
+function updateObject<T extends object>(oldObject: T, ...newValues: { [Prop in keyof T]?: T[Prop] }[]): T {
   return Object.assign({}, oldObject, ...newValues);
 };
 

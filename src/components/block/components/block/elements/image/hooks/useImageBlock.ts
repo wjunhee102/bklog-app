@@ -58,7 +58,7 @@ function useImageBlock(block: ImageBlock, useBlockReducer: UseBlockType, zonePro
 
     onEditBlock(
       block.index, { 
-        styles: updateObject(block.styles, { width: widthRef.current })
+        styles: updateObject(block.styles, { width: `${widthRef.current}` })
     });
 
   }, [widthRef]);

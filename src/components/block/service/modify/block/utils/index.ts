@@ -78,23 +78,30 @@ export function convertRawBlockData<T extends UnionBlockGenericType>(blockDataPr
   return rawData;
 }
 
-function modifyDataReducer<T extends ModifyBlockDataGenericType = ModifyBlockDataGenericType>(length: number = 6) {
+function modifyDataReducer<T extends ModifyBlockDataGenericType = ModifyBlockDataGenericType>(length: number = 7) {
   return function (acc: T["data"], cur: T["token"]) {
     switch (cur.command) {
       case COMMAND_CREATE:
+
         const rawData = cur.getRawData();
+
         if(Object.keys(rawData.payload).length === length) acc.create?.push(rawData);
+
         break;
   
       case COMMAND_UPDATE:
+
         acc.update?.push(cur.getRawData());
+
         break;
   
       case COMMAND_DELETE:
+
         acc.delete?.push({
           id: cur.id,
           type: cur.type
         });
+        
         break;
     }
   
@@ -102,7 +109,7 @@ function modifyDataReducer<T extends ModifyBlockDataGenericType = ModifyBlockDat
   } 
 }
 
-export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(tokenList: T["token"][], length: number = 6): T["data"] | null {
+export function convertModifyBlockData<T extends UnionModifBlockDataGenericType>(tokenList: T["token"][], length: number = 7): T["data"] | null {
   if(!tokenList[0]) return null;
 
   const modifyBlockData = tokenList.reduce(modifyDataReducer<T>(length), {

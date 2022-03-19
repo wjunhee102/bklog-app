@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import BlockEditor, { ReturnConnectStoreHook } from '../block';
 import { UnionRawBlockData } from '../block/entities/block/type';
 import { UseBlockType } from '../block/hooks/useBlock';
+import { ModifyBlockService } from '../block/service/modify/block/ModifyBlockService';
 
 const initialBlockList: UnionRawBlockData[] = [
   {
@@ -105,6 +106,7 @@ function useConnectEditor(useBlockReducer: UseBlockType): ReturnConnectStoreHook
   useEffect(() => {
     console.log(blockList);
     console.log(modifyBlockTokenList);
+    console.log(new ModifyBlockService(modifyBlockTokenList, true))
   }, [blockList]);
 
   return {

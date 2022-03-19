@@ -4,7 +4,12 @@ import useBase from './useBase';
 
 function useApp() {
 
-  const { baseState: { dark } } = useBase();
+  const { 
+    baseState: { 
+      dark 
+    },
+    onInit
+  } = useBase();
 
   const { 
     authState: { waitingCount, user },
@@ -16,6 +21,7 @@ function useApp() {
     if(!user) {
       onReSignInUser();
     }
+    onInit();
   }, []);
 
   return {

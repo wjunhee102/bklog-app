@@ -39,7 +39,7 @@ function revertBlockState(
       modifyPageTokenList.push(new ModifyPageDataToken(ModifyPageService.setUpdateModifyData({ title: pageTitle })));
     }
 
-    return updateObject<BlockState, BlockStateProps>(state, {
+    return updateObject(state, {
       editingBlockId,
       blockList,
       pageTitle: pageTitle? pageTitle : lastPageTitle,
@@ -84,7 +84,7 @@ function revertBlockState(
       modifyPageTokenList.push(new ModifyPageDataToken(ModifyPageService.setUpdateModifyData({ title: pageTitle })));
     }
 
-    return updateObject<BlockState, BlockStateProps>(state, {
+    return updateObject(state, {
       editingBlockId,
       blockList,
       pageTitle: pageTitle? pageTitle : lastPageTitle,

@@ -1,4 +1,5 @@
-import { BaseState, BaseActions, CHANGE_DARK_MODE, SERVER_DISCONNECTED } from "./utils";
+import { updateObject } from "../../utils";
+import { BaseState, BaseActions, CHANGE_DARK_MODE, SERVER_DISCONNECTED, INIT } from "./utils";
 
 const initState: BaseState = {
   dark: false,
@@ -10,25 +11,28 @@ function base(state: BaseState = initState, action: BaseActions) {
     case CHANGE_DARK_MODE:
       localStorage.setItem("dark", JSON.stringify(!state.dark));
 
-      return Object.assign({}, state, {
+      return updateObject(state, {
         dark: !state.dark
       });
 
     case SERVER_DISCONNECTED:
-      return Object.assign({}, state, {
+      return updateObject(state, {
         error: action.payload.error
       });
 
-    default: 
+    case INIT: 
       const darkMode = localStorage.getItem("dark");
-
+  
       if(darkMode) {
-        return Object.assign({}, state, {
-          dark: true
+        return updateObject(state, {
+          dark: JSON.parse(darkMode)
         });
       } else {
         return state;
       }
+
+    default: 
+      return state;
   }
 }
 

@@ -16,9 +16,6 @@ const DropAreaComponent: React.FC<DropAreaComponentProps> = ({
   onMouseLeave,
   onMouseUp
 }) => {
-  useEffect(() => {
-    console.log(on);
-  }, [on]);
 
   return (
     <div 

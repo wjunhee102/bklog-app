@@ -136,6 +136,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
 
   useEffect(() => {
     if(isFetch && !isFetching && !updatingId && !isUpdated && !isKeyPress) {
+      console.log(modifyBlockTokenList);
       if(modifyBlockTokenList[0]) onAddPushModifyBlockTokenList(new ModifyBlockService(modifyBlockTokenList, true).getTokenList());
       if(modifyPageTokenList[0]) onChangePageInfo(new ModifyPageService(modifyPageTokenList, true).getTokenList());
     }

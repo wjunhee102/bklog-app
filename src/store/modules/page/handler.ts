@@ -48,21 +48,21 @@ function resetPageHandler(
   state: PageState, 
   { type }: ReturnType<typeof resetPage>
 ) {
-  return updateObject<PageState, PageStateProps>(state, initialPageState);  
+  return updateObject(state, initialPageState);  
 }
 
 function clearPageStateHandler(
   state: PageState,
   { payload }: ReturnType<typeof clearPageState>
 ) {
-  return updateObject<PageState, PageStateProps>(state, createClearStatePart(initialPageState, payload));
+  return updateObject(state, createClearStatePart(initialPageState, payload));
 }
 
 function changeToggleHandler(
   state: PageState,
   { payload: { toggle } }: ReturnType<typeof changeToggle>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     toggle: toggle !== undefined? toggle : !state.toggle
   });
 }
@@ -71,7 +71,7 @@ function changePageTitleHandler(
   state: PageState,
   { payload: { title, id } }: ReturnType<typeof changePageTitle>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     pageList: state.pageList.map(page => {
       if(page.id === id) {
         return updateObject(page, { title });
@@ -86,7 +86,7 @@ function createPageHandler(
   state: PageState,
   { payload: { title, disclosureScope } }: ReturnType<typeof createPage>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: true,
     tempPageInfo: {
       title, 
@@ -101,7 +101,7 @@ function createPageSuccessHandler(
 ): PageState {
   const pageList = state.pageList.concat();
 
-  if(state.tempPageInfo) pageList.push(updateObject<Page, PageProps>(createPageInfo(payload), state.tempPageInfo));
+  if(state.tempPageInfo) pageList.push(updateObject(createPageInfo(payload), state.tempPageInfo));
   
   pageList.sort((a, b) => {
     const titleA = a.title.toUpperCase();
@@ -115,7 +115,7 @@ function createPageSuccessHandler(
     return 0;
   });
 
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: false,
     pageList,
     tempPageInfo: {
@@ -128,7 +128,7 @@ function createPageErrorHandler(
   state: PageState,
   { payload }: ReturnType<typeof createPageError>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: false,
     error: payload,
     tempPageInfo: null
@@ -139,7 +139,7 @@ function getUserProfileHandler(
   state: PageState,
   actions: ReturnType<typeof getUserProfile>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: true,
     error: null
   });
@@ -149,7 +149,7 @@ function getUserProfileSuccessHandler(
   state: PageState,
   { payload }: ReturnType<typeof getUserProfileSuccess>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: false,
     pageEditor: payload
   })
@@ -159,7 +159,7 @@ function getUserProfileErrorHandler(
   state: PageState,
   { payload }: ReturnType<typeof getUserProfileError>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: false,
     error: payload
   });
@@ -169,7 +169,7 @@ function getPageListHandler(
   state: PageState,
   { payload }: ReturnType<typeof getPageList>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: true
   });
 }
@@ -178,7 +178,7 @@ function getPageListSuccessHandler(
   state: PageState,
   { payload: { pageInfoList, userProfile } }: ReturnType<typeof getPageListSuccess>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: false,
     pageList: pageInfoList,
     pageEditor: userProfile
@@ -189,7 +189,7 @@ function getPageListErrorHandler(
   state: PageState,
   { payload }: ReturnType<typeof getPageListError>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     loading: false,
     error: payload
   });
@@ -199,7 +199,7 @@ function updatePageInfoHandler(
   state: PageState,
   { payload }: ReturnType<typeof updatePageInfo>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     updatingPageId: payload.pageId,
     updatedVersion: null,
     tempPageInfo: payload.data
@@ -211,13 +211,13 @@ function updatePageInfoSuccessHandler(
   { payload }: ReturnType<typeof updatePageInfoSuccess>
 ): PageState {
   if(!state.updatingPageId || !state.tempPageInfo) return state;
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     updatedVersion: [state.updatingPageId, payload.pageVersion],
     updatingPageId: null,
     pageList: state.pageList.map(page => 
       page.id !== state.updatingPageId?
       page 
-      : updateObject<Page, PageProps>(page, state.tempPageInfo as PageProps)
+      : updateObject(page, state.tempPageInfo as PageProps)
     ),
     tempPageInfo: null
   });
@@ -227,7 +227,7 @@ function updatePageInfoErrorHandler(
   state: PageState,
   { payload }: ReturnType<typeof updatePageInfoError>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     updatedVersion: null,
     updatingPageId: null,
     error: payload
@@ -238,7 +238,7 @@ function deletePageHandler(
   state: PageState,
   { payload }: ReturnType<typeof deletePage>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     error: null,
     updatingPageId: payload
   });
@@ -248,7 +248,7 @@ function deletePageSuccessHandler(
   state: PageState,
   { payload }: ReturnType<typeof deletePageSuccess>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     pageList: state.pageList.filter((page => page.id !== state.updatingPageId)),
     updatingPageId: null
   });
@@ -258,7 +258,7 @@ function deletePageErrorHandler(
   state: PageState,
   { payload }: ReturnType<typeof deletePageError>
 ): PageState {
-  return updateObject<PageState, PageStateProps>(state, {
+  return updateObject(state, {
     error: payload,
     updatingPageId: null
   });

@@ -1,9 +1,9 @@
-function updateObject<T = any, P = any>(oldObject: T, ...newValues: P[]): T {
+function updateObject<T extends object>(oldObject: T, ...newValues: { [P in keyof T]?: T[P] }[]): T {
   return Object.assign({}, oldObject, ...newValues);
 };
 
-function modifyAnObject<T extends Object = any, P extends Object = any>(object: T, propertys: P) {
-  const newObject: T = updateObject<T>(object);
+function modifyAnObject<T extends Object>(object: T, propertys: { [P in keyof T]?: T[P] }) {
+  const newObject = updateObject(object);
 
   for(const key in propertys) {
     if(newObject.hasOwnProperty(key)) {
