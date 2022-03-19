@@ -6,7 +6,8 @@ function useApp() {
 
   const { 
     baseState: { 
-      dark 
+      dark,
+      browser
     },
     onInit
   } = useBase();
@@ -23,6 +24,10 @@ function useApp() {
     }
     onInit();
   }, []);
+
+  useEffect(() => {
+    console.log("browser", browser);
+  }, [browser]);
 
   return {
     dark

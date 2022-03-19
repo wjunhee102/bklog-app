@@ -6,6 +6,7 @@ import FullSizeContainer from '../common/FullScreenContainer';
 import { UserInfo } from '../../store/modules/auth/utils';
 import { UseGnbConnectStoreType } from '../../components/gnb/hooks/useGnbConnectStore';
 import { BrowserRouter } from 'react-router-dom';
+import { CHROME } from '../../store/modules/base/utils';
 
 export default {
   title: 'Gnb/gnb',
@@ -20,7 +21,8 @@ const dummyUseConnectStore = (
   loading,
   user,
   onSignOutUser: () => {},
-  onAllReset: () => {}
+  onAllReset: () => {},
+  browser: CHROME
 });
 
 const userInfo: UserInfo = {

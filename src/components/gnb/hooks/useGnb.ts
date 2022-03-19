@@ -12,7 +12,8 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
     loading,
     user,
     onSignOutUser,
-    onAllReset
+    onAllReset,
+    browser
   } = useConnectStore;
 
   const handleClickUserMenu = useCallback(() => {
@@ -40,7 +41,8 @@ function useGnb( useConnectStore: UseGnbConnectStoreType ) {
     handleNavigate,
     handleClickUserMenu,
     handleClickToggleFalse,
-    handleClickSignOut
+    handleClickSignOut,
+    browser
   }
 }
 

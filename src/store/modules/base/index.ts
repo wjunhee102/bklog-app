@@ -1,9 +1,10 @@
 import { updateObject } from "../../utils";
-import { BaseState, BaseActions, CHANGE_DARK_MODE, SERVER_DISCONNECTED, INIT } from "./utils";
+import { BaseState, BaseActions, CHANGE_DARK_MODE, SERVER_DISCONNECTED, INIT, UNKNOWN, isBrowserCheck } from "./utils";
 
 const initState: BaseState = {
   dark: false,
-  error: null
+  error: null,
+  browser: UNKNOWN
 }
 
 function base(state: BaseState = initState, action: BaseActions) {
@@ -21,15 +22,13 @@ function base(state: BaseState = initState, action: BaseActions) {
       });
 
     case INIT: 
+      const browser = isBrowserCheck(); 
       const darkMode = localStorage.getItem("dark");
-  
-      if(darkMode) {
-        return updateObject(state, {
-          dark: JSON.parse(darkMode)
-        });
-      } else {
-        return state;
-      }
+
+      return updateObject(state, {
+        dark: darkMode? JSON.parse(darkMode) : false,
+        browser
+      });
 
     default: 
       return state;

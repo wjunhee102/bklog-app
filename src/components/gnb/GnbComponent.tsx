@@ -6,6 +6,7 @@ import DarkModeToggle from './DarkModeToggle';
 import { UseGnbConnectStoreType } from './hooks/useGnbConnectStore';
 import useGnb from './hooks/useGnb';
 import './Gnb.scss';
+import { SAFARI } from '../../store/modules/base/utils';
 
 interface GnbComponentProps {
   useConnectStore: UseGnbConnectStoreType;
@@ -21,6 +22,7 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
     onUserMenu,
     user,
     loading,
+    browser,
     handleClickUserMenu,
     handleClickToggleFalse,
     handleClickSignOut,
@@ -50,7 +52,7 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
                         <span className="sr-only"></span>
                         <div className="h-8 w-8 rounded-full leading-8 bg-gray-200"></div>
                       </button> 
-                    : <div className="flex items-center">
+                    : browser !== SAFARI? <div className="flex items-center">
                         <div className="hidden md:block">
                           <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
               
@@ -71,6 +73,17 @@ const GnbComponent: React.FC<GnbComponentProps> = ({
                           </div>
                         </div>
                       </div>
+                    : <div className="flex items-baseline space-x-4 text-gray-700 dark:text-gray-100">
+              
+                        <button 
+                          className="whitespace-nowrap gradient-hover hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                          onClick={() => {handleNavigate("/bklog/penname/test")}}
+                        >
+                          테스트 페이지로 이동
+                        </button>
+          
+                      </div>
+
                   }
                 
                 </div>
