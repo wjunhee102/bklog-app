@@ -92,8 +92,8 @@ function useBlock() {
   const blockLength: number = useMemo(() => state.blockList.length, [state.blockList]);
 
   // dispatch
-  const onInitBlockState = useCallback((rawBlockData: UnionRawBlockData[]) => {
-    dispatch(initBlockState(rawBlockData));
+  const onInitBlockState = useCallback((rawBlockData: UnionRawBlockData[], editable: boolean = false) => {
+    dispatch(initBlockState(rawBlockData, editable));
   }, [dispatch]);
 
   const onChangeEditorState = useCallback((type: EditorStateType, toggle: boolean) => {

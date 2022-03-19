@@ -17,6 +17,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
 
   const {
     state: {
+      editable,
       isCliping,
       isGrab
     },
@@ -30,7 +31,7 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
   const [ isHover, setHover ]         = useState<boolean>(false);
 
   const handleContentsHover = useCallback(() => {
-    if(!isGrab) setHover(true);
+    if(editable && !isGrab) setHover(true);
   }, [isGrab]);
 
   const handleContentsMouseLeave = useCallback(() => {
@@ -73,38 +74,46 @@ const BlockContentsArea: React.FC<BlockContentsAreaProps> = ({
 
       <div className="block-utils-menubar">
 
-        <div className="block-add-button-box">
 
-          <button 
-            className="block-add-button"
-            onClick={handleAddBlock}
-          >
-            <FontAwesomeIcon icon={faPlus as IconProp} />
-          </button> 
+        {
+          editable?
+          (
+            <>
+              <div className="block-add-button-box">
 
-        </div>
+              <button 
+                className="block-add-button"
+                onClick={handleAddBlock}
+              >
+                <FontAwesomeIcon icon={faPlus as IconProp} />
+              </button> 
 
-        <div className="block-type-change-button-box">
+              </div>
 
-          <button
-            className="block-type-change-button"
-            onClick={() => setUtilToggle(!utilToggle)}
-            onMouseDown={handleGrabMouseDown}
-          >
-            <FontAwesomeIcon icon={faGripVertical as IconProp} />
-          </button>
+              <div className="block-type-change-button-box">
 
-          {
-            utilToggle?
-            <BlockUtilsMenu
-              useBlockReducer={useBlockReducer}
-              block={block}
-              setToggle={setUtilToggle}
-            />
-            : null
-          }
+                <button
+                  className="block-type-change-button"
+                  onClick={() => setUtilToggle(!utilToggle)}
+                  onMouseDown={handleGrabMouseDown}
+                >
+                  <FontAwesomeIcon icon={faGripVertical as IconProp} />
+                </button>
 
-        </div>
+                {
+                  utilToggle?
+                  <BlockUtilsMenu
+                    useBlockReducer={useBlockReducer}
+                    block={block}
+                    setToggle={setUtilToggle}
+                  />
+                  : null
+                }
+
+              </div>
+            </>
+          ) : null
+        }
 
       </div>
 

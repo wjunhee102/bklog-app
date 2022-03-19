@@ -120,7 +120,7 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   // effect
   useEffect(() => {
     if(bklogState.blockList && bklogState.pageInfo) {
-      onInitBlockState(bklogState.blockList);
+      onInitBlockState(bklogState.blockList, bklogState.pageInfo.editable);
       onInitPageTitle(bklogState.pageInfo.title);
       onClearBklogState("blockList");
     }

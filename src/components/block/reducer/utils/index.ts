@@ -81,6 +81,7 @@ export interface TargetInfo {
   previous: boolean
 }
 export interface BlockState {
+  editable: boolean;
   isFetch: boolean;
   isGrab: boolean;
   isPress: boolean;

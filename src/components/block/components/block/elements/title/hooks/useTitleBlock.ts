@@ -14,6 +14,7 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
     setCursorStart,
     setCursorEnd,
     state: {
+      editable: storeEditable,
       isGrab,
       preBlockInfo,
       editingBlockId,
@@ -25,7 +26,7 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
     onClearStateItem
   } = useBlockReducer;
 
-  const [ editable, setEditable ] = useState<boolean>(true);
+  const [ editable, setEditable ] = useState<boolean>(storeEditable);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
 
@@ -152,7 +153,7 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
   }, [editingBlockId]);
 
   useEffect(() => {
-    setEditable(!isGrab);
+    if(storeEditable) setEditable(!isGrab);
   }, [isGrab]);
 
   useEffect(() => {

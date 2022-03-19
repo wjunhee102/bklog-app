@@ -68,7 +68,8 @@ function useSidebar({
     pageListTable,
     onUpdatePage,
     onDeletePage,
-    handleClick
+    handleClick,
+    editable: authState.user? pageState.pageEditor.id === authState.user.id : false
   }
 }
 

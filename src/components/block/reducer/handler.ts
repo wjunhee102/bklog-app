@@ -84,9 +84,12 @@ import {
 
 function initBlockStateHandler(
   state: BlockState,
-  { payload }: ReturnType<typeof initBlockState>
+  { payload: {
+    rawBlockData,
+    editable
+  } }: ReturnType<typeof initBlockState>
 ): BlockState {
-  const [ blockDataList, initModifyDataTokenList ] = BlockService.createBlockDataList(payload);
+  const [ blockDataList, initModifyDataTokenList ] = BlockService.createBlockDataList(rawBlockData);
 
   if(!blockDataList) return updateObject(state, {
     modifyBlockTokenList: [...initModifyDataTokenList],
@@ -106,6 +109,7 @@ function initBlockStateHandler(
   } = new BlockService(initialBlockList).sort().positioning().getData();
 
   return updateObject(state, {
+    editable,
     blockList,
     modifyBlockTokenList: [...initModifyDataTokenList, ...modifyBlockTokenList],
     isFetch: (modifyBlockTokenList[0] || initModifyDataTokenList[0])? true : false

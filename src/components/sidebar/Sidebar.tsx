@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     handleClick,
     onDeletePage,
     onUpdatePage,
+    editable
   } = useSidebar(bkPageHooks);
 
   return (
@@ -40,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <PageList 
               penName={pageState.pageEditor.penName} 
               pageListTable={pageListTable} 
-              editable={true}
+              editable={editable}
               onDeletePage={onDeletePage}
               onUpdatePage={onUpdatePage}
             /> 

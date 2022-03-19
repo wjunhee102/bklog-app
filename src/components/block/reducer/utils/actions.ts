@@ -42,10 +42,13 @@ import { BlockType, UnionBlock, UnionBlockDataProps, UnionRawBlockData } from ".
 import { BlockTypeText, TextContentStyleType, OrderType } from "../../entities/block/type/types/text";
 import { ModifyBklogData, ModifyBlockData } from "../../service/modify/type";
 
-function initBlockState(rawBlockData: UnionRawBlockData[]) {
+function initBlockState(rawBlockData: UnionRawBlockData[], editable: boolean = false) {
   return {
     type: INIT_BLOCK_STATE,
-    payload: rawBlockData
+    payload: {
+      rawBlockData,
+      editable
+    }
   };
 }
 

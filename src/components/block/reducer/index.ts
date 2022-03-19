@@ -2,6 +2,7 @@ import blockHandlers from "./handler";
 import { BlockActions, BlockState, createReducer } from "./utils";
 
 export const initialBlockState: BlockState = {
+  editable: false,
   isFetch: false,
   isGrab: false,
   isPress: false,

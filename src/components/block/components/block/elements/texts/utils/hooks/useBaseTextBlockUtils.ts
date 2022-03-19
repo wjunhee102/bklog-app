@@ -24,6 +24,7 @@ function useBaseTextBlockUtils({
     setCursorStart,
     setCursorEnd,
     state: {
+      editable: storeEditable,
       isGrab,
       isHoldingDown,
       isCliping,
@@ -39,7 +40,7 @@ function useBaseTextBlockUtils({
     selected
   } = zoneProps;
 
-  const [ editable, setEditable ]       = useState<boolean>(true);
+  const [ editable, setEditable ]       = useState<boolean>(storeEditable);
   const [ styleToggle, setStyleToggle ] = useState<boolean>(false);
 
   const blockContentsRef = useRef<HTMLDivElement>(null);
@@ -118,10 +119,12 @@ function useBaseTextBlockUtils({
   }, [cursorStart, cursorEnd, editingBlockId]);
 
   useEffect(() => {
-    if(isGrab) {
-      setEditable(!isGrab);
-    } else {
-      setEditable(!selected);
+    if(storeEditable) {
+      if(isGrab) {
+        setEditable(!isGrab);
+      } else {
+        setEditable(!selected);
+      }
     }
   }, [selected]);
 
