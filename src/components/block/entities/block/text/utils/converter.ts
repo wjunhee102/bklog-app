@@ -814,6 +814,8 @@ function mergeTextContents(
   toBeMergedContents: BlockContentsText,
   targetContents: BlockContentsText
 ): BlockContentsText {
+  if(!toBeMergedContents[0]) return targetContents;
+
   const copyToBeMergedContents: BlockContentsText = toBeMergedContents.concat();
   const copyTargetContents: BlockContentsText     = targetContents.concat();
   const front = copyToBeMergedContents.pop();
@@ -833,7 +835,6 @@ function mergeTextContents(
     copyToBeMergedContents.push(frontContent, ...copyTargetContents);
   } else {
     copyToBeMergedContents.push(frontContent, backContent, ...copyTargetContents);
-    console.log("1", frontContent, backContent, copyTargetContents);
   }
 
   return copyToBeMergedContents;

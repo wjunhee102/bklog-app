@@ -109,7 +109,7 @@ function useTextBlock(props: UseTextBlockProps) {
         
         setCursorStart(cursorStartPoint);
         setCursorEnd(cursorEndPoint);
-        console.log("backspace")
+
         if(cursorStartPoint === 0 && cursorEndPoint === 0) {
           if(!e.target.innerHTML || e.target.innerHTML === "<br>") {
             const nextEditIndex = block.index - 1;

@@ -100,9 +100,11 @@ function useBaseTextBlockUtils({
   useEffect(() => {
     const focused = document.activeElement;
     
-    if((cursorStart | cursorEnd) && blockContentsRef.current && focused === blockContentsRef.current) {
-      handleRefreshCursorPoint();
-    }
+    if(!(cursorStart | cursorEnd) || !blockContentsRef.current || focused !== blockContentsRef.current) return;
+    
+    blockContentsRef.current.blur();
+    blockContentsRef.current.focus();
+    handleRefreshCursorPoint();
 
   }, [block.contents]);
 
@@ -129,32 +131,27 @@ function useBaseTextBlockUtils({
   }, [selected]);
 
   useEffect(() => {
-    if(editingBlockId === block.id) {
-      if(blockContentsRef.current) {
-        handleElementFocus();
-
-        if(preBlockInfo) {
-          if(preBlockInfo.type === "text") {
-            if(preBlockInfo.payload[0] === "delete") {
-              const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
-              handleMoveToWantPoint(length, length);
-            }
-            onClearStateItem("preBlockInfo");
-          }
-        }
-
-      }
-    } else {
+    if(editingBlockId !== block.id) { 
       setStyleToggle(false);
+      return;
     }
-  }, [editingBlockId]);
 
-  useEffect(() => {
-    // 크롬에서 한글 중복입력 이슈에 관한 조치 
-    blockContentsRef.current?.blur();
-    blockContentsRef.current?.focus();
-    handleMoveToWantPoint(cursorStart, cursorEnd);
-  }, [block.contents]);
+    if(!blockContentsRef.current) return;
+
+    handleElementFocus();
+
+    if(!preBlockInfo || preBlockInfo.type !== "text") return;
+
+    if(preBlockInfo.payload[0] !== "delete") {
+      onClearStateItem("preBlockInfo");
+      return;
+    }
+
+    const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
+    handleMoveToWantPoint(length, length);
+    onClearStateItem("preBlockInfo");
+
+  }, [editingBlockId]);
 
   return {
     styleToggle,

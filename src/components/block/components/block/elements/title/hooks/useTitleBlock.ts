@@ -50,16 +50,16 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
         setCursorStart(getSelectionStart(e.target));
         setCursorEnd(getSelectionEnd(e.target));
       },
-      "Enter": (e: any) => {
+      Enter: (e: any) => {
         e.preventDefault();
       },
-      "ArrowUp": (e: any) => {
+      ArrowUp: (e: any) => {
         e.preventDefault();
         setCursorStart(0);
         setCursorEnd(0);
         setSelectionRange(e.target, 0, 0);
       },
-      "ArrowDown": (e: any) => {
+      ArrowDown: (e: any) => {
         e.preventDefault();
         const contentsLength = e.target.innerText.length;
         setCursorStart(contentsLength);
@@ -70,7 +70,7 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
           onChangeEditingId(0);
         }
       },
-      "Backspace": (e: any) =>{
+      Backspace: (e: any) =>{
         if(e.target.innerText.length !== (cursorStart && cursorEnd)) {
           onEditPageTitle(e.target.innerText);
         } 
@@ -82,7 +82,7 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
       }
     },
     keyPress: {
-      "Enter": (e: any) => {
+      Enter: (e: any) => {
         e.preventDefault();
         onAddTitleBlock(
           e.target.innerText,
@@ -127,29 +127,31 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
   useEffect(() => {
     const focused = document.activeElement;
     
-    if((cursorStart | cursorEnd) && blockContentsRef && focused === blockContentsRef.current) {
-      handleRefreshCursorPoint();
-    }
+    if(!(cursorStart | cursorEnd) || !blockContentsRef.current || focused !== blockContentsRef.current) return;
+    
+    blockContentsRef.current.blur();
+    blockContentsRef.current.focus();  
+    handleRefreshCursorPoint();
 
   }, [block.contents]);
 
   useEffect(() => {
-    if(editingBlockId === block.id) {
-      if(blockContentsRef.current) {
-        handleElementFocus();
+    if(editingBlockId !== block.id || !blockContentsRef.current) return;
 
-        if(preBlockInfo) {
-          if(preBlockInfo.type === "text") {
-            if(preBlockInfo.payload[0] === "delete") {
-              const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
-              setSelectionRange(blockContentsRef.current, length, length);
-            }
-            onClearStateItem("preBlockInfo");
-          }
-        }
+    handleElementFocus();
 
-      }
-    }
+    if(!preBlockInfo || preBlockInfo.type !== "text") return;
+
+    if(preBlockInfo.payload[0] !== "delete") { 
+      onClearStateItem("preBlockInfo");
+      return;
+    };
+
+    const length = blockContentsRef.current.innerText.length - preBlockInfo.payload[1];
+
+    handleMoveToWantPoint(length, length);
+    onClearStateItem("preBlockInfo");
+
   }, [editingBlockId]);
 
   useEffect(() => {
@@ -159,12 +161,6 @@ function useTitleBlock(block: TitleBlock, useBlockReducer: UseBlockType) {
   useEffect(() => {
     if(editingBlockId === block.id) handleFocus(blockContentsRef.current);
   }, []);
-
-  useEffect(() => {
-    blockContentsRef.current?.blur();
-    blockContentsRef.current?.focus();
-    handleMoveToWantPoint(cursorStart, cursorEnd);
-  }, [block.contents]);
 
   return {
     blockContentsRef,

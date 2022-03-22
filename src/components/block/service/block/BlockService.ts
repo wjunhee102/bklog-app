@@ -263,7 +263,7 @@ export class BlockService {
     if(this.blockList[toHandOverIndex] instanceof BaseTextBlock === false) {
       return this;
     }
-
+  
     const block: BaseTextBlock = this.blockList[toHandOverIndex] as BaseTextBlock;
 
     const contents = BaseTextBlock.parseHtmlContents(innerHTML);

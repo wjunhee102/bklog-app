@@ -87,6 +87,7 @@ export interface BlockState {
   isPress: boolean;
   isHoldingDown: boolean;
   isCliping: boolean;
+  isTracking: boolean;
   targetInfo: TargetInfo | null;
   pageTitle: string | null;
   blockList: UnionBlock[];
