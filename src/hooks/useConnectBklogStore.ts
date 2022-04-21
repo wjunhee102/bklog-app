@@ -84,53 +84,51 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   const currentVersion: string | null =  bklogState.version;
 
   const eventSocket = useCallback(() => {
-    if(socket) {
+    if(!socket) return;
 
-      socket.on("connect", () => {
-        console.log("connected");
-        setConnected(true);
-      });
+    socket.on("connect", () => {
+      console.log("connected");
+      setConnected(true);
+    });
 
-      socket.on("update", (clientId: string) => {
-        setUpdatingId(clientId);
-        onChangeUpdatingState(true);
-      });
+    socket.on("update", (clientId: string) => {
+      setUpdatingId(clientId);
+      onChangeUpdatingState(true);
+    });
 
-      socket.on("updated", (version: string) => {
-        setVersion(version);
-        setUpdatingId(null);
-      });
+    socket.on("updated", (version: string) => {
+      setVersion(version);
+      setUpdatingId(null);
+    });
 
-      socket.on("disconnect", () => {
-        console.log("disconnected");
-        setConnected(false);
-      });
+    socket.on("disconnect", () => {
+      console.log("disconnected");
+      setConnected(false);
+    });
 
-      socket.on("editing", (userInfo: EditingUserInfo) => {
-        console.log(userInfo);
-      });
+    socket.on("editing", (userInfo: EditingUserInfo) => {
+      console.log(userInfo);
+    });
 
-      socket.on("edited", (penName: string) => {
-        console.log(penName);
-      });
+    socket.on("edited", (penName: string) => {
+      console.log(penName);
+    });
 
-    }
   }, [socket]);
 
   // effect
   useEffect(() => {
-    if(bklogState.blockList && bklogState.pageInfo) {
-      onInitBlockState(bklogState.blockList, bklogState.pageInfo.editable);
-      onInitPageTitle(bklogState.pageInfo.title);
-      onClearBklogState("blockList");
-    }
+    if(!bklogState.blockList || !bklogState.pageInfo) return;
+
+    onInitBlockState(bklogState.blockList, bklogState.pageInfo.editable);
+    onInitPageTitle(bklogState.pageInfo.title);
+    onClearBklogState("blockList");
   }, [bklogState.blockList]);
 
   useEffect(() => {
-    if(pageTitle) {
-      if(pageId) onChangePageTitle(pageId, pageTitle);
-      if(pageTitle !== title) onInitPageTitle(pageTitle);
-    }
+    if(!pageTitle) return;
+    if(pageId) onChangePageTitle(pageId, pageTitle);
+    if(pageTitle !== title) onInitPageTitle(pageTitle);
   }, [pageTitle]);
 
   useEffect(() => {
@@ -141,38 +139,38 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [modifyBlockTokenList, modifyPageTokenList, isFetch, isFetching, updatingId, isKeyPress]);
 
   useEffect(() => {
-    if(isUpdated && socket && id) {
-      socket.emit("updated", [id, currentVersion]);
-      onChangeUpdatedState();
-      onClearStateItem("modifyBlockTokenList", "modifyPageTokenList");
-    } 
+    if(!isUpdated || !socket || !id) return;
+
+    socket.emit("updated", [id, currentVersion]);
+    onChangeUpdatedState();
+    onClearStateItem("modifyBlockTokenList", "modifyPageTokenList");
   }, [isUpdated]);
 
   useEffect(eventSocket, [socket]);
 
   useEffect(() => {
-    if(socket && pageId) {
-      if(connected) {
-        console.log("connected", connected);
-        socket.emit("roomjoin", pageId);
-      } else {
-        socket.emit("roomleave", pageId);
-      }
+    if(!socket || !pageId) return;
+
+    if(connected) {
+      console.log("connected", connected);
+      socket.emit("roomjoin", pageId);
+    } else {
+      socket.emit("roomleave", pageId);
     }
   }, [socket, pageId, connected]);
 
   useEffect(() => {
-    if(newVersion && currentVersion) {
-      onUpdateVersion(newVersion, currentVersion);
-      setVersion(null);
-    }
+    if(!newVersion || !currentVersion) return;
+    
+    onUpdateVersion(newVersion, currentVersion);
+    setVersion(null);
   }, [newVersion]);
 
   useEffect(() => {
-    if(bklogState.pullModifyBlockData) { 
-      onUpdateBlock(bklogState.pullModifyBlockData);
-      setUpdated(true);
-    }
+    if(!bklogState.pullModifyBlockData) return;
+    
+    onUpdateBlock(bklogState.pullModifyBlockData);
+    setUpdated(true);
   }, [bklogState.pullModifyBlockData]);
 
   useEffect(() => {
@@ -180,15 +178,15 @@ function useConnectBklogStore(useBlockReducer: UseBlockType): ReturnConnectStore
   }, [isRefresh]);
 
   useEffect(() => {
-    if(socket && pageId) {
-      if(editingBlockId) {
-        socket.emit("edit", [ pageId, {
-          penName: editingPenName,
-          editingId: editingBlockId
-        }]);
-      } else {
-        socket.emit("edited", [ pageId, editingPenName]);
-      }
+    if(!socket || !pageId) return;
+    
+    if(editingBlockId) {
+      socket.emit("edit", [ pageId, {
+        penName: editingPenName,
+        editingId: editingBlockId
+      }]);
+    } else {
+      socket.emit("edited", [ pageId, editingPenName]);
     }
   }, [editingBlockId]);
 

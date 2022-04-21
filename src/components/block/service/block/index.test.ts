@@ -14,19 +14,6 @@ import { createBlockIdMap } from "./utils";
 
 const TEST_TYPE: typeof BLOCK_CONTAINER = "container2" as typeof BLOCK_CONTAINER;
 
-const TEXT_BLOCK = {
-  parentId: null,
-  previousId: null,
-  index: 1,
-  id: "1",
-  type: "text",
-  styleType: "bk-h1",
-  styles: null,
-  contents: [
-    ["블록 1입니다.", ["b"]]
-  ]
-}
-
 const TEST_NOT_BLOCK = {
   parentId: null,
   previousId: null,
@@ -266,289 +253,287 @@ const TEST_STAGE_1: StagedBlockData<TextGenericType>[] = [
   }
 ]
 
-// test("create BlockList", () => {
-//   const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList([TEST_NOT_BLOCK, ...TEST_BLOCK_1]);
+test("create BlockList", () => {
+  const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList([TEST_NOT_BLOCK, ...TEST_BLOCK_1]);
 
-//   if(!blockDataList) {
-//     return false;
-//   }
+  if(!blockDataList) {
+    return false;
+  }
 
-//   const blockList = BlockService.createBlockList(blockDataList);
+  const blockList = BlockService.createBlockList(blockDataList);
 
-//   if(!blockList) return false;
+  if(!blockList) return false;
   
-//   if(!modifyBlockTokenList) return false;
+  if(!modifyBlockTokenList) return false;
 
-//   new BlockService(blockList).sort().positioning().getData();
+  new BlockService(blockList).sort().positioning().getData();
 
-//   expect(modifyBlockTokenList[0].id).toEqual('T1-1CONTAINER');
-//   expect(blockList[0]).toBeInstanceOf(Block);
-//   expect(blockList.length).toEqual(TEST_BLOCK_1.length);
-//   expect(blockList[3].previousId).toEqual(null);
-// });
+  expect(modifyBlockTokenList[0].id).toEqual('T1-1CONTAINER');
+  expect(blockList[0]).toBeInstanceOf(Block);
+  expect(blockList.length).toEqual(TEST_BLOCK_1.length);
+  expect(blockList[3].previousId).toEqual(null);
+});
 
-// test("sort", () => {
-//   const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+test("sort", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
-//   if(!blockDataList) return false;
+  if(!blockDataList) return false;
 
-//   const blockList = BlockService.createBlockList(blockDataList);
+  const blockList = BlockService.createBlockList(blockDataList);
 
-//   if(!blockList) return false;
+  if(!blockList) return false;
 
-//   const result = new BlockService(blockList).sort().getBlockList().map(block => block.id);
+  const result = new BlockService(blockList).sort().getBlockList().map(block => block.id);
 
-//   expect(result.join(",")).toEqual("2T1,2T1-1,2T2,2T3");
-// });
+  expect(result.join(",")).toEqual("2T1,2T1-1,2T2,2T3");
+});
 
-// test("sort", () => {
-//   const modifyBlockService = new ModifyBlockService([]);
-//   const historyBlockService = new HistoryBlockService([]);
-//   const [ blockDataList, modifyBlockTokenList ] = BlockService.createBlockDataList(TEST_BLOCK_3);
+test("sort", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_3);
 
-//   if(!blockDataList) {
-//     return false;
-//   }
+  if(!blockDataList) {
+    return false;
+  }
 
-//   const blockList = BlockService.createBlockList(blockDataList);
+  const blockList = BlockService.createBlockList(blockDataList);
 
-//   if(!blockList) {
-//     return false;
-//   }
-//   const blockService = new BlockService(blockList);
+  if(!blockList) {
+    return false;
+  }
+  const blockService = new BlockService(blockList);
   
-//   const sortedId = blockService.sort().getBlockList().map(block => block.id).join(',');
+  const sortedId = blockService.sort().getBlockList().map(block => block.id).join(',');
 
-//   expect(sortedId).toEqual("3T1-1-1,3T1-1-1-1,3T1-1-1-2,3T2-2");
+  expect(sortedId).toEqual("3T1-1-1,3T1-1-1-1,3T1-1-1-2,3T2-2");
 
-// });
+});
 
-// test("update blockList staged property", () => {
-//   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_1);
+test("update blockList staged property", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_1);
 
-//   if(!blockDataList) return false;
+  if(!blockDataList) return false;
 
-//   const blockList = BlockService.createBlockList(blockDataList);
+  const blockList = BlockService.createBlockList(blockDataList);
 
-//   if(!blockList) return false;
+  if(!blockList) return false;
 
-//   const blockService = new BlockService(blockList);
+  const blockService = new BlockService(blockList);
 
-//   blockService.sort().positioning().updateBlockListStagedProperty(TEST_STAGE_1);
+  blockService.sort().positioning().updateBlockListStagedProperty(TEST_STAGE_1);
 
-//   const { modifyBlockTokenList, historyBlockTokenList } = blockService.getData();
+  const { modifyBlockTokenList, historyBlockTokenList } = blockService.getData();
 
-//   if(!modifyBlockTokenList[0]) return false;
-//   if(!historyBlockTokenList[0]) return false;
+  if(!modifyBlockTokenList[0]) return false;
+  if(!historyBlockTokenList[0]) return false;
 
-//   const modifyBlock1: ModifyBlockToken<TextGenericType> = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[0].id)[0] as ModifyBlockToken<TextGenericType>;
-//   const modifyBlock2: ModifyBlockToken<TextGenericType> = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[1].id)[0] as ModifyBlockToken<TextGenericType>;
-//   const historyBlock1: HistoryBlockToken<TextGenericType> = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[0].id)[0] as HistoryBlockToken<TextGenericType>;
-//   const historyBlock2: HistoryBlockToken<TextGenericType> = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[1].id)[0] as HistoryBlockToken<TextGenericType>;
+  const modifyBlock1: ModifyBlockToken<TextGenericType> = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[0].id)[0] as ModifyBlockToken<TextGenericType>;
+  const modifyBlock2: ModifyBlockToken<TextGenericType> = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[1].id)[0] as ModifyBlockToken<TextGenericType>;
+  const historyBlock1: HistoryBlockToken<TextGenericType> = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[0].id)[0] as HistoryBlockToken<TextGenericType>;
+  const historyBlock2: HistoryBlockToken<TextGenericType> = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_1[1].id)[0] as HistoryBlockToken<TextGenericType>;
 
-//   let M1contents: string = "";
-//   let M2contents: string = "";
-//   let H1contents: string = "";
-//   let H2contents: string = "";
+  let M1contents: string = "";
+  let M2contents: string = "";
+  let H1contents: string = "";
+  let H2contents: string = "";
 
-//   if(modifyBlock1.payload.contents) M1contents = modifyBlock1.payload.contents[0][0];
-//   if(modifyBlock2.payload.contents) M2contents = modifyBlock2.payload.contents[0][0];
-//   if(historyBlock1.payload.contents) H1contents = historyBlock1.payload.contents[0][0];
-//   if(historyBlock1.payload.contents) H2contents = historyBlock2.payload.contents[0][0];
+  if(modifyBlock1.payload.contents) M1contents = modifyBlock1.payload.contents[0][0];
+  if(modifyBlock2.payload.contents) M2contents = modifyBlock2.payload.contents[0][0];
+  if(historyBlock1.payload.contents) H1contents = historyBlock1.payload.contents[0][0];
+  if(historyBlock1.payload.contents) H2contents = historyBlock2.payload.contents[0][0];
 
-//   expect(blockService.getBlockList().map(block => block.id).join(',')).toEqual("T1,T1-1,T1-2,T1-2-1")
-//   expect(blockService.getBlockList()[0].contents[0][0]).toEqual("안녕하세요");
-//   expect(blockService.getBlockList()[1].contents[0][0]).toEqual("반갑습니다.");
-//   expect(M1contents).toEqual("안녕하세요");
-//   expect(M2contents).toEqual("반갑습니다.");
-//   expect(H1contents).toEqual(TEST_BLOCK_1[0].contents[0][0]);
-//   expect(H2contents).toEqual(TEST_BLOCK_1[1].contents[0][0]);
-// });
+  expect(blockService.getBlockList().map(block => block.id).join(',')).toEqual("T1,T1-1,T1-2,T1-2-1")
+  expect(blockService.getBlockList()[0].contents[0][0]).toEqual("안녕하세요");
+  expect(blockService.getBlockList()[1].contents[0][0]).toEqual("반갑습니다.");
+  expect(M1contents).toEqual("안녕하세요");
+  expect(M2contents).toEqual("반갑습니다.");
+  expect(H1contents).toEqual(TEST_BLOCK_1[0].contents[0][0]);
+  expect(H2contents).toEqual(TEST_BLOCK_1[1].contents[0][0]);
+});
 
-// test("add block in list", () => {
-//   const [ blockDataList1 ] = BlockService.createBlockDataList(TEST_BLOCK_2);
-//   const [ blockDataList2 ] = BlockService.createBlockDataList(TEST_BLOCK_3);
+test("add block in list", () => {
+  const [ blockDataList1 ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+  const [ blockDataList2 ] = BlockService.createBlockDataList(TEST_BLOCK_3);
 
-//   if(!(blockDataList1 && blockDataList2)) return false;
+  if(!(blockDataList1 && blockDataList2)) return false;
 
-//   const blockList1 = BlockService.createBlockList(blockDataList1);
-//   const blockList2 = BlockService.createBlockList(blockDataList2);
+  const blockList1 = BlockService.createBlockList(blockDataList1);
+  const blockList2 = BlockService.createBlockList(blockDataList2);
 
-//   if(!(blockList1 && blockList2)) return false;
+  if(!(blockList1 && blockList2)) return false;
 
-//   const blockService = new BlockService(blockList1).sort().positioning();
+  const blockService = new BlockService(blockList1).sort().positioning();
 
-//   expect(blockService.getBlockList().map(block => block.id).join(',')).toEqual("2T1,2T1-1,2T2,2T3");
+  expect(blockService.getBlockList().map(block => block.id).join(',')).toEqual("2T1,2T1-1,2T2,2T3");
 
-//   const { blockList: targetBlockList } = new BlockService(blockList2).sort().getData();
+  const { blockList: targetBlockList } = new BlockService(blockList2).sort().getData();
 
-//   const { 
-//     blockList, 
-//     modifyBlockTokenList,
-//     historyBlockTokenList
-//   } = blockService.addBlockInList(targetBlockList, "2T1", false).getData();
+  const { 
+    blockList, 
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService.addBlockInList(targetBlockList, "2T1", false).getData();
 
-//   if(!(modifyBlockTokenList[0] && historyBlockTokenList[0])) return false;
+  if(!(modifyBlockTokenList[0] && historyBlockTokenList[0])) return false;
 
-//   expect(blockList.map(block => block.id).join(',')).toEqual("2T1,3T1-1-1,3T1-1-1-1,3T1-1-1-2,3T2-2,2T1-1,2T2,2T3");
-//   expect(modifyBlockTokenList
-//     .filter(data => data.command === "create")
-//     .map(data => data.payload.id)
-//     .join(",")).toEqual("3T1-1-1,3T1-1-1-1,3T1-1-1-2,3T2-2");
-//   // expect(historyBlockTokenList
-//   //   .filter(data => data.command === "delete")
-//   //   .map(data => data.id)
-//   //   .join(",")).toEqual("3T2-2,3T1-1-1-2,3T1-1-1-1,3T1-1-1");
-// });
+  expect(blockList.map(block => block.id).join(',')).toEqual("2T1,3T1-1-1,3T1-1-1-1,3T1-1-1-2,3T2-2,2T1-1,2T2,2T3");
+  expect(modifyBlockTokenList
+    .filter(data => data.command === "create")
+    .map(data => data.payload.id)
+    .join(",")).toEqual("3T1-1-1,3T1-1-1-1,3T1-1-1-2,3T2-2");
+  // expect(historyBlockTokenList
+  //   .filter(data => data.command === "delete")
+  //   .map(data => data.id)
+  //   .join(",")).toEqual("3T2-2,3T1-1-1-2,3T1-1-1-1,3T1-1-1");
+});
 
-// test("remove block in list", () => {
-//   const [ blockDataList1 ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+test("remove block in list", () => {
+  const [ blockDataList1 ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
-//   if(!blockDataList1) return false;
+  if(!blockDataList1) return false;
 
-//   const blockList1 = BlockService.createBlockList(blockDataList1);
+  const blockList1 = BlockService.createBlockList(blockDataList1);
 
-//   if(!blockList1) return false;
+  if(!blockList1) return false;
 
-//   const {
-//     blockList,
-//     modifyBlockTokenList,
-//     historyBlockTokenList
-//   } = new BlockService(blockList1).sort().positioning().removeBlockInList(["2T1"]).getData();
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = new BlockService(blockList1).sort().positioning().removeBlockInList(["2T1"]).getData();
 
-//   expect(blockList.map(block => block.id).join(",")).toEqual("2T1-1,2T2,2T3");
-//   expect(modifyBlockTokenList.filter(data => data.command === "delete")[0].id).toEqual("2T1");
-//   expect(modifyBlockTokenList.filter(data => data.command === "update")[0].payload.parentId).toEqual(null);
-//   expect(historyBlockTokenList.filter(data => data.command === "create")[0].id).toEqual("2T1");
-//   expect(historyBlockTokenList.filter(data => data.command === "update" && data.id === "2T1-1")[0].payload.parentId).toEqual("2T1");
-// });
+  expect(blockList.map(block => block.id).join(",")).toEqual("2T1-1,2T2,2T3");
+  expect(modifyBlockTokenList.filter(data => data.command === "delete")[0].id).toEqual("2T1");
+  expect(modifyBlockTokenList.filter(data => data.command === "update")[0].payload.parentId).toEqual(null);
+  expect(historyBlockTokenList.filter(data => data.command === "create")[0].id).toEqual("2T1");
+  expect(historyBlockTokenList.filter(data => data.command === "update" && data.id === "2T1-1")[0].payload.parentId).toEqual("2T1");
+});
 
-// test("remove text block in list", () => {
-//   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+test("remove text block in list", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
-//   if(!blockDataList) return false;
+  if(!blockDataList) return false;
 
-//   const blockList1 = BlockService.createBlockList(blockDataList);
+  const blockList1 = BlockService.createBlockList(blockDataList);
 
-//   if(!blockList1) return false;
+  if(!blockList1) return false;
 
-//   const blockService = new BlockService(blockList1).sort().positioning().removeTextBlockInLIst(2, 1, "블록2입니다.");
+  const blockService = new BlockService(blockList1).sort().positioning().removeTextBlockInLIst(2, 1, "블록2입니다.");
   
-//   const { blockList, modifyBlockTokenList, historyBlockTokenList } = blockService.getData();
+  const { blockList, modifyBlockTokenList, historyBlockTokenList } = blockService.getData();
 
-//   if(!(modifyBlockTokenList[0] && historyBlockTokenList[0])) return false;
+  if(!(modifyBlockTokenList[0] && historyBlockTokenList[0])) return false;
 
-//   const m1 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[3].id)[0];
-//   const m2 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
-//   const h1 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[3].id)[0];
-//   const h2 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const m1 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[3].id)[0];
+  const m2 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const h1 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[3].id)[0];
+  const h2 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
 
-//   expect(blockList.map(block => block.id).join(",")).toEqual("2T1,2T1-1,2T3");
-//   expect(blockList[1].contents[0][0]).toEqual("블록 2입니다.블록2입니다.");
-//   expect(m1.command).toEqual("delete");
-//   expect(m2.payload.contents[0][0]).toEqual("블록 2입니다.블록2입니다.");
-//   expect(h1.command).toEqual("create");
-//   expect(h2.payload.contents[0][0]).toEqual("블록 2입니다.");
-// });
+  expect(blockList.map(block => block.id).join(",")).toEqual("2T1,2T1-1,2T3");
+  expect(blockList[1].contents[0][0]).toEqual("블록 2입니다.블록2입니다.");
+  expect(m1.command).toEqual("delete");
+  expect(m2.payload.contents[0][0]).toEqual("블록 2입니다.블록2입니다.");
+  expect(h1.command).toEqual("create");
+  expect(h2.payload.contents[0][0]).toEqual("블록 2입니다.");
+});
 
 
-// // TODO
-// test("change block position", () => {
-//   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+// TODO
+test("change block position", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
-//   if(!blockDataList) return false;
+  if(!blockDataList) return false;
 
-//   const blockService = new BlockService(BlockService.createBlockList(blockDataList));
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList));
 
-//   const { 
-//     blockList,
-//     modifyBlockTokenList,
-//     historyBlockTokenList
-//   } = blockService.sort().positioning().changeBlockPosition(createBlockIdMap([{ id: "2T1-1" }]), "2T3", true).getData();
+  const { 
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService.sort().positioning().changeBlockPosition(createBlockIdMap([{ id: "2T1-1" }]), "2T3", true).getData();
 
-//   expect(blockList[TEST_BLOCK_2.length-1].id).toEqual("2T1-1");
-//   expect(modifyBlockTokenList.filter(data => data.command === "update")[0].payload.previousId).toEqual("2T3");
-//   expect(historyBlockTokenList.filter(data => data.command === "update" && data.id === "2T1-1")[0].payload.parentId).toEqual(TEST_BLOCK_2[1].id);
-// });
+  expect(blockList[TEST_BLOCK_2.length-1].id).toEqual("2T1-1");
+  expect(modifyBlockTokenList.filter(data => data.command === "update")[0].payload.previousId).toEqual("2T3");
+  expect(historyBlockTokenList.filter(data => data.command === "update" && data.id === "2T1-1")[0].payload.parentId).toEqual(TEST_BLOCK_2[1].id);
+});
 
-// test("switchBlockList", () => {
-//   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
+test("switchBlockList", () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_2);
 
-//   if(!blockDataList) return false;
+  if(!blockDataList) return false;
 
-//   const blockService = new BlockService(BlockService.createBlockList(blockDataList));
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList));
 
-//   const {
-//     blockList,
-//     modifyBlockTokenList,
-//     historyBlockTokenList
-//   } = blockService.sort().positioning().switchBlockList(createBlockIdMap([{ id: "2T1" }]), "2T3", true).getData();
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService.sort().positioning().switchBlockList(createBlockIdMap([{ id: "2T1" }]), "2T3", true).getData();
 
-//   const m1 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
-//   const m2 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[1].id)[0];
-//   const h1 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
-//   const h2 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[1].id)[0];
+  const m1 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const m2 = modifyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[1].id)[0];
+  const h1 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[0].id)[0];
+  const h2 = historyBlockTokenList.filter(data => data.id === TEST_BLOCK_2[1].id)[0];
 
-//   expect(blockList.map(block => block.id).join(",")).toEqual("2T1-1,2T2,2T3,2T1");
-//   expect(blockList[TEST_BLOCK_2.length-1].id).toEqual(TEST_BLOCK_2[1].id);
-//   expect(modifyBlockTokenList.length).toEqual(3);
-//   expect(historyBlockTokenList.length).toEqual(3);
-//   expect(m1.payload.parentId).toEqual(null);
-//   expect(m2.payload.previousId).toEqual("2T3");
-//   expect(h1.payload.parentId).toEqual(TEST_BLOCK_2[1].id);
-//   expect(h2.payload.previousId).toEqual(null);
-// });
+  expect(blockList.map(block => block.id).join(",")).toEqual("2T1-1,2T2,2T3,2T1");
+  expect(blockList[TEST_BLOCK_2.length-1].id).toEqual(TEST_BLOCK_2[1].id);
+  expect(modifyBlockTokenList.length).toEqual(3);
+  expect(historyBlockTokenList.length).toEqual(3);
+  expect(m1.payload.parentId).toEqual(null);
+  expect(m2.payload.previousId).toEqual("2T3");
+  expect(h1.payload.parentId).toEqual(TEST_BLOCK_2[1].id);
+  expect(h2.payload.previousId).toEqual(null);
+});
 
-// test('update block list', () => {
-//   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_4);
+test('update block list', () => {
+  const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_4);
 
-//   if(!blockDataList) return false;
+  if(!blockDataList) return false;
 
-//   const blockService = new BlockService(BlockService.createBlockList(blockDataList)).sort().positioning();
+  const blockService = new BlockService(BlockService.createBlockList(blockDataList)).sort().positioning();
 
-//   let block1: TextBlock = blockService.getBlockList()[1] as TextBlock;
+  let block1: TextBlock = blockService.getBlockList()[1] as TextBlock;
   
-//   block1 = block1.regeneration({
-//     id: "4T5",
-//     previousId: "4T3",
-//     contents: [["블럭 5입니다."]]
-//   })[0];
+  block1 = block1.regeneration({
+    id: "4T5",
+    previousId: "4T3",
+    contents: [["블럭 5입니다."]]
+  })[0];
 
-//   const modifyBlockData: ModifyBlockData = {
-//     create: [
-//       new ModifyBlockToken(
-//         ModifyBlockService
-//         .setCreateModifyData(block1.getBlockData()))
-//         .getRawData()
-//     ],
-//     update: [
-//       {
-//         id: "4T1-1",
-//         type: "text",
-//         payload: {
-//           contents: [["반갑습니다."]]
-//         }
-//       }
-//     ],
-//     delete: [{ id: "4T4", type: "text" }]
-//   }
+  const modifyBlockData: ModifyBlockData = {
+    create: [
+      new ModifyBlockToken(
+        ModifyBlockService
+        .setCreateModifyData(block1.getBlockData()))
+        .getRawData()
+    ],
+    update: [
+      {
+        id: "4T1-1",
+        type: "text",
+        payload: {
+          contents: [["반갑습니다."]]
+        }
+      }
+    ],
+    delete: [{ id: "4T4", type: "text" }]
+  }
 
-//   const blockService2 = new BlockService(blockService.getBlockList()).updateBlockList(modifyBlockData);
+  const blockService2 = new BlockService(blockService.getBlockList()).updateBlockList(modifyBlockData);
 
-//   const {
-//     blockList,
-//     modifyBlockTokenList,
-//     historyBlockTokenList
-//   } = blockService2.getData();
+  const {
+    blockList,
+    modifyBlockTokenList,
+    historyBlockTokenList
+  } = blockService2.getData();
 
-//   expect(blockList.length).toEqual(TEST_BLOCK_4.length);
-//   expect(blockList[1].contents[0][0]).toEqual("반갑습니다.");
-//   expect(blockList[TEST_BLOCK_4.length-1].contents[0][0]).toEqual(block1.contents[0][0]);
-//   expect(blockList[5].id).toEqual(block1.id);
-//   expect(modifyBlockTokenList.length).toEqual(0);
-//   expect(historyBlockTokenList.length).toEqual(3);
+  expect(blockList.length).toEqual(TEST_BLOCK_4.length);
+  expect(blockList[1].contents[0][0]).toEqual("반갑습니다.");
+  expect(blockList[TEST_BLOCK_4.length-1].contents[0][0]).toEqual(block1.contents[0][0]);
+  expect(blockList[5].id).toEqual(block1.id);
+  expect(modifyBlockTokenList.length).toEqual(0);
+  expect(historyBlockTokenList.length).toEqual(3);
 
-// });
+});
 
 test('restore block list', () => {
   const [ blockDataList ] = BlockService.createBlockDataList(TEST_BLOCK_4);
