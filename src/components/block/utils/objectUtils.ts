@@ -2,7 +2,7 @@ function updateObject<T extends object>(oldObject: T, ...newValues: { [P in keyo
   return Object.assign({}, oldObject, ...newValues);
 };
 
-function modifyAnObject<T extends Object>(object: T, propertys: { [P in keyof T]?: T[P] }) {
+function modifyAnObject<T extends object>(object: T, propertys: { [P in keyof T]?: T[P] }): T {
   const newObject = updateObject(object);
 
   for(const key in propertys) {

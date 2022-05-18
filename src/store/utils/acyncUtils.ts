@@ -11,7 +11,7 @@ function createPromiseSaga<T = any>(
   errorType?: string, 
   successType?: string
 ) {
-  const [ SUCCESS, ERROR ] = [successType?  successType: `${type}_SUCCESS`, errorType? errorType: `${type}_ERROR`];
+  const [ SUCCESS, ERROR ] = [successType?  successType : `${type}_SUCCESS`, errorType? errorType: `${type}_ERROR`];
 
   return function* (action: any) {
     try {

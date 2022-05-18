@@ -22,7 +22,7 @@ function* commonSaga() {
   yield takeEvery(ALL_RESET, allResetSaga);
 }
 
-export function* rootSage() {
+export function* rootSaga() {
   yield all([
     commonSaga(), 
     authSaga(),

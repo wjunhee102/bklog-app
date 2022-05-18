@@ -91,15 +91,13 @@ function useTextBlock(props: UseTextBlockProps) {
     },
     keyPress: {
       Enter: (e: any) => {
-        if(e.key === "Enter") {
-          e.preventDefault();
-          onAddTextBlock(
-            block.index, 
-            e.target.innerHTML, 
-            getSelectionStart(e.target), 
-            getSelectionEnd(e.target)
-          );
-        }
+        e.preventDefault();
+        onAddTextBlock(
+          block.index, 
+          e.target.innerHTML, 
+          getSelectionStart(e.target), 
+          getSelectionEnd(e.target)
+        );
       }
     },
     keyDown: {

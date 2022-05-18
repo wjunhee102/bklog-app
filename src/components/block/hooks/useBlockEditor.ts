@@ -39,14 +39,14 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
    const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setClientX(e.clientX);
     setClientY(e.clientY);
-     dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 30}px)`);
+    dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 30}px)`);
    }, [dragRef]);
  
    const handleMouseMove = useCallback((e: React.MouseEvent) => {
      setClientX(e.clientX);
      setClientY(e.clientY);
      if(isGrab) {
-       dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 30}px)`);
+      dragRef.current?.setAttribute("style", `transform: translate(${e.clientX - 40}px, ${e.clientY - 30}px)`);
      }
    }, [isGrab, dragRef]);
  
@@ -56,9 +56,9 @@ function useBlockEditor(useBlockReducer: UseBlockType, updated: boolean = false)
    }, [isGrab, isCliping]);
  
    const handleMouseUp = useCallback((e) => {
-      setClientX(e.clientX);
-     setClientY(e.clientY);
-     onResetEditorState(false);
+    setClientX(e.clientX);
+    setClientY(e.clientY);
+    onResetEditorState(false);
    }, []);
  
    const handleMouseLeave = useCallback(() => {
