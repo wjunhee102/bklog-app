@@ -236,7 +236,6 @@ function commitTextBlockHandler(
   const historyBlockData = new HistoryBlockService(historyBlockTokenList).getData();
   
   if(!historyBlockData) return state;
-
   return updateObject(state, {
     blockList,
     stagedTextBlockData: null,
@@ -823,7 +822,7 @@ function changeStyleTypeHandler(
     isFetch: true,
     historyBack: arrayPush(state.historyBack, {
       editingBlockId: state.editingBlockId,
-      ... historyBlockData
+      ...historyBlockData
     }),
     modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList]
   });
@@ -870,7 +869,7 @@ function changeBlockTypeHandler(
      isFetch: true,
      historyBack: arrayPush(state.historyBack, {
        editingBlockId: state.editingBlockId,
-       ... historyBlockData
+       ...historyBlockData
      }),
      modifyBlockTokenList: [...state.modifyBlockTokenList, ...modifyBlockTokenList]
    });
